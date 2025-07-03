@@ -272,6 +272,8 @@ export default function AddEmployee() {
         lastName: employeeData.lastName || "",
         email: employeeData.email || "",
         phone: employeeData.phone || "",
+        emergencyContactName: employeeData.emergencyContactName || "",
+        emergencyContactPhone: employeeData.emergencyContactPhone || "",
         department: employeeData.department || "",
         jobTitle: employeeData.jobTitle || "",
         manager: employeeData.manager || "",

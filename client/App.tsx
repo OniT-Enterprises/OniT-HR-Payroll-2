@@ -27,6 +27,12 @@ import Reviews from "./pages/performance/Reviews";
 import GoalsOKRs from "./pages/performance/GoalsOKRs";
 import TrainingCertifications from "./pages/performance/TrainingCertifications";
 import Disciplinary from "./pages/performance/Disciplinary";
+import RunPayroll from "./pages/payroll/RunPayroll";
+import PayrollHistory from "./pages/payroll/PayrollHistory";
+import TaxReports from "./pages/payroll/TaxReports";
+import BankTransfers from "./pages/payroll/BankTransfers";
+import BenefitsEnrollment from "./pages/payroll/BenefitsEnrollment";
+import DeductionsAdvances from "./pages/payroll/DeductionsAdvances";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -64,6 +70,12 @@ const App = () => (
             element={<TrainingCertifications />}
           />
           <Route path="/performance/disciplinary" element={<Disciplinary />} />
+          <Route path="/payroll/run" element={<RunPayroll />} />
+          <Route path="/payroll/history" element={<PayrollHistory />} />
+          <Route path="/payroll/taxes" element={<TaxReports />} />
+          <Route path="/payroll/transfers" element={<BankTransfers />} />
+          <Route path="/payroll/benefits" element={<BenefitsEnrollment />} />
+          <Route path="/payroll/deductions" element={<DeductionsAdvances />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>

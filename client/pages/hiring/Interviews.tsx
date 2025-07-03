@@ -48,6 +48,9 @@ import {
 export default function Interviews() {
   const [selectedJury, setSelectedJury] = useState<string[]>([]);
   const [availableDates, setAvailableDates] = useState<string[]>([]);
+  const [interviewSchedules, setInterviewSchedules] = useState<{
+    [key: number]: { date: string; time: string };
+  }>({});
 
   // Mock data for existing staff (jury members)
   const staff = [
@@ -414,7 +417,22 @@ export default function Interviews() {
                       <td className="p-3 text-center">
                         <Input
                           type="date"
-                          value={candidate.interviewDate}
+                          value={
+                            interviewSchedules[candidate.id]?.date ||
+                            candidate.interviewDate
+                          }
+                          onChange={(e) =>
+                            setInterviewSchedules((prev) => ({
+                              ...prev,
+                              [candidate.id]: {
+                                ...prev[candidate.id],
+                                date: e.target.value,
+                                time:
+                                  prev[candidate.id]?.time ||
+                                  candidate.interviewTime,
+                              },
+                            }))
+                          }
                           className="w-32 mx-auto"
                         />
                       </td>
@@ -422,7 +440,22 @@ export default function Interviews() {
                       <td className="p-3 text-center">
                         <Input
                           type="time"
-                          value={candidate.interviewTime}
+                          value={
+                            interviewSchedules[candidate.id]?.time ||
+                            candidate.interviewTime
+                          }
+                          onChange={(e) =>
+                            setInterviewSchedules((prev) => ({
+                              ...prev,
+                              [candidate.id]: {
+                                ...prev[candidate.id],
+                                time: e.target.value,
+                                date:
+                                  prev[candidate.id]?.date ||
+                                  candidate.interviewDate,
+                              },
+                            }))
+                          }
                           className="w-24 mx-auto"
                         />
                       </td>

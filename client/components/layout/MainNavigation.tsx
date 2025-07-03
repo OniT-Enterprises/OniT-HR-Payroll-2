@@ -38,34 +38,6 @@ export default function MainNavigation() {
 
   const navigationItems = [
     {
-      id: "setup",
-      label: "Setup",
-      icon: <Cog className="h-5 w-5" />,
-      color: "text-blue-400",
-      items: [
-        {
-          label: "Company Details",
-          icon: <Building2 className="h-4 w-4" />,
-          path: "/setup/company",
-        },
-        {
-          label: "Departments",
-          icon: <Building className="h-4 w-4" />,
-          path: "/setup/departments",
-        },
-        {
-          label: "Payment Structure",
-          icon: <DollarSign className="h-4 w-4" />,
-          path: "/setup/payments",
-        },
-        {
-          label: "User Management",
-          icon: <UserCog className="h-4 w-4" />,
-          path: "/setup/users",
-        },
-      ],
-    },
-    {
       id: "hiring",
       label: "Hiring",
       icon: <UserPlus className="h-5 w-5" />,
@@ -297,11 +269,43 @@ export default function MainNavigation() {
             align="end"
             sideOffset={5}
           >
+            <DropdownMenuItem
+              className="flex items-center gap-3 px-3 py-2 text-gray-300 hover:bg-gray-800 hover:text-white cursor-pointer"
+              onClick={() => handleNavigation("/setup/company")}
+            >
+              <Building2 className="h-4 w-4 text-blue-400" />
+              <span>Company Details</span>
+            </DropdownMenuItem>
+            <DropdownMenuItem
+              className="flex items-center gap-3 px-3 py-2 text-gray-300 hover:bg-gray-800 hover:text-white cursor-pointer"
+              onClick={() => handleNavigation("/setup/departments")}
+            >
+              <Building className="h-4 w-4 text-blue-400" />
+              <span>Departments</span>
+            </DropdownMenuItem>
+            <DropdownMenuItem
+              className="flex items-center gap-3 px-3 py-2 text-gray-300 hover:bg-gray-800 hover:text-white cursor-pointer"
+              onClick={() => handleNavigation("/setup/payments")}
+            >
+              <DollarSign className="h-4 w-4 text-blue-400" />
+              <span>Payment Structure</span>
+            </DropdownMenuItem>
+            <DropdownMenuItem
+              className="flex items-center gap-3 px-3 py-2 text-gray-300 hover:bg-gray-800 hover:text-white cursor-pointer"
+              onClick={() => handleNavigation("/setup/users")}
+            >
+              <UserCog className="h-4 w-4 text-blue-400" />
+              <span>User Management</span>
+            </DropdownMenuItem>
+            <DropdownMenuSeparator className="bg-gray-700" />
             <DropdownMenuItem className="flex items-center gap-3 px-3 py-2 text-gray-300 hover:bg-gray-800 hover:text-white cursor-pointer">
               <Users className="h-4 w-4" />
               <span>Profile</span>
             </DropdownMenuItem>
-            <DropdownMenuItem className="flex items-center gap-3 px-3 py-2 text-gray-300 hover:bg-gray-800 hover:text-white cursor-pointer">
+            <DropdownMenuItem
+              className="flex items-center gap-3 px-3 py-2 text-gray-300 hover:bg-gray-800 hover:text-white cursor-pointer"
+              onClick={() => navigate("/settings")}
+            >
               <Settings className="h-4 w-4" />
               <span>Account Settings</span>
             </DropdownMenuItem>

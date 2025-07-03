@@ -72,6 +72,10 @@ export default function CandidateSelection() {
       appliedDate: "2024-01-15",
       resume: "sarah_johnson_resume.pdf",
       avatar: "SJ",
+      cvQuality: 9.2,
+      coverLetter: 8.8,
+      technicalSkills: 9.0,
+      interviewScore: 8.5,
     },
     {
       id: 2,
@@ -85,6 +89,10 @@ export default function CandidateSelection() {
       appliedDate: "2024-01-14",
       resume: "michael_chen_resume.pdf",
       avatar: "MC",
+      cvQuality: 8.9,
+      coverLetter: 8.2,
+      technicalSkills: 9.5,
+      interviewScore: 9.0,
     },
     {
       id: 3,
@@ -98,6 +106,10 @@ export default function CandidateSelection() {
       appliedDate: "2024-01-16",
       resume: "emily_rodriguez_resume.pdf",
       avatar: "ER",
+      cvQuality: 8.1,
+      coverLetter: 8.7,
+      technicalSkills: 8.0,
+      interviewScore: null,
     },
     {
       id: 4,
@@ -111,6 +123,10 @@ export default function CandidateSelection() {
       appliedDate: "2024-01-13",
       resume: "david_wilson_resume.pdf",
       avatar: "DW",
+      cvQuality: 7.2,
+      coverLetter: 6.8,
+      technicalSkills: 7.5,
+      interviewScore: 6.0,
     },
   ];
 
@@ -142,6 +158,13 @@ export default function CandidateSelection() {
       default:
         return null;
     }
+  };
+
+  const getScoreColor = (score: number | null) => {
+    if (score === null) return "text-gray-400";
+    if (score >= 8.5) return "text-green-600";
+    if (score >= 7.5) return "text-yellow-600";
+    return "text-red-600";
   };
 
   return (
@@ -267,27 +290,39 @@ export default function CandidateSelection() {
           </div>
         </div>
 
-        {/* Search and Filters */}
+        {/* Job Selector */}
         <Card className="mb-6">
-          <CardHeader>
-            <CardTitle>Search Candidates</CardTitle>
-            <CardDescription>
-              Find candidates by name, skills, or experience
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div className="flex items-center gap-4">
-              <div className="flex-1 relative">
-                <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
-                <Input
-                  placeholder="Search by name, email, skills..."
-                  className="pl-9"
-                />
+          <CardContent className="py-4">
+            <div className="flex items-center justify-center">
+              <div className="flex items-center gap-4">
+                <label className="text-sm font-medium">
+                  Select Job Position:
+                </label>
+                <select className="px-4 py-2 border rounded-md bg-background min-w-[300px]">
+                  <option value="">Choose a job position...</option>
+                  <option value="senior-software-engineer">
+                    Senior Software Engineer
+                  </option>
+                  <option value="marketing-manager">Marketing Manager</option>
+                  <option value="hr-specialist">HR Specialist</option>
+                  <option value="data-analyst">Data Analyst</option>
+                  <option value="product-manager">Product Manager</option>
+                </select>
               </div>
-              <Button>Search</Button>
             </div>
           </CardContent>
         </Card>
+
+        {/* Compact Search */}
+        <div className="flex items-center justify-between mb-6">
+          <div className="flex items-center gap-4">
+            <div className="relative">
+              <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+              <Input placeholder="Search candidates..." className="pl-9 w-64" />
+            </div>
+            <Button size="sm">Search</Button>
+          </div>
+        </div>
 
         {/* Statistics */}
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
@@ -354,131 +389,197 @@ export default function CandidateSelection() {
             </CardDescription>
           </CardHeader>
           <CardContent>
-            <div className="space-y-4">
-              {candidates.map((candidate) => (
-                <div
-                  key={candidate.id}
-                  className="flex items-center justify-between p-4 border rounded-lg hover:bg-muted/50 transition-colors"
-                >
-                  <div className="flex items-center gap-4">
-                    <Avatar>
-                      <AvatarImage
-                        src={`/placeholder.svg`}
-                        alt={candidate.name}
-                      />
-                      <AvatarFallback>{candidate.avatar}</AvatarFallback>
-                    </Avatar>
-                    <div>
-                      <h3 className="font-semibold">{candidate.name}</h3>
-                      <p className="text-sm text-muted-foreground">
-                        {candidate.position}
-                      </p>
-                      <div className="flex items-center gap-2 mt-1">
-                        <Badge variant="outline">{candidate.experience}</Badge>
-                        <div className="flex items-center gap-1">
-                          <Star className="h-3 w-3 fill-yellow-400 text-yellow-400" />
-                          <span className="text-xs font-medium">
-                            {candidate.score}
-                          </span>
+            <div className="overflow-x-auto">
+              <table className="w-full">
+                <thead>
+                  <tr className="border-b">
+                    <th className="text-left p-3 font-medium">Candidate</th>
+                    <th className="text-center p-3 font-medium">CV Quality</th>
+                    <th className="text-center p-3 font-medium">
+                      Cover Letter
+                    </th>
+                    <th className="text-center p-3 font-medium">
+                      Technical Skills
+                    </th>
+                    <th className="text-center p-3 font-medium">
+                      Interview Score
+                    </th>
+                    <th className="text-center p-3 font-medium">Status</th>
+                    <th className="text-center p-3 font-medium">Documents</th>
+                    <th className="text-center p-3 font-medium">Actions</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {candidates.map((candidate) => (
+                    <tr
+                      key={candidate.id}
+                      className="border-b hover:bg-muted/50 transition-colors"
+                    >
+                      {/* Candidate Info */}
+                      <td className="p-3">
+                        <div className="flex items-center gap-3">
+                          <Avatar>
+                            <AvatarImage
+                              src={`/placeholder.svg`}
+                              alt={candidate.name}
+                            />
+                            <AvatarFallback>{candidate.avatar}</AvatarFallback>
+                          </Avatar>
+                          <div>
+                            <h3 className="font-semibold">{candidate.name}</h3>
+                            <p className="text-sm text-muted-foreground">
+                              {candidate.email}
+                            </p>
+                            <div className="flex items-center gap-2 mt-1">
+                              <Badge variant="outline">
+                                {candidate.experience}
+                              </Badge>
+                              <span className="text-xs text-muted-foreground">
+                                Applied: {candidate.appliedDate}
+                              </span>
+                            </div>
+                          </div>
                         </div>
-                      </div>
-                    </div>
-                  </div>
+                      </td>
 
-                  <div className="flex items-center gap-4">
-                    <div className="text-right">
-                      <div className="flex items-center gap-2 mb-1">
-                        {getStatusIcon(candidate.status)}
-                        <Badge className={getStatusColor(candidate.status)}>
-                          {candidate.status}
-                        </Badge>
-                      </div>
-                      <p className="text-xs text-muted-foreground">
-                        Applied: {candidate.appliedDate}
-                      </p>
-                    </div>
+                      {/* CV Quality */}
+                      <td className="p-3 text-center">
+                        <span
+                          className={`font-semibold ${getScoreColor(candidate.cvQuality)}`}
+                        >
+                          {candidate.cvQuality}/10
+                        </span>
+                      </td>
 
-                    <div className="flex items-center gap-1">
-                      <Button variant="ghost" size="icon">
-                        <Eye className="h-4 w-4" />
-                      </Button>
+                      {/* Cover Letter */}
+                      <td className="p-3 text-center">
+                        <span
+                          className={`font-semibold ${getScoreColor(candidate.coverLetter)}`}
+                        >
+                          {candidate.coverLetter}/10
+                        </span>
+                      </td>
 
-                      {/* CV Viewer */}
-                      <Dialog>
-                        <DialogTrigger asChild>
-                          <Button
-                            variant="ghost"
-                            size="icon"
-                            className="flex flex-col p-1 h-12 w-12"
+                      {/* Technical Skills */}
+                      <td className="p-3 text-center">
+                        <span
+                          className={`font-semibold ${getScoreColor(candidate.technicalSkills)}`}
+                        >
+                          {candidate.technicalSkills}/10
+                        </span>
+                      </td>
+
+                      {/* Interview Score */}
+                      <td className="p-3 text-center">
+                        {candidate.interviewScore ? (
+                          <span
+                            className={`font-semibold ${getScoreColor(candidate.interviewScore)}`}
                           >
-                            <File className="h-4 w-4" />
-                            <span className="text-xs">CV</span>
+                            {candidate.interviewScore}/10
+                          </span>
+                        ) : (
+                          <span className="text-gray-400 text-sm">
+                            Not interviewed
+                          </span>
+                        )}
+                      </td>
+
+                      {/* Status */}
+                      <td className="p-3 text-center">
+                        <div className="flex items-center justify-center gap-2">
+                          {getStatusIcon(candidate.status)}
+                          <Badge className={getStatusColor(candidate.status)}>
+                            {candidate.status}
+                          </Badge>
+                        </div>
+                      </td>
+
+                      {/* Documents */}
+                      <td className="p-3">
+                        <div className="flex items-center justify-center gap-1">
+                          {/* CV Viewer */}
+                          <Dialog>
+                            <DialogTrigger asChild>
+                              <Button
+                                variant="ghost"
+                                size="icon"
+                                className="flex flex-col p-1 h-12 w-12"
+                              >
+                                <File className="h-4 w-4" />
+                                <span className="text-xs">CV</span>
+                              </Button>
+                            </DialogTrigger>
+                            <DialogContent className="max-w-4xl max-h-[80vh]">
+                              <DialogHeader>
+                                <DialogTitle>CV - {candidate.name}</DialogTitle>
+                                <DialogDescription>
+                                  Resume/CV document for review
+                                </DialogDescription>
+                              </DialogHeader>
+                              <div className="border rounded-lg p-4 h-[60vh] overflow-auto bg-gray-50">
+                                <div className="text-center text-muted-foreground">
+                                  <File className="h-16 w-16 mx-auto mb-4" />
+                                  <p>CV document would be displayed here</p>
+                                  <p className="text-sm">{candidate.resume}</p>
+                                </div>
+                              </div>
+                            </DialogContent>
+                          </Dialog>
+
+                          {/* Cover Letter Viewer */}
+                          <Dialog>
+                            <DialogTrigger asChild>
+                              <Button
+                                variant="ghost"
+                                size="icon"
+                                className="flex flex-col p-1 h-12 w-12"
+                              >
+                                <Mail className="h-4 w-4" />
+                                <span className="text-xs">CL</span>
+                              </Button>
+                            </DialogTrigger>
+                            <DialogContent className="max-w-4xl max-h-[80vh]">
+                              <DialogHeader>
+                                <DialogTitle>
+                                  Cover Letter - {candidate.name}
+                                </DialogTitle>
+                                <DialogDescription>
+                                  Cover letter document for review
+                                </DialogDescription>
+                              </DialogHeader>
+                              <div className="border rounded-lg p-4 h-[60vh] overflow-auto bg-gray-50">
+                                <div className="text-center text-muted-foreground">
+                                  <Mail className="h-16 w-16 mx-auto mb-4" />
+                                  <p>Cover letter would be displayed here</p>
+                                  <p className="text-sm">
+                                    Cover letter content for {candidate.name}
+                                  </p>
+                                </div>
+                              </div>
+                            </DialogContent>
+                          </Dialog>
+
+                          <Button variant="ghost" size="icon">
+                            <Phone className="h-4 w-4" />
                           </Button>
-                        </DialogTrigger>
-                        <DialogContent className="max-w-4xl max-h-[80vh]">
-                          <DialogHeader>
-                            <DialogTitle>CV - {candidate.name}</DialogTitle>
-                            <DialogDescription>
-                              Resume/CV document for review
-                            </DialogDescription>
-                          </DialogHeader>
-                          <div className="border rounded-lg p-4 h-[60vh] overflow-auto bg-gray-50">
-                            <div className="text-center text-muted-foreground">
-                              <File className="h-16 w-16 mx-auto mb-4" />
-                              <p>CV document would be displayed here</p>
-                              <p className="text-sm">{candidate.resume}</p>
-                            </div>
-                          </div>
-                        </DialogContent>
-                      </Dialog>
+                        </div>
+                      </td>
 
-                      {/* Cover Letter Viewer */}
-                      <Dialog>
-                        <DialogTrigger asChild>
-                          <Button
-                            variant="ghost"
-                            size="icon"
-                            className="flex flex-col p-1 h-12 w-12"
-                          >
-                            <Mail className="h-4 w-4" />
-                            <span className="text-xs">CL</span>
+                      {/* Actions */}
+                      <td className="p-3">
+                        <div className="flex flex-col items-center gap-1">
+                          <Button variant="outline" size="sm" className="w-20">
+                            Reject
                           </Button>
-                        </DialogTrigger>
-                        <DialogContent className="max-w-4xl max-h-[80vh]">
-                          <DialogHeader>
-                            <DialogTitle>
-                              Cover Letter - {candidate.name}
-                            </DialogTitle>
-                            <DialogDescription>
-                              Cover letter document for review
-                            </DialogDescription>
-                          </DialogHeader>
-                          <div className="border rounded-lg p-4 h-[60vh] overflow-auto bg-gray-50">
-                            <div className="text-center text-muted-foreground">
-                              <Mail className="h-16 w-16 mx-auto mb-4" />
-                              <p>Cover letter would be displayed here</p>
-                              <p className="text-sm">
-                                Cover letter content for {candidate.name}
-                              </p>
-                            </div>
-                          </div>
-                        </DialogContent>
-                      </Dialog>
-
-                      <Button variant="ghost" size="icon">
-                        <Phone className="h-4 w-4" />
-                      </Button>
-                    </div>
-
-                    <div className="flex items-center gap-2">
-                      <Button variant="outline" size="sm">
-                        Reject
-                      </Button>
-                      <Button size="sm">Shortlist</Button>
-                    </div>
-                  </div>
-                </div>
-              ))}
+                          <Button size="sm" className="w-20">
+                            Shortlist
+                          </Button>
+                        </div>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
             </div>
           </CardContent>
         </Card>

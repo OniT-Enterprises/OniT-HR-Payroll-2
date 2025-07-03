@@ -67,6 +67,9 @@ export default function AddEmployee() {
     { id: 4, type: "Passport", number: "", expiryDate: "" },
   ]);
 
+  const [showImportDialog, setShowImportDialog] = useState(false);
+  const [importFile, setImportFile] = useState<File | null>(null);
+
   // Mock data for dropdowns (would come from Firestore)
   const departments = [
     { id: "eng", name: "Engineering" },
@@ -130,6 +133,178 @@ export default function AddEmployee() {
     return { status: "valid", message: "Valid", variant: "default" as const };
   };
 
+  const downloadTemplate = () => {
+    const headers = [
+      "firstName",
+      "lastName",
+      "email",
+      "phone",
+      "department",
+      "jobTitle",
+      "manager",
+      "startDate",
+      "employmentType",
+      "salary",
+      "leaveDays",
+      "benefits",
+      "socialSecurityNumber",
+      "socialSecurityExpiry",
+      "electoralCardNumber",
+      "electoralCardExpiry",
+      "idCardNumber",
+      "idCardExpiry",
+      "passportNumber",
+      "passportExpiry",
+    ];
+
+    const sampleData = [
+      "John",
+      "Doe",
+      "john.doe@company.com",
+      "+1234567890",
+      "eng",
+      "Software Engineer",
+      "1",
+      "2024-02-01",
+      "Full-time",
+      "75000",
+      "25",
+      "standard",
+      "123-45-6789",
+      "2030-12-31",
+      "EC123456789",
+      "2029-06-15",
+      "ID987654321",
+      "2028-03-20",
+      "P123456789",
+      "2030-01-15",
+    ];
+
+    const csvContent = [headers, sampleData]
+      .map((row) => row.map((cell) => `"${cell}"`).join(","))
+      .join("\n");
+
+    const blob = new Blob([csvContent], { type: "text/csv" });
+    const url = window.URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = "employee_import_template.csv";
+    link.click();
+    window.URL.revokeObjectURL(url);
+
+    toast({
+      title: "Template Downloaded",
+      description: "Employee import template has been downloaded successfully.",
+    });
+  };
+
+  const handleFileImport = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (file) {
+      setImportFile(file);
+    }
+  };
+
+  const processCSVImport = async () => {
+    if (!importFile) {
+      toast({
+        title: "No File Selected",
+        description: "Please select a CSV file to import.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    try {
+      const text = await importFile.text();
+      const lines = text.split("\n");
+      const headers = lines[0]
+        .split(",")
+        .map((header) => header.replace(/"/g, "").trim());
+
+      if (lines.length < 2) {
+        toast({
+          title: "Empty File",
+          description:
+            "The CSV file appears to be empty or contains only headers.",
+          variant: "destructive",
+        });
+        return;
+      }
+
+      // Process first data row (for demo - in production you'd handle multiple rows)
+      const dataRow = lines[1]
+        .split(",")
+        .map((cell) => cell.replace(/"/g, "").trim());
+
+      const employeeData: any = {};
+      headers.forEach((header, index) => {
+        employeeData[header] = dataRow[index] || "";
+      });
+
+      // Map CSV data to form data
+      setFormData({
+        profilePhoto: null,
+        firstName: employeeData.firstName || "",
+        lastName: employeeData.lastName || "",
+        email: employeeData.email || "",
+        phone: employeeData.phone || "",
+        department: employeeData.department || "",
+        jobTitle: employeeData.jobTitle || "",
+        manager: employeeData.manager || "",
+        startDate: employeeData.startDate || "",
+        employmentType: employeeData.employmentType || "Full-time",
+        status: "Active",
+        salary: employeeData.salary || "",
+        leaveDays: employeeData.leaveDays || "",
+        benefits: employeeData.benefits || "",
+      });
+
+      // Map documents data
+      setDocuments([
+        {
+          id: 1,
+          type: "Social Security Number",
+          number: employeeData.socialSecurityNumber || "",
+          expiryDate: employeeData.socialSecurityExpiry || "",
+        },
+        {
+          id: 2,
+          type: "Electoral Card Number",
+          number: employeeData.electoralCardNumber || "",
+          expiryDate: employeeData.electoralCardExpiry || "",
+        },
+        {
+          id: 3,
+          type: "ID Card",
+          number: employeeData.idCardNumber || "",
+          expiryDate: employeeData.idCardExpiry || "",
+        },
+        {
+          id: 4,
+          type: "Passport",
+          number: employeeData.passportNumber || "",
+          expiryDate: employeeData.passportExpiry || "",
+        },
+      ]);
+
+      setShowImportDialog(false);
+      setImportFile(null);
+
+      toast({
+        title: "Import Successful",
+        description: `Employee data imported successfully. Please review and save.`,
+      });
+    } catch (error) {
+      toast({
+        title: "Import Failed",
+        description:
+          "Failed to process CSV file. Please check the file format.",
+        variant: "destructive",
+      });
+    }
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
@@ -171,20 +346,85 @@ export default function AddEmployee() {
       <MainNavigation />
 
       <div className="p-6">
-        <div className="flex items-center gap-3 mb-8">
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={() => navigate("/staff/employees")}
-          >
-            <ArrowLeft className="h-4 w-4" />
-          </Button>
-          <UserPlus className="h-8 w-8 text-purple-400" />
-          <div>
-            <h2 className="text-3xl font-bold">New Employee Profile</h2>
-            <p className="text-muted-foreground">
-              Add a new team member to your organization
-            </p>
+        <div className="flex items-center justify-between mb-8">
+          <div className="flex items-center gap-3">
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={() => navigate("/staff/employees")}
+            >
+              <ArrowLeft className="h-4 w-4" />
+            </Button>
+            <UserPlus className="h-8 w-8 text-purple-400" />
+            <div>
+              <h2 className="text-3xl font-bold">New Employee Profile</h2>
+              <p className="text-muted-foreground">
+                Add a new team member to your organization
+              </p>
+            </div>
+          </div>
+
+          {/* CSV Import Options */}
+          <div className="flex gap-2">
+            <Button type="button" variant="outline" onClick={downloadTemplate}>
+              <FileDown className="mr-2 h-4 w-4" />
+              Download Template
+            </Button>
+
+            <Dialog open={showImportDialog} onOpenChange={setShowImportDialog}>
+              <DialogTrigger asChild>
+                <Button type="button" variant="outline">
+                  <FileUp className="mr-2 h-4 w-4" />
+                  Import CSV
+                </Button>
+              </DialogTrigger>
+              <DialogContent className="max-w-md">
+                <DialogHeader>
+                  <DialogTitle>Import Employee Data</DialogTitle>
+                  <DialogDescription>
+                    Upload a CSV file with employee information. Download the
+                    template first for the correct format.
+                  </DialogDescription>
+                </DialogHeader>
+                <div className="space-y-4">
+                  <div>
+                    <Label htmlFor="csvFile">CSV File</Label>
+                    <Input
+                      id="csvFile"
+                      type="file"
+                      accept=".csv"
+                      onChange={handleFileImport}
+                      className="mt-1"
+                    />
+                  </div>
+                  {importFile && (
+                    <div className="text-sm text-muted-foreground">
+                      Selected: {importFile.name}
+                    </div>
+                  )}
+                  <div className="flex gap-2">
+                    <Button
+                      type="button"
+                      variant="outline"
+                      onClick={() => {
+                        setShowImportDialog(false);
+                        setImportFile(null);
+                      }}
+                      className="flex-1"
+                    >
+                      Cancel
+                    </Button>
+                    <Button
+                      type="button"
+                      onClick={processCSVImport}
+                      className="flex-1"
+                    >
+                      Import Data
+                    </Button>
+                  </div>
+                </div>
+              </DialogContent>
+            </Dialog>
           </div>
         </div>
 

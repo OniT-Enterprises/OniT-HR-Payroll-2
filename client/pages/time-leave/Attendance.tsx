@@ -231,12 +231,17 @@ export default function Attendance() {
   const filteredRecords = attendanceRecords.filter((record) => {
     if (
       selectedDepartment &&
+      selectedDepartment !== "all" &&
       record.department !==
         departments.find((d) => d.id === selectedDepartment)?.name
     ) {
       return false;
     }
-    if (selectedStatus && record.status !== selectedStatus) {
+    if (
+      selectedStatus &&
+      selectedStatus !== "all" &&
+      record.status !== selectedStatus
+    ) {
       return false;
     }
     return true;

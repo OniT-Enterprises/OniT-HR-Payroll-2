@@ -221,7 +221,7 @@ export default function TimeTracking() {
     console.log("Filtering time entries:", {
       startDate,
       endDate,
-      selectedEmployee,
+      selectedEmployee: selectedEmployee === "all" ? "" : selectedEmployee,
     });
     toast({
       title: "Filter Applied",

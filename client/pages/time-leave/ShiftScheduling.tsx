@@ -323,6 +323,7 @@ export default function ShiftScheduling() {
       const matchesWeek = shiftDate >= weekStart && shiftDate <= weekEnd;
       const matchesDepartment =
         !selectedDepartment ||
+        selectedDepartment === "all" ||
         shift.department ===
           departments.find((d) => d.id === selectedDepartment)?.name;
       return matchesWeek && matchesDepartment;

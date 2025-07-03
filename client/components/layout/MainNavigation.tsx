@@ -270,6 +270,8 @@ export default function MainNavigation() {
                     return { border: "#4ade80", bg: "#22c55e" }; // Green
                   case "staff":
                     return { border: "#06b6d4", bg: "#0891b2" }; // Cyan/Teal
+                  case "time-leave":
+                    return { border: "#3b82f6", bg: "#2563eb" }; // Blue
                   case "performance":
                     return { border: "#f97316", bg: "#ea580c" }; // Orange
                   case "payroll":

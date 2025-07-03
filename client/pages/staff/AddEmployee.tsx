@@ -26,6 +26,14 @@ import {
 } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import { Alert, AlertDescription } from "@/components/ui/alert";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 import { useToast } from "@/hooks/use-toast";
 import MainNavigation from "@/components/layout/MainNavigation";
 import {
@@ -37,6 +45,8 @@ import {
   DollarSign,
   Calendar,
   AlertTriangle,
+  FileDown,
+  FileUp,
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 

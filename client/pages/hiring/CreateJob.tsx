@@ -240,6 +240,96 @@ export default function CreateJob() {
                 </div>
               </CardContent>
             </Card>
+
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <Upload className="h-5 w-5" />
+                  Application Submission
+                </CardTitle>
+                <CardDescription>
+                  How candidates should submit their CV and covering letter
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="space-y-2">
+                  <Label htmlFor="submissionMethod">Submission Method</Label>
+                  <Select>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select submission method" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="email">Email Application</SelectItem>
+                      <SelectItem value="portal">Online Portal</SelectItem>
+                      <SelectItem value="both">Email & Portal</SelectItem>
+                      <SelectItem value="linkedin">LinkedIn</SelectItem>
+                      <SelectItem value="post">Postal Mail</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="applicationEmail">Application Email</Label>
+                  <div className="flex items-center gap-2">
+                    <Mail className="h-4 w-4 text-muted-foreground" />
+                    <Input
+                      id="applicationEmail"
+                      type="email"
+                      placeholder="hr@company.com"
+                    />
+                  </div>
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="applicationUrl">Application Portal URL</Label>
+                  <div className="flex items-center gap-2">
+                    <Globe className="h-4 w-4 text-muted-foreground" />
+                    <Input
+                      id="applicationUrl"
+                      type="url"
+                      placeholder="https://careers.company.com/apply"
+                    />
+                  </div>
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="requiredDocuments">Required Documents</Label>
+                  <div className="grid grid-cols-2 gap-2">
+                    <label className="flex items-center space-x-2">
+                      <input
+                        type="checkbox"
+                        className="rounded"
+                        defaultChecked
+                      />
+                      <span className="text-sm">CV/Resume</span>
+                    </label>
+                    <label className="flex items-center space-x-2">
+                      <input
+                        type="checkbox"
+                        className="rounded"
+                        defaultChecked
+                      />
+                      <span className="text-sm">Cover Letter</span>
+                    </label>
+                    <label className="flex items-center space-x-2">
+                      <input type="checkbox" className="rounded" />
+                      <span className="text-sm">Portfolio</span>
+                    </label>
+                    <label className="flex items-center space-x-2">
+                      <input type="checkbox" className="rounded" />
+                      <span className="text-sm">References</span>
+                    </label>
+                  </div>
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="applicationInstructions">
+                    Application Instructions
+                  </Label>
+                  <Textarea
+                    id="applicationInstructions"
+                    placeholder="Please submit your CV and cover letter via email with the subject line 'Application for [Job Title]'..."
+                    rows={3}
+                  />
+                </div>
+              </CardContent>
+            </Card>
           </div>
         </div>
 

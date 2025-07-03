@@ -49,19 +49,24 @@ export default function MainNavigation() {
           path: "/hiring/create-job",
         },
         {
-          label: "Candidate Selection",
-          icon: <Users className="h-4 w-4" />,
-          path: "/hiring/candidates",
-        },
-        {
           label: "Interviews",
           icon: <Calendar className="h-4 w-4" />,
           path: "/hiring/interviews",
         },
         {
+          label: "Candidate Selection",
+          icon: <Users className="h-4 w-4" />,
+          path: "/hiring/candidates",
+        },
+        {
           label: "Onboarding",
           icon: <UserPlus className="h-4 w-4" />,
           path: "/hiring/onboarding",
+        },
+        {
+          label: "Offboarding",
+          icon: <UserCog className="h-4 w-4" />,
+          path: "/hiring/offboarding",
         },
       ],
     },
@@ -344,9 +349,9 @@ export default function MainNavigation() {
 
       {/* Sub-menu area below main navigation */}
       {activeDropdown && (
-        <div className="bg-gray-800 border-b border-gray-700 py-4">
+        <div className="bg-gray-800 border-b border-gray-700 py-3">
           <div className="px-8">
-            <div className="flex items-center justify-center gap-8 max-w-6xl mx-auto">
+            <div className="flex items-center justify-center gap-6 max-w-6xl mx-auto">
               {navigationItems
                 .find((item) => item.id === activeDropdown)
                 ?.items.map((subItem, index) => {
@@ -377,10 +382,10 @@ export default function MainNavigation() {
                     <Button
                       key={index}
                       variant="ghost"
-                      className={`flex flex-col items-center gap-3 px-6 py-4 h-auto rounded-lg transition-all min-w-[140px] ${
+                      className={`flex flex-col items-center gap-2 px-4 py-3 h-auto rounded-lg transition-all min-w-[120px] border ${
                         isActiveSubItem
-                          ? "text-white"
-                          : "text-gray-300 hover:text-white hover:bg-gray-700"
+                          ? "text-white border-transparent"
+                          : "text-gray-300 hover:text-white hover:bg-gray-700 border-gray-600"
                       }`}
                       style={{
                         backgroundColor: isActiveSubItem
@@ -389,10 +394,10 @@ export default function MainNavigation() {
                       }}
                       onClick={() => handleNavigation(subItem.path)}
                     >
-                      <span className={`${moduleColor} text-2xl`}>
+                      <span className={`${moduleColor} text-xl`}>
                         {subItem.icon}
                       </span>
-                      <span className="text-sm font-medium text-center leading-tight">
+                      <span className="text-xs font-medium text-center leading-tight">
                         {subItem.label}
                       </span>
                     </Button>

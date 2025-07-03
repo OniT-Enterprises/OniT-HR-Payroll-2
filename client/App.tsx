@@ -14,6 +14,7 @@ import CreateJob from "./pages/hiring/CreateJob";
 import CandidateSelection from "./pages/hiring/CandidateSelection";
 import Interviews from "./pages/hiring/Interviews";
 import Onboarding from "./pages/hiring/Onboarding";
+import Offboarding from "./pages/hiring/Offboarding";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -32,6 +33,7 @@ const App = () => (
           <Route path="/hiring/candidates" element={<CandidateSelection />} />
           <Route path="/hiring/interviews" element={<Interviews />} />
           <Route path="/hiring/onboarding" element={<Onboarding />} />
+          <Route path="/hiring/offboarding" element={<Offboarding />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>

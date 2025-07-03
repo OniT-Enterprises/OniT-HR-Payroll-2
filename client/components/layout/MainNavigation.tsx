@@ -193,140 +193,203 @@ export default function MainNavigation() {
   };
 
   return (
-    <nav className="bg-gray-900 border-b border-gray-800 h-14 flex items-center justify-between px-4">
-      {/* Logo */}
-      <div className="flex items-center">
-        <Button
-          variant="ghost"
-          className="flex items-center gap-2 hover:bg-gray-800 text-white p-2"
-          onClick={() => navigate("/dashboard")}
-        >
-          <div className="flex h-8 w-8 items-center justify-center rounded bg-primary">
-            <Building className="h-5 w-5 text-primary-foreground" />
-          </div>
-          <span className="text-lg font-semibold">PayrollHR</span>
-        </Button>
-      </div>
-
-      {/* Main Navigation */}
-      <div className="flex items-center gap-1">
-        {navigationItems.map((item) => (
-          <DropdownMenu
-            key={item.id}
-            open={activeDropdown === item.id}
-            onOpenChange={(open) => setActiveDropdown(open ? item.id : null)}
+    <div>
+      <nav className="bg-gray-900 border-b border-gray-800 h-14 flex items-center justify-between px-4">
+        {/* Logo */}
+        <div className="flex items-center">
+          <Button
+            variant="ghost"
+            className="flex items-center gap-2 hover:bg-gray-800 text-white p-2"
+            onClick={() => navigate("/dashboard")}
           >
-            <DropdownMenuTrigger asChild>
+            <div className="flex h-8 w-8 items-center justify-center rounded bg-primary">
+              <Building className="h-5 w-5 text-primary-foreground" />
+            </div>
+            <span className="text-lg font-semibold">PayrollHR</span>
+          </Button>
+        </div>
+
+        {/* Main Navigation */}
+        <div className="flex-1 flex items-center justify-center">
+          <div className="flex items-center gap-2 max-w-4xl w-full">
+            {navigationItems.map((item) => (
               <Button
+                key={item.id}
                 variant="ghost"
-                className={`flex items-center gap-2 px-3 py-2 h-10 hover:bg-gray-800 transition-colors ${
+                className={`flex-1 flex items-center justify-center gap-2 px-4 py-2 h-10 border border-gray-600 rounded-md transition-all ${
                   isActiveModule(item.id)
-                    ? "bg-gray-800 text-white"
-                    : "text-gray-300 hover:text-white"
+                    ? `bg-gray-800 text-white border-2`
+                    : "text-gray-300 hover:text-white hover:bg-gray-800"
                 }`}
+                style={{
+                  borderColor: isActiveModule(item.id)
+                    ? item.color.replace("text-", "").replace("-400", "") ===
+                      "green"
+                      ? "#4ade80"
+                      : item.color.replace("text-", "").replace("-400", "") ===
+                          "purple"
+                        ? "#a855f7"
+                        : item.color
+                              .replace("text-", "")
+                              .replace("-400", "") === "orange"
+                          ? "#fb923c"
+                          : item.color
+                                .replace("text-", "")
+                                .replace("-400", "") === "emerald"
+                            ? "#34d399"
+                            : item.color
+                                  .replace("text-", "")
+                                  .replace("-400", "") === "pink"
+                              ? "#f472b6"
+                              : "#6b7280"
+                    : "#6b7280",
+                }}
                 onClick={() => handleDropdownClick(item.id)}
               >
                 <span className={item.color}>{item.icon}</span>
                 <span className="text-sm font-medium">{item.label}</span>
                 <ChevronDown className="h-3 w-3" />
               </Button>
+            ))}
+          </div>
+        </div>
+
+        {/* Right Side - User Menu */}
+        <div className="flex items-center gap-3">
+          {/* User Avatar */}
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="ghost" className="p-0 h-8 w-8 rounded-full">
+                <Avatar className="h-8 w-8">
+                  <AvatarFallback className="bg-primary text-primary-foreground text-sm">
+                    JD
+                  </AvatarFallback>
+                </Avatar>
+              </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent
               className="w-56 bg-gray-900 border-gray-700"
-              align="start"
+              align="end"
               sideOffset={5}
             >
-              {item.items.map((subItem, index) => (
-                <DropdownMenuItem
-                  key={index}
-                  className="flex items-center gap-3 px-3 py-2 text-gray-300 hover:bg-gray-800 hover:text-white cursor-pointer"
-                  onClick={() => handleNavigation(subItem.path)}
-                >
-                  <span className={item.color}>{subItem.icon}</span>
-                  <span>{subItem.label}</span>
-                </DropdownMenuItem>
-              ))}
+              <DropdownMenuItem
+                className="flex items-center gap-3 px-3 py-2 text-gray-300 hover:bg-gray-800 hover:text-white cursor-pointer"
+                onClick={() => handleNavigation("/setup/company")}
+              >
+                <Building2 className="h-4 w-4 text-blue-400" />
+                <span>Company Details</span>
+              </DropdownMenuItem>
+              <DropdownMenuItem
+                className="flex items-center gap-3 px-3 py-2 text-gray-300 hover:bg-gray-800 hover:text-white cursor-pointer"
+                onClick={() => handleNavigation("/setup/departments")}
+              >
+                <Building className="h-4 w-4 text-blue-400" />
+                <span>Departments</span>
+              </DropdownMenuItem>
+              <DropdownMenuItem
+                className="flex items-center gap-3 px-3 py-2 text-gray-300 hover:bg-gray-800 hover:text-white cursor-pointer"
+                onClick={() => handleNavigation("/setup/payments")}
+              >
+                <DollarSign className="h-4 w-4 text-blue-400" />
+                <span>Payment Structure</span>
+              </DropdownMenuItem>
+              <DropdownMenuItem
+                className="flex items-center gap-3 px-3 py-2 text-gray-300 hover:bg-gray-800 hover:text-white cursor-pointer"
+                onClick={() => handleNavigation("/setup/users")}
+              >
+                <UserCog className="h-4 w-4 text-blue-400" />
+                <span>User Management</span>
+              </DropdownMenuItem>
+              <DropdownMenuSeparator className="bg-gray-700" />
+              <DropdownMenuItem className="flex items-center gap-3 px-3 py-2 text-gray-300 hover:bg-gray-800 hover:text-white cursor-pointer">
+                <Users className="h-4 w-4" />
+                <span>Profile</span>
+              </DropdownMenuItem>
+              <DropdownMenuItem
+                className="flex items-center gap-3 px-3 py-2 text-gray-300 hover:bg-gray-800 hover:text-white cursor-pointer"
+                onClick={() => navigate("/settings")}
+              >
+                <Settings className="h-4 w-4" />
+                <span>Account Settings</span>
+              </DropdownMenuItem>
+              <DropdownMenuSeparator className="bg-gray-700" />
+              <DropdownMenuItem className="flex items-center gap-3 px-3 py-2 text-gray-300 hover:bg-gray-800 hover:text-white cursor-pointer">
+                <Activity className="h-4 w-4" />
+                <span>Sign Out</span>
+              </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
-        ))}
-      </div>
 
-      {/* Right Side - User Menu */}
-      <div className="flex items-center gap-3">
-        {/* User Avatar */}
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant="ghost" className="p-0 h-8 w-8 rounded-full">
-              <Avatar className="h-8 w-8">
-                <AvatarFallback className="bg-primary text-primary-foreground text-sm">
-                  JD
-                </AvatarFallback>
-              </Avatar>
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent
-            className="w-56 bg-gray-900 border-gray-700"
-            align="end"
-            sideOffset={5}
+          {/* Settings */}
+          <Button
+            variant="ghost"
+            size="icon"
+            className="h-8 w-8 text-gray-400 hover:text-white hover:bg-gray-800"
+            onClick={() => navigate("/settings")}
           >
-            <DropdownMenuItem
-              className="flex items-center gap-3 px-3 py-2 text-gray-300 hover:bg-gray-800 hover:text-white cursor-pointer"
-              onClick={() => handleNavigation("/setup/company")}
-            >
-              <Building2 className="h-4 w-4 text-blue-400" />
-              <span>Company Details</span>
-            </DropdownMenuItem>
-            <DropdownMenuItem
-              className="flex items-center gap-3 px-3 py-2 text-gray-300 hover:bg-gray-800 hover:text-white cursor-pointer"
-              onClick={() => handleNavigation("/setup/departments")}
-            >
-              <Building className="h-4 w-4 text-blue-400" />
-              <span>Departments</span>
-            </DropdownMenuItem>
-            <DropdownMenuItem
-              className="flex items-center gap-3 px-3 py-2 text-gray-300 hover:bg-gray-800 hover:text-white cursor-pointer"
-              onClick={() => handleNavigation("/setup/payments")}
-            >
-              <DollarSign className="h-4 w-4 text-blue-400" />
-              <span>Payment Structure</span>
-            </DropdownMenuItem>
-            <DropdownMenuItem
-              className="flex items-center gap-3 px-3 py-2 text-gray-300 hover:bg-gray-800 hover:text-white cursor-pointer"
-              onClick={() => handleNavigation("/setup/users")}
-            >
-              <UserCog className="h-4 w-4 text-blue-400" />
-              <span>User Management</span>
-            </DropdownMenuItem>
-            <DropdownMenuSeparator className="bg-gray-700" />
-            <DropdownMenuItem className="flex items-center gap-3 px-3 py-2 text-gray-300 hover:bg-gray-800 hover:text-white cursor-pointer">
-              <Users className="h-4 w-4" />
-              <span>Profile</span>
-            </DropdownMenuItem>
-            <DropdownMenuItem
-              className="flex items-center gap-3 px-3 py-2 text-gray-300 hover:bg-gray-800 hover:text-white cursor-pointer"
-              onClick={() => navigate("/settings")}
-            >
-              <Settings className="h-4 w-4" />
-              <span>Account Settings</span>
-            </DropdownMenuItem>
-            <DropdownMenuSeparator className="bg-gray-700" />
-            <DropdownMenuItem className="flex items-center gap-3 px-3 py-2 text-gray-300 hover:bg-gray-800 hover:text-white cursor-pointer">
-              <Activity className="h-4 w-4" />
-              <span>Sign Out</span>
-            </DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
+            <Settings className="h-5 w-5" />
+          </Button>
+        </div>
+      </nav>
 
-        {/* Settings */}
-        <Button
-          variant="ghost"
-          size="icon"
-          className="h-8 w-8 text-gray-400 hover:text-white hover:bg-gray-800"
-          onClick={() => navigate("/settings")}
-        >
-          <Settings className="h-5 w-5" />
-        </Button>
-      </div>
-    </nav>
+      {/* Sub-menu area */}
+      {activeDropdown && (
+        <div className="bg-gray-800 border-b border-gray-700 py-3">
+          <div className="px-6">
+            <div className="flex items-center justify-center gap-4 max-w-4xl mx-auto">
+              {navigationItems
+                .find((item) => item.id === activeDropdown)
+                ?.items.map((subItem, index) => {
+                  const moduleColor = navigationItems.find(
+                    (item) => item.id === activeDropdown,
+                  )?.color;
+                  const isActiveSubItem = location.pathname === subItem.path;
+
+                  return (
+                    <Button
+                      key={index}
+                      variant="ghost"
+                      className={`flex items-center gap-2 px-4 py-2 h-9 rounded-md transition-all ${
+                        isActiveSubItem
+                          ? "text-white"
+                          : "text-gray-300 hover:text-white hover:bg-gray-700"
+                      }`}
+                      style={{
+                        backgroundColor: isActiveSubItem
+                          ? moduleColor
+                              ?.replace("text-", "")
+                              .replace("-400", "") === "green"
+                            ? "#16a34a"
+                            : moduleColor
+                                  ?.replace("text-", "")
+                                  .replace("-400", "") === "purple"
+                              ? "#9333ea"
+                              : moduleColor
+                                    ?.replace("text-", "")
+                                    .replace("-400", "") === "orange"
+                                ? "#ea580c"
+                                : moduleColor
+                                      ?.replace("text-", "")
+                                      .replace("-400", "") === "emerald"
+                                  ? "#059669"
+                                  : moduleColor
+                                        ?.replace("text-", "")
+                                        .replace("-400", "") === "pink"
+                                    ? "#ec4899"
+                                    : "transparent"
+                          : "transparent",
+                      }}
+                      onClick={() => handleNavigation(subItem.path)}
+                    >
+                      <span className={moduleColor}>{subItem.icon}</span>
+                      <span className="text-sm">{subItem.label}</span>
+                    </Button>
+                  );
+                })}
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
   );
 }

@@ -375,7 +375,7 @@ export default function CandidateSelection() {
 
         {/* Candidates List */}
         <Card>
-          <CardHeader>
+          <CardHeader className="ml-2.5">
             <CardTitle>Candidate Applications</CardTitle>
             <CardDescription>
               Review and manage candidate applications for open positions
@@ -403,13 +403,17 @@ export default function CandidateSelection() {
                     </th>
                     <th className="text-center p-3 font-medium">
                       <button className="flex flex-col items-center gap-1 hover:bg-gray-50 p-1 rounded">
-                        <span className="text-xs leading-tight">Technical</span>
-                        <span className="text-xs leading-tight">Skills</span>
-                        <ChevronDown className="h-3 w-3" />
+                        <span className="text-xs leading-tight ml-2.5">
+                          Technical
+                        </span>
+                        <span className="text-xs leading-tight ml-2.5">
+                          Skills
+                        </span>
+                        <ChevronDown className="h-3 w-3 ml-2.5" />
                       </button>
                     </th>
                     <th className="text-center p-3 font-medium">
-                      <button className="flex flex-col items-center gap-1 hover:bg-gray-50 p-1 rounded">
+                      <button className="flex flex-col items-center gap-1 hover:bg-gray-50 p-1 rounded ml-3.5">
                         <span className="text-xs leading-tight">Interview</span>
                         <span className="text-xs leading-tight">Score</span>
                         <ChevronDown className="h-3 w-3" />
@@ -417,9 +421,13 @@ export default function CandidateSelection() {
                     </th>
                     <th className="text-center p-3 font-medium">
                       <button className="flex flex-col items-center gap-1 hover:bg-gray-50 p-1 rounded">
-                        <span className="text-xs leading-tight">Total</span>
-                        <span className="text-xs leading-tight">Score</span>
-                        <ChevronDown className="h-3 w-3" />
+                        <span className="text-sm font-semibold leading-tight ml-2.5">
+                          Total
+                        </span>
+                        <span className="text-sm font-semibold leading-tight ml-2.5">
+                          Score
+                        </span>
+                        <ChevronDown className="h-3 w-3 ml-2.5" />
                       </button>
                     </th>
                     <th className="text-center p-3 font-medium">Status</th>

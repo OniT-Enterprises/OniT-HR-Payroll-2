@@ -210,47 +210,48 @@ export default function MainNavigation() {
         </div>
 
         {/* Main Navigation */}
-        <div className="flex-1 flex items-center justify-center">
-          <div className="flex items-center gap-2 max-w-4xl w-full">
-            {navigationItems.map((item) => (
-              <Button
-                key={item.id}
-                variant="ghost"
-                className={`flex-1 flex items-center justify-center gap-2 px-4 py-2 h-10 border border-gray-600 rounded-md transition-all ${
-                  isActiveModule(item.id)
-                    ? `bg-gray-800 text-white border-2`
-                    : "text-gray-300 hover:text-white hover:bg-gray-800"
-                }`}
-                style={{
-                  borderColor: isActiveModule(item.id)
-                    ? item.color.replace("text-", "").replace("-400", "") ===
-                      "green"
-                      ? "#4ade80"
-                      : item.color.replace("text-", "").replace("-400", "") ===
-                          "purple"
-                        ? "#a855f7"
-                        : item.color
-                              .replace("text-", "")
-                              .replace("-400", "") === "orange"
-                          ? "#fb923c"
-                          : item.color
-                                .replace("text-", "")
-                                .replace("-400", "") === "emerald"
-                            ? "#34d399"
-                            : item.color
-                                  .replace("text-", "")
-                                  .replace("-400", "") === "pink"
-                              ? "#f472b6"
-                              : "#6b7280"
-                    : "#6b7280",
-                }}
-                onClick={() => handleDropdownClick(item.id)}
-              >
-                <span className={item.color}>{item.icon}</span>
-                <span className="text-sm font-medium">{item.label}</span>
-                <ChevronDown className="h-3 w-3" />
-              </Button>
-            ))}
+        <div className="flex-1 flex items-center justify-center px-8">
+          <div className="flex items-center gap-3 w-full max-w-5xl">
+            {navigationItems.map((item) => {
+              const isActive =
+                isActiveModule(item.id) || activeDropdown === item.id;
+              const borderColor = item.color.includes("green")
+                ? "#4ade80"
+                : item.color.includes("purple")
+                  ? "#a855f7"
+                  : item.color.includes("orange")
+                    ? "#fb923c"
+                    : item.color.includes("emerald")
+                      ? "#34d399"
+                      : item.color.includes("pink")
+                        ? "#f472b6"
+                        : "#6b7280";
+
+              return (
+                <Button
+                  key={item.id}
+                  variant="ghost"
+                  className={`flex-1 flex items-center justify-center gap-2 px-4 py-2 h-10 border-2 rounded-lg transition-all ${
+                    isActive
+                      ? "text-white"
+                      : "text-gray-300 hover:text-white border-gray-600 hover:border-gray-500"
+                  }`}
+                  style={{
+                    borderColor: isActive ? borderColor : "#6b7280",
+                    backgroundColor: isActive
+                      ? "rgba(75, 85, 99, 0.5)"
+                      : "transparent",
+                  }}
+                  onClick={() => handleDropdownClick(item.id)}
+                >
+                  <span className={item.color}>{item.icon}</span>
+                  <span className="text-sm font-medium">{item.label}</span>
+                  <ChevronDown
+                    className={`h-3 w-3 transition-transform ${activeDropdown === item.id ? "rotate-180" : ""}`}
+                  />
+                </Button>
+              );
+            })}
           </div>
         </div>
 
@@ -334,9 +335,9 @@ export default function MainNavigation() {
 
       {/* Sub-menu area */}
       {activeDropdown && (
-        <div className="bg-gray-800 border-b border-gray-700 py-3">
-          <div className="px-6">
-            <div className="flex items-center justify-center gap-4 max-w-4xl mx-auto">
+        <div className="bg-black border-b border-gray-700 py-4">
+          <div className="px-8">
+            <div className="flex items-center justify-center gap-8 max-w-5xl mx-auto">
               {navigationItems
                 .find((item) => item.id === activeDropdown)
                 ?.items.map((subItem, index) => {
@@ -344,45 +345,25 @@ export default function MainNavigation() {
                     (item) => item.id === activeDropdown,
                   )?.color;
                   const isActiveSubItem = location.pathname === subItem.path;
+                  const colorClass = moduleColor || "text-gray-400";
 
                   return (
                     <Button
                       key={index}
                       variant="ghost"
-                      className={`flex items-center gap-2 px-4 py-2 h-9 rounded-md transition-all ${
+                      className={`flex flex-col items-center gap-2 px-6 py-3 h-auto rounded-lg transition-all min-w-[120px] ${
                         isActiveSubItem
-                          ? "text-white"
-                          : "text-gray-300 hover:text-white hover:bg-gray-700"
+                          ? "text-white bg-gray-800"
+                          : "text-gray-300 hover:text-white hover:bg-gray-800"
                       }`}
-                      style={{
-                        backgroundColor: isActiveSubItem
-                          ? moduleColor
-                              ?.replace("text-", "")
-                              .replace("-400", "") === "green"
-                            ? "#16a34a"
-                            : moduleColor
-                                  ?.replace("text-", "")
-                                  .replace("-400", "") === "purple"
-                              ? "#9333ea"
-                              : moduleColor
-                                    ?.replace("text-", "")
-                                    .replace("-400", "") === "orange"
-                                ? "#ea580c"
-                                : moduleColor
-                                      ?.replace("text-", "")
-                                      .replace("-400", "") === "emerald"
-                                  ? "#059669"
-                                  : moduleColor
-                                        ?.replace("text-", "")
-                                        .replace("-400", "") === "pink"
-                                    ? "#ec4899"
-                                    : "transparent"
-                          : "transparent",
-                      }}
                       onClick={() => handleNavigation(subItem.path)}
                     >
-                      <span className={moduleColor}>{subItem.icon}</span>
-                      <span className="text-sm">{subItem.label}</span>
+                      <span className={`${colorClass} text-xl`}>
+                        {subItem.icon}
+                      </span>
+                      <span className="text-xs font-medium text-center leading-tight">
+                        {subItem.label}
+                      </span>
                     </Button>
                   );
                 })}

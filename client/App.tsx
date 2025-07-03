@@ -35,6 +35,7 @@ import BenefitsEnrollment from "./pages/payroll/BenefitsEnrollment";
 import DeductionsAdvances from "./pages/payroll/DeductionsAdvances";
 import HiringDashboard from "./pages/dashboards/HiringDashboard";
 import StaffDashboard from "./pages/dashboards/StaffDashboard";
+import TimeLeaveDashboard from "./pages/dashboards/TimeLeaveDashboard";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -51,6 +52,10 @@ const App = () => (
           <Route path="/settings" element={<Settings />} />
           <Route path="/hiring" element={<HiringDashboard />} />
           <Route path="/staff" element={<StaffDashboard />} />
+          <Route path="/time-leave" element={<TimeLeaveDashboard />} />
+          <Route path="/performance" element={<Dashboard />} />
+          <Route path="/payroll" element={<Dashboard />} />
+          <Route path="/reports" element={<Dashboard />} />
           <Route path="/hiring/create-job" element={<CreateJob />} />
           <Route path="/hiring/candidates" element={<CandidateSelection />} />
           <Route path="/hiring/interviews" element={<Interviews />} />

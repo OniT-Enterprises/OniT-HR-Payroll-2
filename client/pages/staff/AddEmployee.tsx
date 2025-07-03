@@ -34,6 +34,12 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 import { useToast } from "@/hooks/use-toast";
 import MainNavigation from "@/components/layout/MainNavigation";
 import {
@@ -47,6 +53,7 @@ import {
   AlertTriangle,
   FileDown,
   FileUp,
+  Info,
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
@@ -59,6 +66,8 @@ export default function AddEmployee() {
     lastName: "",
     email: "",
     phone: "",
+    emergencyContactName: "",
+    emergencyContactPhone: "",
     department: "",
     jobTitle: "",
     manager: "",

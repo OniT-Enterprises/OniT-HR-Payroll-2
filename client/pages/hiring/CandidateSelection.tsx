@@ -496,8 +496,8 @@ export default function CandidateSelection() {
                             {candidate.interviewScore}/10
                           </span>
                         ) : (
-                          <span className="text-gray-400 text-sm">
-                            Not interviewed
+                          <span className="text-gray-400 font-semibold">
+                            NA
                           </span>
                         )}
                       </td>

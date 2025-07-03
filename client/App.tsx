@@ -15,6 +15,10 @@ import CandidateSelection from "./pages/hiring/CandidateSelection";
 import Interviews from "./pages/hiring/Interviews";
 import Onboarding from "./pages/hiring/Onboarding";
 import Offboarding from "./pages/hiring/Offboarding";
+import AllEmployees from "./pages/staff/AllEmployees";
+import AddEmployee from "./pages/staff/AddEmployee";
+import Departments from "./pages/staff/Departments";
+import OrganizationChart from "./pages/staff/OrganizationChart";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -34,6 +38,10 @@ const App = () => (
           <Route path="/hiring/interviews" element={<Interviews />} />
           <Route path="/hiring/onboarding" element={<Onboarding />} />
           <Route path="/hiring/offboarding" element={<Offboarding />} />
+          <Route path="/staff/employees" element={<AllEmployees />} />
+          <Route path="/staff/add" element={<AddEmployee />} />
+          <Route path="/staff/departments" element={<Departments />} />
+          <Route path="/staff/org-chart" element={<OrganizationChart />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>

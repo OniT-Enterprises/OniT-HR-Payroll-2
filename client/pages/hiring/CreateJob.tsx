@@ -37,13 +37,22 @@ export default function CreateJob() {
       <MainNavigation />
 
       <div className="p-6">
-        <div className="flex items-center gap-3 mb-8">
-          <Briefcase className="h-8 w-8 text-green-400" />
-          <div>
-            <h1 className="text-3xl font-bold">Create Job Posting</h1>
-            <p className="text-muted-foreground">
-              Create a new job posting for your organization
-            </p>
+        <div className="flex items-center justify-between mb-8">
+          <div className="flex items-center gap-3">
+            <Briefcase className="h-8 w-8 text-green-400" />
+            <div>
+              <h1 className="text-3xl font-bold">Create Job Posting</h1>
+              <p className="text-muted-foreground">
+                Create a new job posting for your organization
+              </p>
+            </div>
+          </div>
+
+          {/* Action Buttons - Top Right */}
+          <div className="flex items-center gap-3">
+            <Button variant="outline">Save as Draft</Button>
+            <Button variant="outline">Preview</Button>
+            <Button>Submit for Approval</Button>
           </div>
         </div>
 
@@ -330,16 +339,6 @@ export default function CreateJob() {
                 </div>
               </CardContent>
             </Card>
-          </div>
-        </div>
-
-        {/* Action Buttons */}
-        <Separator className="my-8" />
-        <div className="flex items-center justify-between">
-          <Button variant="outline">Save as Draft</Button>
-          <div className="flex items-center gap-3">
-            <Button variant="outline">Preview</Button>
-            <Button>Submit for Approval</Button>
           </div>
         </div>
       </div>

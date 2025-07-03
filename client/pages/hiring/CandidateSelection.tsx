@@ -35,6 +35,7 @@ import {
   FileText,
   Upload,
   File,
+  ChevronDown,
 } from "lucide-react";
 
 export default function CandidateSelection() {
@@ -76,6 +77,7 @@ export default function CandidateSelection() {
       coverLetter: 8.8,
       technicalSkills: 9.0,
       interviewScore: 8.5,
+      totalScore: 8.9,
     },
     {
       id: 2,
@@ -93,6 +95,7 @@ export default function CandidateSelection() {
       coverLetter: 8.2,
       technicalSkills: 9.5,
       interviewScore: 9.0,
+      totalScore: 8.9,
     },
     {
       id: 3,
@@ -110,6 +113,7 @@ export default function CandidateSelection() {
       coverLetter: 8.7,
       technicalSkills: 8.0,
       interviewScore: null,
+      totalScore: 8.3,
     },
     {
       id: 4,
@@ -127,6 +131,7 @@ export default function CandidateSelection() {
       coverLetter: 6.8,
       technicalSkills: 7.5,
       interviewScore: 6.0,
+      totalScore: 6.9,
     },
   ];
 
@@ -250,7 +255,7 @@ export default function CandidateSelection() {
 
           <div className="flex items-center gap-3">
             <select className="px-4 py-2 border rounded-md bg-background min-w-[200px] h-9">
-              <option value="">Choose a job position...</option>
+              <option value="">Select job position...</option>
               <option value="senior-software-engineer">
                 Senior Software Engineer
               </option>
@@ -382,15 +387,40 @@ export default function CandidateSelection() {
                 <thead>
                   <tr className="border-b">
                     <th className="text-left p-3 font-medium">Candidate</th>
-                    <th className="text-center p-3 font-medium">CV Quality</th>
                     <th className="text-center p-3 font-medium">
-                      Cover Letter
+                      <button className="flex flex-col items-center gap-1 hover:bg-gray-50 p-1 rounded">
+                        <span className="text-xs leading-tight">CV</span>
+                        <span className="text-xs leading-tight">Quality</span>
+                        <ChevronDown className="h-3 w-3" />
+                      </button>
                     </th>
                     <th className="text-center p-3 font-medium">
-                      Technical Skills
+                      <button className="flex flex-col items-center gap-1 hover:bg-gray-50 p-1 rounded">
+                        <span className="text-xs leading-tight">Cover</span>
+                        <span className="text-xs leading-tight">Letter</span>
+                        <ChevronDown className="h-3 w-3" />
+                      </button>
                     </th>
                     <th className="text-center p-3 font-medium">
-                      Interview Score
+                      <button className="flex flex-col items-center gap-1 hover:bg-gray-50 p-1 rounded">
+                        <span className="text-xs leading-tight">Technical</span>
+                        <span className="text-xs leading-tight">Skills</span>
+                        <ChevronDown className="h-3 w-3" />
+                      </button>
+                    </th>
+                    <th className="text-center p-3 font-medium">
+                      <button className="flex flex-col items-center gap-1 hover:bg-gray-50 p-1 rounded">
+                        <span className="text-xs leading-tight">Interview</span>
+                        <span className="text-xs leading-tight">Score</span>
+                        <ChevronDown className="h-3 w-3" />
+                      </button>
+                    </th>
+                    <th className="text-center p-3 font-medium">
+                      <button className="flex flex-col items-center gap-1 hover:bg-gray-50 p-1 rounded">
+                        <span className="text-xs leading-tight">Total</span>
+                        <span className="text-xs leading-tight">Score</span>
+                        <ChevronDown className="h-3 w-3" />
+                      </button>
                     </th>
                     <th className="text-center p-3 font-medium">Status</th>
                     <th className="text-center p-3 font-medium">Documents</th>
@@ -470,6 +500,15 @@ export default function CandidateSelection() {
                             Not interviewed
                           </span>
                         )}
+                      </td>
+
+                      {/* Total Score */}
+                      <td className="p-3 text-center">
+                        <span
+                          className={`font-bold text-lg ${getScoreColor(candidate.totalScore)}`}
+                        >
+                          {candidate.totalScore}/10
+                        </span>
                       </td>
 
                       {/* Status */}

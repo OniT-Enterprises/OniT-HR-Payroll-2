@@ -36,6 +36,10 @@ import DeductionsAdvances from "./pages/payroll/DeductionsAdvances";
 import HiringDashboard from "./pages/dashboards/HiringDashboard";
 import StaffDashboard from "./pages/dashboards/StaffDashboard";
 import TimeLeaveDashboard from "./pages/dashboards/TimeLeaveDashboard";
+import PayrollReports from "./pages/reports/PayrollReports";
+import EmployeeReports from "./pages/reports/EmployeeReports";
+import AttendanceReports from "./pages/reports/AttendanceReports";
+import CustomReports from "./pages/reports/CustomReports";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -82,6 +86,10 @@ const App = () => (
           <Route path="/payroll/transfers" element={<BankTransfers />} />
           <Route path="/payroll/benefits" element={<BenefitsEnrollment />} />
           <Route path="/payroll/deductions" element={<DeductionsAdvances />} />
+          <Route path="/reports/payroll" element={<PayrollReports />} />
+          <Route path="/reports/employees" element={<EmployeeReports />} />
+          <Route path="/reports/attendance" element={<AttendanceReports />} />
+          <Route path="/reports/custom" element={<CustomReports />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>

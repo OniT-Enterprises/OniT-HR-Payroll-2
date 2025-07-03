@@ -211,35 +211,44 @@ export default function MainNavigation() {
 
         {/* Main Navigation */}
         <div className="flex-1 flex items-center justify-center px-8">
-          <div className="flex items-center gap-3 w-full max-w-5xl">
+          <div className="flex items-center gap-4 w-full max-w-6xl">
             {navigationItems.map((item) => {
               const isActive =
                 isActiveModule(item.id) || activeDropdown === item.id;
-              const borderColor = item.color.includes("green")
-                ? "#4ade80"
-                : item.color.includes("purple")
-                  ? "#a855f7"
-                  : item.color.includes("orange")
-                    ? "#fb923c"
-                    : item.color.includes("emerald")
-                      ? "#34d399"
-                      : item.color.includes("pink")
-                        ? "#f472b6"
-                        : "#6b7280";
+
+              // Define exact colors to match the image
+              const getModuleColors = (moduleId: string) => {
+                switch (moduleId) {
+                  case "hiring":
+                    return { border: "#4ade80", bg: "#22c55e" }; // Green
+                  case "staff":
+                    return { border: "#06b6d4", bg: "#0891b2" }; // Cyan/Teal
+                  case "performance":
+                    return { border: "#f97316", bg: "#ea580c" }; // Orange
+                  case "payroll":
+                    return { border: "#10b981", bg: "#059669" }; // Emerald
+                  case "reports":
+                    return { border: "#ec4899", bg: "#db2777" }; // Pink
+                  default:
+                    return { border: "#6b7280", bg: "#4b5563" };
+                }
+              };
+
+              const colors = getModuleColors(item.id);
 
               return (
                 <Button
                   key={item.id}
                   variant="ghost"
-                  className={`flex-1 flex items-center justify-center gap-2 px-4 py-2 h-10 border-2 rounded-lg transition-all ${
+                  className={`flex-1 flex items-center justify-center gap-2 px-3 py-2 h-10 border-2 rounded-md transition-all ${
                     isActive
                       ? "text-white"
                       : "text-gray-300 hover:text-white border-gray-600 hover:border-gray-500"
                   }`}
                   style={{
-                    borderColor: isActive ? borderColor : "#6b7280",
+                    borderColor: isActive ? colors.border : "#6b7280",
                     backgroundColor: isActive
-                      ? "rgba(75, 85, 99, 0.5)"
+                      ? "rgba(55, 65, 81, 0.8)"
                       : "transparent",
                   }}
                   onClick={() => handleDropdownClick(item.id)}
@@ -335,9 +344,9 @@ export default function MainNavigation() {
 
       {/* Sub-menu area */}
       {activeDropdown && (
-        <div className="bg-black border-b border-gray-700 py-4">
+        <div className="bg-black py-4">
           <div className="px-8">
-            <div className="flex items-center justify-center gap-8 max-w-5xl mx-auto">
+            <div className="flex items-center justify-center gap-12 max-w-6xl mx-auto">
               {navigationItems
                 .find((item) => item.id === activeDropdown)
                 ?.items.map((subItem, index) => {
@@ -345,23 +354,45 @@ export default function MainNavigation() {
                     (item) => item.id === activeDropdown,
                   )?.color;
                   const isActiveSubItem = location.pathname === subItem.path;
-                  const colorClass = moduleColor || "text-gray-400";
+
+                  // Get the proper module color for highlighting
+                  const getHighlightColor = (moduleId: string) => {
+                    switch (moduleId) {
+                      case "hiring":
+                        return "#22c55e";
+                      case "staff":
+                        return "#0891b2";
+                      case "performance":
+                        return "#ea580c";
+                      case "payroll":
+                        return "#059669";
+                      case "reports":
+                        return "#db2777";
+                      default:
+                        return "#4b5563";
+                    }
+                  };
 
                   return (
                     <Button
                       key={index}
                       variant="ghost"
-                      className={`flex flex-col items-center gap-2 px-6 py-3 h-auto rounded-lg transition-all min-w-[120px] ${
+                      className={`flex flex-col items-center gap-3 px-4 py-3 h-auto rounded-lg transition-all min-w-[140px] ${
                         isActiveSubItem
-                          ? "text-white bg-gray-800"
+                          ? "text-white"
                           : "text-gray-300 hover:text-white hover:bg-gray-800"
                       }`}
+                      style={{
+                        backgroundColor: isActiveSubItem
+                          ? getHighlightColor(activeDropdown)
+                          : "transparent",
+                      }}
                       onClick={() => handleNavigation(subItem.path)}
                     >
-                      <span className={`${colorClass} text-xl`}>
+                      <span className={`${moduleColor} text-2xl`}>
                         {subItem.icon}
                       </span>
-                      <span className="text-xs font-medium text-center leading-tight">
+                      <span className="text-sm font-medium text-center leading-tight">
                         {subItem.label}
                       </span>
                     </Button>

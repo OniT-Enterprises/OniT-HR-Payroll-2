@@ -193,7 +193,7 @@ export default function MainNavigation() {
   };
 
   return (
-    <div>
+    <div className="sticky top-0 z-50">
       <nav className="bg-gray-900 border-b border-gray-800 h-14 flex items-center justify-between px-4">
         {/* Logo */}
         <div className="flex items-center">

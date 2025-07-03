@@ -297,7 +297,7 @@ export default function MainNavigation() {
                   case "hiring":
                     return { border: "#4ade80", bg: "#22c55e" }; // Green
                   case "staff":
-                    return { border: "#06b6d4", bg: "#0891b2" }; // Cyan/Teal
+                    return { border: "#8b5cf6", bg: "#7c3aed" }; // Purple
                   case "time-leave":
                     return { border: "#3b82f6", bg: "#2563eb" }; // Blue
                   case "performance":
@@ -438,7 +438,7 @@ export default function MainNavigation() {
                       case "hiring":
                         return "#22c55e";
                       case "staff":
-                        return "#0891b2";
+                        return "#7c3aed";
                       case "time-leave":
                         return "#2563eb";
                       case "performance":

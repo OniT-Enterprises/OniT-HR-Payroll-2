@@ -23,6 +23,10 @@ import TimeTracking from "./pages/time-leave/TimeTracking";
 import Attendance from "./pages/time-leave/Attendance";
 import LeaveRequests from "./pages/time-leave/LeaveRequests";
 import ShiftScheduling from "./pages/time-leave/ShiftScheduling";
+import Reviews from "./pages/performance/Reviews";
+import GoalsOKRs from "./pages/performance/GoalsOKRs";
+import TrainingCertifications from "./pages/performance/TrainingCertifications";
+import Disciplinary from "./pages/performance/Disciplinary";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -53,6 +57,13 @@ const App = () => (
             element={<LeaveRequests />}
           />
           <Route path="/time-leave/scheduling" element={<ShiftScheduling />} />
+          <Route path="/performance/reviews" element={<Reviews />} />
+          <Route path="/performance/goals" element={<GoalsOKRs />} />
+          <Route
+            path="/performance/training"
+            element={<TrainingCertifications />}
+          />
+          <Route path="/performance/disciplinary" element={<Disciplinary />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>

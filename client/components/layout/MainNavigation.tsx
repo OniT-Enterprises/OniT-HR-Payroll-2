@@ -211,11 +211,10 @@ export default function MainNavigation() {
 
         {/* Main Navigation */}
         <div className="flex-1 flex items-center justify-center px-8">
-          <div className="flex items-center gap-2 w-full max-w-7xl">
+          <div className="flex items-center w-full max-w-7xl">
             {navigationItems.map((item) => {
-              const isActive =
-                isActiveModule(item.id) || activeDropdown === item.id;
               const isExpanded = activeDropdown === item.id;
+              const isAnyExpanded = activeDropdown !== null;
 
               // Define exact colors to match the image
               const getModuleColors = (moduleId: string) => {
@@ -236,98 +235,73 @@ export default function MainNavigation() {
               };
 
               const colors = getModuleColors(item.id);
-              const isAnyExpanded = activeDropdown !== null;
 
               if (isExpanded) {
-                // Show expanded module with sub-items INSIDE the button - horizontal layout like hotel software
+                // Show expanded view - just the sub-items, no module name repetition
                 return (
-                  <div
-                    key={item.id}
-                    className="flex items-center border-2 rounded-md h-10 px-2 transition-all"
-                    style={{
-                      borderColor: colors.border,
-                      backgroundColor: "rgba(55, 65, 81, 0.8)",
-                      flex: "4", // Takes much more space when expanded
-                    }}
-                  >
-                    {/* Main module button - smaller */}
-                    <Button
-                      variant="ghost"
-                      className="flex items-center gap-1 px-2 py-2 h-8 text-white hover:bg-gray-700 rounded"
-                      onClick={() => handleDropdownClick(item.id)}
-                    >
-                      <span className={item.color}>{item.icon}</span>
-                      <span className="text-xs font-medium">{item.label}</span>
-                      <ChevronDown className="h-2 w-2 rotate-180 transition-transform" />
-                    </Button>
-
-                    {/* Sub-items INSIDE horizontally - icon above text */}
-                    <div className="flex items-center gap-1 ml-1">
-                      {item.items.map((subItem, index) => {
-                        const isActiveSubItem =
-                          location.pathname === subItem.path;
-                        return (
-                          <Button
-                            key={index}
-                            variant="ghost"
-                            className={`flex flex-col items-center justify-center px-2 py-1 h-8 rounded transition-all ${
-                              isActiveSubItem
-                                ? "text-white"
-                                : "text-gray-300 hover:text-white hover:bg-gray-700"
-                            }`}
-                            style={{
-                              backgroundColor: isActiveSubItem
-                                ? colors.bg
-                                : "transparent",
-                              minWidth: "60px",
-                            }}
-                            onClick={() => handleNavigation(subItem.path)}
-                          >
-                            <span
-                              className={`${item.color} text-xs leading-none mb-0.5`}
-                            >
-                              {subItem.icon}
-                            </span>
-                            <span className="text-xs font-medium leading-none">
-                              {subItem.label}
-                            </span>
-                          </Button>
-                        );
-                      })}
-                    </div>
+                  <div key={item.id} className="flex items-center flex-1 gap-4">
+                    {item.items.map((subItem, index) => {
+                      const isActiveSubItem =
+                        location.pathname === subItem.path;
+                      return (
+                        <div
+                          key={index}
+                          className={`flex flex-col items-center justify-center px-3 py-1 h-10 rounded cursor-pointer transition-all ${
+                            isActiveSubItem
+                              ? "text-white"
+                              : "text-gray-300 hover:text-white"
+                          }`}
+                          style={{
+                            backgroundColor: isActiveSubItem
+                              ? colors.bg
+                              : "transparent",
+                            borderWidth: isActiveSubItem ? "1px" : "0px",
+                            borderColor: isActiveSubItem
+                              ? colors.border
+                              : "transparent",
+                          }}
+                          onClick={() => handleNavigation(subItem.path)}
+                        >
+                          <span className={`${item.color} text-lg mb-1`}>
+                            {subItem.icon}
+                          </span>
+                          <span className="text-xs font-medium">
+                            {subItem.label}
+                          </span>
+                        </div>
+                      );
+                    })}
                   </div>
                 );
               } else {
-                // Show collapsed module
+                // Show collapsed module with thin border around text only
+                const isActive = isActiveModule(item.id);
                 return (
-                  <Button
+                  <div
                     key={item.id}
-                    variant="ghost"
-                    className={`flex items-center justify-center gap-1 px-2 py-2 h-10 border-2 rounded-md transition-all ${
-                      isActive
-                        ? "text-white"
-                        : "text-gray-300 hover:text-white border-gray-600 hover:border-gray-500"
+                    className={`flex items-center justify-center px-4 py-2 h-10 cursor-pointer transition-all ${
+                      isAnyExpanded ? "flex-shrink-0" : "flex-1"
                     }`}
-                    style={{
-                      borderColor: isActive ? colors.border : "#6b7280",
-                      backgroundColor: isActive
-                        ? "rgba(55, 65, 81, 0.8)"
-                        : "transparent",
-                      flex: isAnyExpanded ? "0.5" : "1", // Much smaller when others expanded
-                      minWidth: isAnyExpanded ? "60px" : "auto",
-                    }}
                     onClick={() => handleDropdownClick(item.id)}
                   >
-                    <span className={item.color}>{item.icon}</span>
-                    <span
-                      className={`text-xs font-medium ${isAnyExpanded ? "hidden" : "block"}`}
+                    <div
+                      className="flex items-center gap-2 px-3 py-1 rounded transition-all text-gray-300 hover:text-white"
+                      style={{
+                        borderWidth: isActive ? "1px" : "0px",
+                        borderColor: isActive ? colors.border : "transparent",
+                      }}
                     >
-                      {item.label}
-                    </span>
-                    {!isAnyExpanded && (
-                      <ChevronDown className="h-3 w-3 transition-transform" />
-                    )}
-                  </Button>
+                      <span className={item.color}>{item.icon}</span>
+                      {!isAnyExpanded && (
+                        <>
+                          <span className="text-sm font-medium">
+                            {item.label}
+                          </span>
+                          <ChevronDown className="h-3 w-3" />
+                        </>
+                      )}
+                    </div>
+                  </div>
                 );
               }
             })}

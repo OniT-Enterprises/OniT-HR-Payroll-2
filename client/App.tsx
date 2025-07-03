@@ -67,10 +67,7 @@ const App = () => (
           <Route path="/staff/org-chart" element={<OrganizationChart />} />
           <Route path="/time-leave/tracking" element={<TimeTracking />} />
           <Route path="/time-leave/attendance" element={<Attendance />} />
-          <Route
-            path="/time-leave/leave-requests"
-            element={<LeaveRequests />}
-          />
+          <Route path="/time-leave/requests" element={<LeaveRequests />} />
           <Route path="/time-leave/scheduling" element={<ShiftScheduling />} />
           <Route path="/performance/reviews" element={<Reviews />} />
           <Route path="/performance/goals" element={<GoalsOKRs />} />

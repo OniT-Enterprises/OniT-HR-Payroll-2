@@ -1,0 +1,228 @@
+import React from "react";
+import { Button } from "@/components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
+import { Separator } from "@/components/ui/separator";
+import MainNavigation from "@/components/layout/MainNavigation";
+import {
+  Briefcase,
+  DollarSign,
+  Calendar,
+  Building,
+  Users,
+  FileText,
+} from "lucide-react";
+
+export default function CreateJob() {
+  return (
+    <div className="min-h-screen bg-background">
+      <MainNavigation />
+
+      <div className="p-6">
+        <div className="flex items-center gap-3 mb-8">
+          <Briefcase className="h-8 w-8 text-green-400" />
+          <div>
+            <h1 className="text-3xl font-bold">Create Job Posting</h1>
+            <p className="text-muted-foreground">
+              Create a new job posting for your organization
+            </p>
+          </div>
+        </div>
+
+        <div className="grid lg:grid-cols-3 gap-6">
+          {/* Main Form */}
+          <div className="lg:col-span-2 space-y-6">
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <Briefcase className="h-5 w-5" />
+                  Job Information
+                </CardTitle>
+                <CardDescription>
+                  Basic information about the position
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="jobTitle">Job Title</Label>
+                    <Input
+                      id="jobTitle"
+                      placeholder="e.g. Senior Software Engineer"
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="department">Department</Label>
+                    <Input id="department" placeholder="e.g. Engineering" />
+                  </div>
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="jobDescription">Job Description</Label>
+                  <Textarea
+                    id="jobDescription"
+                    placeholder="Describe the role, responsibilities, and requirements..."
+                    rows={6}
+                  />
+                </div>
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <DollarSign className="h-5 w-5" />
+                  Compensation & Benefits
+                </CardTitle>
+                <CardDescription>
+                  Salary range and benefits information
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="salaryMin">Minimum Salary</Label>
+                    <Input id="salaryMin" placeholder="$50,000" />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="salaryMax">Maximum Salary</Label>
+                    <Input id="salaryMax" placeholder="$70,000" />
+                  </div>
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="benefits">Benefits</Label>
+                  <Textarea
+                    id="benefits"
+                    placeholder="Health insurance, dental, 401k, vacation time..."
+                    rows={3}
+                  />
+                </div>
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <FileText className="h-5 w-5" />
+                  Requirements & Qualifications
+                </CardTitle>
+                <CardDescription>
+                  Skills and experience required for this position
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="space-y-2">
+                  <Label htmlFor="qualifications">
+                    Required Qualifications
+                  </Label>
+                  <Textarea
+                    id="qualifications"
+                    placeholder="Bachelor's degree, 3+ years experience..."
+                    rows={4}
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="skills">Required Skills</Label>
+                  <Textarea
+                    id="skills"
+                    placeholder="JavaScript, React, Node.js..."
+                    rows={3}
+                  />
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+
+          {/* Sidebar */}
+          <div className="space-y-6">
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <Calendar className="h-5 w-5" />
+                  Timeline
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="space-y-2">
+                  <Label htmlFor="applicationDeadline">
+                    Application Deadline
+                  </Label>
+                  <Input id="applicationDeadline" type="date" />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="startDate">Expected Start Date</Label>
+                  <Input id="startDate" type="date" />
+                </div>
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <Building className="h-5 w-5" />
+                  Job Details
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="space-y-2">
+                  <Label htmlFor="location">Work Location</Label>
+                  <Input id="location" placeholder="Remote / Office / Hybrid" />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="employmentType">Employment Type</Label>
+                  <Input
+                    id="employmentType"
+                    placeholder="Full-time / Part-time / Contract"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="positions">Number of Positions</Label>
+                  <Input id="positions" type="number" placeholder="1" />
+                </div>
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <Users className="h-5 w-5" />
+                  Approval Process
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="space-y-2">
+                  <Label htmlFor="hiringManager">Hiring Manager</Label>
+                  <Input
+                    id="hiringManager"
+                    placeholder="Select hiring manager"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="approver">Job Posting Approver</Label>
+                  <Input id="approver" placeholder="Select approver" />
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+        </div>
+
+        {/* Action Buttons */}
+        <Separator className="my-8" />
+        <div className="flex items-center justify-between">
+          <Button variant="outline">Save as Draft</Button>
+          <div className="flex items-center gap-3">
+            <Button variant="outline">Preview</Button>
+            <Button>Submit for Approval</Button>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}

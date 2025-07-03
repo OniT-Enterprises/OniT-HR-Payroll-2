@@ -158,6 +158,8 @@ export default function AddEmployee() {
       "lastName",
       "email",
       "phone",
+      "emergencyContactName",
+      "emergencyContactPhone",
       "department",
       "jobTitle",
       "manager",
@@ -181,6 +183,8 @@ export default function AddEmployee() {
       "Doe",
       "john.doe@company.com",
       "+1234567890",
+      "Jane Doe",
+      "+1987654321",
       "eng",
       "Software Engineer",
       "1",
@@ -533,6 +537,58 @@ export default function AddEmployee() {
                       onChange={(e) =>
                         handleInputChange("phone", e.target.value)
                       }
+                    />
+                  </div>
+                </div>
+
+                <div className="grid md:grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <div className="flex items-center gap-2">
+                      <Label htmlFor="emergencyContactName">
+                        Emergency Contact Name
+                      </Label>
+                      <TooltipProvider>
+                        <Tooltip>
+                          <TooltipTrigger asChild>
+                            <Info className="h-4 w-4 text-muted-foreground cursor-help" />
+                          </TooltipTrigger>
+                          <TooltipContent>
+                            <p className="max-w-xs">
+                              Person to contact in case of emergency, medical
+                              situation, or urgent workplace incident involving
+                              this employee.
+                            </p>
+                          </TooltipContent>
+                        </Tooltip>
+                      </TooltipProvider>
+                    </div>
+                    <Input
+                      id="emergencyContactName"
+                      value={formData.emergencyContactName}
+                      onChange={(e) =>
+                        handleInputChange(
+                          "emergencyContactName",
+                          e.target.value,
+                        )
+                      }
+                      placeholder="Enter contact name"
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="emergencyContactPhone">
+                      Emergency Contact Phone
+                    </Label>
+                    <Input
+                      id="emergencyContactPhone"
+                      type="tel"
+                      value={formData.emergencyContactPhone}
+                      onChange={(e) =>
+                        handleInputChange(
+                          "emergencyContactPhone",
+                          e.target.value,
+                        )
+                      }
+                      placeholder="Enter contact phone number"
                     />
                   </div>
                 </div>

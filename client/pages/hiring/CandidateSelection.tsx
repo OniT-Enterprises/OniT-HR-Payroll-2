@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -11,6 +11,14 @@ import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Separator } from "@/components/ui/separator";
 import { Input } from "@/components/ui/input";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 import MainNavigation from "@/components/layout/MainNavigation";
 import {
   Users,
@@ -25,9 +33,32 @@ import {
   XCircle,
   Eye,
   FileText,
+  Upload,
+  File,
 } from "lucide-react";
 
 export default function CandidateSelection() {
+  const [showImportDialog, setShowImportDialog] = useState(false);
+  const [importedData, setImportedData] = useState({
+    name: "",
+    email: "",
+    phone: "",
+  });
+
+  const handleFileImport = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const files = event.target.files;
+    if (files && files.length > 0) {
+      // Simulate AI processing of CV and cover letter
+      setTimeout(() => {
+        setImportedData({
+          name: "John Smith", // This would come from AI processing
+          email: "john.smith@email.com",
+          phone: "+1 (555) 0127",
+        });
+      }, 2000);
+    }
+  };
+
   const candidates = [
     {
       id: 1,
@@ -129,6 +160,102 @@ export default function CandidateSelection() {
             </div>
           </div>
           <div className="flex items-center gap-3">
+            <Dialog open={showImportDialog} onOpenChange={setShowImportDialog}>
+              <DialogTrigger asChild>
+                <Button variant="outline">
+                  <Upload className="mr-2 h-4 w-4" />
+                  Import Application
+                </Button>
+              </DialogTrigger>
+              <DialogContent className="max-w-2xl">
+                <DialogHeader>
+                  <DialogTitle>Import Application</DialogTitle>
+                  <DialogDescription>
+                    Upload CV and cover letter files. Our AI will automatically
+                    extract candidate information.
+                  </DialogDescription>
+                </DialogHeader>
+                <div className="space-y-6">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div className="space-y-2">
+                      <label className="text-sm font-medium">CV/Resume</label>
+                      <div className="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center">
+                        <File className="h-8 w-8 mx-auto mb-2 text-gray-400" />
+                        <input
+                          type="file"
+                          accept=".pdf,.doc,.docx"
+                          onChange={handleFileImport}
+                          className="hidden"
+                          id="cv-upload"
+                        />
+                        <label htmlFor="cv-upload" className="cursor-pointer">
+                          <p className="text-sm text-gray-600">
+                            Click to upload CV
+                          </p>
+                          <p className="text-xs text-gray-400">
+                            PDF, DOC, DOCX
+                          </p>
+                        </label>
+                      </div>
+                    </div>
+                    <div className="space-y-2">
+                      <label className="text-sm font-medium">
+                        Cover Letter
+                      </label>
+                      <div className="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center">
+                        <Mail className="h-8 w-8 mx-auto mb-2 text-gray-400" />
+                        <input
+                          type="file"
+                          accept=".pdf,.doc,.docx"
+                          className="hidden"
+                          id="cl-upload"
+                        />
+                        <label htmlFor="cl-upload" className="cursor-pointer">
+                          <p className="text-sm text-gray-600">
+                            Click to upload Cover Letter
+                          </p>
+                          <p className="text-xs text-gray-400">
+                            PDF, DOC, DOCX
+                          </p>
+                        </label>
+                      </div>
+                    </div>
+                  </div>
+
+                  {importedData.name && (
+                    <div className="border rounded-lg p-4 bg-green-50">
+                      <h4 className="font-medium mb-3 text-green-800">
+                        AI Extracted Information
+                      </h4>
+                      <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+                        <div>
+                          <label className="text-xs text-gray-600">Name</label>
+                          <p className="font-medium">{importedData.name}</p>
+                        </div>
+                        <div>
+                          <label className="text-xs text-gray-600">Email</label>
+                          <p className="font-medium">{importedData.email}</p>
+                        </div>
+                        <div>
+                          <label className="text-xs text-gray-600">Phone</label>
+                          <p className="font-medium">{importedData.phone}</p>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+
+                  <div className="flex justify-end gap-3">
+                    <Button
+                      variant="outline"
+                      onClick={() => setShowImportDialog(false)}
+                    >
+                      Cancel
+                    </Button>
+                    <Button disabled={!importedData.name}>Add Candidate</Button>
+                  </div>
+                </div>
+              </DialogContent>
+            </Dialog>
             <Button variant="outline">
               <Download className="mr-2 h-4 w-4" />
               Export
@@ -275,12 +402,69 @@ export default function CandidateSelection() {
                       <Button variant="ghost" size="icon">
                         <Eye className="h-4 w-4" />
                       </Button>
-                      <Button variant="ghost" size="icon">
-                        <FileText className="h-4 w-4" />
-                      </Button>
-                      <Button variant="ghost" size="icon">
-                        <Mail className="h-4 w-4" />
-                      </Button>
+
+                      {/* CV Viewer */}
+                      <Dialog>
+                        <DialogTrigger asChild>
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            className="flex flex-col p-1 h-12 w-12"
+                          >
+                            <File className="h-4 w-4" />
+                            <span className="text-xs">CV</span>
+                          </Button>
+                        </DialogTrigger>
+                        <DialogContent className="max-w-4xl max-h-[80vh]">
+                          <DialogHeader>
+                            <DialogTitle>CV - {candidate.name}</DialogTitle>
+                            <DialogDescription>
+                              Resume/CV document for review
+                            </DialogDescription>
+                          </DialogHeader>
+                          <div className="border rounded-lg p-4 h-[60vh] overflow-auto bg-gray-50">
+                            <div className="text-center text-muted-foreground">
+                              <File className="h-16 w-16 mx-auto mb-4" />
+                              <p>CV document would be displayed here</p>
+                              <p className="text-sm">{candidate.resume}</p>
+                            </div>
+                          </div>
+                        </DialogContent>
+                      </Dialog>
+
+                      {/* Cover Letter Viewer */}
+                      <Dialog>
+                        <DialogTrigger asChild>
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            className="flex flex-col p-1 h-12 w-12"
+                          >
+                            <Mail className="h-4 w-4" />
+                            <span className="text-xs">CL</span>
+                          </Button>
+                        </DialogTrigger>
+                        <DialogContent className="max-w-4xl max-h-[80vh]">
+                          <DialogHeader>
+                            <DialogTitle>
+                              Cover Letter - {candidate.name}
+                            </DialogTitle>
+                            <DialogDescription>
+                              Cover letter document for review
+                            </DialogDescription>
+                          </DialogHeader>
+                          <div className="border rounded-lg p-4 h-[60vh] overflow-auto bg-gray-50">
+                            <div className="text-center text-muted-foreground">
+                              <Mail className="h-16 w-16 mx-auto mb-4" />
+                              <p>Cover letter would be displayed here</p>
+                              <p className="text-sm">
+                                Cover letter content for {candidate.name}
+                              </p>
+                            </div>
+                          </div>
+                        </DialogContent>
+                      </Dialog>
+
                       <Button variant="ghost" size="icon">
                         <Phone className="h-4 w-4" />
                       </Button>

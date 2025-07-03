@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import {
@@ -227,17 +227,45 @@ export default function MainNavigation() {
   ];
 
   const handleDropdownClick = (itemId: string) => {
-    setActiveDropdown(activeDropdown === itemId ? null : itemId);
+    // Navigate to module dashboard
+    navigate(`/${itemId}`);
+    setActiveDropdown(itemId);
   };
 
   const handleNavigation = (path: string) => {
     navigate(path);
-    setActiveDropdown(null);
+    // Don't close dropdown when navigating to submenu items
   };
 
   const isActiveModule = (moduleId: string) => {
     return location.pathname.startsWith(`/${moduleId}`);
   };
+
+  const isMainDashboard = () => {
+    return location.pathname === "/" || location.pathname === "/dashboard";
+  };
+
+  // Determine which module should show submenu based on current path
+  const getCurrentModule = () => {
+    const path = location.pathname;
+    if (path.startsWith("/hiring")) return "hiring";
+    if (path.startsWith("/staff")) return "staff";
+    if (path.startsWith("/time-leave")) return "time-leave";
+    if (path.startsWith("/performance")) return "performance";
+    if (path.startsWith("/payroll")) return "payroll";
+    if (path.startsWith("/reports")) return "reports";
+    return null;
+  };
+
+  // Set active dropdown based on current path
+  React.useEffect(() => {
+    const currentModule = getCurrentModule();
+    if (currentModule && !isMainDashboard()) {
+      setActiveDropdown(currentModule);
+    } else {
+      setActiveDropdown(null);
+    }
+  }, [location.pathname]);
 
   return (
     <div className="sticky top-0 z-50">
@@ -247,7 +275,7 @@ export default function MainNavigation() {
           <Button
             variant="ghost"
             className="flex items-center gap-2 hover:bg-gray-800 text-white p-2"
-            onClick={() => navigate("/dashboard")}
+            onClick={() => navigate("/")}
           >
             <div className="flex h-8 w-8 items-center justify-center rounded bg-primary">
               <Building className="h-5 w-5 text-primary-foreground" />
@@ -392,7 +420,7 @@ export default function MainNavigation() {
       </nav>
 
       {/* Sub-menu area below main navigation */}
-      {activeDropdown && (
+      {activeDropdown && !isMainDashboard() && (
         <div className="sticky top-16 z-40 bg-gray-800 border-b border-gray-700 py-2">
           <div className="px-8">
             <div className="flex items-center justify-center gap-4 max-w-6xl mx-auto">

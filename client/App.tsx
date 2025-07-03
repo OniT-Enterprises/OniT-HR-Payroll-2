@@ -33,6 +33,8 @@ import TaxReports from "./pages/payroll/TaxReports";
 import BankTransfers from "./pages/payroll/BankTransfers";
 import BenefitsEnrollment from "./pages/payroll/BenefitsEnrollment";
 import DeductionsAdvances from "./pages/payroll/DeductionsAdvances";
+import HiringDashboard from "./pages/dashboards/HiringDashboard";
+import StaffDashboard from "./pages/dashboards/StaffDashboard";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -44,9 +46,11 @@ const App = () => (
       <Sonner />
       <BrowserRouter>
         <Routes>
-          <Route path="/" element={<Index />} />
+          <Route path="/" element={<Dashboard />} />
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/settings" element={<Settings />} />
+          <Route path="/hiring" element={<HiringDashboard />} />
+          <Route path="/staff" element={<StaffDashboard />} />
           <Route path="/hiring/create-job" element={<CreateJob />} />
           <Route path="/hiring/candidates" element={<CandidateSelection />} />
           <Route path="/hiring/interviews" element={<Interviews />} />

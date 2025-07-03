@@ -26,6 +26,9 @@ import {
   Building,
   Users,
   FileText,
+  Upload,
+  Mail,
+  Globe,
 } from "lucide-react";
 
 export default function CreateJob() {

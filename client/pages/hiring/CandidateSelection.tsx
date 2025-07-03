@@ -172,20 +172,97 @@ export default function CandidateSelection() {
       <MainNavigation />
 
       <div className="p-6">
-        <div className="flex items-center justify-between mb-8">
-          <div className="flex items-center gap-3">
-            <Users className="h-8 w-8 text-green-400" />
-            <div>
-              <h1 className="text-3xl font-bold">Candidate Selection</h1>
-              <p className="text-muted-foreground">
-                Review and manage job applications
-              </p>
-            </div>
+        <div className="flex items-center gap-3 mb-6">
+          <Users className="h-8 w-8 text-green-400" />
+          <div>
+            <h1 className="text-3xl font-bold">Candidate Selection</h1>
+            <p className="text-muted-foreground">
+              Review and manage job applications
+            </p>
           </div>
+        </div>
+
+        {/* Statistics moved under title */}
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+          <Card>
+            <CardContent className="p-6">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm font-medium text-muted-foreground">
+                    Total Applications
+                  </p>
+                  <p className="text-2xl font-bold">47</p>
+                </div>
+                <Users className="h-8 w-8 text-blue-500" />
+              </div>
+            </CardContent>
+          </Card>
+          <Card>
+            <CardContent className="p-6">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm font-medium text-muted-foreground">
+                    Shortlisted
+                  </p>
+                  <p className="text-2xl font-bold">12</p>
+                </div>
+                <CheckCircle className="h-8 w-8 text-green-500" />
+              </div>
+            </CardContent>
+          </Card>
+          <Card>
+            <CardContent className="p-6">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm font-medium text-muted-foreground">
+                    Under Review
+                  </p>
+                  <p className="text-2xl font-bold">8</p>
+                </div>
+                <Clock className="h-8 w-8 text-yellow-500" />
+              </div>
+            </CardContent>
+          </Card>
+          <Card>
+            <CardContent className="p-6">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm font-medium text-muted-foreground">
+                    New Applications
+                  </p>
+                  <p className="text-2xl font-bold">5</p>
+                </div>
+                <Star className="h-8 w-8 text-blue-500" />
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+
+        {/* Controls row - job selector inline with other buttons */}
+        <div className="flex items-center justify-between mb-6">
+          <div className="flex items-center gap-4">
+            <div className="relative">
+              <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+              <Input placeholder="Search candidates..." className="pl-9 w-64" />
+            </div>
+            <Button size="sm">Search</Button>
+          </div>
+
           <div className="flex items-center gap-3">
+            <select className="px-4 py-2 border rounded-md bg-background min-w-[200px] h-9">
+              <option value="">Choose a job position...</option>
+              <option value="senior-software-engineer">
+                Senior Software Engineer
+              </option>
+              <option value="marketing-manager">Marketing Manager</option>
+              <option value="hr-specialist">HR Specialist</option>
+              <option value="data-analyst">Data Analyst</option>
+              <option value="product-manager">Product Manager</option>
+            </select>
+
             <Dialog open={showImportDialog} onOpenChange={setShowImportDialog}>
               <DialogTrigger asChild>
-                <Button variant="outline">
+                <Button variant="outline" size="sm">
                   <Upload className="mr-2 h-4 w-4" />
                   Import Application
                 </Button>
@@ -279,105 +356,16 @@ export default function CandidateSelection() {
                 </div>
               </DialogContent>
             </Dialog>
-            <Button variant="outline">
+
+            <Button variant="outline" size="sm">
               <Download className="mr-2 h-4 w-4" />
               Export
             </Button>
-            <Button variant="outline">
+            <Button variant="outline" size="sm">
               <Filter className="mr-2 h-4 w-4" />
               Filter
             </Button>
           </div>
-        </div>
-
-        {/* Job Selector */}
-        <Card className="mb-6">
-          <CardContent className="py-4">
-            <div className="flex items-center justify-center">
-              <div className="flex items-center gap-4">
-                <label className="text-sm font-medium">
-                  Select Job Position:
-                </label>
-                <select className="px-4 py-2 border rounded-md bg-background min-w-[300px]">
-                  <option value="">Choose a job position...</option>
-                  <option value="senior-software-engineer">
-                    Senior Software Engineer
-                  </option>
-                  <option value="marketing-manager">Marketing Manager</option>
-                  <option value="hr-specialist">HR Specialist</option>
-                  <option value="data-analyst">Data Analyst</option>
-                  <option value="product-manager">Product Manager</option>
-                </select>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-
-        {/* Compact Search */}
-        <div className="flex items-center justify-between mb-6">
-          <div className="flex items-center gap-4">
-            <div className="relative">
-              <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
-              <Input placeholder="Search candidates..." className="pl-9 w-64" />
-            </div>
-            <Button size="sm">Search</Button>
-          </div>
-        </div>
-
-        {/* Statistics */}
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
-          <Card>
-            <CardContent className="p-6">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm font-medium text-muted-foreground">
-                    Total Applications
-                  </p>
-                  <p className="text-2xl font-bold">47</p>
-                </div>
-                <Users className="h-8 w-8 text-blue-500" />
-              </div>
-            </CardContent>
-          </Card>
-          <Card>
-            <CardContent className="p-6">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm font-medium text-muted-foreground">
-                    Shortlisted
-                  </p>
-                  <p className="text-2xl font-bold">12</p>
-                </div>
-                <CheckCircle className="h-8 w-8 text-green-500" />
-              </div>
-            </CardContent>
-          </Card>
-          <Card>
-            <CardContent className="p-6">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm font-medium text-muted-foreground">
-                    Under Review
-                  </p>
-                  <p className="text-2xl font-bold">8</p>
-                </div>
-                <Clock className="h-8 w-8 text-yellow-500" />
-              </div>
-            </CardContent>
-          </Card>
-          <Card>
-            <CardContent className="p-6">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm font-medium text-muted-foreground">
-                    New Applications
-                  </p>
-                  <p className="text-2xl font-bold">5</p>
-                </div>
-                <Star className="h-8 w-8 text-blue-500" />
-              </div>
-            </CardContent>
-          </Card>
         </div>
 
         {/* Candidates List */}
@@ -496,72 +484,104 @@ export default function CandidateSelection() {
 
                       {/* Documents */}
                       <td className="p-3">
-                        <div className="flex items-center justify-center gap-1">
-                          {/* CV Viewer */}
-                          <Dialog>
-                            <DialogTrigger asChild>
-                              <Button
-                                variant="ghost"
-                                size="icon"
-                                className="flex flex-col p-1 h-12 w-12"
-                              >
-                                <File className="h-4 w-4" />
-                                <span className="text-xs">CV</span>
-                              </Button>
-                            </DialogTrigger>
-                            <DialogContent className="max-w-4xl max-h-[80vh]">
-                              <DialogHeader>
-                                <DialogTitle>CV - {candidate.name}</DialogTitle>
-                                <DialogDescription>
-                                  Resume/CV document for review
-                                </DialogDescription>
-                              </DialogHeader>
-                              <div className="border rounded-lg p-4 h-[60vh] overflow-auto bg-gray-50">
-                                <div className="text-center text-muted-foreground">
-                                  <File className="h-16 w-16 mx-auto mb-4" />
-                                  <p>CV document would be displayed here</p>
-                                  <p className="text-sm">{candidate.resume}</p>
-                                </div>
-                              </div>
-                            </DialogContent>
-                          </Dialog>
+                        <div className="flex items-center justify-center gap-3">
+                          {/* CV and CL stacked */}
+                          <div className="flex items-center gap-2">
+                            <div className="flex flex-col gap-1">
+                              <span className="text-xs font-medium">CV</span>
+                              <span className="text-xs font-medium">CL</span>
+                            </div>
+                            <div className="flex flex-col gap-1">
+                              {/* CV Viewer */}
+                              <Dialog>
+                                <DialogTrigger asChild>
+                                  <Button
+                                    variant="ghost"
+                                    size="icon"
+                                    className="h-6 w-6 p-0 rounded-full border"
+                                  >
+                                    <div className="h-4 w-4 rounded-full bg-primary flex items-center justify-center">
+                                      <File className="h-2 w-2 text-primary-foreground" />
+                                    </div>
+                                  </Button>
+                                </DialogTrigger>
+                                <DialogContent className="max-w-4xl max-h-[80vh]">
+                                  <DialogHeader>
+                                    <DialogTitle>
+                                      CV - {candidate.name}
+                                    </DialogTitle>
+                                    <DialogDescription>
+                                      Resume/CV document for review
+                                    </DialogDescription>
+                                  </DialogHeader>
+                                  <div className="border rounded-lg p-4 h-[60vh] overflow-auto bg-gray-50">
+                                    <div className="text-center text-muted-foreground">
+                                      <File className="h-16 w-16 mx-auto mb-4" />
+                                      <p>CV document would be displayed here</p>
+                                      <p className="text-sm">
+                                        {candidate.resume}
+                                      </p>
+                                    </div>
+                                  </div>
+                                </DialogContent>
+                              </Dialog>
 
-                          {/* Cover Letter Viewer */}
-                          <Dialog>
-                            <DialogTrigger asChild>
-                              <Button
-                                variant="ghost"
-                                size="icon"
-                                className="flex flex-col p-1 h-12 w-12"
-                              >
-                                <Mail className="h-4 w-4" />
-                                <span className="text-xs">CL</span>
-                              </Button>
-                            </DialogTrigger>
-                            <DialogContent className="max-w-4xl max-h-[80vh]">
-                              <DialogHeader>
-                                <DialogTitle>
-                                  Cover Letter - {candidate.name}
-                                </DialogTitle>
-                                <DialogDescription>
-                                  Cover letter document for review
-                                </DialogDescription>
-                              </DialogHeader>
-                              <div className="border rounded-lg p-4 h-[60vh] overflow-auto bg-gray-50">
-                                <div className="text-center text-muted-foreground">
-                                  <Mail className="h-16 w-16 mx-auto mb-4" />
-                                  <p>Cover letter would be displayed here</p>
-                                  <p className="text-sm">
-                                    Cover letter content for {candidate.name}
-                                  </p>
-                                </div>
-                              </div>
-                            </DialogContent>
-                          </Dialog>
+                              {/* Cover Letter Viewer */}
+                              <Dialog>
+                                <DialogTrigger asChild>
+                                  <Button
+                                    variant="ghost"
+                                    size="icon"
+                                    className="h-6 w-6 p-0 rounded-sm border"
+                                  >
+                                    <div className="h-4 w-4 bg-secondary flex items-center justify-center rounded-sm">
+                                      <div className="h-2 w-3 bg-foreground rounded-sm opacity-70"></div>
+                                    </div>
+                                  </Button>
+                                </DialogTrigger>
+                                <DialogContent className="max-w-4xl max-h-[80vh]">
+                                  <DialogHeader>
+                                    <DialogTitle>
+                                      Cover Letter - {candidate.name}
+                                    </DialogTitle>
+                                    <DialogDescription>
+                                      Cover letter document for review
+                                    </DialogDescription>
+                                  </DialogHeader>
+                                  <div className="border rounded-lg p-4 h-[60vh] overflow-auto bg-gray-50">
+                                    <div className="text-center text-muted-foreground">
+                                      <Mail className="h-16 w-16 mx-auto mb-4" />
+                                      <p>
+                                        Cover letter would be displayed here
+                                      </p>
+                                      <p className="text-sm">
+                                        Cover letter content for{" "}
+                                        {candidate.name}
+                                      </p>
+                                    </div>
+                                  </div>
+                                </DialogContent>
+                              </Dialog>
+                            </div>
+                          </div>
 
-                          <Button variant="ghost" size="icon">
-                            <Phone className="h-4 w-4" />
-                          </Button>
+                          {/* Contact icons stacked */}
+                          <div className="flex flex-col gap-1">
+                            <Button
+                              variant="ghost"
+                              size="icon"
+                              className="h-6 w-6 p-0"
+                            >
+                              <Phone className="h-3 w-3" />
+                            </Button>
+                            <Button
+                              variant="ghost"
+                              size="icon"
+                              className="h-6 w-6 p-0"
+                            >
+                              <Mail className="h-3 w-3" />
+                            </Button>
+                          </div>
                         </div>
                       </td>
 

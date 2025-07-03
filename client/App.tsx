@@ -19,6 +19,10 @@ import AllEmployees from "./pages/staff/AllEmployees";
 import AddEmployee from "./pages/staff/AddEmployee";
 import Departments from "./pages/staff/Departments";
 import OrganizationChart from "./pages/staff/OrganizationChart";
+import TimeTracking from "./pages/time-leave/TimeTracking";
+import Attendance from "./pages/time-leave/Attendance";
+import LeaveRequests from "./pages/time-leave/LeaveRequests";
+import ShiftScheduling from "./pages/time-leave/ShiftScheduling";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -42,6 +46,13 @@ const App = () => (
           <Route path="/staff/add" element={<AddEmployee />} />
           <Route path="/staff/departments" element={<Departments />} />
           <Route path="/staff/org-chart" element={<OrganizationChart />} />
+          <Route path="/time-leave/tracking" element={<TimeTracking />} />
+          <Route path="/time-leave/attendance" element={<Attendance />} />
+          <Route
+            path="/time-leave/leave-requests"
+            element={<LeaveRequests />}
+          />
+          <Route path="/time-leave/scheduling" element={<ShiftScheduling />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>

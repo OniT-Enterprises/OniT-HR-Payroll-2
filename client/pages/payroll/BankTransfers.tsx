@@ -209,8 +209,17 @@ export default function BankTransfers() {
   };
 
   const filteredTransfers = transfers.filter((transfer) => {
-    if (selectedStatus && transfer.status !== selectedStatus) return false;
-    if (selectedPeriod && transfer.payrollPeriod !== selectedPeriod)
+    if (
+      selectedStatus &&
+      selectedStatus !== "all" &&
+      transfer.status !== selectedStatus
+    )
+      return false;
+    if (
+      selectedPeriod &&
+      selectedPeriod !== "all" &&
+      transfer.payrollPeriod !== selectedPeriod
+    )
       return false;
     return true;
   });
@@ -304,7 +313,7 @@ export default function BankTransfers() {
                       <SelectValue placeholder="All statuses" />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="">All statuses</SelectItem>
+                      <SelectItem value="all">All statuses</SelectItem>
                       <SelectItem value="Completed">Completed</SelectItem>
                       <SelectItem value="Pending">Pending</SelectItem>
                       <SelectItem value="Failed">Failed</SelectItem>
@@ -321,7 +330,7 @@ export default function BankTransfers() {
                       <SelectValue placeholder="All periods" />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="">All periods</SelectItem>
+                      <SelectItem value="all">All periods</SelectItem>
                       <SelectItem value="February 2024">
                         February 2024
                       </SelectItem>

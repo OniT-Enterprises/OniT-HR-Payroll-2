@@ -16,9 +16,28 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import { Badge } from "@/components/ui/badge";
+import { Alert, AlertDescription } from "@/components/ui/alert";
 import { useToast } from "@/hooks/use-toast";
 import MainNavigation from "@/components/layout/MainNavigation";
-import { UserPlus, Upload, Save, ArrowLeft } from "lucide-react";
+import {
+  UserPlus,
+  Upload,
+  Save,
+  ArrowLeft,
+  CreditCard,
+  DollarSign,
+  Calendar,
+  AlertTriangle,
+} from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
 export default function AddEmployee() {
@@ -36,7 +55,17 @@ export default function AddEmployee() {
     startDate: "",
     employmentType: "Full-time",
     status: "Active",
+    salary: "",
+    leaveDays: "",
+    benefits: "",
   });
+
+  const [documents, setDocuments] = useState([
+    { id: 1, type: "Social Security Number", number: "", expiryDate: "" },
+    { id: 2, type: "Electoral Card Number", number: "", expiryDate: "" },
+    { id: 3, type: "ID Card", number: "", expiryDate: "" },
+    { id: 4, type: "Passport", number: "", expiryDate: "" },
+  ]);
 
   // Mock data for dropdowns (would come from Firestore)
   const departments = [
@@ -65,6 +94,42 @@ export default function AddEmployee() {
     }));
   };
 
+  const handleDocumentChange = (id: number, field: string, value: string) => {
+    setDocuments((prev) =>
+      prev.map((doc) => (doc.id === id ? { ...doc, [field]: value } : doc)),
+    );
+  };
+
+  const getExpiryStatus = (expiryDate: string) => {
+    if (!expiryDate) return null;
+
+    const today = new Date();
+    const expiry = new Date(expiryDate);
+    const timeDiff = expiry.getTime() - today.getTime();
+    const daysDiff = Math.ceil(timeDiff / (1000 * 3600 * 24));
+
+    if (daysDiff < 0) {
+      return {
+        status: "expired",
+        message: "Expired",
+        variant: "destructive" as const,
+      };
+    } else if (daysDiff <= 28) {
+      return {
+        status: "expiring",
+        message: `Expires in ${daysDiff} days`,
+        variant: "destructive" as const,
+      };
+    } else if (daysDiff <= 60) {
+      return {
+        status: "warning",
+        message: `Expires in ${daysDiff} days`,
+        variant: "secondary" as const,
+      };
+    }
+    return { status: "valid", message: "Valid", variant: "default" as const };
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
@@ -80,7 +145,7 @@ export default function AddEmployee() {
 
     try {
       // Mock Firebase save operation
-      console.log("Saving employee to Firestore:", formData);
+      console.log("Saving employee to Firestore:", { ...formData, documents });
 
       // Simulate API call delay
       await new Promise((resolve) => setTimeout(resolve, 1000));
@@ -325,6 +390,164 @@ export default function AddEmployee() {
                         <SelectItem value="Active">Active</SelectItem>
                         <SelectItem value="On Leave">On Leave</SelectItem>
                         <SelectItem value="Archived">Archived</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Documents Section */}
+            <Card className="lg:col-span-3">
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <CreditCard className="h-5 w-5" />
+                  Documents & Identification
+                </CardTitle>
+                <CardDescription>
+                  Employee identification documents with expiry tracking
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead>Document Type</TableHead>
+                      <TableHead>Number/ID</TableHead>
+                      <TableHead>Expiry Date</TableHead>
+                      <TableHead>Status</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {documents.map((document) => {
+                      const expiryStatus = getExpiryStatus(document.expiryDate);
+                      return (
+                        <TableRow key={document.id}>
+                          <TableCell className="font-medium">
+                            {document.type}
+                          </TableCell>
+                          <TableCell>
+                            <Input
+                              value={document.number}
+                              onChange={(e) =>
+                                handleDocumentChange(
+                                  document.id,
+                                  "number",
+                                  e.target.value,
+                                )
+                              }
+                              placeholder="Enter number"
+                              className="max-w-xs"
+                            />
+                          </TableCell>
+                          <TableCell>
+                            <Input
+                              type="date"
+                              value={document.expiryDate}
+                              onChange={(e) =>
+                                handleDocumentChange(
+                                  document.id,
+                                  "expiryDate",
+                                  e.target.value,
+                                )
+                              }
+                              className="max-w-xs"
+                            />
+                          </TableCell>
+                          <TableCell>
+                            {expiryStatus && (
+                              <Badge variant={expiryStatus.variant}>
+                                {expiryStatus.status === "expiring" && (
+                                  <AlertTriangle className="h-3 w-3 mr-1" />
+                                )}
+                                {expiryStatus.message}
+                              </Badge>
+                            )}
+                          </TableCell>
+                        </TableRow>
+                      );
+                    })}
+                  </TableBody>
+                </Table>
+
+                {/* Show expiry warnings */}
+                {documents.some((doc) => {
+                  const status = getExpiryStatus(doc.expiryDate);
+                  return (
+                    status &&
+                    (status.status === "expired" ||
+                      status.status === "expiring")
+                  );
+                }) && (
+                  <Alert className="mt-4">
+                    <AlertTriangle className="h-4 w-4" />
+                    <AlertDescription>
+                      Some documents are expired or expiring soon. Please ensure
+                      all employee documents are up to date.
+                    </AlertDescription>
+                  </Alert>
+                )}
+              </CardContent>
+            </Card>
+
+            {/* Salary & Benefits Section */}
+            <Card className="lg:col-span-3">
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <DollarSign className="h-5 w-5" />
+                  Compensation & Benefits
+                </CardTitle>
+                <CardDescription>
+                  Salary, leave allowance, and benefits information
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="grid md:grid-cols-3 gap-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="salary">Annual Salary</Label>
+                    <Input
+                      id="salary"
+                      type="number"
+                      value={formData.salary}
+                      onChange={(e) =>
+                        handleInputChange("salary", e.target.value)
+                      }
+                      placeholder="e.g., 75000"
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="leaveDays">Annual Leave Days</Label>
+                    <Input
+                      id="leaveDays"
+                      type="number"
+                      value={formData.leaveDays}
+                      onChange={(e) =>
+                        handleInputChange("leaveDays", e.target.value)
+                      }
+                      placeholder="e.g., 25"
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="benefits">Benefits Package</Label>
+                    <Select
+                      value={formData.benefits}
+                      onValueChange={(value) =>
+                        handleInputChange("benefits", value)
+                      }
+                    >
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select benefits package" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="basic">Basic Package</SelectItem>
+                        <SelectItem value="standard">
+                          Standard Package
+                        </SelectItem>
+                        <SelectItem value="premium">Premium Package</SelectItem>
+                        <SelectItem value="executive">
+                          Executive Package
+                        </SelectItem>
+                        <SelectItem value="custom">Custom Package</SelectItem>
                       </SelectContent>
                     </Select>
                   </div>

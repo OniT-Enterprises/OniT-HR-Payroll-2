@@ -341,6 +341,67 @@ export default function MainNavigation() {
           </Button>
         </div>
       </nav>
+
+      {/* Sub-menu area below main navigation */}
+      {activeDropdown && (
+        <div className="bg-gray-800 border-b border-gray-700 py-4">
+          <div className="px-8">
+            <div className="flex items-center justify-center gap-8 max-w-6xl mx-auto">
+              {navigationItems
+                .find((item) => item.id === activeDropdown)
+                ?.items.map((subItem, index) => {
+                  const moduleColor = navigationItems.find(
+                    (item) => item.id === activeDropdown,
+                  )?.color;
+                  const isActiveSubItem = location.pathname === subItem.path;
+
+                  // Get the proper module color for highlighting
+                  const getHighlightColor = (moduleId: string) => {
+                    switch (moduleId) {
+                      case "hiring":
+                        return "#22c55e";
+                      case "staff":
+                        return "#0891b2";
+                      case "performance":
+                        return "#ea580c";
+                      case "payroll":
+                        return "#059669";
+                      case "reports":
+                        return "#db2777";
+                      default:
+                        return "#4b5563";
+                    }
+                  };
+
+                  return (
+                    <Button
+                      key={index}
+                      variant="ghost"
+                      className={`flex flex-col items-center gap-3 px-6 py-4 h-auto rounded-lg transition-all min-w-[140px] ${
+                        isActiveSubItem
+                          ? "text-white"
+                          : "text-gray-300 hover:text-white hover:bg-gray-700"
+                      }`}
+                      style={{
+                        backgroundColor: isActiveSubItem
+                          ? getHighlightColor(activeDropdown)
+                          : "transparent",
+                      }}
+                      onClick={() => handleNavigation(subItem.path)}
+                    >
+                      <span className={`${moduleColor} text-2xl`}>
+                        {subItem.icon}
+                      </span>
+                      <span className="text-sm font-medium text-center leading-tight">
+                        {subItem.label}
+                      </span>
+                    </Button>
+                  );
+                })}
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

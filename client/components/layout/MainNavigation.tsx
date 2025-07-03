@@ -29,6 +29,10 @@ import {
   Activity,
   Shield,
   ChevronDown,
+  Target,
+  Award,
+  Heart,
+  CreditCard,
 } from "lucide-react";
 
 export default function MainNavigation() {
@@ -99,25 +103,53 @@ export default function MainNavigation() {
       ],
     },
     {
+      id: "time-leave",
+      label: "Time & Leave",
+      icon: <Clock className="h-5 w-5" />,
+      color: "text-blue-400",
+      items: [
+        {
+          label: "Time Tracking",
+          icon: <Clock className="h-4 w-4" />,
+          path: "/time-leave/tracking",
+        },
+        {
+          label: "Attendance",
+          icon: <Calendar className="h-4 w-4" />,
+          path: "/time-leave/attendance",
+        },
+        {
+          label: "Leave Requests & Approvals",
+          icon: <FileText className="h-4 w-4" />,
+          path: "/time-leave/requests",
+        },
+        {
+          label: "Shift Scheduling",
+          icon: <Calendar className="h-4 w-4" />,
+          path: "/time-leave/scheduling",
+        },
+      ],
+    },
+    {
       id: "performance",
       label: "Performance",
       icon: <TrendingUp className="h-5 w-5" />,
       color: "text-orange-400",
       items: [
         {
-          label: "Time Tracking",
-          icon: <Clock className="h-4 w-4" />,
-          path: "/performance/time",
-        },
-        {
-          label: "Attendance",
-          icon: <Calendar className="h-4 w-4" />,
-          path: "/performance/attendance",
-        },
-        {
           label: "Reviews",
           icon: <FileText className="h-4 w-4" />,
           path: "/performance/reviews",
+        },
+        {
+          label: "Goals & OKRs",
+          icon: <Target className="h-4 w-4" />,
+          path: "/performance/goals",
+        },
+        {
+          label: "Training & Certifications",
+          icon: <Award className="h-4 w-4" />,
+          path: "/performance/training",
         },
         {
           label: "Disciplinary",
@@ -151,6 +183,16 @@ export default function MainNavigation() {
           label: "Bank Transfers",
           icon: <DollarSign className="h-4 w-4" />,
           path: "/payroll/transfers",
+        },
+        {
+          label: "Benefits Enrollment",
+          icon: <Heart className="h-4 w-4" />,
+          path: "/payroll/benefits",
+        },
+        {
+          label: "Deductions/Advances",
+          icon: <CreditCard className="h-4 w-4" />,
+          path: "/payroll/deductions",
         },
       ],
     },
@@ -367,6 +409,8 @@ export default function MainNavigation() {
                         return "#22c55e";
                       case "staff":
                         return "#0891b2";
+                      case "time-leave":
+                        return "#2563eb";
                       case "performance":
                         return "#ea580c";
                       case "payroll":

@@ -8,8 +8,8 @@ import {
 } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
-import { Separator } from "@/components/ui/separator";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import MainNavigation from "@/components/layout/MainNavigation";
 import {
   Users,
   DollarSign,
@@ -17,16 +17,10 @@ import {
   TrendingUp,
   Calendar,
   FileText,
-  AlertTriangle,
   CheckCircle,
-  Building,
-  Bell,
-  Settings,
   MoreHorizontal,
   Download,
   Plus,
-  Search,
-  Filter,
 } from "lucide-react";
 
 export default function Dashboard() {
@@ -137,66 +131,7 @@ export default function Dashboard() {
 
   return (
     <div className="min-h-screen bg-background">
-      {/* Header */}
-      <header className="border-b border-border bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 sticky top-0 z-50">
-        <div className="px-6">
-          <div className="flex h-16 items-center justify-between">
-            <div className="flex items-center gap-4">
-              <div className="flex items-center gap-2">
-                <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary text-primary-foreground">
-                  <Building className="h-5 w-5" />
-                </div>
-                <span className="text-xl font-bold">PayrollHR</span>
-              </div>
-              <Separator orientation="vertical" className="h-6" />
-              <nav className="flex items-center gap-6">
-                <a href="#" className="text-sm font-medium text-foreground">
-                  Dashboard
-                </a>
-                <a
-                  href="#"
-                  className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
-                >
-                  Employees
-                </a>
-                <a
-                  href="#"
-                  className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
-                >
-                  Payroll
-                </a>
-                <a
-                  href="#"
-                  className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
-                >
-                  Reports
-                </a>
-                <a
-                  href="#"
-                  className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
-                >
-                  Settings
-                </a>
-              </nav>
-            </div>
-            <div className="flex items-center gap-3">
-              <Button variant="ghost" size="icon">
-                <Search className="h-5 w-5" />
-              </Button>
-              <Button variant="ghost" size="icon">
-                <Bell className="h-5 w-5" />
-              </Button>
-              <Button variant="ghost" size="icon">
-                <Settings className="h-5 w-5" />
-              </Button>
-              <Avatar>
-                <AvatarImage src="/placeholder.svg" alt="User" />
-                <AvatarFallback>JD</AvatarFallback>
-              </Avatar>
-            </div>
-          </div>
-        </div>
-      </header>
+      <MainNavigation />
 
       <div className="p-6">
         <div className="flex items-center justify-between mb-8">

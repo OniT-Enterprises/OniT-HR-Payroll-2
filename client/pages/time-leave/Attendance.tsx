@@ -388,7 +388,7 @@ export default function Attendance() {
                       <SelectValue placeholder="All departments" />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="">All departments</SelectItem>
+                      <SelectItem value="all">All departments</SelectItem>
                       {departments.map((dept) => (
                         <SelectItem key={dept.id} value={dept.id}>
                           {dept.name}
@@ -407,7 +407,7 @@ export default function Attendance() {
                       <SelectValue placeholder="All statuses" />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="">All statuses</SelectItem>
+                      <SelectItem value="all">All statuses</SelectItem>
                       <SelectItem value="On-time">On-time</SelectItem>
                       <SelectItem value="Late">Late</SelectItem>
                       <SelectItem value="Absent">Absent</SelectItem>

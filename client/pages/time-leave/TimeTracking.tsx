@@ -309,7 +309,7 @@ export default function TimeTracking() {
                       <SelectValue placeholder="All employees" />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="">All employees</SelectItem>
+                      <SelectItem value="all">All employees</SelectItem>
                       {employees.map((employee) => (
                         <SelectItem key={employee.id} value={employee.id}>
                           {employee.name}

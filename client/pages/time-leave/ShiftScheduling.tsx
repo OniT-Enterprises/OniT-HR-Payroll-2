@@ -397,7 +397,7 @@ export default function ShiftScheduling() {
                       <SelectValue placeholder="All departments" />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="">All departments</SelectItem>
+                      <SelectItem value="all">All departments</SelectItem>
                       {departments.map((dept) => (
                         <SelectItem key={dept.id} value={dept.id}>
                           {dept.name}

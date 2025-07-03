@@ -211,7 +211,7 @@ export default function MainNavigation() {
 
         {/* Main Navigation */}
         <div className="flex-1 flex items-center justify-center px-8">
-          <div className="flex items-center gap-4 w-full max-w-6xl">
+          <div className="flex items-center gap-2 w-full max-w-7xl">
             {navigationItems.map((item) => {
               const isActive =
                 isActiveModule(item.id) || activeDropdown === item.id;
@@ -238,9 +238,13 @@ export default function MainNavigation() {
               const colors = getModuleColors(item.id);
 
               if (isExpanded) {
-                // Show expanded module with sub-items inline
+                // Show expanded module with sub-items inline - takes more space
                 return (
-                  <div key={item.id} className="flex-1 flex items-center gap-1">
+                  <div
+                    key={item.id}
+                    className="flex items-center gap-1"
+                    style={{ flex: "3" }}
+                  >
                     {/* Main module button */}
                     <Button
                       variant="ghost"
@@ -264,7 +268,7 @@ export default function MainNavigation() {
                         <Button
                           key={index}
                           variant="ghost"
-                          className={`flex items-center gap-2 px-3 py-2 h-10 rounded-md transition-all ${
+                          className={`flex items-center gap-1 px-2 py-2 h-10 rounded-md transition-all text-xs ${
                             isActiveSubItem
                               ? "text-white"
                               : "text-gray-300 hover:text-white"
@@ -273,11 +277,15 @@ export default function MainNavigation() {
                             backgroundColor: isActiveSubItem
                               ? colors.bg
                               : "transparent",
+                            borderWidth: isActiveSubItem ? "1px" : "0px",
+                            borderColor: isActiveSubItem
+                              ? colors.border
+                              : "transparent",
                           }}
                           onClick={() => handleNavigation(subItem.path)}
                         >
                           <span className={item.color}>{subItem.icon}</span>
-                          <span className="text-xs font-medium">
+                          <span className="font-medium whitespace-nowrap">
                             {subItem.label}
                           </span>
                         </Button>
@@ -286,12 +294,13 @@ export default function MainNavigation() {
                   </div>
                 );
               } else {
-                // Show collapsed module
+                // Show collapsed module - smaller when others are expanded
+                const isAnyExpanded = activeDropdown !== null;
                 return (
                   <Button
                     key={item.id}
                     variant="ghost"
-                    className={`flex-1 flex items-center justify-center gap-2 px-3 py-2 h-10 border-2 rounded-md transition-all ${
+                    className={`flex items-center justify-center gap-2 px-3 py-2 h-10 border-2 rounded-md transition-all ${
                       isActive
                         ? "text-white"
                         : "text-gray-300 hover:text-white border-gray-600 hover:border-gray-500"
@@ -301,11 +310,16 @@ export default function MainNavigation() {
                       backgroundColor: isActive
                         ? "rgba(55, 65, 81, 0.8)"
                         : "transparent",
+                      flex: isAnyExpanded ? "1" : "1", // Shrink when others are expanded
                     }}
                     onClick={() => handleDropdownClick(item.id)}
                   >
                     <span className={item.color}>{item.icon}</span>
-                    <span className="text-sm font-medium">{item.label}</span>
+                    <span
+                      className={`text-sm font-medium ${isAnyExpanded ? "hidden sm:block" : ""}`}
+                    >
+                      {item.label}
+                    </span>
                     <ChevronDown className="h-3 w-3 transition-transform" />
                   </Button>
                 );

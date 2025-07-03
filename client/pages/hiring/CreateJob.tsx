@@ -183,14 +183,34 @@ export default function CreateJob() {
               <CardContent className="space-y-4">
                 <div className="space-y-2">
                   <Label htmlFor="location">Work Location</Label>
-                  <Input id="location" placeholder="Remote / Office / Hybrid" />
+                  <Select>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select work location" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="remote">Remote</SelectItem>
+                      <SelectItem value="office">Office</SelectItem>
+                      <SelectItem value="hybrid">Hybrid</SelectItem>
+                      <SelectItem value="on-site">On-site</SelectItem>
+                      <SelectItem value="field-work">Field Work</SelectItem>
+                    </SelectContent>
+                  </Select>
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="employmentType">Employment Type</Label>
-                  <Input
-                    id="employmentType"
-                    placeholder="Full-time / Part-time / Contract"
-                  />
+                  <Select>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select employment type" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="full-time">Full-time</SelectItem>
+                      <SelectItem value="part-time">Part-time</SelectItem>
+                      <SelectItem value="contract">Contract</SelectItem>
+                      <SelectItem value="temporary">Temporary</SelectItem>
+                      <SelectItem value="internship">Internship</SelectItem>
+                      <SelectItem value="freelance">Freelance</SelectItem>
+                    </SelectContent>
+                  </Select>
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="positions">Number of Positions</Label>

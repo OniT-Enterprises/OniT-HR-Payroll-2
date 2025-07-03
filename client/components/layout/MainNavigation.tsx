@@ -236,23 +236,24 @@ export default function MainNavigation() {
               };
 
               const colors = getModuleColors(item.id);
+              const isAnyExpanded = activeDropdown !== null;
 
               if (isExpanded) {
-                // Show expanded module with sub-items inline - takes more space
+                // Show expanded module with sub-items INSIDE the button
                 return (
                   <div
                     key={item.id}
-                    className="flex items-center gap-1"
-                    style={{ flex: "3" }}
+                    className="flex flex-col border-2 rounded-md p-2 transition-all"
+                    style={{
+                      borderColor: colors.border,
+                      backgroundColor: "rgba(55, 65, 81, 0.8)",
+                      flex: "2.5",
+                    }}
                   >
-                    {/* Main module button */}
+                    {/* Main module header */}
                     <Button
                       variant="ghost"
-                      className="flex items-center justify-center gap-2 px-3 py-2 h-10 border-2 rounded-md text-white"
-                      style={{
-                        borderColor: colors.border,
-                        backgroundColor: "rgba(55, 65, 81, 0.8)",
-                      }}
+                      className="flex items-center justify-center gap-2 px-3 py-2 h-10 text-white hover:bg-transparent"
                       onClick={() => handleDropdownClick(item.id)}
                     >
                       <span className={item.color}>{item.icon}</span>
@@ -260,42 +261,39 @@ export default function MainNavigation() {
                       <ChevronDown className="h-3 w-3 rotate-180 transition-transform" />
                     </Button>
 
-                    {/* Sub-items inline */}
-                    {item.items.map((subItem, index) => {
-                      const isActiveSubItem =
-                        location.pathname === subItem.path;
-                      return (
-                        <Button
-                          key={index}
-                          variant="ghost"
-                          className={`flex items-center gap-1 px-2 py-2 h-10 rounded-md transition-all text-xs ${
-                            isActiveSubItem
-                              ? "text-white"
-                              : "text-gray-300 hover:text-white"
-                          }`}
-                          style={{
-                            backgroundColor: isActiveSubItem
-                              ? colors.bg
-                              : "transparent",
-                            borderWidth: isActiveSubItem ? "1px" : "0px",
-                            borderColor: isActiveSubItem
-                              ? colors.border
-                              : "transparent",
-                          }}
-                          onClick={() => handleNavigation(subItem.path)}
-                        >
-                          <span className={item.color}>{subItem.icon}</span>
-                          <span className="font-medium whitespace-nowrap">
-                            {subItem.label}
-                          </span>
-                        </Button>
-                      );
-                    })}
+                    {/* Sub-items INSIDE the button */}
+                    <div className="grid grid-cols-2 gap-1 mt-2">
+                      {item.items.map((subItem, index) => {
+                        const isActiveSubItem =
+                          location.pathname === subItem.path;
+                        return (
+                          <Button
+                            key={index}
+                            variant="ghost"
+                            className={`flex items-center gap-1 px-2 py-1 h-8 rounded text-xs transition-all ${
+                              isActiveSubItem
+                                ? "text-white"
+                                : "text-gray-300 hover:text-white hover:bg-gray-700"
+                            }`}
+                            style={{
+                              backgroundColor: isActiveSubItem
+                                ? colors.bg
+                                : "transparent",
+                            }}
+                            onClick={() => handleNavigation(subItem.path)}
+                          >
+                            <span className={item.color}>{subItem.icon}</span>
+                            <span className="font-medium text-center flex-1">
+                              {subItem.label}
+                            </span>
+                          </Button>
+                        );
+                      })}
+                    </div>
                   </div>
                 );
               } else {
-                // Show collapsed module - smaller when others are expanded
-                const isAnyExpanded = activeDropdown !== null;
+                // Show collapsed module
                 return (
                   <Button
                     key={item.id}
@@ -310,13 +308,13 @@ export default function MainNavigation() {
                       backgroundColor: isActive
                         ? "rgba(55, 65, 81, 0.8)"
                         : "transparent",
-                      flex: isAnyExpanded ? "1" : "1", // Shrink when others are expanded
+                      flex: isAnyExpanded ? "1" : "1",
                     }}
                     onClick={() => handleDropdownClick(item.id)}
                   >
                     <span className={item.color}>{item.icon}</span>
                     <span
-                      className={`text-sm font-medium ${isAnyExpanded ? "hidden sm:block" : ""}`}
+                      className={`text-sm font-medium ${isAnyExpanded ? "hidden lg:block" : ""}`}
                     >
                       {item.label}
                     </span>

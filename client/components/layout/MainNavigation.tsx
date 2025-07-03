@@ -215,6 +215,7 @@ export default function MainNavigation() {
             {navigationItems.map((item) => {
               const isActive =
                 isActiveModule(item.id) || activeDropdown === item.id;
+              const isExpanded = activeDropdown === item.id;
 
               // Define exact colors to match the image
               const getModuleColors = (moduleId: string) => {
@@ -236,30 +237,79 @@ export default function MainNavigation() {
 
               const colors = getModuleColors(item.id);
 
-              return (
-                <Button
-                  key={item.id}
-                  variant="ghost"
-                  className={`flex-1 flex items-center justify-center gap-2 px-3 py-2 h-10 border-2 rounded-md transition-all ${
-                    isActive
-                      ? "text-white"
-                      : "text-gray-300 hover:text-white border-gray-600 hover:border-gray-500"
-                  }`}
-                  style={{
-                    borderColor: isActive ? colors.border : "#6b7280",
-                    backgroundColor: isActive
-                      ? "rgba(55, 65, 81, 0.8)"
-                      : "transparent",
-                  }}
-                  onClick={() => handleDropdownClick(item.id)}
-                >
-                  <span className={item.color}>{item.icon}</span>
-                  <span className="text-sm font-medium">{item.label}</span>
-                  <ChevronDown
-                    className={`h-3 w-3 transition-transform ${activeDropdown === item.id ? "rotate-180" : ""}`}
-                  />
-                </Button>
-              );
+              if (isExpanded) {
+                // Show expanded module with sub-items inline
+                return (
+                  <div key={item.id} className="flex-1 flex items-center gap-1">
+                    {/* Main module button */}
+                    <Button
+                      variant="ghost"
+                      className="flex items-center justify-center gap-2 px-3 py-2 h-10 border-2 rounded-md text-white"
+                      style={{
+                        borderColor: colors.border,
+                        backgroundColor: "rgba(55, 65, 81, 0.8)",
+                      }}
+                      onClick={() => handleDropdownClick(item.id)}
+                    >
+                      <span className={item.color}>{item.icon}</span>
+                      <span className="text-sm font-medium">{item.label}</span>
+                      <ChevronDown className="h-3 w-3 rotate-180 transition-transform" />
+                    </Button>
+
+                    {/* Sub-items inline */}
+                    {item.items.map((subItem, index) => {
+                      const isActiveSubItem =
+                        location.pathname === subItem.path;
+                      return (
+                        <Button
+                          key={index}
+                          variant="ghost"
+                          className={`flex items-center gap-2 px-3 py-2 h-10 rounded-md transition-all ${
+                            isActiveSubItem
+                              ? "text-white"
+                              : "text-gray-300 hover:text-white"
+                          }`}
+                          style={{
+                            backgroundColor: isActiveSubItem
+                              ? colors.bg
+                              : "transparent",
+                          }}
+                          onClick={() => handleNavigation(subItem.path)}
+                        >
+                          <span className={item.color}>{subItem.icon}</span>
+                          <span className="text-xs font-medium">
+                            {subItem.label}
+                          </span>
+                        </Button>
+                      );
+                    })}
+                  </div>
+                );
+              } else {
+                // Show collapsed module
+                return (
+                  <Button
+                    key={item.id}
+                    variant="ghost"
+                    className={`flex-1 flex items-center justify-center gap-2 px-3 py-2 h-10 border-2 rounded-md transition-all ${
+                      isActive
+                        ? "text-white"
+                        : "text-gray-300 hover:text-white border-gray-600 hover:border-gray-500"
+                    }`}
+                    style={{
+                      borderColor: isActive ? colors.border : "#6b7280",
+                      backgroundColor: isActive
+                        ? "rgba(55, 65, 81, 0.8)"
+                        : "transparent",
+                    }}
+                    onClick={() => handleDropdownClick(item.id)}
+                  >
+                    <span className={item.color}>{item.icon}</span>
+                    <span className="text-sm font-medium">{item.label}</span>
+                    <ChevronDown className="h-3 w-3 transition-transform" />
+                  </Button>
+                );
+              }
             })}
           </div>
         </div>
@@ -341,67 +391,6 @@ export default function MainNavigation() {
           </Button>
         </div>
       </nav>
-
-      {/* Sub-menu area */}
-      {activeDropdown && (
-        <div className="bg-black py-4">
-          <div className="px-8">
-            <div className="flex items-center justify-center gap-12 max-w-6xl mx-auto">
-              {navigationItems
-                .find((item) => item.id === activeDropdown)
-                ?.items.map((subItem, index) => {
-                  const moduleColor = navigationItems.find(
-                    (item) => item.id === activeDropdown,
-                  )?.color;
-                  const isActiveSubItem = location.pathname === subItem.path;
-
-                  // Get the proper module color for highlighting
-                  const getHighlightColor = (moduleId: string) => {
-                    switch (moduleId) {
-                      case "hiring":
-                        return "#22c55e";
-                      case "staff":
-                        return "#0891b2";
-                      case "performance":
-                        return "#ea580c";
-                      case "payroll":
-                        return "#059669";
-                      case "reports":
-                        return "#db2777";
-                      default:
-                        return "#4b5563";
-                    }
-                  };
-
-                  return (
-                    <Button
-                      key={index}
-                      variant="ghost"
-                      className={`flex flex-col items-center gap-3 px-4 py-3 h-auto rounded-lg transition-all min-w-[140px] ${
-                        isActiveSubItem
-                          ? "text-white"
-                          : "text-gray-300 hover:text-white hover:bg-gray-800"
-                      }`}
-                      style={{
-                        backgroundColor: isActiveSubItem
-                          ? getHighlightColor(activeDropdown)
-                          : "transparent",
-                      }}
-                      onClick={() => handleNavigation(subItem.path)}
-                    >
-                      <span className={`${moduleColor} text-2xl`}>
-                        {subItem.icon}
-                      </span>
-                      <span className="text-sm font-medium text-center leading-tight">
-                        {subItem.label}
-                      </span>
-                    </Button>
-                  );
-                })}
-            </div>
-          </div>
-        </div>
-      )}
     </div>
   );
 }

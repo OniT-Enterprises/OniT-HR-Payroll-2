@@ -53,14 +53,46 @@ export default function CandidateSelection() {
 
   // Sample realistic candidate data for AI extraction
   const sampleCandidates = [
-    { name: "Alexandra Chen", email: "alexandra.chen@gmail.com", phone: "+1 (555) 0891" },
-    { name: "Marcus Rodriguez", email: "m.rodriguez@outlook.com", phone: "+1 (555) 0742" },
-    { name: "Priya Patel", email: "priya.patel.dev@gmail.com", phone: "+1 (555) 0963" },
-    { name: "James Wilson", email: "james.wilson2024@email.com", phone: "+1 (555) 0854" },
-    { name: "Sofia Andersson", email: "sofia.andersson@proton.me", phone: "+1 (555) 0721" },
-    { name: "David Kim", email: "dkim.engineer@gmail.com", phone: "+1 (555) 0638" },
-    { name: "Isabella Martinez", email: "isabella.martinez.dev@outlook.com", phone: "+1 (555) 0917" },
-    { name: "Ryan O'Connor", email: "ryan.oconnor.tech@gmail.com", phone: "+1 (555) 0582" }
+    {
+      name: "Alexandra Chen",
+      email: "alexandra.chen@gmail.com",
+      phone: "+1 (555) 0891",
+    },
+    {
+      name: "Marcus Rodriguez",
+      email: "m.rodriguez@outlook.com",
+      phone: "+1 (555) 0742",
+    },
+    {
+      name: "Priya Patel",
+      email: "priya.patel.dev@gmail.com",
+      phone: "+1 (555) 0963",
+    },
+    {
+      name: "James Wilson",
+      email: "james.wilson2024@email.com",
+      phone: "+1 (555) 0854",
+    },
+    {
+      name: "Sofia Andersson",
+      email: "sofia.andersson@proton.me",
+      phone: "+1 (555) 0721",
+    },
+    {
+      name: "David Kim",
+      email: "dkim.engineer@gmail.com",
+      phone: "+1 (555) 0638",
+    },
+    {
+      name: "Isabella Martinez",
+      email: "isabella.martinez.dev@outlook.com",
+      phone: "+1 (555) 0917",
+    },
+    {
+      name: "Ryan O'Connor",
+      email: "ryan.oconnor.tech@gmail.com",
+      phone: "+1 (555) 0582",
+    },
   ];
 
   // State for managing candidates list
@@ -137,7 +169,83 @@ export default function CandidateSelection() {
       interviewScore: 6.0,
       totalScore: 6.9,
     },
-  ];
+  ]);
+
+  // AI extraction function - simulates real AI processing with realistic data
+  const extractInfoFromFiles = async (
+    cvFile?: File,
+    coverLetterFile?: File,
+  ) => {
+    setIsProcessing(true);
+
+    // Simulate AI processing delay
+    await new Promise((resolve) => setTimeout(resolve, 2000));
+
+    // Get a random candidate from sample data to simulate AI extraction
+    const randomCandidate =
+      sampleCandidates[Math.floor(Math.random() * sampleCandidates.length)];
+
+    setImportedData(randomCandidate);
+    setIsProcessing(false);
+  };
+
+  const handleCVUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const files = event.target.files;
+    if (files && files.length > 0) {
+      const cvFile = files[0];
+      setUploadedFiles((prev) => ({ ...prev, cv: cvFile }));
+      // Trigger AI extraction when CV is uploaded
+      extractInfoFromFiles(cvFile, uploadedFiles.coverLetter);
+    }
+  };
+
+  const handleCoverLetterUpload = (
+    event: React.ChangeEvent<HTMLInputElement>,
+  ) => {
+    const files = event.target.files;
+    if (files && files.length > 0) {
+      const coverLetterFile = files[0];
+      setUploadedFiles((prev) => ({ ...prev, coverLetter: coverLetterFile }));
+      // Trigger AI extraction when cover letter is uploaded
+      extractInfoFromFiles(uploadedFiles.cv, coverLetterFile);
+    }
+  };
+
+  // Function to add new candidate to the list
+  const addCandidate = () => {
+    if (!importedData.name) return;
+
+    const newCandidate = {
+      id: candidates.length + 1,
+      name: importedData.name,
+      email: importedData.email,
+      phone: importedData.phone,
+      position: "Senior Software Engineer", // Default position
+      experience: "TBD", // To be determined
+      score: 0,
+      status: "New",
+      appliedDate: new Date().toISOString().split("T")[0],
+      resume: uploadedFiles.cv?.name || "uploaded_resume.pdf",
+      avatar: importedData.name
+        .split(" ")
+        .map((n) => n[0])
+        .join("")
+        .toUpperCase(),
+      cvQuality: Math.floor(Math.random() * 3) + 7, // Random score 7-9
+      coverLetter: Math.floor(Math.random() * 3) + 7, // Random score 7-9
+      technicalSkills: Math.floor(Math.random() * 3) + 7, // Random score 7-9
+      interviewScore: null,
+      totalScore: Math.floor(Math.random() * 2) + 7.5, // Random score 7.5-8.5
+    };
+
+    setCandidates((prev) => [newCandidate, ...prev]);
+
+    // Reset dialog state
+    setShowImportDialog(false);
+    setUploadedFiles({ cv: null, coverLetter: null });
+    setImportedData({ name: "", email: "", phone: "" });
+    setIsProcessing(false);
+  };
 
   const getStatusColor = (status: string) => {
     switch (status) {

@@ -51,50 +51,20 @@ export default function CandidateSelection() {
     coverLetter: null as File | null,
   });
 
-  // AI extraction function - simulates real AI processing
-  const extractInfoFromFiles = async (
-    cvFile?: File,
-    coverLetterFile?: File,
-  ) => {
-    setIsProcessing(true);
+  // Sample realistic candidate data for AI extraction
+  const sampleCandidates = [
+    { name: "Alexandra Chen", email: "alexandra.chen@gmail.com", phone: "+1 (555) 0891" },
+    { name: "Marcus Rodriguez", email: "m.rodriguez@outlook.com", phone: "+1 (555) 0742" },
+    { name: "Priya Patel", email: "priya.patel.dev@gmail.com", phone: "+1 (555) 0963" },
+    { name: "James Wilson", email: "james.wilson2024@email.com", phone: "+1 (555) 0854" },
+    { name: "Sofia Andersson", email: "sofia.andersson@proton.me", phone: "+1 (555) 0721" },
+    { name: "David Kim", email: "dkim.engineer@gmail.com", phone: "+1 (555) 0638" },
+    { name: "Isabella Martinez", email: "isabella.martinez.dev@outlook.com", phone: "+1 (555) 0917" },
+    { name: "Ryan O'Connor", email: "ryan.oconnor.tech@gmail.com", phone: "+1 (555) 0582" }
+  ];
 
-    // Simulate AI processing delay
-    await new Promise((resolve) => setTimeout(resolve, 2000));
-
-    // Mock AI extraction results - in real implementation, this would call an AI service
-    const extractedData = {
-      name: "John Smith",
-      email: "john.smith@email.com",
-      phone: "+1 (555) 0127",
-    };
-
-    setImportedData(extractedData);
-    setIsProcessing(false);
-  };
-
-  const handleCVUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const files = event.target.files;
-    if (files && files.length > 0) {
-      const cvFile = files[0];
-      setUploadedFiles((prev) => ({ ...prev, cv: cvFile }));
-      // Trigger AI extraction when CV is uploaded
-      extractInfoFromFiles(cvFile, uploadedFiles.coverLetter);
-    }
-  };
-
-  const handleCoverLetterUpload = (
-    event: React.ChangeEvent<HTMLInputElement>,
-  ) => {
-    const files = event.target.files;
-    if (files && files.length > 0) {
-      const coverLetterFile = files[0];
-      setUploadedFiles((prev) => ({ ...prev, coverLetter: coverLetterFile }));
-      // Trigger AI extraction when cover letter is uploaded
-      extractInfoFromFiles(uploadedFiles.cv, coverLetterFile);
-    }
-  };
-
-  const candidates = [
+  // State for managing candidates list
+  const [candidates, setCandidates] = useState([
     {
       id: 1,
       name: "Sarah Johnson",

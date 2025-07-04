@@ -45,18 +45,52 @@ export default function CandidateSelection() {
     email: "",
     phone: "",
   });
+  const [isProcessing, setIsProcessing] = useState(false);
+  const [uploadedFiles, setUploadedFiles] = useState({
+    cv: null as File | null,
+    coverLetter: null as File | null,
+  });
 
-  const handleFileImport = (event: React.ChangeEvent<HTMLInputElement>) => {
+  // AI extraction function - simulates real AI processing
+  const extractInfoFromFiles = async (
+    cvFile?: File,
+    coverLetterFile?: File,
+  ) => {
+    setIsProcessing(true);
+
+    // Simulate AI processing delay
+    await new Promise((resolve) => setTimeout(resolve, 2000));
+
+    // Mock AI extraction results - in real implementation, this would call an AI service
+    const extractedData = {
+      name: "John Smith",
+      email: "john.smith@email.com",
+      phone: "+1 (555) 0127",
+    };
+
+    setImportedData(extractedData);
+    setIsProcessing(false);
+  };
+
+  const handleCVUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
     const files = event.target.files;
     if (files && files.length > 0) {
-      // Simulate AI processing of CV and cover letter
-      setTimeout(() => {
-        setImportedData({
-          name: "John Smith", // This would come from AI processing
-          email: "john.smith@email.com",
-          phone: "+1 (555) 0127",
-        });
-      }, 2000);
+      const cvFile = files[0];
+      setUploadedFiles((prev) => ({ ...prev, cv: cvFile }));
+      // Trigger AI extraction when CV is uploaded
+      extractInfoFromFiles(cvFile, uploadedFiles.coverLetter);
+    }
+  };
+
+  const handleCoverLetterUpload = (
+    event: React.ChangeEvent<HTMLInputElement>,
+  ) => {
+    const files = event.target.files;
+    if (files && files.length > 0) {
+      const coverLetterFile = files[0];
+      setUploadedFiles((prev) => ({ ...prev, coverLetter: coverLetterFile }));
+      // Trigger AI extraction when cover letter is uploaded
+      extractInfoFromFiles(uploadedFiles.cv, coverLetterFile);
     }
   };
 

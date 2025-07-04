@@ -529,270 +529,283 @@ export default function CandidateSelection() {
             ) : (
               <div className="overflow-x-auto">
                 <table className="w-full">
-                <thead>
-                  <tr className="border-b">
-                    <th className="text-left p-3 font-medium">Candidate</th>
-                    <th className="text-center p-3 font-medium">
-                      <button className="flex flex-col items-center gap-1 hover:bg-gray-50 p-1 rounded">
-                        <span className="text-xs leading-tight">CV</span>
-                        <span className="text-xs leading-tight">Quality</span>
-                        <ChevronDown className="h-3 w-3" />
-                      </button>
-                    </th>
-                    <th className="text-center p-3 font-medium">
-                      <button className="flex flex-col items-center gap-1 hover:bg-gray-50 p-1 rounded">
-                        <span className="text-xs leading-tight">Cover</span>
-                        <span className="text-xs leading-tight">Letter</span>
-                        <ChevronDown className="h-3 w-3" />
-                      </button>
-                    </th>
-                    <th className="text-center p-3 font-medium">
-                      <button className="flex flex-col items-center gap-1 hover:bg-gray-50 p-1 rounded">
-                        <span className="text-xs leading-tight ml-2.5">
-                          Technical
-                        </span>
-                        <span className="text-xs leading-tight ml-2.5">
-                          Skills
-                        </span>
-                        <ChevronDown className="h-3 w-3 ml-2.5" />
-                      </button>
-                    </th>
-                    <th className="text-center p-3 font-medium">
-                      <button className="flex flex-col items-center gap-1 hover:bg-gray-50 p-1 rounded ml-3.5">
-                        <span className="text-xs leading-tight">Interview</span>
-                        <span className="text-xs leading-tight">Score</span>
-                        <ChevronDown className="h-3 w-3" />
-                      </button>
-                    </th>
-                    <th className="text-center p-3 font-medium">
-                      <button className="flex flex-col items-center gap-1 hover:bg-gray-50 p-1 rounded">
-                        <span className="text-sm font-semibold leading-tight ml-2.5">
-                          Total
-                        </span>
-                        <span className="text-sm font-semibold leading-tight ml-2.5">
-                          Score
-                        </span>
-                        <ChevronDown className="h-3 w-3 ml-2.5" />
-                      </button>
-                    </th>
-                    <th className="text-center p-3 font-medium">Status</th>
-                    <th className="text-center p-3 font-medium">Documents</th>
-                    <th className="text-center p-3 font-medium">Actions</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {candidates.map((candidate) => (
-                    <tr
-                      key={candidate.id}
-                      className="border-b hover:bg-muted/50 transition-colors"
-                    >
-                      {/* Candidate Info */}
-                      <td className="p-3">
-                        <div className="flex items-center gap-3">
-                          <Avatar>
-                            <AvatarImage
-                              src={`/placeholder.svg`}
-                              alt={candidate.name}
-                            />
-                            <AvatarFallback>{candidate.avatar}</AvatarFallback>
-                          </Avatar>
-                          <div>
-                            <h3 className="font-semibold">{candidate.name}</h3>
-                            <p className="text-sm text-muted-foreground">
-                              {candidate.email}
-                            </p>
-                            <div className="flex items-center gap-2 mt-1">
-                              <Badge variant="outline">
-                                {candidate.experience}
-                              </Badge>
-                              <span className="text-xs text-muted-foreground">
-                                Applied: {candidate.appliedDate}
-                              </span>
-                            </div>
-                          </div>
-                        </div>
-                      </td>
-
-                      {/* CV Quality */}
-                      <td className="p-3 text-center">
-                        <span
-                          className={`font-semibold ${getScoreColor(candidate.cvQuality)}`}
-                        >
-                          {candidate.cvQuality}/10
-                        </span>
-                      </td>
-
-                      {/* Cover Letter */}
-                      <td className="p-3 text-center">
-                        <span
-                          className={`font-semibold ${getScoreColor(candidate.coverLetter)}`}
-                        >
-                          {candidate.coverLetter}/10
-                        </span>
-                      </td>
-
-                      {/* Technical Skills */}
-                      <td className="p-3 text-center">
-                        <span
-                          className={`font-semibold ${getScoreColor(candidate.technicalSkills)}`}
-                        >
-                          {candidate.technicalSkills}/10
-                        </span>
-                      </td>
-
-                      {/* Interview Score */}
-                      <td className="p-3 text-center">
-                        {candidate.interviewScore ? (
-                          <span
-                            className={`font-semibold ${getScoreColor(candidate.interviewScore)}`}
-                          >
-                            {candidate.interviewScore}/10
+                  <thead>
+                    <tr className="border-b">
+                      <th className="text-left p-3 font-medium">Candidate</th>
+                      <th className="text-center p-3 font-medium">
+                        <button className="flex flex-col items-center gap-1 hover:bg-gray-50 p-1 rounded">
+                          <span className="text-xs leading-tight">CV</span>
+                          <span className="text-xs leading-tight">Quality</span>
+                          <ChevronDown className="h-3 w-3" />
+                        </button>
+                      </th>
+                      <th className="text-center p-3 font-medium">
+                        <button className="flex flex-col items-center gap-1 hover:bg-gray-50 p-1 rounded">
+                          <span className="text-xs leading-tight">Cover</span>
+                          <span className="text-xs leading-tight">Letter</span>
+                          <ChevronDown className="h-3 w-3" />
+                        </button>
+                      </th>
+                      <th className="text-center p-3 font-medium">
+                        <button className="flex flex-col items-center gap-1 hover:bg-gray-50 p-1 rounded">
+                          <span className="text-xs leading-tight ml-2.5">
+                            Technical
                           </span>
-                        ) : (
-                          <span className="text-gray-400 font-semibold">
-                            NA
+                          <span className="text-xs leading-tight ml-2.5">
+                            Skills
                           </span>
-                        )}
-                      </td>
-
-                      {/* Total Score */}
-                      <td className="p-3 text-center">
-                        <span
-                          className={`font-bold text-lg ${getScoreColor(candidate.totalScore)}`}
-                        >
-                          {candidate.totalScore}/10
-                        </span>
-                      </td>
-
-                      {/* Status */}
-                      <td className="p-3 text-center">
-                        <div className="flex items-center justify-center gap-2">
-                          {getStatusIcon(candidate.status)}
-                          <Badge className={getStatusColor(candidate.status)}>
-                            {candidate.status}
-                          </Badge>
-                        </div>
-                      </td>
-
-                      {/* Documents */}
-                      <td className="p-3">
-                        <div className="flex items-center justify-center gap-3">
-                          {/* CV and CL stacked */}
-                          <div className="flex items-center gap-2">
-                            <div className="flex flex-col gap-1">
-                              <span className="text-xs font-medium">CV</span>
-                              <span className="text-xs font-medium">CL</span>
-                            </div>
-                            <div className="flex flex-col gap-1">
-                              {/* CV Viewer */}
-                              <Dialog>
-                                <DialogTrigger asChild>
-                                  <Button
-                                    variant="ghost"
-                                    size="icon"
-                                    className="h-6 w-6 p-0 rounded-full border"
-                                  >
-                                    <div className="h-4 w-4 rounded-full bg-primary flex items-center justify-center">
-                                      <File className="h-2 w-2 text-primary-foreground" />
-                                    </div>
-                                  </Button>
-                                </DialogTrigger>
-                                <DialogContent className="max-w-4xl max-h-[80vh]">
-                                  <DialogHeader>
-                                    <DialogTitle>
-                                      CV - {candidate.name}
-                                    </DialogTitle>
-                                    <DialogDescription>
-                                      Resume/CV document for review
-                                    </DialogDescription>
-                                  </DialogHeader>
-                                  <div className="border rounded-lg p-4 h-[60vh] overflow-auto bg-gray-50">
-                                    <div className="text-center text-muted-foreground">
-                                      <File className="h-16 w-16 mx-auto mb-4" />
-                                      <p>CV document would be displayed here</p>
-                                      <p className="text-sm">
-                                        {candidate.resume}
-                                      </p>
-                                    </div>
-                                  </div>
-                                </DialogContent>
-                              </Dialog>
-
-                              {/* Cover Letter Viewer */}
-                              <Dialog>
-                                <DialogTrigger asChild>
-                                  <Button
-                                    variant="ghost"
-                                    size="icon"
-                                    className="h-6 w-6 p-0 rounded-sm border"
-                                  >
-                                    <div className="h-4 w-4 bg-secondary flex items-center justify-center rounded-sm">
-                                      <div className="h-2 w-3 bg-foreground rounded-sm opacity-70"></div>
-                                    </div>
-                                  </Button>
-                                </DialogTrigger>
-                                <DialogContent className="max-w-4xl max-h-[80vh]">
-                                  <DialogHeader>
-                                    <DialogTitle>
-                                      Cover Letter - {candidate.name}
-                                    </DialogTitle>
-                                    <DialogDescription>
-                                      Cover letter document for review
-                                    </DialogDescription>
-                                  </DialogHeader>
-                                  <div className="border rounded-lg p-4 h-[60vh] overflow-auto bg-gray-50">
-                                    <div className="text-center text-muted-foreground">
-                                      <Mail className="h-16 w-16 mx-auto mb-4" />
-                                      <p>
-                                        Cover letter would be displayed here
-                                      </p>
-                                      <p className="text-sm">
-                                        Cover letter content for{" "}
-                                        {candidate.name}
-                                      </p>
-                                    </div>
-                                  </div>
-                                </DialogContent>
-                              </Dialog>
-                            </div>
-                          </div>
-
-                          {/* Contact icons stacked */}
-                          <div className="flex flex-col gap-1">
-                            <Button
-                              variant="ghost"
-                              size="icon"
-                              className="h-6 w-6 p-0"
-                            >
-                              <Phone className="h-3 w-3" />
-                            </Button>
-                            <Button
-                              variant="ghost"
-                              size="icon"
-                              className="h-6 w-6 p-0"
-                            >
-                              <Mail className="h-3 w-3" />
-                            </Button>
-                          </div>
-                        </div>
-                      </td>
-
-                      {/* Actions */}
-                      <td className="p-3">
-                        <div className="flex flex-col items-center gap-1">
-                          <Button variant="outline" size="sm" className="w-20">
-                            Reject
-                          </Button>
-                          <Button size="sm" className="w-20">
-                            Shortlist
-                          </Button>
-                        </div>
-                      </td>
+                          <ChevronDown className="h-3 w-3 ml-2.5" />
+                        </button>
+                      </th>
+                      <th className="text-center p-3 font-medium">
+                        <button className="flex flex-col items-center gap-1 hover:bg-gray-50 p-1 rounded ml-3.5">
+                          <span className="text-xs leading-tight">
+                            Interview
+                          </span>
+                          <span className="text-xs leading-tight">Score</span>
+                          <ChevronDown className="h-3 w-3" />
+                        </button>
+                      </th>
+                      <th className="text-center p-3 font-medium">
+                        <button className="flex flex-col items-center gap-1 hover:bg-gray-50 p-1 rounded">
+                          <span className="text-sm font-semibold leading-tight ml-2.5">
+                            Total
+                          </span>
+                          <span className="text-sm font-semibold leading-tight ml-2.5">
+                            Score
+                          </span>
+                          <ChevronDown className="h-3 w-3 ml-2.5" />
+                        </button>
+                      </th>
+                      <th className="text-center p-3 font-medium">Status</th>
+                      <th className="text-center p-3 font-medium">Documents</th>
+                      <th className="text-center p-3 font-medium">Actions</th>
                     </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
+                  </thead>
+                  <tbody>
+                    {candidates.map((candidate) => (
+                      <tr
+                        key={candidate.id}
+                        className="border-b hover:bg-muted/50 transition-colors"
+                      >
+                        {/* Candidate Info */}
+                        <td className="p-3">
+                          <div className="flex items-center gap-3">
+                            <Avatar>
+                              <AvatarImage
+                                src={`/placeholder.svg`}
+                                alt={candidate.name}
+                              />
+                              <AvatarFallback>
+                                {candidate.avatar}
+                              </AvatarFallback>
+                            </Avatar>
+                            <div>
+                              <h3 className="font-semibold">
+                                {candidate.name}
+                              </h3>
+                              <p className="text-sm text-muted-foreground">
+                                {candidate.email}
+                              </p>
+                              <div className="flex items-center gap-2 mt-1">
+                                <Badge variant="outline">
+                                  {candidate.experience}
+                                </Badge>
+                                <span className="text-xs text-muted-foreground">
+                                  Applied: {candidate.appliedDate}
+                                </span>
+                              </div>
+                            </div>
+                          </div>
+                        </td>
+
+                        {/* CV Quality */}
+                        <td className="p-3 text-center">
+                          <span
+                            className={`font-semibold ${getScoreColor(candidate.cvQuality)}`}
+                          >
+                            {candidate.cvQuality}/10
+                          </span>
+                        </td>
+
+                        {/* Cover Letter */}
+                        <td className="p-3 text-center">
+                          <span
+                            className={`font-semibold ${getScoreColor(candidate.coverLetter)}`}
+                          >
+                            {candidate.coverLetter}/10
+                          </span>
+                        </td>
+
+                        {/* Technical Skills */}
+                        <td className="p-3 text-center">
+                          <span
+                            className={`font-semibold ${getScoreColor(candidate.technicalSkills)}`}
+                          >
+                            {candidate.technicalSkills}/10
+                          </span>
+                        </td>
+
+                        {/* Interview Score */}
+                        <td className="p-3 text-center">
+                          {candidate.interviewScore ? (
+                            <span
+                              className={`font-semibold ${getScoreColor(candidate.interviewScore)}`}
+                            >
+                              {candidate.interviewScore}/10
+                            </span>
+                          ) : (
+                            <span className="text-gray-400 font-semibold">
+                              NA
+                            </span>
+                          )}
+                        </td>
+
+                        {/* Total Score */}
+                        <td className="p-3 text-center">
+                          <span
+                            className={`font-bold text-lg ${getScoreColor(candidate.totalScore)}`}
+                          >
+                            {candidate.totalScore}/10
+                          </span>
+                        </td>
+
+                        {/* Status */}
+                        <td className="p-3 text-center">
+                          <div className="flex items-center justify-center gap-2">
+                            {getStatusIcon(candidate.status)}
+                            <Badge className={getStatusColor(candidate.status)}>
+                              {candidate.status}
+                            </Badge>
+                          </div>
+                        </td>
+
+                        {/* Documents */}
+                        <td className="p-3">
+                          <div className="flex items-center justify-center gap-3">
+                            {/* CV and CL stacked */}
+                            <div className="flex items-center gap-2">
+                              <div className="flex flex-col gap-1">
+                                <span className="text-xs font-medium">CV</span>
+                                <span className="text-xs font-medium">CL</span>
+                              </div>
+                              <div className="flex flex-col gap-1">
+                                {/* CV Viewer */}
+                                <Dialog>
+                                  <DialogTrigger asChild>
+                                    <Button
+                                      variant="ghost"
+                                      size="icon"
+                                      className="h-6 w-6 p-0 rounded-full border"
+                                    >
+                                      <div className="h-4 w-4 rounded-full bg-primary flex items-center justify-center">
+                                        <File className="h-2 w-2 text-primary-foreground" />
+                                      </div>
+                                    </Button>
+                                  </DialogTrigger>
+                                  <DialogContent className="max-w-4xl max-h-[80vh]">
+                                    <DialogHeader>
+                                      <DialogTitle>
+                                        CV - {candidate.name}
+                                      </DialogTitle>
+                                      <DialogDescription>
+                                        Resume/CV document for review
+                                      </DialogDescription>
+                                    </DialogHeader>
+                                    <div className="border rounded-lg p-4 h-[60vh] overflow-auto bg-gray-50">
+                                      <div className="text-center text-muted-foreground">
+                                        <File className="h-16 w-16 mx-auto mb-4" />
+                                        <p>
+                                          CV document would be displayed here
+                                        </p>
+                                        <p className="text-sm">
+                                          {candidate.resume}
+                                        </p>
+                                      </div>
+                                    </div>
+                                  </DialogContent>
+                                </Dialog>
+
+                                {/* Cover Letter Viewer */}
+                                <Dialog>
+                                  <DialogTrigger asChild>
+                                    <Button
+                                      variant="ghost"
+                                      size="icon"
+                                      className="h-6 w-6 p-0 rounded-sm border"
+                                    >
+                                      <div className="h-4 w-4 bg-secondary flex items-center justify-center rounded-sm">
+                                        <div className="h-2 w-3 bg-foreground rounded-sm opacity-70"></div>
+                                      </div>
+                                    </Button>
+                                  </DialogTrigger>
+                                  <DialogContent className="max-w-4xl max-h-[80vh]">
+                                    <DialogHeader>
+                                      <DialogTitle>
+                                        Cover Letter - {candidate.name}
+                                      </DialogTitle>
+                                      <DialogDescription>
+                                        Cover letter document for review
+                                      </DialogDescription>
+                                    </DialogHeader>
+                                    <div className="border rounded-lg p-4 h-[60vh] overflow-auto bg-gray-50">
+                                      <div className="text-center text-muted-foreground">
+                                        <Mail className="h-16 w-16 mx-auto mb-4" />
+                                        <p>
+                                          Cover letter would be displayed here
+                                        </p>
+                                        <p className="text-sm">
+                                          Cover letter content for{" "}
+                                          {candidate.name}
+                                        </p>
+                                      </div>
+                                    </div>
+                                  </DialogContent>
+                                </Dialog>
+                              </div>
+                            </div>
+
+                            {/* Contact icons stacked */}
+                            <div className="flex flex-col gap-1">
+                              <Button
+                                variant="ghost"
+                                size="icon"
+                                className="h-6 w-6 p-0"
+                              >
+                                <Phone className="h-3 w-3" />
+                              </Button>
+                              <Button
+                                variant="ghost"
+                                size="icon"
+                                className="h-6 w-6 p-0"
+                              >
+                                <Mail className="h-3 w-3" />
+                              </Button>
+                            </div>
+                          </div>
+                        </td>
+
+                        {/* Actions */}
+                        <td className="p-3">
+                          <div className="flex flex-col items-center gap-1">
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              className="w-20"
+                            >
+                              Reject
+                            </Button>
+                            <Button size="sm" className="w-20">
+                              Shortlist
+                            </Button>
+                          </div>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            )}
           </CardContent>
         </Card>
       </div>

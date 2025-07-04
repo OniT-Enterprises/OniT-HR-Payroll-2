@@ -260,9 +260,9 @@ export default function OrganizationChart() {
         {/* Organization Chart */}
         <div className="space-y-6">
           {/* CEO Level */}
-          <div className="flex justify-center">
+          <div className="flex justify-center w-3/5 self-stretch">
             <Card className="w-80 border-2 border-yellow-400 bg-yellow-50">
-              <CardContent className="p-4">
+              <CardContent className="p-4 w-7/10">
                 <div className="flex items-center gap-3">
                   <Avatar>
                     <AvatarImage
@@ -286,7 +286,7 @@ export default function OrganizationChart() {
                     <div className="text-sm text-muted-foreground">
                       {organizationData.ceo.title}
                     </div>
-                    <div className="text-xs text-muted-foreground">
+                    <div className="text-xs text-muted-foreground w-12 h-7">
                       {organizationData.ceo.email}
                     </div>
                   </div>

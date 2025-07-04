@@ -165,39 +165,58 @@ export default function CandidateSelection() {
   };
 
   // Function to add new candidate to the list
-  const addCandidate = () => {
+  const addCandidate = async () => {
     if (!importedData.name) return;
 
-    const newCandidate = {
-      id: candidates.length + 1,
-      name: importedData.name,
-      email: importedData.email,
-      phone: importedData.phone,
-      position: "Senior Software Engineer", // Default position
-      experience: "TBD", // To be determined
-      score: 0,
-      status: "New",
-      appliedDate: new Date().toISOString().split("T")[0],
-      resume: uploadedFiles.cv?.name || "uploaded_resume.pdf",
-      avatar: importedData.name
-        .split(" ")
-        .map((n) => n[0])
-        .join("")
-        .toUpperCase(),
-      cvQuality: Math.floor(Math.random() * 3) + 7, // Random score 7-9
-      coverLetter: Math.floor(Math.random() * 3) + 7, // Random score 7-9
-      technicalSkills: Math.floor(Math.random() * 3) + 7, // Random score 7-9
-      interviewScore: null,
-      totalScore: Math.floor(Math.random() * 2) + 7.5, // Random score 7.5-8.5
-    };
+    try {
+      const newCandidate: Omit<Candidate, "id"> = {
+        name: importedData.name,
+        email: importedData.email,
+        phone: importedData.phone,
+        position: "Senior Software Engineer", // Default position
+        experience: "TBD", // To be determined
+        score: 0,
+        status: "New",
+        appliedDate: new Date().toISOString().split("T")[0],
+        resume: uploadedFiles.cv?.name || "uploaded_resume.pdf",
+        avatar: importedData.name
+          .split(" ")
+          .map((n) => n[0])
+          .join("")
+          .toUpperCase(),
+        cvQuality: Math.floor(Math.random() * 3) + 7, // Random score 7-9
+        coverLetter: Math.floor(Math.random() * 3) + 7, // Random score 7-9
+        technicalSkills: Math.floor(Math.random() * 3) + 7, // Random score 7-9
+        interviewScore: null,
+        totalScore: Math.floor(Math.random() * 2) + 7.5, // Random score 7.5-8.5
+      };
 
-    setCandidates((prev) => [newCandidate, ...prev]);
+      const candidateId = await candidateService.addCandidate(newCandidate);
 
-    // Reset dialog state
-    setShowImportDialog(false);
-    setUploadedFiles({ cv: null, coverLetter: null });
-    setImportedData({ name: "", email: "", phone: "" });
-    setIsProcessing(false);
+      if (candidateId) {
+        toast({
+          title: "Success",
+          description: "Candidate added successfully",
+        });
+        // Reload candidates to get the updated list
+        await loadCandidates();
+      } else {
+        throw new Error("Failed to add candidate");
+      }
+    } catch (error) {
+      console.error("Error adding candidate:", error);
+      toast({
+        title: "Error",
+        description: "Failed to add candidate",
+        variant: "destructive",
+      });
+    } finally {
+      // Reset dialog state
+      setShowImportDialog(false);
+      setUploadedFiles({ cv: null, coverLetter: null });
+      setImportedData({ name: "", email: "", phone: "" });
+      setIsProcessing(false);
+    }
   };
 
   const getStatusColor = (status: string) => {

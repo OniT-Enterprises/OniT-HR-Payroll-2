@@ -431,11 +431,27 @@ export default function CandidateSelection() {
                   <div className="flex justify-end gap-3">
                     <Button
                       variant="outline"
-                      onClick={() => setShowImportDialog(false)}
+                      onClick={() => {
+                        setShowImportDialog(false);
+                        setUploadedFiles({ cv: null, coverLetter: null });
+                        setImportedData({ name: "", email: "", phone: "" });
+                        setIsProcessing(false);
+                      }}
                     >
                       Cancel
                     </Button>
-                    <Button disabled={!importedData.name}>Add Candidate</Button>
+                    <Button
+                      disabled={!importedData.name || isProcessing}
+                      onClick={() => {
+                        // Handle adding candidate logic here
+                        setShowImportDialog(false);
+                        setUploadedFiles({ cv: null, coverLetter: null });
+                        setImportedData({ name: "", email: "", phone: "" });
+                        setIsProcessing(false);
+                      }}
+                    >
+                      {isProcessing ? "Processing..." : "Add Candidate"}
+                    </Button>
                   </div>
                 </div>
               </DialogContent>

@@ -98,80 +98,31 @@ export default function CandidateSelection() {
   ];
 
   // State for managing candidates list
-  const [candidates, setCandidates] = useState([
-    {
-      id: 1,
-      name: "Sarah Johnson",
-      email: "sarah.johnson@email.com",
-      phone: "+1 (555) 0123",
-      position: "Senior Software Engineer",
-      experience: "5 years",
-      score: 4.8,
-      status: "Under Review",
-      appliedDate: "2024-01-15",
-      resume: "sarah_johnson_resume.pdf",
-      avatar: "SJ",
-      cvQuality: 9.2,
-      coverLetter: 8.8,
-      technicalSkills: 9.0,
-      interviewScore: 8.5,
-      totalScore: 8.9,
-    },
-    {
-      id: 2,
-      name: "Michael Chen",
-      email: "michael.chen@email.com",
-      phone: "+1 (555) 0124",
-      position: "Senior Software Engineer",
-      experience: "7 years",
-      score: 4.6,
-      status: "Shortlisted",
-      appliedDate: "2024-01-14",
-      resume: "michael_chen_resume.pdf",
-      avatar: "MC",
-      cvQuality: 8.9,
-      coverLetter: 8.2,
-      technicalSkills: 9.5,
-      interviewScore: 9.0,
-      totalScore: 8.9,
-    },
-    {
-      id: 3,
-      name: "Emily Rodriguez",
-      email: "emily.rodriguez@email.com",
-      phone: "+1 (555) 0125",
-      position: "Senior Software Engineer",
-      experience: "4 years",
-      score: 4.4,
-      status: "New",
-      appliedDate: "2024-01-16",
-      resume: "emily_rodriguez_resume.pdf",
-      avatar: "ER",
-      cvQuality: 8.1,
-      coverLetter: 8.7,
-      technicalSkills: 8.0,
-      interviewScore: null,
-      totalScore: 8.3,
-    },
-    {
-      id: 4,
-      name: "David Wilson",
-      email: "david.wilson@email.com",
-      phone: "+1 (555) 0126",
-      position: "Senior Software Engineer",
-      experience: "6 years",
-      score: 4.2,
-      status: "Rejected",
-      appliedDate: "2024-01-13",
-      resume: "david_wilson_resume.pdf",
-      avatar: "DW",
-      cvQuality: 7.2,
-      coverLetter: 6.8,
-      technicalSkills: 7.5,
-      interviewScore: 6.0,
-      totalScore: 6.9,
-    },
-  ]);
+  const [candidates, setCandidates] = useState<Candidate[]>([]);
+  const [loading, setLoading] = useState(true);
+  const { toast } = useToast();
+
+  // Load candidates from Firebase on component mount
+  useEffect(() => {
+    loadCandidates();
+  }, []);
+
+  const loadCandidates = async () => {
+    try {
+      setLoading(true);
+      const candidatesData = await candidateService.getAllCandidates();
+      setCandidates(candidatesData);
+    } catch (error) {
+      console.error("Error loading candidates:", error);
+      toast({
+        title: "Error",
+        description: "Failed to load candidates",
+        variant: "destructive",
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
 
   // AI extraction function - simulates real AI processing with realistic data
   const extractInfoFromFiles = async (

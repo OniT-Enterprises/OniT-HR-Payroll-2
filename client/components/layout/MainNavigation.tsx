@@ -53,14 +53,14 @@ export default function MainNavigation() {
           path: "/hiring/create-job",
         },
         {
-          label: "Interviews",
-          icon: <Calendar className="h-4 w-4" />,
-          path: "/hiring/interviews",
-        },
-        {
           label: "Candidate Selection",
           icon: <Users className="h-4 w-4" />,
           path: "/hiring/candidates",
+        },
+        {
+          label: "Interviews",
+          icon: <Calendar className="h-4 w-4" />,
+          path: "/hiring/interviews",
         },
         {
           label: "Onboarding",

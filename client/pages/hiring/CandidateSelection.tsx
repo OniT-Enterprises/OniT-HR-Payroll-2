@@ -1,5 +1,7 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
+import { candidateService, type Candidate } from "@/services/candidateService";
+import { useToast } from "@/hooks/use-toast";
 import {
   Card,
   CardContent,

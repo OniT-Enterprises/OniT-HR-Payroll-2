@@ -390,7 +390,23 @@ export default function CandidateSelection() {
                     </div>
                   </div>
 
-                  {importedData.name && (
+                  {isProcessing && (
+                    <div className="border rounded-lg p-4 bg-blue-50">
+                      <div className="flex items-center gap-3">
+                        <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-blue-600"></div>
+                        <div>
+                          <h4 className="font-medium text-blue-800">
+                            AI Processing Documents...
+                          </h4>
+                          <p className="text-sm text-blue-600">
+                            Extracting candidate information from uploaded files
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+
+                  {!isProcessing && importedData.name && (
                     <div className="border rounded-lg p-4 bg-green-50">
                       <h4 className="font-medium mb-3 text-green-800">
                         AI Extracted Information

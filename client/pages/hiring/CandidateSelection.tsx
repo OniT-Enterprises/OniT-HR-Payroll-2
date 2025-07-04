@@ -318,18 +318,32 @@ export default function CandidateSelection() {
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div className="space-y-2">
                       <label className="text-sm font-medium">CV/Resume</label>
-                      <div className="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center">
-                        <File className="h-8 w-8 mx-auto mb-2 text-gray-400" />
+                      <div
+                        className={`border-2 border-dashed rounded-lg p-6 text-center transition-colors ${
+                          uploadedFiles.cv
+                            ? "border-green-300 bg-green-50"
+                            : "border-gray-300"
+                        }`}
+                      >
+                        <File
+                          className={`h-8 w-8 mx-auto mb-2 ${
+                            uploadedFiles.cv
+                              ? "text-green-600"
+                              : "text-gray-400"
+                          }`}
+                        />
                         <input
                           type="file"
                           accept=".pdf,.doc,.docx"
-                          onChange={handleFileImport}
+                          onChange={handleCVUpload}
                           className="hidden"
                           id="cv-upload"
                         />
                         <label htmlFor="cv-upload" className="cursor-pointer">
                           <p className="text-sm text-gray-600">
-                            Click to upload CV
+                            {uploadedFiles.cv
+                              ? uploadedFiles.cv.name
+                              : "Click to upload CV"}
                           </p>
                           <p className="text-xs text-gray-400">
                             PDF, DOC, DOCX
@@ -341,17 +355,32 @@ export default function CandidateSelection() {
                       <label className="text-sm font-medium">
                         Cover Letter
                       </label>
-                      <div className="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center">
-                        <Mail className="h-8 w-8 mx-auto mb-2 text-gray-400" />
+                      <div
+                        className={`border-2 border-dashed rounded-lg p-6 text-center transition-colors ${
+                          uploadedFiles.coverLetter
+                            ? "border-green-300 bg-green-50"
+                            : "border-gray-300"
+                        }`}
+                      >
+                        <Mail
+                          className={`h-8 w-8 mx-auto mb-2 ${
+                            uploadedFiles.coverLetter
+                              ? "text-green-600"
+                              : "text-gray-400"
+                          }`}
+                        />
                         <input
                           type="file"
                           accept=".pdf,.doc,.docx"
+                          onChange={handleCoverLetterUpload}
                           className="hidden"
                           id="cl-upload"
                         />
                         <label htmlFor="cl-upload" className="cursor-pointer">
                           <p className="text-sm text-gray-600">
-                            Click to upload Cover Letter
+                            {uploadedFiles.coverLetter
+                              ? uploadedFiles.coverLetter.name
+                              : "Click to upload Cover Letter"}
                           </p>
                           <p className="text-xs text-gray-400">
                             PDF, DOC, DOCX

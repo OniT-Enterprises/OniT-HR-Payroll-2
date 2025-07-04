@@ -520,13 +520,7 @@ export default function CandidateSelection() {
                     </Button>
                     <Button
                       disabled={!importedData.name || isProcessing}
-                      onClick={() => {
-                        // Handle adding candidate logic here
-                        setShowImportDialog(false);
-                        setUploadedFiles({ cv: null, coverLetter: null });
-                        setImportedData({ name: "", email: "", phone: "" });
-                        setIsProcessing(false);
-                      }}
+                      onClick={addCandidate}
                     >
                       {isProcessing ? "Processing..." : "Add Candidate"}
                     </Button>

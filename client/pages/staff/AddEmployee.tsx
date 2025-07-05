@@ -229,7 +229,93 @@ export default function AddEmployee() {
     const file = event.target.files?.[0];
     if (file) {
       setImportFile(file);
+      setShowImportDialog(false);
+      setShowColumnMapper(true);
     }
+  };
+
+  const handleMappingComplete = async (mappings: any[], csvData: any[]) => {
+    try {
+      if (csvData.length === 0) {
+        toast({
+          title: "No Data",
+          description: "The CSV file contains no employee data.",
+          variant: "destructive",
+        });
+        return;
+      }
+
+      // Process the first row of data with the mappings
+      const firstEmployee = csvData[0];
+      const mappedData: any = {};
+
+      // Apply column mappings to extract data
+      mappings.forEach((mapping) => {
+        const csvValue = firstEmployee[mapping.csvColumn] || "";
+        mappedData[mapping.employeeField] = csvValue;
+      });
+
+      // Map the data to our form structure
+      setFormData({
+        profilePhoto: null,
+        firstName: mappedData.firstName || "",
+        lastName: mappedData.lastName || "",
+        email: mappedData.email || "",
+        phone: mappedData.phone || "",
+        emergencyContactName: mappedData.emergencyContactName || "",
+        emergencyContactPhone: mappedData.emergencyContactPhone || "",
+        department: mappedData.department || "",
+        jobTitle: mappedData.position || "",
+        manager: mappedData.manager || "",
+        startDate: mappedData.hireDate || "",
+        employmentType: mappedData.employmentType || "Full-time",
+        status: "Active",
+        salary: mappedData.annualSalary || "",
+        leaveDays: mappedData.annualLeaveDays || "",
+        benefits: mappedData.benefitsPackage || "",
+      });
+
+      // Update documents if present
+      const updatedDocuments = [...documents];
+      if (mappedData.socialSecurityNumber) {
+        updatedDocuments[0].number = mappedData.socialSecurityNumber;
+        updatedDocuments[0].expiryDate = mappedData.ssnExpiryDate || "";
+      }
+      if (mappedData.electoralCardNumber) {
+        updatedDocuments[1].number = mappedData.electoralCardNumber;
+        updatedDocuments[1].expiryDate =
+          mappedData.electoralCardExpiryDate || "";
+      }
+      if (mappedData.idCardNumber) {
+        updatedDocuments[2].number = mappedData.idCardNumber;
+        updatedDocuments[2].expiryDate = mappedData.idCardExpiryDate || "";
+      }
+      if (mappedData.passportNumber) {
+        updatedDocuments[3].number = mappedData.passportNumber;
+        updatedDocuments[3].expiryDate = mappedData.passportExpiryDate || "";
+      }
+      setDocuments(updatedDocuments);
+
+      setShowColumnMapper(false);
+      setImportFile(null);
+
+      toast({
+        title: "Import Successful",
+        description: `Employee data imported successfully. ${csvData.length - 1} more employees available in CSV.`,
+      });
+    } catch (error) {
+      console.error("Error processing mapped data:", error);
+      toast({
+        title: "Import Failed",
+        description: "Failed to process the mapped data. Please try again.",
+        variant: "destructive",
+      });
+    }
+  };
+
+  const handleMappingCancel = () => {
+    setShowColumnMapper(false);
+    setImportFile(null);
   };
 
   const processCSVImport = async () => {

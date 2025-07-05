@@ -335,30 +335,93 @@ export default function AddEmployee() {
     e.preventDefault();
 
     // Basic validation
-    if (!formData.firstName || !formData.lastName || !formData.email) {
+    if (
+      !formData.firstName ||
+      !formData.lastName ||
+      !formData.email ||
+      !formData.department ||
+      !formData.jobTitle
+    ) {
       toast({
         title: "Validation Error",
-        description: "Please fill in all required fields.",
+        description:
+          "Please fill in all required fields (First Name, Last Name, Email, Department, Job Title).",
         variant: "destructive",
       });
       return;
     }
 
     try {
-      // Mock Firebase save operation
-      console.log("Saving employee to Firestore:", { ...formData, documents });
+      // Generate employee ID
+      const currentDate = new Date();
+      const employeeId = `EMP${Math.floor(Math.random() * 900) + 100}`;
 
-      // Simulate API call delay
-      await new Promise((resolve) => setTimeout(resolve, 1000));
+      // Create employee object in the format expected by Firebase
+      const newEmployee: Omit<Employee, "id"> = {
+        personalInfo: {
+          firstName: formData.firstName,
+          lastName: formData.lastName,
+          email: formData.email,
+          phone: formData.phone,
+          address: "", // Could be added to form later
+          dateOfBirth: "", // Could be added to form later
+          socialSecurityNumber: documents[0]?.number || "",
+          emergencyContactName: formData.emergencyContactName,
+          emergencyContactPhone: formData.emergencyContactPhone,
+        },
+        jobDetails: {
+          employeeId: employeeId,
+          department: formData.department,
+          position: formData.jobTitle,
+          hireDate:
+            formData.startDate || currentDate.toISOString().split("T")[0],
+          employmentType: formData.employmentType,
+          workLocation: "Office", // Default value
+          manager: formData.manager,
+        },
+        compensation: {
+          annualSalary: parseInt(formData.salary) || 0,
+          annualLeaveDays: parseInt(formData.leaveDays) || 25,
+          benefitsPackage: formData.benefits || "Standard",
+        },
+        documents: {
+          socialSecurityNumber: {
+            number: documents[0]?.number || "",
+            expiryDate: documents[0]?.expiryDate || "",
+          },
+          electoralCard: {
+            number: documents[1]?.number || "",
+            expiryDate: documents[1]?.expiryDate || "",
+          },
+          idCard: {
+            number: documents[2]?.number || "",
+            expiryDate: documents[2]?.expiryDate || "",
+          },
+          passport: {
+            number: documents[3]?.number || "",
+            expiryDate: documents[3]?.expiryDate || "",
+          },
+        },
+        status: formData.status === "Active" ? "active" : "inactive",
+      };
 
-      toast({
-        title: "Success",
-        description: "Employee added successfully!",
-      });
+      // Save to Firebase
+      const employeeId_returned =
+        await employeeService.addEmployee(newEmployee);
 
-      // Navigate back to All Employees
-      navigate("/staff/employees");
+      if (employeeId_returned) {
+        toast({
+          title: "Success",
+          description: `Employee ${formData.firstName} ${formData.lastName} added successfully!`,
+        });
+
+        // Navigate back to All Employees
+        navigate("/staff/employees");
+      } else {
+        throw new Error("Failed to save employee");
+      }
     } catch (error) {
+      console.error("Error adding employee:", error);
       toast({
         title: "Error",
         description: "Failed to add employee. Please try again.",

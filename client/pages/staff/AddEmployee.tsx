@@ -952,9 +952,9 @@ export default function AddEmployee() {
             >
               Cancel
             </Button>
-            <Button type="submit">
+            <Button type="submit" disabled={isSubmitting}>
               <Save className="mr-2 h-4 w-4" />
-              Save Employee
+              {isSubmitting ? "Saving..." : "Save Employee"}
             </Button>
           </div>
         </form>

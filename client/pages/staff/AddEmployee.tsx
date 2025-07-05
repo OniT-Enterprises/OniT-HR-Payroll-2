@@ -565,8 +565,8 @@ export default function AddEmployee() {
                 <DialogHeader>
                   <DialogTitle>Import Employee Data</DialogTitle>
                   <DialogDescription>
-                    Upload a CSV file with employee information. Download the
-                    template first for the correct format.
+                    Upload a CSV file with employee information or download our
+                    template.
                   </DialogDescription>
                 </DialogHeader>
                 <div className="space-y-4">
@@ -580,11 +580,18 @@ export default function AddEmployee() {
                       className="mt-1"
                     />
                   </div>
-                  {importFile && (
-                    <div className="text-sm text-muted-foreground">
-                      Selected: {importFile.name}
-                    </div>
-                  )}
+                  <div className="text-center">
+                    <span className="text-sm text-muted-foreground">or</span>
+                  </div>
+                  <Button
+                    type="button"
+                    variant="outline"
+                    onClick={downloadTemplate}
+                    className="w-full"
+                  >
+                    <FileDown className="mr-2 h-4 w-4" />
+                    Download Template
+                  </Button>
                   <div className="flex gap-2">
                     <Button
                       type="button"
@@ -597,15 +604,19 @@ export default function AddEmployee() {
                     >
                       Cancel
                     </Button>
-                    <Button
-                      type="button"
-                      onClick={processCSVImport}
-                      className="flex-1"
-                    >
-                      Import Data
-                    </Button>
                   </div>
                 </div>
+              </DialogContent>
+            </Dialog>
+
+            {/* CSV Column Mapper Dialog */}
+            <Dialog open={showColumnMapper} onOpenChange={setShowColumnMapper}>
+              <DialogContent className="max-w-7xl max-h-[90vh] overflow-auto">
+                <CSVColumnMapper
+                  csvFile={importFile}
+                  onMappingComplete={handleMappingComplete}
+                  onCancel={handleMappingCancel}
+                />
               </DialogContent>
             </Dialog>
           </div>

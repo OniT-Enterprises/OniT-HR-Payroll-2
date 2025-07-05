@@ -42,6 +42,7 @@ import {
 } from "@/components/ui/tooltip";
 import { useToast } from "@/hooks/use-toast";
 import MainNavigation from "@/components/layout/MainNavigation";
+import { employeeService, type Employee } from "@/services/employeeService";
 import {
   UserPlus,
   Upload,

@@ -91,6 +91,7 @@ export default function AddEmployee() {
   const [showImportDialog, setShowImportDialog] = useState(false);
   const [importFile, setImportFile] = useState<File | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [showColumnMapper, setShowColumnMapper] = useState(false);
 
   // Mock data for dropdowns (would come from Firestore)
   const departments = [

@@ -335,6 +335,8 @@ export default function AddEmployee() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
+    if (isSubmitting) return; // Prevent double submission
+
     // Basic validation
     if (
       !formData.firstName ||
@@ -352,6 +354,7 @@ export default function AddEmployee() {
       return;
     }
 
+    setIsSubmitting(true);
     try {
       // Generate employee ID
       const currentDate = new Date();

@@ -43,6 +43,7 @@ import {
 import { useToast } from "@/hooks/use-toast";
 import MainNavigation from "@/components/layout/MainNavigation";
 import { employeeService, type Employee } from "@/services/employeeService";
+import CSVColumnMapper from "@/components/CSVColumnMapper";
 import {
   UserPlus,
   Upload,

@@ -431,6 +431,8 @@ export default function AddEmployee() {
         description: "Failed to add employee. Please try again.",
         variant: "destructive",
       });
+    } finally {
+      setIsSubmitting(false);
     }
   };
 

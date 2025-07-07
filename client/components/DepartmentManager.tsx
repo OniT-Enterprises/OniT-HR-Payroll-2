@@ -282,7 +282,7 @@ export default function DepartmentManager({
                         <SelectValue placeholder="Select director" />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="">No Director</SelectItem>
+                        <SelectItem value="none">No Director</SelectItem>
                         {employees
                           .filter((emp) => emp.status === "active")
                           .map((employee) => (

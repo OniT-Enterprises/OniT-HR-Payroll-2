@@ -168,8 +168,8 @@ export default function DepartmentManager({
     setEditingDept(department);
     setFormData({
       name: department.name,
-      director: department.director || "",
-      manager: department.manager || "",
+      director: department.director || "none",
+      manager: department.manager || "none",
       description: department.description || "",
     });
     setShowAddForm(true);

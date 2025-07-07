@@ -260,54 +260,70 @@ export default function DepartmentManager({
                 </CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
-                <div className="grid md:grid-cols-2 gap-4">
-                  <div className="space-y-2">
-                    <Label htmlFor="deptName">Department Name *</Label>
-                    <Input
-                      id="deptName"
-                      value={formData.name}
-                      onChange={(e) =>
-                        handleInputChange("name", e.target.value)
-                      }
-                      placeholder="e.g., Engineering, Marketing"
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="deptBudget">Annual Budget</Label>
-                    <Input
-                      id="deptBudget"
-                      type="number"
-                      value={formData.budget || ""}
-                      onChange={(e) =>
-                        handleInputChange("budget", e.target.value)
-                      }
-                      placeholder="0"
-                    />
-                  </div>
+                <div className="space-y-2">
+                  <Label htmlFor="deptName">Department Name *</Label>
+                  <Input
+                    id="deptName"
+                    value={formData.name}
+                    onChange={(e) => handleInputChange("name", e.target.value)}
+                    placeholder="e.g., Engineering, Marketing"
+                  />
                 </div>
 
                 <div className="grid md:grid-cols-2 gap-4">
                   <div className="space-y-2">
                     <Label htmlFor="deptDirector">Director</Label>
-                    <Input
-                      id="deptDirector"
+                    <Select
                       value={formData.director}
-                      onChange={(e) =>
-                        handleInputChange("director", e.target.value)
+                      onValueChange={(value) =>
+                        handleInputChange("director", value)
                       }
-                      placeholder="Department director name"
-                    />
+                    >
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select director" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="">No Director</SelectItem>
+                        {employees
+                          .filter((emp) => emp.status === "active")
+                          .map((employee) => (
+                            <SelectItem
+                              key={employee.id}
+                              value={`${employee.personalInfo.firstName} ${employee.personalInfo.lastName}`}
+                            >
+                              {employee.personalInfo.firstName}{" "}
+                              {employee.personalInfo.lastName}
+                            </SelectItem>
+                          ))}
+                      </SelectContent>
+                    </Select>
                   </div>
                   <div className="space-y-2">
                     <Label htmlFor="deptManager">Manager</Label>
-                    <Input
-                      id="deptManager"
+                    <Select
                       value={formData.manager}
-                      onChange={(e) =>
-                        handleInputChange("manager", e.target.value)
+                      onValueChange={(value) =>
+                        handleInputChange("manager", value)
                       }
-                      placeholder="Department manager name"
-                    />
+                    >
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select manager" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="">No Manager</SelectItem>
+                        {employees
+                          .filter((emp) => emp.status === "active")
+                          .map((employee) => (
+                            <SelectItem
+                              key={employee.id}
+                              value={`${employee.personalInfo.firstName} ${employee.personalInfo.lastName}`}
+                            >
+                              {employee.personalInfo.firstName}{" "}
+                              {employee.personalInfo.lastName}
+                            </SelectItem>
+                          ))}
+                      </SelectContent>
+                    </Select>
                   </div>
                 </div>
 

@@ -169,7 +169,7 @@ export default function PayrollReports() {
                         Monthly Payroll
                       </p>
                       <p className="text-2xl font-bold">
-                        {formatCurrency(Math.round(totalSalary / 12))}
+                        {formatCurrency(Math.round(totalMonthlySalary))}
                       </p>
                       <p className="text-xs text-orange-600">Estimated</p>
                     </div>

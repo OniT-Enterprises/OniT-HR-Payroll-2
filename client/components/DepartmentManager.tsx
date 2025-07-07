@@ -104,8 +104,8 @@ export default function DepartmentManager({
   const resetForm = () => {
     setFormData({
       name: "",
-      director: "",
-      manager: "",
+      director: "none",
+      manager: "none",
       description: "",
     });
     setEditingDept(null);

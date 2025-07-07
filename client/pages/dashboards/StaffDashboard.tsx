@@ -22,6 +22,75 @@ import {
 } from "lucide-react";
 
 export default function StaffDashboard() {
+  const [employees, setEmployees] = useState<Employee[]>([]);
+  const [loading, setLoading] = useState(true);
+  const { toast } = useToast();
+
+  useEffect(() => {
+    loadEmployees();
+  }, []);
+
+  const loadEmployees = async () => {
+    try {
+      setLoading(true);
+      const employeesData = await employeeService.getAllEmployees();
+      setEmployees(employeesData);
+    } catch (error) {
+      console.error("Error loading employees:", error);
+      toast({
+        title: "Error",
+        description: "Failed to load employee data",
+        variant: "destructive",
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Calculate real statistics
+  const totalEmployees = employees.length;
+  const activeEmployees = employees.filter(
+    (emp) => emp.status === "active",
+  ).length;
+  const inactiveEmployees = employees.filter(
+    (emp) => emp.status === "inactive",
+  ).length;
+
+  // Calculate department breakdown
+  const departmentStats = employees.reduce(
+    (acc, emp) => {
+      const dept = emp.jobDetails.department;
+      acc[dept] = (acc[dept] || 0) + 1;
+      return acc;
+    },
+    {} as Record<string, number>,
+  );
+
+  const totalDepartments = Object.keys(departmentStats).length;
+  const activeRate =
+    totalEmployees > 0
+      ? ((activeEmployees / totalEmployees) * 100).toFixed(1)
+      : "0";
+
+  // Get top departments
+  const topDepartments = Object.entries(departmentStats)
+    .sort(([, a], [, b]) => b - a)
+    .slice(0, 4);
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gray-50">
+        <MainNavigation />
+        <div className="p-6">
+          <div className="flex items-center justify-center p-8">
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-purple-600"></div>
+            <span className="ml-3">Loading dashboard...</span>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-gray-50">
       <MainNavigation />

@@ -233,7 +233,7 @@ export default function PayrollReports() {
                     <div className="flex justify-between">
                       <span className="text-sm">Median Salary:</span>
                       <span className="font-medium">
-                        {formatCurrency(averageSalary)}
+                        {formatCurrency(averageMonthlySalary)}
                       </span>
                     </div>
                     <Button variant="outline" size="sm" className="w-full">

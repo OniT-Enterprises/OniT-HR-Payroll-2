@@ -301,9 +301,6 @@ export default function Departments() {
             {/* Departments Grid */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {departmentStats.map((dept, index) => {
-                const departmentData = departments.find(
-                  (d) => d.name === dept.name,
-                );
                 const monthlyPayroll = dept.employees.reduce(
                   (sum, emp) => sum + emp.compensation.annualSalary / 12,
                   0,
@@ -332,30 +329,32 @@ export default function Departments() {
                     <CardContent>
                       <div className="space-y-4">
                         {/* Director */}
-                        {departmentData?.director && (
-                          <div className="flex items-center gap-2 text-sm">
-                            <Crown className="h-4 w-4 text-blue-500" />
-                            <span className="text-muted-foreground">
-                              Director:
-                            </span>
-                            <span className="font-medium">
-                              {departmentData.director}
-                            </span>
-                          </div>
-                        )}
+                        {dept.department?.director &&
+                          dept.department.director !== "none" && (
+                            <div className="flex items-center gap-2 text-sm">
+                              <Crown className="h-4 w-4 text-blue-500" />
+                              <span className="text-muted-foreground">
+                                Director:
+                              </span>
+                              <span className="font-medium">
+                                {dept.department.director}
+                              </span>
+                            </div>
+                          )}
 
                         {/* Manager */}
-                        {departmentData?.manager && (
-                          <div className="flex items-center gap-2 text-sm">
-                            <User className="h-4 w-4 text-green-500" />
-                            <span className="text-muted-foreground">
-                              Manager:
-                            </span>
-                            <span className="font-medium">
-                              {departmentData.manager}
-                            </span>
-                          </div>
-                        )}
+                        {dept.department?.manager &&
+                          dept.department.manager !== "none" && (
+                            <div className="flex items-center gap-2 text-sm">
+                              <User className="h-4 w-4 text-green-500" />
+                              <span className="text-muted-foreground">
+                                Manager:
+                              </span>
+                              <span className="font-medium">
+                                {departmentData.manager}
+                              </span>
+                            </div>
+                          )}
 
                         {/* Staff Count */}
                         <div className="flex justify-between items-center">

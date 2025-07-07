@@ -210,7 +210,7 @@ export default function PayrollReports() {
                         {formatCurrency(
                           Math.max(
                             ...employees.map(
-                              (emp) => emp.compensation.annualSalary,
+                              (emp) => emp.compensation.annualSalary / 12,
                             ),
                           ),
                         )}

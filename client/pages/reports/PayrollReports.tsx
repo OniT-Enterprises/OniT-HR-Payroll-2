@@ -225,7 +225,7 @@ export default function PayrollReports() {
                               .filter(
                                 (emp) => emp.compensation.annualSalary > 0,
                               )
-                              .map((emp) => emp.compensation.annualSalary),
+                              .map((emp) => emp.compensation.annualSalary / 12),
                           ),
                         )}
                       </span>

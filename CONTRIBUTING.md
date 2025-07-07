@@ -43,11 +43,11 @@ For feature requests:
 
 ```bash
 # Clone your fork
-git clone https://github.com/YOUR_USERNAME/OniT-HR-Payroll.git
-cd OniT-HR-Payroll
+git clone https://github.com/YOUR_USERNAME/OniT-HR-Payroll-2.git
+cd OniT-HR-Payroll-2
 
 # Add upstream remote
-git remote add upstream https://github.com/OniT-Enterprises/OniT-HR-Payroll.git
+git remote add upstream https://github.com/OniT-Enterprises/OniT-HR-Payroll-2.git
 
 # Install dependencies
 npm install

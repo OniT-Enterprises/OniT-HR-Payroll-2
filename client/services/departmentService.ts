@@ -16,7 +16,9 @@ export interface Department {
   name: string;
   director?: string;
   manager?: string;
-  description?: string;
+  icon?: string;
+  shape?: "circle" | "square" | "hexagon" | "diamond";
+  color?: string;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -25,7 +27,9 @@ export interface DepartmentInput {
   name: string;
   director?: string;
   manager?: string;
-  description?: string;
+  icon?: string;
+  shape?: "circle" | "square" | "hexagon" | "diamond";
+  color?: string;
 }
 
 class DepartmentService {

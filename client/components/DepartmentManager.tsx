@@ -33,6 +33,12 @@ import {
 } from "@/services/departmentService";
 import { employeeService, type Employee } from "@/services/employeeService";
 import {
+  departmentIcons,
+  departmentColors,
+  departmentShapes,
+  type DepartmentIcon,
+} from "@/lib/departmentIcons";
+import {
   Building,
   Plus,
   Edit,
@@ -41,6 +47,10 @@ import {
   User,
   Save,
   X,
+  Palette,
+  Shapes,
+  ChevronDown,
+  Check,
 } from "lucide-react";
 
 interface DepartmentManagerProps {

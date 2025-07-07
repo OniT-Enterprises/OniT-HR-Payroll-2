@@ -463,6 +463,14 @@ export default function Departments() {
             </Card>
           </div>
         )}
+
+        {/* Department Manager Dialog */}
+        <DepartmentManager
+          open={showDepartmentManager}
+          onOpenChange={setShowDepartmentManager}
+          mode={managerMode}
+          onDepartmentChange={loadData}
+        />
       </div>
     </div>
   );

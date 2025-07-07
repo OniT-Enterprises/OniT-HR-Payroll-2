@@ -10,6 +10,8 @@ import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import MainNavigation from "@/components/layout/MainNavigation";
+import { employeeService } from "@/services/employeeService";
+import React, { useState, useEffect } from "react";
 import {
   Users,
   DollarSign,

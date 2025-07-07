@@ -150,7 +150,7 @@ export default function PayrollReports() {
                   <div className="flex items-center justify-between">
                     <div>
                       <p className="text-sm font-medium text-muted-foreground">
-                        Average Salary
+                        Average Monthly Salary
                       </p>
                       <p className="text-2xl font-bold">
                         {formatCurrency(averageMonthlySalary)}

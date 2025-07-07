@@ -17,7 +17,6 @@ export interface Department {
   director?: string;
   manager?: string;
   description?: string;
-  budget?: number;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -27,7 +26,6 @@ export interface DepartmentInput {
   director?: string;
   manager?: string;
   description?: string;
-  budget?: number;
 }
 
 class DepartmentService {

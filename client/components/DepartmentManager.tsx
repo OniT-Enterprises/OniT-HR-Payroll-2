@@ -115,7 +115,7 @@ export default function DepartmentManager({
   const handleInputChange = (field: keyof DepartmentInput, value: string) => {
     setFormData((prev) => ({
       ...prev,
-      [field]: field === "budget" ? parseFloat(value) || 0 : value,
+      [field]: value,
     }));
   };
 

@@ -194,13 +194,14 @@ export default function AllEmployees() {
     }
   };
 
-  const formatSalary = (salary: number) => {
+  const formatSalary = (annualSalary: number) => {
+    const monthlySalary = annualSalary / 12;
     return new Intl.NumberFormat("en-US", {
       style: "currency",
       currency: "USD",
       minimumFractionDigits: 0,
       maximumFractionDigits: 0,
-    }).format(salary);
+    }).format(monthlySalary);
   };
 
   if (loading) {

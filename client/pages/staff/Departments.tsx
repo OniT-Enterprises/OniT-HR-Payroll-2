@@ -158,13 +158,13 @@ export default function Departments() {
     return colors[index % colors.length];
   };
 
-  const formatSalary = (salary: number) => {
+  const formatSalary = (monthlySalary: number) => {
     return new Intl.NumberFormat("en-US", {
       style: "currency",
       currency: "USD",
       minimumFractionDigits: 0,
       maximumFractionDigits: 0,
-    }).format(salary);
+    }).format(monthlySalary);
   };
 
   if (loading) {

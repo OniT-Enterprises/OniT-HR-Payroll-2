@@ -96,26 +96,38 @@ export default function AddEmployee() {
   const [importFile, setImportFile] = useState<File | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showColumnMapper, setShowColumnMapper] = useState(false);
+  const [departments, setDepartments] = useState<Department[]>([]);
+  const [managers, setManagers] = useState<Employee[]>([]);
+  const [loading, setLoading] = useState(true);
 
-  // Mock data for dropdowns (would come from Firestore)
-  const departments = [
-    { id: "eng", name: "Engineering" },
-    { id: "marketing", name: "Marketing" },
-    { id: "hr", name: "Human Resources" },
-    { id: "sales", name: "Sales" },
-    { id: "finance", name: "Finance" },
-    { id: "design", name: "Design" },
-    { id: "product", name: "Product" },
-    { id: "support", name: "Customer Support" },
-  ];
+  useEffect(() => {
+    loadDepartmentsAndManagers();
+  }, []);
 
-  const managers = [
-    { id: "1", name: "Sarah Johnson" },
-    { id: "2", name: "Michael Chen" },
-    { id: "3", name: "Emily Rodriguez" },
-    { id: "4", name: "James Miller" },
-    { id: "5", name: "Jennifer Brown" },
-  ];
+  const loadDepartmentsAndManagers = async () => {
+    try {
+      const [departmentsData, employeesData] = await Promise.all([
+        departmentService.getAllDepartments(),
+        employeeService.getAllEmployees(),
+      ]);
+
+      setDepartments(departmentsData);
+      // Filter employees who could be managers (active employees)
+      const potentialManagers = employeesData.filter(
+        (emp) => emp.status === "active",
+      );
+      setManagers(potentialManagers);
+    } catch (error) {
+      console.error("Error loading departments and managers:", error);
+      toast({
+        title: "Error",
+        description: "Failed to load departments and managers",
+        variant: "destructive",
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const handleInputChange = (field: string, value: string) => {
     setFormData((prev) => ({

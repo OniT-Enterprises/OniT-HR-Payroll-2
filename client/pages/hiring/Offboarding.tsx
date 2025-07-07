@@ -438,6 +438,18 @@ export default function Offboarding() {
       <MainNavigation />
 
       <div className="p-6">
+        {/* Connection Status Banner */}
+        {isOffline && (
+          <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-lg">
+            <div className="flex items-center gap-2">
+              <AlertTriangle className="h-4 w-4 text-red-600" />
+              <span className="text-sm text-red-700">
+                You're currently offline. Some features may not work properly.
+              </span>
+            </div>
+          </div>
+        )}
+
         <div className="flex items-center justify-between mb-8">
           <div className="flex items-center gap-3">
             <UserMinus className="h-8 w-8 text-green-400" />

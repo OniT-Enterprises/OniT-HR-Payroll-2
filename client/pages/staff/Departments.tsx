@@ -122,10 +122,10 @@ export default function Departments() {
     const inactiveCount = deptEmployees.filter(
       (emp) => emp.status === "inactive",
     ).length;
-    const averageSalary =
+    const averageMonthlySalary =
       deptEmployees.length > 0
         ? deptEmployees.reduce(
-            (sum, emp) => sum + emp.compensation.annualSalary,
+            (sum, emp) => sum + emp.compensation.annualSalary / 12,
             0,
           ) / deptEmployees.length
         : 0;

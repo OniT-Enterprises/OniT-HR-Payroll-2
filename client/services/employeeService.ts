@@ -57,15 +57,38 @@ class EmployeeService {
 
   async getAllEmployees(): Promise<Employee[]> {
     try {
-      const querySnapshot = await getDocs(
+      // Add timeout and retry logic
+      const timeoutPromise = new Promise((_, reject) =>
+        setTimeout(() => reject(new Error("Request timeout")), 10000),
+      );
+
+      const queryPromise = getDocs(
         query(this.collection, orderBy("createdAt", "desc")),
       );
+
+      const querySnapshot = (await Promise.race([
+        queryPromise,
+        timeoutPromise,
+      ])) as any;
+
       return querySnapshot.docs.map((doc) => ({
         id: doc.id,
         ...doc.data(),
       })) as Employee[];
     } catch (error) {
       console.error("Error getting employees:", error);
+
+      // If it's a network error, throw it so the calling code can handle it
+      if (
+        error.message?.includes("fetch") ||
+        error.message?.includes("timeout") ||
+        error.code?.includes("unavailable")
+      ) {
+        throw new Error(
+          "Firebase connection failed. Please check your internet connection.",
+        );
+      }
+
       return [];
     }
   }

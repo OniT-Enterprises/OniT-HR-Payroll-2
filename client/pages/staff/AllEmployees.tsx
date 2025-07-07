@@ -129,7 +129,7 @@ export default function AllEmployees() {
       "Hire Date",
       "Employment Type",
       "Work Location",
-      "Annual Salary",
+      "Monthly Salary",
       "Status",
     ];
 

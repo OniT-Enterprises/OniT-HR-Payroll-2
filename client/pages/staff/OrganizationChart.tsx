@@ -374,6 +374,14 @@ export default function OrganizationChart() {
             </div>
           </div>
         )}
+
+        {/* Department Manager Dialog */}
+        <DepartmentManager
+          open={showDepartmentManager}
+          onOpenChange={setShowDepartmentManager}
+          mode={managerMode}
+          onDepartmentChange={loadData}
+        />
       </div>
     </div>
   );

@@ -111,7 +111,13 @@ export default function AddEmployee() {
         employeeService.getAllEmployees(),
       ]);
 
-      setDepartments(departmentsData);
+      // Auto-migrate departments that exist in employee records but not in departments collection
+      const migrationResult = await migrateMissingDepartments(
+        employeesData,
+        departmentsData,
+      );
+
+      setDepartments(migrationResult.departments);
       // Filter employees who could be managers (active employees)
       const potentialManagers = employeesData.filter(
         (emp) => emp.status === "active",
@@ -126,6 +132,45 @@ export default function AddEmployee() {
       });
     } finally {
       setLoading(false);
+    }
+  };
+
+  const migrateMissingDepartments = async (
+    employees: Employee[],
+    existingDepartments: Department[],
+  ) => {
+    try {
+      // Get unique department names from employees
+      const employeeDepartments = [
+        ...new Set(employees.map((emp) => emp.jobDetails.department)),
+      ];
+
+      // Get existing department names
+      const existingDeptNames = existingDepartments.map((dept) => dept.name);
+
+      // Find departments that exist in employee records but not in departments collection
+      const missingDepartments = employeeDepartments.filter(
+        (deptName) => deptName && !existingDeptNames.includes(deptName),
+      );
+
+      // Create missing departments
+      for (const deptName of missingDepartments) {
+        await departmentService.addDepartment({
+          name: deptName,
+          description: `Auto-migrated department from existing employee records`,
+        });
+      }
+
+      // Return updated departments
+      const finalDepartments =
+        missingDepartments.length > 0
+          ? await departmentService.getAllDepartments()
+          : existingDepartments;
+
+      return { departments: finalDepartments };
+    } catch (error) {
+      console.error("Error migrating departments:", error);
+      return { departments: existingDepartments };
     }
   };
 

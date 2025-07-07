@@ -135,7 +135,7 @@ export default function PayrollReports() {
                         Total Annual Payroll
                       </p>
                       <p className="text-2xl font-bold">
-                        {formatCurrency(totalSalary)}
+                        {formatCurrency(totalMonthlySalary)}
                       </p>
                       <p className="text-xs text-green-600">
                         Based on current salaries

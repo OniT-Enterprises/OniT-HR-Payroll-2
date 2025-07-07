@@ -23,6 +23,50 @@ import {
 } from "lucide-react";
 
 export default function TimeLeaveDashboard() {
+  const [employees, setEmployees] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const { toast } = useToast();
+
+  useEffect(() => {
+    loadEmployees();
+  }, []);
+
+  const loadEmployees = async () => {
+    try {
+      setLoading(true);
+      const employeesData = await employeeService.getAllEmployees();
+      setEmployees(employeesData);
+    } catch (error) {
+      console.error("Error loading employees:", error);
+      toast({
+        title: "Error",
+        description: "Failed to load employee data",
+        variant: "destructive",
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const totalEmployees = employees.length;
+  const activeEmployees = employees.filter(
+    (emp) => emp.status === "active",
+  ).length;
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gray-50">
+        <MainNavigation />
+        <div className="p-6">
+          <div className="flex items-center justify-center p-8">
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+            <span className="ml-3">Loading time & leave data...</span>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-gray-50">
       <MainNavigation />

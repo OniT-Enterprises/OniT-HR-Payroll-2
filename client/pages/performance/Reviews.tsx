@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -8,622 +8,325 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
-import {
-  Pagination,
-  PaginationContent,
-  PaginationItem,
-  PaginationLink,
-  PaginationNext,
-  PaginationPrevious,
-} from "@/components/ui/pagination";
-import { useToast } from "@/hooks/use-toast";
 import MainNavigation from "@/components/layout/MainNavigation";
+import { employeeService } from "@/services/employeeService";
+import { useToast } from "@/hooks/use-toast";
 import {
-  Filter,
-  Plus,
-  Download,
-  Eye,
-  Calendar as CalendarIcon,
   Star,
+  Users,
+  Database,
+  AlertCircle,
   User,
-  FileText,
+  Plus,
+  Filter,
+  Download,
 } from "lucide-react";
 
 export default function Reviews() {
+  const [employees, setEmployees] = useState([]);
+  const [loading, setLoading] = useState(true);
   const { toast } = useToast();
-  const [fromDate, setFromDate] = useState("");
-  const [toDate, setToDate] = useState("");
-  const [selectedEmployee, setSelectedEmployee] = useState("");
-  const [showAddDialog, setShowAddDialog] = useState(false);
-  const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 10;
 
-  const [formData, setFormData] = useState({
-    employee: "",
-    reviewPeriod: "",
-    reviewer: "",
-    score: 0,
-    comments: "",
-  });
+  useEffect(() => {
+    loadEmployees();
+  }, []);
 
-  // Mock data
-  const employees = [
-    { id: "1", name: "Sarah Johnson" },
-    { id: "2", name: "Michael Chen" },
-    { id: "3", name: "Emily Rodriguez" },
-    { id: "4", name: "James Miller" },
-    { id: "5", name: "Jennifer Brown" },
-    { id: "6", name: "David Wilson" },
-    { id: "7", name: "Lisa Anderson" },
-    { id: "8", name: "Robert Taylor" },
-  ];
-
-  const reviewPeriods = [
-    { id: "q1-2025", name: "Q1 2025" },
-    { id: "q4-2024", name: "Q4 2024" },
-    { id: "q3-2024", name: "Q3 2024" },
-    { id: "q2-2024", name: "Q2 2024" },
-    { id: "q1-2024", name: "Q1 2024" },
-  ];
-
-  const reviewers = [
-    { id: "1", name: "Sarah Johnson" },
-    { id: "2", name: "Michael Chen" },
-    { id: "3", name: "Emily Rodriguez" },
-    { id: "4", name: "James Miller" },
-    { id: "5", name: "Jennifer Brown" },
-  ];
-
-  // Mock performance reviews data
-  const performanceReviews = [
-    {
-      id: 1,
-      employeeId: "1",
-      employeeName: "Sarah Johnson",
-      reviewPeriod: "Q4 2024",
-      reviewerId: "2",
-      reviewerName: "Michael Chen",
-      overallScore: 4.5,
-      status: "Completed",
-      completedDate: "2024-01-15",
-    },
-    {
-      id: 2,
-      employeeId: "3",
-      employeeName: "Emily Rodriguez",
-      reviewPeriod: "Q4 2024",
-      reviewerId: "1",
-      reviewerName: "Sarah Johnson",
-      overallScore: 4.2,
-      status: "Completed",
-      completedDate: "2024-01-12",
-    },
-    {
-      id: 3,
-      employeeId: "4",
-      employeeName: "James Miller",
-      reviewPeriod: "Q1 2025",
-      reviewerId: "2",
-      reviewerName: "Michael Chen",
-      overallScore: 0,
-      status: "Scheduled",
-      scheduledDate: "2024-02-15",
-    },
-    {
-      id: 4,
-      employeeId: "6",
-      employeeName: "David Wilson",
-      reviewPeriod: "Q4 2024",
-      reviewerId: "1",
-      reviewerName: "Sarah Johnson",
-      overallScore: 3.8,
-      status: "Overdue",
-      dueDate: "2024-01-10",
-    },
-    {
-      id: 5,
-      employeeId: "7",
-      employeeName: "Lisa Anderson",
-      reviewPeriod: "Q1 2025",
-      reviewerId: "5",
-      reviewerName: "Jennifer Brown",
-      overallScore: 0,
-      status: "Scheduled",
-      scheduledDate: "2024-02-20",
-    },
-  ];
-
-  const getStatusBadge = (status: string) => {
-    switch (status) {
-      case "Completed":
-        return <Badge className="bg-green-100 text-green-800">Completed</Badge>;
-      case "Scheduled":
-        return <Badge className="bg-blue-100 text-blue-800">Scheduled</Badge>;
-      case "Overdue":
-        return <Badge className="bg-red-100 text-red-800">Overdue</Badge>;
-      default:
-        return <Badge variant="outline">{status}</Badge>;
-    }
-  };
-
-  const renderStarRating = (score: number) => {
-    return (
-      <div className="flex items-center gap-1">
-        {[1, 2, 3, 4, 5].map((star) => (
-          <Star
-            key={star}
-            className={`h-4 w-4 ${
-              star <= score
-                ? "fill-yellow-400 text-yellow-400"
-                : "text-gray-300"
-            }`}
-          />
-        ))}
-        <span className="ml-2 text-sm text-gray-600">
-          {score > 0 ? score.toFixed(1) : "N/A"}
-        </span>
-      </div>
-    );
-  };
-
-  const handleInputChange = (field: string, value: string | number) => {
-    setFormData((prev) => ({
-      ...prev,
-      [field]: value,
-    }));
-  };
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-
-    if (
-      !formData.employee ||
-      !formData.reviewPeriod ||
-      !formData.reviewer ||
-      formData.score === 0
-    ) {
-      toast({
-        title: "Validation Error",
-        description: "Please fill in all required fields.",
-        variant: "destructive",
-      });
-      return;
-    }
-
+  const loadEmployees = async () => {
     try {
-      console.log("Creating performance review:", formData);
-
-      toast({
-        title: "Success",
-        description: "Review saved successfully.",
-      });
-
-      setFormData({
-        employee: "",
-        reviewPeriod: "",
-        reviewer: "",
-        score: 0,
-        comments: "",
-      });
-      setShowAddDialog(false);
+      setLoading(true);
+      const employeesData = await employeeService.getAllEmployees();
+      setEmployees(employeesData);
     } catch (error) {
+      console.error("Error loading employees:", error);
       toast({
         title: "Error",
-        description: "Failed to save review. Please try again.",
+        description: "Failed to load employee data",
         variant: "destructive",
       });
+    } finally {
+      setLoading(false);
     }
   };
 
-  const handleFilter = () => {
-    console.log("Filtering reviews:", {
-      fromDate,
-      toDate,
-      selectedEmployee: selectedEmployee === "all" ? "" : selectedEmployee,
-    });
-    toast({
-      title: "Filter Applied",
-      description: "Reviews filtered successfully.",
-    });
-  };
+  const activeEmployees = employees.filter((emp) => emp.status === "active");
 
-  const handleExportCSV = () => {
-    const csvData = paginatedReviews.map((review) => ({
-      Employee: review.employeeName,
-      "Review Period": review.reviewPeriod,
-      Reviewer: review.reviewerName,
-      "Overall Score": review.overallScore || "N/A",
-      Status: review.status,
-    }));
-
-    console.log("Exporting CSV data:", csvData);
-    toast({
-      title: "Export Started",
-      description: "CSV file will be downloaded shortly.",
-    });
-  };
-
-  const handleViewDetails = (reviewId: number) => {
-    console.log("Viewing review details:", reviewId);
-    toast({
-      title: "View Details",
-      description: "Opening review details...",
-    });
-  };
-
-  const handleScheduleNext = (employeeId: string) => {
-    console.log("Scheduling next review for employee:", employeeId);
-    toast({
-      title: "Schedule Next",
-      description: "Opening schedule dialog...",
-    });
-  };
-
-  // Filter and pagination
-  const filteredReviews = performanceReviews.filter((review) => {
-    if (selectedEmployee && selectedEmployee !== "all") {
-      return review.employeeId === selectedEmployee;
-    }
-    return true;
-  });
-
-  const totalPages = Math.ceil(filteredReviews.length / itemsPerPage);
-  const startIndex = (currentPage - 1) * itemsPerPage;
-  const paginatedReviews = filteredReviews.slice(
-    startIndex,
-    startIndex + itemsPerPage,
-  );
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-background">
+        <MainNavigation />
+        <div className="p-6">
+          <div className="flex items-center justify-center p-8">
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-purple-600"></div>
+            <span className="ml-3">Loading performance reviews...</span>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-background">
       <MainNavigation />
 
       <div className="p-6">
-        <div className="max-w-7xl mx-auto">
-          <div className="mb-6">
-            <h1 className="text-3xl font-bold text-gray-900 mb-2">Reviews</h1>
-            <p className="text-gray-600">
-              Manage performance reviews and evaluations
+        <div className="flex items-center gap-3 mb-6">
+          <Star className="h-8 w-8 text-purple-600" />
+          <div>
+            <h1 className="text-3xl font-bold">Performance Reviews</h1>
+            <p className="text-muted-foreground">
+              Manage and track employee performance evaluations
             </p>
           </div>
-
-          {/* Filters */}
-          <Card className="mb-6">
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <Filter className="h-5 w-5" />
-                Filters
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="grid grid-cols-1 md:grid-cols-4 gap-4 items-end">
-                <div>
-                  <Label htmlFor="from-date">From Date</Label>
-                  <Input
-                    id="from-date"
-                    type="date"
-                    value={fromDate}
-                    onChange={(e) => setFromDate(e.target.value)}
-                  />
-                </div>
-                <div>
-                  <Label htmlFor="to-date">To Date</Label>
-                  <Input
-                    id="to-date"
-                    type="date"
-                    value={toDate}
-                    onChange={(e) => setToDate(e.target.value)}
-                  />
-                </div>
-                <div>
-                  <Label htmlFor="employee-filter">Employee</Label>
-                  <Select
-                    value={selectedEmployee}
-                    onValueChange={setSelectedEmployee}
-                  >
-                    <SelectTrigger>
-                      <SelectValue placeholder="All employees" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="all">All employees</SelectItem>
-                      {employees.map((employee) => (
-                        <SelectItem key={employee.id} value={employee.id}>
-                          {employee.name}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
-                <div>
-                  <Button onClick={handleFilter} className="w-full">
-                    <Filter className="h-4 w-4 mr-2" />
-                    Filter
-                  </Button>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-
-          {/* Reviews Table */}
-          <Card>
-            <CardHeader>
-              <div className="flex items-center justify-between">
-                <div>
-                  <CardTitle className="flex items-center gap-2">
-                    <FileText className="h-5 w-5" />
-                    Performance Reviews
-                  </CardTitle>
-                  <CardDescription>
-                    Showing {paginatedReviews.length} of{" "}
-                    {filteredReviews.length} reviews
-                  </CardDescription>
-                </div>
-                <div className="flex gap-2">
-                  <Button variant="outline" onClick={handleExportCSV}>
-                    <Download className="h-4 w-4 mr-2" />
-                    Export CSV
-                  </Button>
-                  <Dialog open={showAddDialog} onOpenChange={setShowAddDialog}>
-                    <DialogTrigger asChild>
-                      <Button>
-                        <Plus className="h-4 w-4 mr-2" />
-                        Add Review
-                      </Button>
-                    </DialogTrigger>
-                    <DialogContent className="max-w-md">
-                      <DialogHeader>
-                        <DialogTitle>Add Performance Review</DialogTitle>
-                        <DialogDescription>
-                          Create a new performance review
-                        </DialogDescription>
-                      </DialogHeader>
-                      <form onSubmit={handleSubmit} className="space-y-4">
-                        <div>
-                          <Label htmlFor="employee">Employee *</Label>
-                          <Select
-                            value={formData.employee}
-                            onValueChange={(value) =>
-                              handleInputChange("employee", value)
-                            }
-                          >
-                            <SelectTrigger>
-                              <SelectValue placeholder="Select employee" />
-                            </SelectTrigger>
-                            <SelectContent>
-                              {employees.map((employee) => (
-                                <SelectItem
-                                  key={employee.id}
-                                  value={employee.id}
-                                >
-                                  {employee.name}
-                                </SelectItem>
-                              ))}
-                            </SelectContent>
-                          </Select>
-                        </div>
-                        <div>
-                          <Label htmlFor="review-period">Review Period *</Label>
-                          <Select
-                            value={formData.reviewPeriod}
-                            onValueChange={(value) =>
-                              handleInputChange("reviewPeriod", value)
-                            }
-                          >
-                            <SelectTrigger>
-                              <SelectValue placeholder="Select period" />
-                            </SelectTrigger>
-                            <SelectContent>
-                              {reviewPeriods.map((period) => (
-                                <SelectItem key={period.id} value={period.id}>
-                                  {period.name}
-                                </SelectItem>
-                              ))}
-                            </SelectContent>
-                          </Select>
-                        </div>
-                        <div>
-                          <Label htmlFor="reviewer">Reviewer *</Label>
-                          <Select
-                            value={formData.reviewer}
-                            onValueChange={(value) =>
-                              handleInputChange("reviewer", value)
-                            }
-                          >
-                            <SelectTrigger>
-                              <SelectValue placeholder="Select reviewer" />
-                            </SelectTrigger>
-                            <SelectContent>
-                              {reviewers.map((reviewer) => (
-                                <SelectItem
-                                  key={reviewer.id}
-                                  value={reviewer.id}
-                                >
-                                  {reviewer.name}
-                                </SelectItem>
-                              ))}
-                            </SelectContent>
-                          </Select>
-                        </div>
-                        <div>
-                          <Label htmlFor="score">Overall Score *</Label>
-                          <div className="flex items-center gap-2 mt-2">
-                            {[1, 2, 3, 4, 5].map((star) => (
-                              <button
-                                key={star}
-                                type="button"
-                                onClick={() => handleInputChange("score", star)}
-                                className="p-1"
-                              >
-                                <Star
-                                  className={`h-6 w-6 ${
-                                    star <= formData.score
-                                      ? "fill-yellow-400 text-yellow-400"
-                                      : "text-gray-300 hover:text-yellow-300"
-                                  }`}
-                                />
-                              </button>
-                            ))}
-                            <span className="ml-2 text-sm">
-                              {formData.score > 0
-                                ? `${formData.score}/5`
-                                : "Select rating"}
-                            </span>
-                          </div>
-                        </div>
-                        <div>
-                          <Label htmlFor="comments">Comments</Label>
-                          <Textarea
-                            id="comments"
-                            value={formData.comments}
-                            onChange={(e) =>
-                              handleInputChange("comments", e.target.value)
-                            }
-                            placeholder="Enter review comments..."
-                            rows={3}
-                          />
-                        </div>
-                        <div className="flex gap-2">
-                          <Button
-                            type="button"
-                            variant="outline"
-                            onClick={() => setShowAddDialog(false)}
-                            className="flex-1"
-                          >
-                            Cancel
-                          </Button>
-                          <Button type="submit" className="flex-1">
-                            Save Review
-                          </Button>
-                        </div>
-                      </form>
-                    </DialogContent>
-                  </Dialog>
-                </div>
-              </div>
-            </CardHeader>
-            <CardContent>
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>Employee Name</TableHead>
-                    <TableHead>Review Period</TableHead>
-                    <TableHead>Reviewer</TableHead>
-                    <TableHead>Overall Score</TableHead>
-                    <TableHead>Status</TableHead>
-                    <TableHead>Actions</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {paginatedReviews.map((review) => (
-                    <TableRow key={review.id}>
-                      <TableCell className="font-medium">
-                        {review.employeeName}
-                      </TableCell>
-                      <TableCell>{review.reviewPeriod}</TableCell>
-                      <TableCell>{review.reviewerName}</TableCell>
-                      <TableCell>
-                        {renderStarRating(review.overallScore)}
-                      </TableCell>
-                      <TableCell>{getStatusBadge(review.status)}</TableCell>
-                      <TableCell>
-                        <div className="flex gap-2">
-                          <Button
-                            size="sm"
-                            variant="outline"
-                            onClick={() => handleViewDetails(review.id)}
-                          >
-                            <Eye className="h-4 w-4" />
-                          </Button>
-                          <Button
-                            size="sm"
-                            variant="outline"
-                            onClick={() =>
-                              handleScheduleNext(review.employeeId)
-                            }
-                          >
-                            <CalendarIcon className="h-4 w-4" />
-                          </Button>
-                        </div>
-                      </TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-
-              {/* Pagination */}
-              {totalPages > 1 && (
-                <div className="mt-4">
-                  <Pagination>
-                    <PaginationContent>
-                      <PaginationItem>
-                        <PaginationPrevious
-                          onClick={() =>
-                            setCurrentPage(Math.max(1, currentPage - 1))
-                          }
-                          className={
-                            currentPage === 1
-                              ? "pointer-events-none opacity-50"
-                              : ""
-                          }
-                        />
-                      </PaginationItem>
-                      {[...Array(totalPages)].map((_, i) => (
-                        <PaginationItem key={i + 1}>
-                          <PaginationLink
-                            onClick={() => setCurrentPage(i + 1)}
-                            isActive={currentPage === i + 1}
-                          >
-                            {i + 1}
-                          </PaginationLink>
-                        </PaginationItem>
-                      ))}
-                      <PaginationItem>
-                        <PaginationNext
-                          onClick={() =>
-                            setCurrentPage(
-                              Math.min(totalPages, currentPage + 1),
-                            )
-                          }
-                          className={
-                            currentPage === totalPages
-                              ? "pointer-events-none opacity-50"
-                              : ""
-                          }
-                        />
-                      </PaginationItem>
-                    </PaginationContent>
-                  </Pagination>
-                </div>
-              )}
-            </CardContent>
-          </Card>
         </div>
+
+        {employees.length === 0 ? (
+          /* Empty State */
+          <div className="text-center py-16">
+            <Star className="h-16 w-16 mx-auto mb-4 text-gray-300" />
+            <h3 className="text-lg font-semibold mb-2">No Performance Data</h3>
+            <p className="text-muted-foreground mb-6">
+              Add employees to your database to start performance reviews
+            </p>
+            <Button onClick={() => (window.location.href = "/staff/add")}>
+              <User className="mr-2 h-4 w-4" />
+              Add Employees First
+            </Button>
+          </div>
+        ) : (
+          <div className="space-y-6">
+            {/* Statistics */}
+            <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+              <Card>
+                <CardContent className="p-6">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <p className="text-sm font-medium text-muted-foreground">
+                        Total Employees
+                      </p>
+                      <p className="text-2xl font-bold">{employees.length}</p>
+                      <p className="text-xs text-blue-600">
+                        Available to review
+                      </p>
+                    </div>
+                    <Users className="h-8 w-8 text-blue-500" />
+                  </div>
+                </CardContent>
+              </Card>
+              <Card>
+                <CardContent className="p-6">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <p className="text-sm font-medium text-muted-foreground">
+                        Active Employees
+                      </p>
+                      <p className="text-2xl font-bold">
+                        {activeEmployees.length}
+                      </p>
+                      <p className="text-xs text-green-600">
+                        Ready for reviews
+                      </p>
+                    </div>
+                    <User className="h-8 w-8 text-green-500" />
+                  </div>
+                </CardContent>
+              </Card>
+              <Card>
+                <CardContent className="p-6">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <p className="text-sm font-medium text-muted-foreground">
+                        Reviews Completed
+                      </p>
+                      <p className="text-2xl font-bold">0</p>
+                      <p className="text-xs text-gray-600">No reviews yet</p>
+                    </div>
+                    <Star className="h-8 w-8 text-orange-500" />
+                  </div>
+                </CardContent>
+              </Card>
+              <Card>
+                <CardContent className="p-6">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <p className="text-sm font-medium text-muted-foreground">
+                        Pending Reviews
+                      </p>
+                      <p className="text-2xl font-bold">
+                        {activeEmployees.length}
+                      </p>
+                      <p className="text-xs text-purple-600">Need review</p>
+                    </div>
+                    <AlertCircle className="h-8 w-8 text-purple-500" />
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
+
+            {/* Controls */}
+            <div className="flex justify-between items-center">
+              <div className="flex gap-2">
+                <Button variant="outline">
+                  <Filter className="mr-2 h-4 w-4" />
+                  Filter
+                </Button>
+                <Button variant="outline">
+                  <Download className="mr-2 h-4 w-4" />
+                  Export
+                </Button>
+              </div>
+              <Button>
+                <Plus className="mr-2 h-4 w-4" />
+                New Review
+              </Button>
+            </div>
+
+            {/* Review System Setup */}
+            <Card>
+              <CardHeader>
+                <CardTitle>Performance Review System</CardTitle>
+                <CardDescription>
+                  Ready to start performance reviews for your {employees.length}{" "}
+                  employees
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div className="space-y-4">
+                    <h4 className="font-semibold">Getting Started</h4>
+                    <div className="space-y-3">
+                      <div className="flex items-center gap-3 p-3 bg-green-50 rounded-lg">
+                        <div className="w-6 h-6 bg-green-500 rounded-full flex items-center justify-center text-white text-sm">
+                          ✓
+                        </div>
+                        <div>
+                          <p className="font-medium text-sm">Employees Added</p>
+                          <p className="text-xs text-gray-600">
+                            {employees.length} employees in database
+                          </p>
+                        </div>
+                      </div>
+                      <div className="flex items-center gap-3 p-3 bg-blue-50 rounded-lg">
+                        <div className="w-6 h-6 bg-blue-500 rounded-full flex items-center justify-center text-white text-sm">
+                          2
+                        </div>
+                        <div>
+                          <p className="font-medium text-sm">
+                            Setup Review Cycle
+                          </p>
+                          <p className="text-xs text-gray-600">
+                            Configure review periods and criteria
+                          </p>
+                        </div>
+                      </div>
+                      <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg">
+                        <div className="w-6 h-6 bg-gray-400 rounded-full flex items-center justify-center text-white text-sm">
+                          3
+                        </div>
+                        <div>
+                          <p className="font-medium text-sm">Start Reviews</p>
+                          <p className="text-xs text-gray-600">
+                            Begin performance evaluations
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="space-y-4">
+                    <h4 className="font-semibold">Available Features</h4>
+                    <div className="space-y-2">
+                      <div className="flex items-center gap-2 text-sm">
+                        <Star className="h-4 w-4 text-yellow-500" />
+                        <span>5-star rating system</span>
+                      </div>
+                      <div className="flex items-center gap-2 text-sm">
+                        <Users className="h-4 w-4 text-blue-500" />
+                        <span>Employee goal tracking</span>
+                      </div>
+                      <div className="flex items-center gap-2 text-sm">
+                        <Database className="h-4 w-4 text-green-500" />
+                        <span>Performance analytics</span>
+                      </div>
+                      <div className="flex items-center gap-2 text-sm">
+                        <Download className="h-4 w-4 text-purple-500" />
+                        <span>Review export & reporting</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Employee List for Reviews */}
+            <Card>
+              <CardHeader>
+                <CardTitle>Employees Ready for Review</CardTitle>
+                <CardDescription>
+                  {activeEmployees.length} active employees available for
+                  performance review
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                {activeEmployees.length === 0 ? (
+                  <div className="text-center py-8">
+                    <AlertCircle className="h-12 w-12 mx-auto mb-4 text-gray-300" />
+                    <p className="text-sm text-gray-600">
+                      No active employees to review
+                    </p>
+                  </div>
+                ) : (
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                    {activeEmployees.slice(0, 9).map((employee) => (
+                      <Card
+                        key={employee.id}
+                        className="border border-gray-200"
+                      >
+                        <CardContent className="p-4">
+                          <div className="space-y-2">
+                            <div>
+                              <h4 className="font-semibold">
+                                {employee.personalInfo.firstName}{" "}
+                                {employee.personalInfo.lastName}
+                              </h4>
+                              <p className="text-sm text-gray-600">
+                                {employee.jobDetails.position}
+                              </p>
+                              <p className="text-xs text-gray-500">
+                                {employee.jobDetails.department}
+                              </p>
+                            </div>
+                            <div className="flex items-center justify-between">
+                              <Badge variant="outline" className="text-xs">
+                                {employee.jobDetails.employeeId}
+                              </Badge>
+                              <Button size="sm" variant="outline">
+                                Start Review
+                              </Button>
+                            </div>
+                          </div>
+                        </CardContent>
+                      </Card>
+                    ))}
+                    {activeEmployees.length > 9 && (
+                      <Card className="border border-gray-200 border-dashed">
+                        <CardContent className="p-4 flex items-center justify-center">
+                          <div className="text-center">
+                            <p className="text-sm font-medium">
+                              +{activeEmployees.length - 9} more
+                            </p>
+                            <p className="text-xs text-gray-600">
+                              employees ready
+                            </p>
+                          </div>
+                        </CardContent>
+                      </Card>
+                    )}
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+          </div>
+        )}
       </div>
     </div>
   );

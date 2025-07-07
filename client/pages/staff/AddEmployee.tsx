@@ -43,6 +43,10 @@ import {
 import { useToast } from "@/hooks/use-toast";
 import MainNavigation from "@/components/layout/MainNavigation";
 import { employeeService, type Employee } from "@/services/employeeService";
+import {
+  departmentService,
+  type Department,
+} from "@/services/departmentService";
 import CSVColumnMapper from "@/components/CSVColumnMapper";
 import {
   UserPlus,

@@ -38,7 +38,6 @@ import {
   Edit,
   Trash2,
   Users,
-  DollarSign,
   User,
   Save,
   X,

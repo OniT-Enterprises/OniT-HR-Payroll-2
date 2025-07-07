@@ -914,7 +914,7 @@ export default function AddEmployee() {
                       </SelectTrigger>
                       <SelectContent>
                         {departments.map((dept) => (
-                          <SelectItem key={dept.id} value={dept.id}>
+                          <SelectItem key={dept.id} value={dept.name}>
                             {dept.name}
                           </SelectItem>
                         ))}

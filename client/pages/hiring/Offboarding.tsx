@@ -13,6 +13,8 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Checkbox } from "@/components/ui/checkbox";
+import { Progress } from "@/components/ui/progress";
+import { Separator } from "@/components/ui/separator";
 import {
   Select,
   SelectContent,
@@ -51,43 +53,99 @@ import {
   Users,
   User,
   Search,
+  History,
+  Plus,
+  Eye,
+  Edit,
+  Save,
 } from "lucide-react";
+
+// Define interfaces for offboarding data
+interface OffboardingCase {
+  id: string;
+  employee: Employee;
+  departureReason: string;
+  lastWorkingDay: string;
+  noticeDate: string;
+  status: "pending" | "in-progress" | "completed";
+  notes: string;
+  checklist: OffboardingChecklist;
+  exitInterview: ExitInterview;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+interface OffboardingChecklist {
+  accessRevoked: boolean;
+  equipmentReturned: boolean;
+  documentsSigned: boolean;
+  knowledgeTransfer: boolean;
+  finalPayCalculated: boolean;
+  benefitsCancelled: boolean;
+  exitInterviewCompleted: boolean;
+  referenceLetter: boolean;
+}
+
+interface ExitInterview {
+  overallSatisfaction: string;
+  managerRelationship: string;
+  primaryReason: string;
+  suggestions: string;
+  wouldRecommend: string;
+  additionalComments: string;
+  completed: boolean;
+}
 
 export default function Offboarding() {
   const [employees, setEmployees] = useState<Employee[]>([]);
+  const [ongoingCases, setOngoingCases] = useState<OffboardingCase[]>([]);
+  const [offboardingHistory, setOffboardingHistory] = useState<
+    OffboardingCase[]
+  >([]);
+  const [selectedCase, setSelectedCase] = useState<OffboardingCase | null>(
+    null,
+  );
   const [loading, setLoading] = useState(true);
-  const [selectedEmployee, setSelectedEmployee] = useState<string>("");
-  const [selectedDepartment, setSelectedDepartment] = useState<string>("all");
-  const [searchTerm, setSearchTerm] = useState("");
-  const [offboardingType, setOffboardingType] = useState<string>("");
   const [showDialog, setShowDialog] = useState(false);
   const { toast } = useToast();
 
-  const [checklist, setChecklist] = useState({
-    accessRevoked: false,
-    equipmentReturned: false,
-    documentsSigned: false,
-    knowledgeTransfer: false,
-    finalPayCalculated: false,
-    benefitsCancelled: false,
-    exitInterview: false,
-    referenceLetter: false,
+  // New offboarding form data
+  const [newOffboarding, setNewOffboarding] = useState({
+    employeeId: "",
+    departureReason: "",
+    lastWorkingDay: "",
+    noticeDate: "",
+    notes: "",
+    department: "all",
+    search: "",
   });
 
   useEffect(() => {
-    loadEmployees();
+    loadData();
   }, []);
 
-  const loadEmployees = async () => {
+  const loadData = async () => {
     try {
       setLoading(true);
       const employeesData = await employeeService.getAllEmployees();
       setEmployees(employeesData);
+
+      // Load offboarding cases from localStorage for demo
+      const savedCases = localStorage.getItem("offboardingCases");
+      if (savedCases) {
+        const cases = JSON.parse(savedCases);
+        setOngoingCases(
+          cases.filter((c: OffboardingCase) => c.status !== "completed"),
+        );
+        setOffboardingHistory(
+          cases.filter((c: OffboardingCase) => c.status === "completed"),
+        );
+      }
     } catch (error) {
-      console.error("Error loading employees:", error);
+      console.error("Error loading data:", error);
       toast({
         title: "Error",
-        description: "Failed to load employee data",
+        description: "Failed to load data",
         variant: "destructive",
       });
     } finally {
@@ -95,66 +153,205 @@ export default function Offboarding() {
     }
   };
 
-  // Filter employees based on department and search
+  // Filter employees for selection
   const filteredEmployees = employees.filter((employee) => {
     const matchesDepartment =
-      selectedDepartment === "all" ||
-      employee.jobDetails.department === selectedDepartment;
+      newOffboarding.department === "all" ||
+      employee.jobDetails.department === newOffboarding.department;
 
     const matchesSearch =
-      searchTerm === "" ||
-      employee.personalInfo.firstName
+      !newOffboarding.search ||
+      `${employee.personalInfo.firstName} ${employee.personalInfo.lastName}`
         .toLowerCase()
-        .includes(searchTerm.toLowerCase()) ||
-      employee.personalInfo.lastName
-        .toLowerCase()
-        .includes(searchTerm.toLowerCase()) ||
+        .includes(newOffboarding.search.toLowerCase()) ||
       employee.jobDetails.employeeId
         .toLowerCase()
-        .includes(searchTerm.toLowerCase()) ||
-      employee.jobDetails.position
-        .toLowerCase()
-        .includes(searchTerm.toLowerCase());
+        .includes(newOffboarding.search.toLowerCase());
 
-    // Only show active employees for offboarding
     return employee.status === "active" && matchesDepartment && matchesSearch;
   });
 
-  // Get unique departments for filter
   const departments = Array.from(
     new Set(employees.map((emp) => emp.jobDetails.department)),
   ).sort();
-
   const activeEmployees = employees.filter((emp) => emp.status === "active");
 
-  const handleChecklistUpdate = (item: string) => {
-    setChecklist((prev) => ({
-      ...prev,
-      [item]: !prev[item],
-    }));
-  };
+  // Calculate departures in last year (mock data for now)
+  const departuresLastYear = offboardingHistory.filter(
+    (case_) =>
+      new Date(case_.createdAt).getFullYear() === new Date().getFullYear(),
+  ).length;
 
   const handleStartOffboarding = () => {
-    if (!selectedEmployee) {
+    if (!newOffboarding.employeeId || !newOffboarding.departureReason) {
       toast({
         title: "Validation Error",
-        description: "Please select an employee to start offboarding",
+        description: "Please select an employee and departure reason",
         variant: "destructive",
       });
       return;
     }
 
-    // Here you would normally save the offboarding case to Firebase
+    const employee = employees.find(
+      (emp) => emp.id === newOffboarding.employeeId,
+    );
+    if (!employee) return;
+
+    const newCase: OffboardingCase = {
+      id: Date.now().toString(),
+      employee,
+      departureReason: newOffboarding.departureReason,
+      lastWorkingDay: newOffboarding.lastWorkingDay,
+      noticeDate: newOffboarding.noticeDate,
+      status: "pending",
+      notes: newOffboarding.notes,
+      checklist: {
+        accessRevoked: false,
+        equipmentReturned: false,
+        documentsSigned: false,
+        knowledgeTransfer: false,
+        finalPayCalculated: false,
+        benefitsCancelled: false,
+        exitInterviewCompleted: false,
+        referenceLetter: false,
+      },
+      exitInterview: {
+        overallSatisfaction: "",
+        managerRelationship: "",
+        primaryReason: "",
+        suggestions: "",
+        wouldRecommend: "",
+        additionalComments: "",
+        completed: false,
+      },
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    };
+
+    const updatedCases = [...ongoingCases, newCase];
+    setOngoingCases(updatedCases);
+
+    // Save to localStorage
+    const allCases = [...updatedCases, ...offboardingHistory];
+    localStorage.setItem("offboardingCases", JSON.stringify(allCases));
+
     toast({
       title: "Offboarding Started",
-      description: "Employee offboarding process has been initiated",
+      description: `Offboarding process initiated for ${employee.personalInfo.firstName} ${employee.personalInfo.lastName}`,
     });
 
     setShowDialog(false);
-    setSelectedEmployee("");
-    setOffboardingType("");
-    setSelectedDepartment("all");
-    setSearchTerm("");
+    setNewOffboarding({
+      employeeId: "",
+      departureReason: "",
+      lastWorkingDay: "",
+      noticeDate: "",
+      notes: "",
+      department: "all",
+      search: "",
+    });
+  };
+
+  const updateChecklist = (caseId: string, item: string, value: boolean) => {
+    const updatedCases = ongoingCases.map((case_) => {
+      if (case_.id === caseId) {
+        const updatedCase = {
+          ...case_,
+          checklist: { ...case_.checklist, [item]: value },
+          updatedAt: new Date(),
+        };
+
+        // Update status based on checklist completion
+        const checklistItems = Object.values(updatedCase.checklist);
+        const completedItems = checklistItems.filter(Boolean).length;
+
+        if (completedItems === checklistItems.length) {
+          updatedCase.status = "completed";
+        } else if (completedItems > 0) {
+          updatedCase.status = "in-progress";
+        }
+
+        return updatedCase;
+      }
+      return case_;
+    });
+
+    setOngoingCases(updatedCases.filter((c) => c.status !== "completed"));
+
+    // Move completed cases to history
+    const completedCases = updatedCases.filter((c) => c.status === "completed");
+    if (completedCases.length > 0) {
+      setOffboardingHistory((prev) => [...prev, ...completedCases]);
+    }
+
+    // Update selected case if it's the one being modified
+    if (selectedCase && selectedCase.id === caseId) {
+      setSelectedCase(updatedCases.find((c) => c.id === caseId) || null);
+    }
+
+    // Save to localStorage
+    const allCases = [
+      ...updatedCases.filter((c) => c.status !== "completed"),
+      ...offboardingHistory,
+      ...completedCases,
+    ];
+    localStorage.setItem("offboardingCases", JSON.stringify(allCases));
+  };
+
+  const updateExitInterview = (
+    caseId: string,
+    field: string,
+    value: string,
+  ) => {
+    const updatedCases = ongoingCases.map((case_) => {
+      if (case_.id === caseId) {
+        const updatedCase = {
+          ...case_,
+          exitInterview: { ...case_.exitInterview, [field]: value },
+          updatedAt: new Date(),
+        };
+        return updatedCase;
+      }
+      return case_;
+    });
+
+    setOngoingCases(updatedCases);
+
+    if (selectedCase && selectedCase.id === caseId) {
+      setSelectedCase(updatedCases.find((c) => c.id === caseId) || null);
+    }
+
+    // Save to localStorage
+    const allCases = [...updatedCases, ...offboardingHistory];
+    localStorage.setItem("offboardingCases", JSON.stringify(allCases));
+  };
+
+  const saveDraft = () => {
+    if (selectedCase) {
+      toast({
+        title: "Draft Saved",
+        description: "Offboarding progress has been saved",
+      });
+    }
+  };
+
+  const getStatusColor = (status: string) => {
+    switch (status) {
+      case "completed":
+        return "bg-green-100 text-green-800";
+      case "in-progress":
+        return "bg-yellow-100 text-yellow-800";
+      case "pending":
+        return "bg-gray-100 text-gray-800";
+      default:
+        return "bg-gray-100 text-gray-800";
+    }
+  };
+
+  const getProgressPercentage = (checklist: OffboardingChecklist) => {
+    const items = Object.values(checklist);
+    const completed = items.filter(Boolean).length;
+    return Math.round((completed / items.length) * 100);
   };
 
   if (loading) {
@@ -187,7 +384,7 @@ export default function Offboarding() {
             </div>
           </div>
 
-          {activeEmployees.length > 0 ? (
+          {activeEmployees.length > 0 && (
             <Dialog open={showDialog} onOpenChange={setShowDialog}>
               <DialogTrigger asChild>
                 <Button>
@@ -203,16 +400,20 @@ export default function Offboarding() {
                   </DialogDescription>
                 </DialogHeader>
                 <div className="space-y-4">
-                  {/* Department Filter */}
                   <div className="grid grid-cols-2 gap-4">
                     <div className="space-y-2">
-                      <Label htmlFor="department">Filter by Department</Label>
+                      <Label>Filter by Department</Label>
                       <Select
-                        value={selectedDepartment}
-                        onValueChange={setSelectedDepartment}
+                        value={newOffboarding.department}
+                        onValueChange={(value) =>
+                          setNewOffboarding((prev) => ({
+                            ...prev,
+                            department: value,
+                          }))
+                        }
                       >
                         <SelectTrigger>
-                          <SelectValue placeholder="All departments" />
+                          <SelectValue />
                         </SelectTrigger>
                         <SelectContent>
                           <SelectItem value="all">All Departments</SelectItem>
@@ -225,119 +426,65 @@ export default function Offboarding() {
                       </Select>
                     </div>
                     <div className="space-y-2">
-                      <Label htmlFor="search">Search Employee</Label>
+                      <Label>Search Employee</Label>
                       <div className="relative">
                         <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
                         <Input
-                          id="search"
                           placeholder="Name or ID..."
-                          value={searchTerm}
-                          onChange={(e) => setSearchTerm(e.target.value)}
+                          value={newOffboarding.search}
+                          onChange={(e) =>
+                            setNewOffboarding((prev) => ({
+                              ...prev,
+                              search: e.target.value,
+                            }))
+                          }
                           className="pl-10"
                         />
                       </div>
                     </div>
                   </div>
 
-                  {/* Employee Selection */}
                   <div className="space-y-2">
-                    <Label htmlFor="employee">
+                    <Label>
                       Select Employee ({filteredEmployees.length} available)
                     </Label>
                     <Select
-                      value={selectedEmployee}
-                      onValueChange={setSelectedEmployee}
+                      value={newOffboarding.employeeId}
+                      onValueChange={(value) =>
+                        setNewOffboarding((prev) => ({
+                          ...prev,
+                          employeeId: value,
+                        }))
+                      }
                     >
                       <SelectTrigger>
                         <SelectValue placeholder="Choose an employee..." />
                       </SelectTrigger>
                       <SelectContent>
-                        {filteredEmployees.length === 0 ? (
-                          <div className="p-4 text-center text-gray-500">
-                            {searchTerm || selectedDepartment !== "all"
-                              ? "No employees match your filters"
-                              : "No active employees available"}
-                          </div>
-                        ) : (
-                          filteredEmployees.map((employee) => (
-                            <SelectItem
-                              key={employee.id}
-                              value={employee.id || ""}
-                            >
-                              <div className="flex items-center gap-2">
-                                <span>
-                                  {employee.personalInfo.firstName}{" "}
-                                  {employee.personalInfo.lastName}
-                                </span>
-                                <span className="text-sm text-gray-500">
-                                  - {employee.jobDetails.department}
-                                </span>
-                                <Badge variant="outline" className="text-xs">
-                                  {employee.jobDetails.employeeId}
-                                </Badge>
-                              </div>
-                            </SelectItem>
-                          ))
-                        )}
+                        {filteredEmployees.map((employee) => (
+                          <SelectItem
+                            key={employee.id}
+                            value={employee.id || ""}
+                          >
+                            {employee.personalInfo.firstName}{" "}
+                            {employee.personalInfo.lastName} -{" "}
+                            {employee.jobDetails.department}
+                          </SelectItem>
+                        ))}
                       </SelectContent>
                     </Select>
                   </div>
 
-                  {/* Selected Employee Details */}
-                  {selectedEmployee && (
-                    <div className="p-4 bg-blue-50 rounded-lg">
-                      {(() => {
-                        const employee = employees.find(
-                          (emp) => emp.id === selectedEmployee,
-                        );
-                        if (!employee) return null;
-                        return (
-                          <div className="space-y-2">
-                            <h4 className="font-medium">
-                              Selected Employee Details:
-                            </h4>
-                            <div className="grid grid-cols-2 gap-4 text-sm">
-                              <div>
-                                <span className="text-gray-600">Name:</span>
-                                <p className="font-medium">
-                                  {employee.personalInfo.firstName}{" "}
-                                  {employee.personalInfo.lastName}
-                                </p>
-                              </div>
-                              <div>
-                                <span className="text-gray-600">Position:</span>
-                                <p className="font-medium">
-                                  {employee.jobDetails.position}
-                                </p>
-                              </div>
-                              <div>
-                                <span className="text-gray-600">
-                                  Department:
-                                </span>
-                                <p className="font-medium">
-                                  {employee.jobDetails.department}
-                                </p>
-                              </div>
-                              <div>
-                                <span className="text-gray-600">
-                                  Employee ID:
-                                </span>
-                                <p className="font-medium">
-                                  {employee.jobDetails.employeeId}
-                                </p>
-                              </div>
-                            </div>
-                          </div>
-                        );
-                      })()}
-                    </div>
-                  )}
-
                   <div className="space-y-2">
-                    <Label htmlFor="reason">Departure Reason</Label>
+                    <Label>Departure Reason</Label>
                     <Select
-                      value={offboardingType}
-                      onValueChange={setOffboardingType}
+                      value={newOffboarding.departureReason}
+                      onValueChange={(value) =>
+                        setNewOffboarding((prev) => ({
+                          ...prev,
+                          departureReason: value,
+                        }))
+                      }
                     >
                       <SelectTrigger>
                         <SelectValue placeholder="Select reason..." />
@@ -353,23 +500,50 @@ export default function Offboarding() {
                       </SelectContent>
                     </Select>
                   </div>
+
                   <div className="grid grid-cols-2 gap-4">
                     <div className="space-y-2">
-                      <Label htmlFor="lastDay">Last Working Day</Label>
-                      <Input id="lastDay" type="date" />
+                      <Label>Last Working Day</Label>
+                      <Input
+                        type="date"
+                        value={newOffboarding.lastWorkingDay}
+                        onChange={(e) =>
+                          setNewOffboarding((prev) => ({
+                            ...prev,
+                            lastWorkingDay: e.target.value,
+                          }))
+                        }
+                      />
                     </div>
                     <div className="space-y-2">
-                      <Label htmlFor="noticeDate">Notice Date</Label>
-                      <Input id="noticeDate" type="date" />
+                      <Label>Notice Date</Label>
+                      <Input
+                        type="date"
+                        value={newOffboarding.noticeDate}
+                        onChange={(e) =>
+                          setNewOffboarding((prev) => ({
+                            ...prev,
+                            noticeDate: e.target.value,
+                          }))
+                        }
+                      />
                     </div>
                   </div>
+
                   <div className="space-y-2">
-                    <Label htmlFor="notes">Additional Notes</Label>
+                    <Label>Additional Notes</Label>
                     <Textarea
-                      id="notes"
                       placeholder="Any special instructions or notes..."
+                      value={newOffboarding.notes}
+                      onChange={(e) =>
+                        setNewOffboarding((prev) => ({
+                          ...prev,
+                          notes: e.target.value,
+                        }))
+                      }
                     />
                   </div>
+
                   <div className="flex justify-end gap-3">
                     <Button
                       variant="outline"
@@ -384,16 +558,10 @@ export default function Offboarding() {
                 </div>
               </DialogContent>
             </Dialog>
-          ) : (
-            <Button disabled>
-              <UserMinus className="mr-2 h-4 w-4" />
-              No Active Employees
-            </Button>
           )}
         </div>
 
         {employees.length === 0 ? (
-          /* Empty State */
           <div className="text-center py-16">
             <UserMinus className="h-16 w-16 mx-auto mb-4 text-gray-300" />
             <h3 className="text-lg font-semibold mb-2">No Employee Data</h3>
@@ -428,16 +596,12 @@ export default function Offboarding() {
                   <div className="flex items-center justify-between">
                     <div>
                       <p className="text-sm font-medium text-muted-foreground">
-                        Active Employees
+                        Employee Departures
                       </p>
-                      <p className="text-2xl font-bold">
-                        {activeEmployees.length}
-                      </p>
-                      <p className="text-xs text-green-600">
-                        Available to offboard
-                      </p>
+                      <p className="text-2xl font-bold">{departuresLastYear}</p>
+                      <p className="text-xs text-orange-600">Last year</p>
                     </div>
-                    <CheckCircle className="h-8 w-8 text-green-500" />
+                    <History className="h-8 w-8 text-orange-500" />
                   </div>
                 </CardContent>
               </Card>
@@ -448,10 +612,12 @@ export default function Offboarding() {
                       <p className="text-sm font-medium text-muted-foreground">
                         Offboarding Cases
                       </p>
-                      <p className="text-2xl font-bold">0</p>
-                      <p className="text-xs text-gray-600">No active cases</p>
+                      <p className="text-2xl font-bold">
+                        {ongoingCases.length}
+                      </p>
+                      <p className="text-xs text-green-600">Currently active</p>
                     </div>
-                    <Clock className="h-8 w-8 text-orange-500" />
+                    <Clock className="h-8 w-8 text-green-500" />
                   </div>
                 </CardContent>
               </Card>
@@ -460,91 +626,98 @@ export default function Offboarding() {
                   <div className="flex items-center justify-between">
                     <div>
                       <p className="text-sm font-medium text-muted-foreground">
-                        Departments
+                        Offboarding History
                       </p>
-                      <p className="text-2xl font-bold">{departments.length}</p>
-                      <p className="text-xs text-purple-600">With employees</p>
+                      <p className="text-2xl font-bold">
+                        {offboardingHistory.length}
+                      </p>
+                      <p className="text-xs text-purple-600">Completed cases</p>
                     </div>
-                    <Building className="h-8 w-8 text-purple-500" />
+                    <Archive className="h-8 w-8 text-purple-500" />
                   </div>
                 </CardContent>
               </Card>
             </div>
 
             <div className="grid lg:grid-cols-2 gap-6">
-              {/* Available Employees */}
+              {/* Ongoing Departures */}
               <Card>
                 <CardHeader>
-                  <CardTitle>Active Employees by Department</CardTitle>
+                  <CardTitle>Ongoing Departures</CardTitle>
                   <CardDescription>
-                    {activeEmployees.length} employees available for offboarding
+                    {ongoingCases.length} employees currently in offboarding
+                    process
                   </CardDescription>
                 </CardHeader>
                 <CardContent>
-                  {activeEmployees.length === 0 ? (
+                  {ongoingCases.length === 0 ? (
                     <div className="text-center py-8">
-                      <Database className="h-12 w-12 mx-auto mb-4 text-gray-300" />
+                      <Clock className="h-12 w-12 mx-auto mb-4 text-gray-300" />
                       <p className="text-sm text-gray-600">
-                        No active employees
+                        No ongoing offboarding cases
                       </p>
                     </div>
                   ) : (
                     <div className="space-y-4">
-                      {departments.map((dept) => {
-                        const deptEmployees = activeEmployees.filter(
-                          (emp) => emp.jobDetails.department === dept,
-                        );
-                        if (deptEmployees.length === 0) return null;
-
-                        return (
-                          <div key={dept} className="border rounded-lg p-4">
-                            <div className="flex items-center justify-between mb-3">
-                              <div className="flex items-center gap-2">
-                                <Building className="h-4 w-4" />
-                                <span className="font-medium">{dept}</span>
+                      {ongoingCases.map((case_) => (
+                        <Card
+                          key={case_.id}
+                          className={`cursor-pointer transition-colors ${
+                            selectedCase?.id === case_.id
+                              ? "ring-2 ring-blue-500"
+                              : "hover:bg-gray-50"
+                          }`}
+                          onClick={() => setSelectedCase(case_)}
+                        >
+                          <CardContent className="p-4">
+                            <div className="flex items-start justify-between mb-3">
+                              <div className="flex items-center gap-3">
+                                <Avatar>
+                                  <AvatarImage src="/placeholder.svg" />
+                                  <AvatarFallback>
+                                    {case_.employee.personalInfo.firstName[0]}
+                                    {case_.employee.personalInfo.lastName[0]}
+                                  </AvatarFallback>
+                                </Avatar>
+                                <div>
+                                  <h4 className="font-semibold">
+                                    {case_.employee.personalInfo.firstName}{" "}
+                                    {case_.employee.personalInfo.lastName}
+                                  </h4>
+                                  <p className="text-sm text-muted-foreground">
+                                    {case_.employee.jobDetails.department} •{" "}
+                                    {case_.employee.jobDetails.position}
+                                  </p>
+                                </div>
                               </div>
-                              <Badge variant="secondary">
-                                {deptEmployees.length} employees
+                              <Badge className={getStatusColor(case_.status)}>
+                                {case_.status.replace("-", " ")}
                               </Badge>
                             </div>
-                            <div className="grid grid-cols-1 gap-2">
-                              {deptEmployees.slice(0, 3).map((employee) => (
-                                <div
-                                  key={employee.id}
-                                  className="flex items-center gap-3 p-2 bg-gray-50 rounded"
-                                >
-                                  <Avatar className="w-8 h-8">
-                                    <AvatarImage src="/placeholder.svg" />
-                                    <AvatarFallback className="text-xs">
-                                      {employee.personalInfo.firstName[0]}
-                                      {employee.personalInfo.lastName[0]}
-                                    </AvatarFallback>
-                                  </Avatar>
-                                  <div className="flex-1 min-w-0">
-                                    <p className="text-sm font-medium truncate">
-                                      {employee.personalInfo.firstName}{" "}
-                                      {employee.personalInfo.lastName}
-                                    </p>
-                                    <p className="text-xs text-gray-500 truncate">
-                                      {employee.jobDetails.position}
-                                    </p>
-                                  </div>
-                                  <Badge variant="outline" className="text-xs">
-                                    {employee.jobDetails.employeeId}
-                                  </Badge>
-                                </div>
-                              ))}
-                              {deptEmployees.length > 3 && (
-                                <div className="text-center py-2">
-                                  <span className="text-xs text-gray-500">
-                                    +{deptEmployees.length - 3} more employees
-                                  </span>
-                                </div>
-                              )}
+                            <div className="space-y-2">
+                              <div className="flex justify-between text-sm">
+                                <span>Progress:</span>
+                                <span>
+                                  {getProgressPercentage(case_.checklist)}%
+                                  completed
+                                </span>
+                              </div>
+                              <Progress
+                                value={getProgressPercentage(case_.checklist)}
+                                className="h-2"
+                              />
+                              <div className="flex justify-between items-center text-sm">
+                                <span className="text-muted-foreground">
+                                  Reason: {case_.departureReason}
+                                </span>
+                                <span className="text-muted-foreground">
+                                  Last day: {case_.lastWorkingDay || "TBD"}
+                                </span>
+                              </div>
                             </div>
-                          </div>
-                        );
-                      })}
+                          </CardContent>
+                        </Card>
+                      ))}
                     </div>
                   )}
                 </CardContent>
@@ -553,183 +726,277 @@ export default function Offboarding() {
               {/* Offboarding Checklist */}
               <Card>
                 <CardHeader>
-                  <CardTitle>Offboarding Checklist</CardTitle>
+                  <CardTitle>
+                    {selectedCase
+                      ? `Offboarding Checklist - ${selectedCase.employee.personalInfo.firstName} ${selectedCase.employee.personalInfo.lastName}`
+                      : "Offboarding Checklist"}
+                  </CardTitle>
                   <CardDescription>
-                    Standard items to complete for employee departures
+                    {selectedCase
+                      ? "Complete the offboarding process"
+                      : "Select an employee to view their checklist"}
                   </CardDescription>
                 </CardHeader>
                 <CardContent>
-                  <div className="space-y-4">
-                    {[
-                      {
-                        id: "accessRevoked",
-                        label: "Revoke System Access",
-                        icon: <Key className="h-4 w-4" />,
-                      },
-                      {
-                        id: "equipmentReturned",
-                        label: "Equipment Return",
-                        icon: <Building className="h-4 w-4" />,
-                      },
-                      {
-                        id: "documentsSigned",
-                        label: "Exit Documents Signed",
-                        icon: <FileText className="h-4 w-4" />,
-                      },
-                      {
-                        id: "knowledgeTransfer",
-                        label: "Knowledge Transfer",
-                        icon: <Archive className="h-4 w-4" />,
-                      },
-                      {
-                        id: "finalPayCalculated",
-                        label: "Final Pay Calculated",
-                        icon: <DollarSign className="h-4 w-4" />,
-                      },
-                      {
-                        id: "benefitsCancelled",
-                        label: "Benefits Cancelled",
-                        icon: <CreditCard className="h-4 w-4" />,
-                      },
-                      {
-                        id: "exitInterview",
-                        label: "Exit Interview Completed",
-                        icon: <Mail className="h-4 w-4" />,
-                      },
-                      {
-                        id: "referenceLetter",
-                        label: "Reference Letter Prepared",
-                        icon: <Download className="h-4 w-4" />,
-                      },
-                    ].map((item) => (
-                      <div
-                        key={item.id}
-                        className="flex items-center space-x-3"
-                      >
-                        <Checkbox
-                          id={item.id}
-                          checked={checklist[item.id]}
-                          onCheckedChange={() => handleChecklistUpdate(item.id)}
+                  {!selectedCase ? (
+                    <div className="text-center py-8">
+                      <CheckCircle className="h-12 w-12 mx-auto mb-4 text-gray-300" />
+                      <p className="text-sm text-gray-600">
+                        Select an ongoing departure to view checklist
+                      </p>
+                    </div>
+                  ) : (
+                    <div className="space-y-6">
+                      {/* Progress Summary */}
+                      <div className="p-4 bg-blue-50 rounded-lg">
+                        <div className="flex justify-between items-center mb-2">
+                          <span className="font-medium">Overall Progress</span>
+                          <span className="text-sm">
+                            {getProgressPercentage(selectedCase.checklist)}%
+                          </span>
+                        </div>
+                        <Progress
+                          value={getProgressPercentage(selectedCase.checklist)}
+                          className="h-3"
                         />
-                        <div className="flex items-center gap-2">
-                          {item.icon}
-                          <label
-                            htmlFor={item.id}
-                            className="text-sm font-medium"
+                      </div>
+
+                      {/* Checklist Items */}
+                      <div className="space-y-4">
+                        {[
+                          {
+                            id: "accessRevoked",
+                            label: "Revoke System Access",
+                            icon: <Key className="h-4 w-4" />,
+                          },
+                          {
+                            id: "equipmentReturned",
+                            label: "Equipment Return",
+                            icon: <Building className="h-4 w-4" />,
+                          },
+                          {
+                            id: "documentsSigned",
+                            label: "Exit Documents Signed",
+                            icon: <FileText className="h-4 w-4" />,
+                          },
+                          {
+                            id: "knowledgeTransfer",
+                            label: "Knowledge Transfer",
+                            icon: <Archive className="h-4 w-4" />,
+                          },
+                          {
+                            id: "finalPayCalculated",
+                            label: "Final Pay Calculated",
+                            icon: <DollarSign className="h-4 w-4" />,
+                          },
+                          {
+                            id: "benefitsCancelled",
+                            label: "Benefits Cancelled",
+                            icon: <CreditCard className="h-4 w-4" />,
+                          },
+                          {
+                            id: "exitInterviewCompleted",
+                            label: "Exit Interview Completed",
+                            icon: <Mail className="h-4 w-4" />,
+                          },
+                          {
+                            id: "referenceLetter",
+                            label: "Reference Letter Prepared",
+                            icon: <Download className="h-4 w-4" />,
+                          },
+                        ].map((item) => (
+                          <div
+                            key={item.id}
+                            className="flex items-center space-x-3"
                           >
-                            {item.label}
-                          </label>
+                            <Checkbox
+                              checked={
+                                selectedCase.checklist[
+                                  item.id as keyof OffboardingChecklist
+                                ]
+                              }
+                              onCheckedChange={(checked) =>
+                                updateChecklist(
+                                  selectedCase.id,
+                                  item.id,
+                                  checked as boolean,
+                                )
+                              }
+                            />
+                            <div className="flex items-center gap-2">
+                              {item.icon}
+                              <label className="text-sm font-medium">
+                                {item.label}
+                              </label>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+
+                      {/* Exit Interview Section */}
+                      <Separator />
+                      <div className="space-y-4">
+                        <h4 className="font-medium">
+                          Exit Interview Questions
+                        </h4>
+
+                        <div className="grid grid-cols-1 gap-4">
+                          <div className="space-y-2">
+                            <Label>Overall Job Satisfaction</Label>
+                            <Select
+                              value={
+                                selectedCase.exitInterview.overallSatisfaction
+                              }
+                              onValueChange={(value) =>
+                                updateExitInterview(
+                                  selectedCase.id,
+                                  "overallSatisfaction",
+                                  value,
+                                )
+                              }
+                            >
+                              <SelectTrigger>
+                                <SelectValue placeholder="Rate satisfaction..." />
+                              </SelectTrigger>
+                              <SelectContent>
+                                <SelectItem value="very-satisfied">
+                                  Very Satisfied
+                                </SelectItem>
+                                <SelectItem value="satisfied">
+                                  Satisfied
+                                </SelectItem>
+                                <SelectItem value="neutral">Neutral</SelectItem>
+                                <SelectItem value="dissatisfied">
+                                  Dissatisfied
+                                </SelectItem>
+                                <SelectItem value="very-dissatisfied">
+                                  Very Dissatisfied
+                                </SelectItem>
+                              </SelectContent>
+                            </Select>
+                          </div>
+
+                          <div className="space-y-2">
+                            <Label>Manager Relationship</Label>
+                            <Select
+                              value={
+                                selectedCase.exitInterview.managerRelationship
+                              }
+                              onValueChange={(value) =>
+                                updateExitInterview(
+                                  selectedCase.id,
+                                  "managerRelationship",
+                                  value,
+                                )
+                              }
+                            >
+                              <SelectTrigger>
+                                <SelectValue placeholder="Rate manager relationship..." />
+                              </SelectTrigger>
+                              <SelectContent>
+                                <SelectItem value="excellent">
+                                  Excellent
+                                </SelectItem>
+                                <SelectItem value="good">Good</SelectItem>
+                                <SelectItem value="average">Average</SelectItem>
+                                <SelectItem value="poor">Poor</SelectItem>
+                              </SelectContent>
+                            </Select>
+                          </div>
+
+                          <div className="space-y-2">
+                            <Label>Primary Reason for Leaving</Label>
+                            <Textarea
+                              placeholder="Please explain..."
+                              value={selectedCase.exitInterview.primaryReason}
+                              onChange={(e) =>
+                                updateExitInterview(
+                                  selectedCase.id,
+                                  "primaryReason",
+                                  e.target.value,
+                                )
+                              }
+                              rows={2}
+                            />
+                          </div>
+
+                          <div className="space-y-2">
+                            <Label>Would Recommend Company</Label>
+                            <Select
+                              value={selectedCase.exitInterview.wouldRecommend}
+                              onValueChange={(value) =>
+                                updateExitInterview(
+                                  selectedCase.id,
+                                  "wouldRecommend",
+                                  value,
+                                )
+                              }
+                            >
+                              <SelectTrigger>
+                                <SelectValue placeholder="Would you recommend us?" />
+                              </SelectTrigger>
+                              <SelectContent>
+                                <SelectItem value="yes">
+                                  Yes, definitely
+                                </SelectItem>
+                                <SelectItem value="maybe">Maybe</SelectItem>
+                                <SelectItem value="no">No</SelectItem>
+                              </SelectContent>
+                            </Select>
+                          </div>
+
+                          <div className="space-y-2">
+                            <Label>Additional Comments</Label>
+                            <Textarea
+                              placeholder="Any other feedback..."
+                              value={
+                                selectedCase.exitInterview.additionalComments
+                              }
+                              onChange={(e) =>
+                                updateExitInterview(
+                                  selectedCase.id,
+                                  "additionalComments",
+                                  e.target.value,
+                                )
+                              }
+                              rows={2}
+                            />
+                          </div>
                         </div>
                       </div>
-                    ))}
-                  </div>
-                  <div className="mt-6">
-                    <Button className="w-full">Save Checklist Progress</Button>
-                  </div>
+
+                      {/* Action Buttons */}
+                      <div className="flex gap-3">
+                        <Button
+                          variant="outline"
+                          onClick={saveDraft}
+                          className="flex-1"
+                        >
+                          <Save className="mr-2 h-4 w-4" />
+                          Save Draft
+                        </Button>
+                        <Button
+                          onClick={() =>
+                            updateChecklist(
+                              selectedCase.id,
+                              "exitInterviewCompleted",
+                              true,
+                            )
+                          }
+                          className="flex-1"
+                          disabled={
+                            getProgressPercentage(selectedCase.checklist) ===
+                            100
+                          }
+                        >
+                          Complete Exit Interview
+                        </Button>
+                      </div>
+                    </div>
+                  )}
                 </CardContent>
               </Card>
             </div>
-
-            {/* Exit Interview Form */}
-            <Card className="mt-6">
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <Mail className="h-5 w-5" />
-                  Exit Interview Questions
-                </CardTitle>
-                <CardDescription>
-                  Standard questions for departing employees
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <div className="grid md:grid-cols-2 gap-6">
-                  <div className="space-y-4">
-                    <div className="space-y-2">
-                      <Label htmlFor="satisfaction">
-                        Overall Job Satisfaction
-                      </Label>
-                      <Select>
-                        <SelectTrigger>
-                          <SelectValue placeholder="Rate satisfaction..." />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="very-satisfied">
-                            Very Satisfied
-                          </SelectItem>
-                          <SelectItem value="satisfied">Satisfied</SelectItem>
-                          <SelectItem value="neutral">Neutral</SelectItem>
-                          <SelectItem value="dissatisfied">
-                            Dissatisfied
-                          </SelectItem>
-                          <SelectItem value="very-dissatisfied">
-                            Very Dissatisfied
-                          </SelectItem>
-                        </SelectContent>
-                      </Select>
-                    </div>
-                    <div className="space-y-2">
-                      <Label htmlFor="reason">Primary Reason for Leaving</Label>
-                      <Textarea
-                        id="reason"
-                        placeholder="Please explain your primary reason for leaving..."
-                        rows={3}
-                      />
-                    </div>
-                    <div className="space-y-2">
-                      <Label htmlFor="improvements">
-                        Suggestions for Improvement
-                      </Label>
-                      <Textarea
-                        id="improvements"
-                        placeholder="What could the company do better?"
-                        rows={3}
-                      />
-                    </div>
-                  </div>
-                  <div className="space-y-4">
-                    <div className="space-y-2">
-                      <Label htmlFor="manager">Manager Relationship</Label>
-                      <Select>
-                        <SelectTrigger>
-                          <SelectValue placeholder="Rate manager relationship..." />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="excellent">Excellent</SelectItem>
-                          <SelectItem value="good">Good</SelectItem>
-                          <SelectItem value="average">Average</SelectItem>
-                          <SelectItem value="poor">Poor</SelectItem>
-                        </SelectContent>
-                      </Select>
-                    </div>
-                    <div className="space-y-2">
-                      <Label htmlFor="recommend">Would Recommend Company</Label>
-                      <Select>
-                        <SelectTrigger>
-                          <SelectValue placeholder="Would you recommend us?" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="yes">Yes, definitely</SelectItem>
-                          <SelectItem value="maybe">Maybe</SelectItem>
-                          <SelectItem value="no">No</SelectItem>
-                        </SelectContent>
-                      </Select>
-                    </div>
-                    <div className="space-y-2">
-                      <Label htmlFor="additional">Additional Comments</Label>
-                      <Textarea
-                        id="additional"
-                        placeholder="Any other feedback or comments..."
-                        rows={3}
-                      />
-                    </div>
-                  </div>
-                </div>
-                <div className="flex justify-end gap-3 mt-6">
-                  <Button variant="outline">Save Draft</Button>
-                  <Button>Complete Exit Interview</Button>
-                </div>
-              </CardContent>
-            </Card>
           </div>
         )}
       </div>

@@ -135,7 +135,7 @@ export default function Departments() {
       totalEmployees: deptEmployees.length,
       activeEmployees: activeCount,
       inactiveEmployees: inactiveCount,
-      averageSalary: Math.round(averageSalary),
+      averageSalary: Math.round(averageMonthlySalary),
       employees: deptEmployees,
       department, // Include the full department object
     };

@@ -75,9 +75,11 @@ export default function DepartmentManager({
 
   const [formData, setFormData] = useState<DepartmentInput>({
     name: "",
-    director: "",
-    manager: "",
-    description: "",
+    director: "none",
+    manager: "none",
+    icon: "building",
+    shape: "circle",
+    color: "#3B82F6",
   });
 
   useEffect(() => {

@@ -245,71 +245,182 @@ export default function AddEmployee() {
         return;
       }
 
-      // Process the first row of data with the mappings
-      const firstEmployee = csvData[0];
-      const mappedData: any = {};
+      setIsSubmitting(true);
+      let successCount = 0;
+      let errorCount = 0;
+      const errors: string[] = [];
 
-      // Apply column mappings to extract data
-      mappings.forEach((mapping) => {
-        const csvValue = firstEmployee[mapping.csvColumn] || "";
-        mappedData[mapping.employeeField] = csvValue;
+      // Show initial progress
+      toast({
+        title: "Starting Bulk Import",
+        description: `Processing ${csvData.length} employees...`,
       });
 
-      // Map the data to our form structure
-      setFormData({
-        profilePhoto: null,
-        firstName: mappedData.firstName || "",
-        lastName: mappedData.lastName || "",
-        email: mappedData.email || "",
-        phone: mappedData.phone || "",
-        emergencyContactName: mappedData.emergencyContactName || "",
-        emergencyContactPhone: mappedData.emergencyContactPhone || "",
-        department: mappedData.department || "",
-        jobTitle: mappedData.position || "",
-        manager: mappedData.manager || "",
-        startDate: mappedData.hireDate || "",
-        employmentType: mappedData.employmentType || "Full-time",
-        status: "Active",
-        salary: mappedData.annualSalary || "",
-        leaveDays: mappedData.annualLeaveDays || "",
-        benefits: mappedData.benefitsPackage || "",
-      });
+      // Process all rows of data with the mappings
+      for (let i = 0; i < csvData.length; i++) {
+        try {
+          const employeeData = csvData[i];
+          const mappedData: any = {};
 
-      // Update documents if present
-      const updatedDocuments = [...documents];
-      if (mappedData.socialSecurityNumber) {
-        updatedDocuments[0].number = mappedData.socialSecurityNumber;
-        updatedDocuments[0].expiryDate = mappedData.ssnExpiryDate || "";
+          // Apply column mappings to extract data
+          mappings.forEach((mapping) => {
+            const csvValue = employeeData[mapping.csvColumn] || "";
+            mappedData[mapping.employeeField] = csvValue.toString().trim();
+          });
+
+          // Validate required fields
+          if (
+            !mappedData.firstName ||
+            !mappedData.lastName ||
+            !mappedData.email
+          ) {
+            errorCount++;
+            errors.push(
+              `Row ${i + 1}: Missing required fields (First Name, Last Name, or Email)`,
+            );
+            continue;
+          }
+
+          // Generate employee ID if not provided
+          const employeeId =
+            mappedData.employeeId ||
+            `EMP${Math.floor(Math.random() * 900) + 100}`;
+          const currentDate = new Date();
+
+          // Create employee object in the format expected by Firebase
+          const newEmployee: Omit<Employee, "id"> = {
+            personalInfo: {
+              firstName: mappedData.firstName,
+              lastName: mappedData.lastName,
+              email: mappedData.email,
+              phone: mappedData.phone || "",
+              address: mappedData.address || "",
+              dateOfBirth: mappedData.dateOfBirth || "",
+              socialSecurityNumber: mappedData.socialSecurityNumber || "",
+              emergencyContactName: mappedData.emergencyContactName || "",
+              emergencyContactPhone: mappedData.emergencyContactPhone || "",
+            },
+            jobDetails: {
+              employeeId: employeeId,
+              department: mappedData.department || "General",
+              position: mappedData.position || "Employee",
+              hireDate:
+                mappedData.hireDate || currentDate.toISOString().split("T")[0],
+              employmentType: mappedData.employmentType || "Full-time",
+              workLocation: mappedData.workLocation || "Office",
+              manager: mappedData.manager || "",
+            },
+            compensation: {
+              annualSalary: parseInt(mappedData.annualSalary) || 0,
+              annualLeaveDays: parseInt(mappedData.annualLeaveDays) || 25,
+              benefitsPackage: mappedData.benefitsPackage || "Standard",
+            },
+            documents: {
+              socialSecurityNumber: {
+                number: mappedData.socialSecurityNumber || "",
+                expiryDate: mappedData.ssnExpiryDate || "",
+              },
+              electoralCard: {
+                number: mappedData.electoralCardNumber || "",
+                expiryDate: mappedData.electoralCardExpiryDate || "",
+              },
+              idCard: {
+                number: mappedData.idCardNumber || "",
+                expiryDate: mappedData.idCardExpiryDate || "",
+              },
+              passport: {
+                number: mappedData.passportNumber || "",
+                expiryDate: mappedData.passportExpiryDate || "",
+              },
+            },
+            status: "active",
+          };
+
+          // Save to Firebase
+          const employeeId_returned =
+            await employeeService.addEmployee(newEmployee);
+
+          if (employeeId_returned) {
+            successCount++;
+
+            // Show progress every 10 employees
+            if (successCount % 10 === 0) {
+              toast({
+                title: "Import Progress",
+                description: `${successCount}/${csvData.length} employees imported...`,
+              });
+            }
+          } else {
+            errorCount++;
+            errors.push(
+              `Row ${i + 1}: Failed to save ${mappedData.firstName} ${mappedData.lastName}`,
+            );
+          }
+
+          // Add small delay to avoid overwhelming Firebase
+          if (i % 5 === 0 && i > 0) {
+            await new Promise((resolve) => setTimeout(resolve, 500));
+          }
+        } catch (error) {
+          errorCount++;
+          const employeeData = csvData[i];
+          const name = `${employeeData[mappings.find((m) => m.employeeField === "firstName")?.csvColumn] || "Unknown"} ${employeeData[mappings.find((m) => m.employeeField === "lastName")?.csvColumn] || "Employee"}`;
+          errors.push(`Row ${i + 1}: Error importing ${name} - ${error}`);
+          console.error(`Error importing employee ${i + 1}:`, error);
+        }
       }
-      if (mappedData.electoralCardNumber) {
-        updatedDocuments[1].number = mappedData.electoralCardNumber;
-        updatedDocuments[1].expiryDate =
-          mappedData.electoralCardExpiryDate || "";
-      }
-      if (mappedData.idCardNumber) {
-        updatedDocuments[2].number = mappedData.idCardNumber;
-        updatedDocuments[2].expiryDate = mappedData.idCardExpiryDate || "";
-      }
-      if (mappedData.passportNumber) {
-        updatedDocuments[3].number = mappedData.passportNumber;
-        updatedDocuments[3].expiryDate = mappedData.passportExpiryDate || "";
-      }
-      setDocuments(updatedDocuments);
 
       setShowColumnMapper(false);
       setImportFile(null);
 
-      toast({
-        title: "Import Successful",
-        description: `Employee data imported successfully. ${csvData.length - 1} more employees available in CSV.`,
-      });
+      // Show final results
+      if (successCount > 0) {
+        toast({
+          title: "Bulk Import Complete!",
+          description: `Successfully imported ${successCount} employees. ${errorCount > 0 ? `${errorCount} errors occurred.` : ""}`,
+        });
+
+        // Navigate to All Employees to see the imported data
+        setTimeout(() => {
+          navigate("/staff/employees");
+        }, 2000);
+      } else {
+        toast({
+          title: "Import Failed",
+          description:
+            "No employees were successfully imported. Please check your data and try again.",
+          variant: "destructive",
+        });
+      }
+
+      // Show detailed errors if any
+      if (errors.length > 0 && errors.length <= 5) {
+        setTimeout(() => {
+          toast({
+            title: "Import Errors",
+            description: errors.join("; "),
+            variant: "destructive",
+          });
+        }, 1000);
+      } else if (errors.length > 5) {
+        setTimeout(() => {
+          toast({
+            title: "Multiple Import Errors",
+            description: `${errors.length} errors occurred. Check console for details.`,
+            variant: "destructive",
+          });
+        }, 1000);
+        console.error("Import errors:", errors);
+      }
     } catch (error) {
-      console.error("Error processing mapped data:", error);
+      console.error("Error during bulk import:", error);
       toast({
         title: "Import Failed",
-        description: "Failed to process the mapped data. Please try again.",
+        description: "Failed to process the CSV file. Please try again.",
         variant: "destructive",
       });
+    } finally {
+      setIsSubmitting(false);
     }
   };
 

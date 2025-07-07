@@ -11,8 +11,23 @@ import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import MainNavigation from "@/components/layout/MainNavigation";
 import { employeeService, type Employee } from "@/services/employeeService";
+import {
+  departmentService,
+  type Department,
+} from "@/services/departmentService";
+import DepartmentManager from "@/components/DepartmentManager";
 import { useToast } from "@/hooks/use-toast";
-import { Building, Users, Database, AlertCircle, User } from "lucide-react";
+import {
+  Building,
+  Users,
+  Database,
+  AlertCircle,
+  User,
+  Plus,
+  Edit,
+  DollarSign,
+  Crown,
+} from "lucide-react";
 
 export default function Departments() {
   const [employees, setEmployees] = useState<Employee[]>([]);

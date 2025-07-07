@@ -127,25 +127,67 @@ export default function Offboarding() {
   const loadData = async () => {
     try {
       setLoading(true);
-      const employeesData = await employeeService.getAllEmployees();
-      setEmployees(employeesData);
 
-      // Load offboarding cases from localStorage for demo
+      // Try to load employees with retry logic
+      let employeesData = [];
+      try {
+        employeesData = await employeeService.getAllEmployees();
+        setEmployees(employeesData);
+      } catch (firebaseError) {
+        console.warn(
+          "Firebase connection failed, using fallback:",
+          firebaseError,
+        );
+
+        // Check if we have cached employee data
+        const cachedEmployees = localStorage.getItem("cachedEmployees");
+        if (cachedEmployees) {
+          employeesData = JSON.parse(cachedEmployees);
+          setEmployees(employeesData);
+          toast({
+            title: "Using Cached Data",
+            description: "Firebase connection failed. Using local data.",
+            variant: "destructive",
+          });
+        } else {
+          // Provide mock data as absolute fallback
+          employeesData = [];
+          setEmployees([]);
+          toast({
+            title: "Connection Error",
+            description:
+              "Unable to connect to database. Please check your internet connection.",
+            variant: "destructive",
+          });
+        }
+      }
+
+      // Load offboarding cases from localStorage
       const savedCases = localStorage.getItem("offboardingCases");
       if (savedCases) {
-        const cases = JSON.parse(savedCases);
-        setOngoingCases(
-          cases.filter((c: OffboardingCase) => c.status !== "completed"),
-        );
-        setOffboardingHistory(
-          cases.filter((c: OffboardingCase) => c.status === "completed"),
-        );
+        try {
+          const cases = JSON.parse(savedCases);
+          setOngoingCases(
+            cases.filter((c: OffboardingCase) => c.status !== "completed"),
+          );
+          setOffboardingHistory(
+            cases.filter((c: OffboardingCase) => c.status === "completed"),
+          );
+        } catch (parseError) {
+          console.error("Error parsing saved cases:", parseError);
+          localStorage.removeItem("offboardingCases");
+        }
+      }
+
+      // Cache employees for future use
+      if (employeesData.length > 0) {
+        localStorage.setItem("cachedEmployees", JSON.stringify(employeesData));
       }
     } catch (error) {
       console.error("Error loading data:", error);
       toast({
         title: "Error",
-        description: "Failed to load data",
+        description: "Failed to load application data",
         variant: "destructive",
       });
     } finally {

@@ -31,23 +31,30 @@ import {
 
 export default function Departments() {
   const [employees, setEmployees] = useState<Employee[]>([]);
+  const [departments, setDepartments] = useState<Department[]>([]);
   const [loading, setLoading] = useState(true);
+  const [showDepartmentManager, setShowDepartmentManager] = useState(false);
+  const [managerMode, setManagerMode] = useState<"add" | "edit">("edit");
   const { toast } = useToast();
 
   useEffect(() => {
-    loadEmployees();
+    loadData();
   }, []);
 
-  const loadEmployees = async () => {
+  const loadData = async () => {
     try {
       setLoading(true);
-      const employeesData = await employeeService.getAllEmployees();
+      const [employeesData, departmentsData] = await Promise.all([
+        employeeService.getAllEmployees(),
+        departmentService.getAllDepartments(),
+      ]);
       setEmployees(employeesData);
+      setDepartments(departmentsData);
     } catch (error) {
-      console.error("Error loading employees:", error);
+      console.error("Error loading data:", error);
       toast({
         title: "Error",
-        description: "Failed to load employee data",
+        description: "Failed to load data",
         variant: "destructive",
       });
     } finally {

@@ -373,7 +373,7 @@ export default function PayrollReports() {
                             </td>
                             <td className="p-3 text-right font-medium">
                               {formatCurrency(
-                                employee.compensation.annualSalary,
+                                employee.compensation.annualSalary / 12,
                               )}
                             </td>
                             <td className="p-3 text-center">

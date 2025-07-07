@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import {
   Card,
   CardContent,
@@ -8,6 +8,8 @@ import {
 } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import MainNavigation from "@/components/layout/MainNavigation";
+import { employeeService } from "@/services/employeeService";
+import { useToast } from "@/hooks/use-toast";
 import {
   Clock,
   Calendar,
@@ -17,6 +19,7 @@ import {
   TrendingUp,
   UserCheck,
   Coffee,
+  Database,
 } from "lucide-react";
 
 export default function TimeLeaveDashboard() {

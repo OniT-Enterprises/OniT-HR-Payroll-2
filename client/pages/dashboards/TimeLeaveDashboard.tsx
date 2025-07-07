@@ -14,12 +14,9 @@ import {
   Clock,
   Calendar,
   Users,
-  CheckCircle,
-  AlertTriangle,
-  TrendingUp,
   UserCheck,
-  Coffee,
   Database,
+  AlertCircle,
 } from "lucide-react";
 
 export default function TimeLeaveDashboard() {
@@ -94,11 +91,26 @@ export default function TimeLeaveDashboard() {
                 <div className="flex items-center justify-between">
                   <div>
                     <p className="text-sm font-medium text-gray-600">
-                      Today's Attendance
+                      Total Employees
                     </p>
-                    <p className="text-2xl font-bold">142/156</p>
+                    <p className="text-2xl font-bold">{totalEmployees}</p>
+                    <p className="text-xs text-blue-600">In database</p>
+                  </div>
+                  <Users className="h-8 w-8 text-blue-500" />
+                </div>
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardContent className="p-6">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="text-sm font-medium text-gray-600">
+                      Active Employees
+                    </p>
+                    <p className="text-2xl font-bold">{activeEmployees}</p>
                     <p className="text-xs text-green-600">
-                      91% attendance rate
+                      Available for tracking
                     </p>
                   </div>
                   <UserCheck className="h-8 w-8 text-green-500" />
@@ -111,12 +123,12 @@ export default function TimeLeaveDashboard() {
                 <div className="flex items-center justify-between">
                   <div>
                     <p className="text-sm font-medium text-gray-600">
-                      Pending Leave Requests
+                      Time Entries
                     </p>
-                    <p className="text-2xl font-bold">12</p>
-                    <p className="text-xs text-orange-600">Awaiting approval</p>
+                    <p className="text-2xl font-bold">0</p>
+                    <p className="text-xs text-gray-600">No data yet</p>
                   </div>
-                  <Calendar className="h-8 w-8 text-orange-500" />
+                  <Clock className="h-8 w-8 text-orange-500" />
                 </div>
               </CardContent>
             </Card>
@@ -126,167 +138,129 @@ export default function TimeLeaveDashboard() {
                 <div className="flex items-center justify-between">
                   <div>
                     <p className="text-sm font-medium text-gray-600">
-                      On Leave Today
+                      Leave Requests
                     </p>
-                    <p className="text-2xl font-bold">8</p>
-                    <p className="text-xs text-blue-600">
-                      Vacation & sick leave
-                    </p>
+                    <p className="text-2xl font-bold">0</p>
+                    <p className="text-xs text-gray-600">No requests yet</p>
                   </div>
-                  <Coffee className="h-8 w-8 text-blue-500" />
-                </div>
-              </CardContent>
-            </Card>
-
-            <Card>
-              <CardContent className="p-6">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="text-sm font-medium text-gray-600">
-                      Overtime Hours
-                    </p>
-                    <p className="text-2xl font-bold">234</p>
-                    <p className="text-xs text-purple-600">This week</p>
-                  </div>
-                  <Clock className="h-8 w-8 text-purple-500" />
+                  <Calendar className="h-8 w-8 text-purple-500" />
                 </div>
               </CardContent>
             </Card>
           </div>
 
-          {/* Recent Activity & Quick Insights */}
+          {/* Status Cards */}
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
             <Card>
               <CardHeader>
-                <CardTitle>Recent Time & Leave Activity</CardTitle>
+                <CardTitle>Database Status</CardTitle>
                 <CardDescription>
-                  Latest attendance and leave updates
+                  Real-time employee data for time tracking
                 </CardDescription>
               </CardHeader>
               <CardContent>
                 <div className="space-y-4">
-                  <div className="flex items-center gap-3 p-3 bg-green-50 rounded-lg">
-                    <CheckCircle className="h-5 w-5 text-green-600" />
+                  <div className="flex items-center gap-3 p-3 bg-blue-50 rounded-lg">
+                    <Database className="h-5 w-5 text-blue-600" />
                     <div className="flex-1">
                       <p className="text-sm font-medium">
-                        Leave request approved
+                        Live Data Connection
                       </p>
                       <p className="text-xs text-gray-600">
-                        Sarah Johnson - Vacation leave (5 days)
+                        Connected to Firebase database
                       </p>
                     </div>
-                    <Badge className="bg-green-100 text-green-800">
-                      Approved
-                    </Badge>
+                    <Badge className="bg-blue-100 text-blue-800">Live</Badge>
                   </div>
 
-                  <div className="flex items-center gap-3 p-3 bg-blue-50 rounded-lg">
-                    <Clock className="h-5 w-5 text-blue-600" />
-                    <div className="flex-1">
-                      <p className="text-sm font-medium">Overtime logged</p>
-                      <p className="text-xs text-gray-600">
-                        Engineering team - 45 hours this week
-                      </p>
+                  {totalEmployees > 0 ? (
+                    <>
+                      <div className="flex items-center gap-3 p-3 bg-green-50 rounded-lg">
+                        <Users className="h-5 w-5 text-green-600" />
+                        <div className="flex-1">
+                          <p className="text-sm font-medium">
+                            Employees Available
+                          </p>
+                          <p className="text-xs text-gray-600">
+                            {activeEmployees} active employees ready for time
+                            tracking
+                          </p>
+                        </div>
+                        <Badge className="bg-green-100 text-green-800">
+                          {activeEmployees}
+                        </Badge>
+                      </div>
+                    </>
+                  ) : (
+                    <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg">
+                      <AlertCircle className="h-5 w-5 text-gray-600" />
+                      <div className="flex-1">
+                        <p className="text-sm font-medium">No Employee Data</p>
+                        <p className="text-xs text-gray-600">
+                          Add employees to enable time & leave tracking
+                        </p>
+                      </div>
+                      <Badge className="bg-gray-100 text-gray-800">Empty</Badge>
                     </div>
-                    <Badge className="bg-blue-100 text-blue-800">
-                      Overtime
-                    </Badge>
-                  </div>
-
-                  <div className="flex items-center gap-3 p-3 bg-orange-50 rounded-lg">
-                    <AlertTriangle className="h-5 w-5 text-orange-600" />
-                    <div className="flex-1">
-                      <p className="text-sm font-medium">Late arrivals</p>
-                      <p className="text-xs text-gray-600">
-                        3 employees arrived late today
-                      </p>
-                    </div>
-                    <Badge className="bg-orange-100 text-orange-800">
-                      Warning
-                    </Badge>
-                  </div>
-
-                  <div className="flex items-center gap-3 p-3 bg-purple-50 rounded-lg">
-                    <TrendingUp className="h-5 w-5 text-purple-600" />
-                    <div className="flex-1">
-                      <p className="text-sm font-medium">Attendance trend</p>
-                      <p className="text-xs text-gray-600">
-                        2% improvement over last month
-                      </p>
-                    </div>
-                    <Badge className="bg-purple-100 text-purple-800">
-                      Trending
-                    </Badge>
-                  </div>
+                  )}
                 </div>
               </CardContent>
             </Card>
 
             <Card>
               <CardHeader>
-                <CardTitle>Leave Balance Overview</CardTitle>
+                <CardTitle>Getting Started</CardTitle>
                 <CardDescription>
-                  Department-wise leave utilization
+                  Set up time & leave tracking for your organization
                 </CardDescription>
               </CardHeader>
               <CardContent>
                 <div className="space-y-4">
-                  <div className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
-                    <div>
-                      <p className="text-sm font-medium">Engineering</p>
+                  <div className="flex items-center gap-3 p-3 bg-blue-50 rounded-lg">
+                    <Users className="h-5 w-5 text-blue-600" />
+                    <div className="flex-1">
+                      <p className="text-sm font-medium">
+                        Step 1: Add Employees
+                      </p>
                       <p className="text-xs text-gray-600">
-                        Average leave days used
+                        Import or add employees to your database
                       </p>
                     </div>
-                    <div className="text-right">
-                      <p className="text-lg font-bold">12.5</p>
-                      <Badge variant="outline">50% utilized</Badge>
-                    </div>
+                    <Badge
+                      className={
+                        totalEmployees > 0
+                          ? "bg-green-100 text-green-800"
+                          : "bg-gray-100 text-gray-800"
+                      }
+                    >
+                      {totalEmployees > 0 ? "Complete" : "Pending"}
+                    </Badge>
                   </div>
 
-                  <div className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
-                    <div>
-                      <p className="text-sm font-medium">Sales</p>
+                  <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg">
+                    <Clock className="h-5 w-5 text-gray-600" />
+                    <div className="flex-1">
+                      <p className="text-sm font-medium">
+                        Step 2: Configure Time Tracking
+                      </p>
                       <p className="text-xs text-gray-600">
-                        Average leave days used
+                        Set up time tracking policies and rules
                       </p>
                     </div>
-                    <div className="text-right">
-                      <p className="text-lg font-bold">8.2</p>
-                      <Badge className="bg-green-100 text-green-800">
-                        33% utilized
-                      </Badge>
-                    </div>
+                    <Badge className="bg-gray-100 text-gray-800">Pending</Badge>
                   </div>
 
-                  <div className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
-                    <div>
-                      <p className="text-sm font-medium">Marketing</p>
+                  <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg">
+                    <Calendar className="h-5 w-5 text-gray-600" />
+                    <div className="flex-1">
+                      <p className="text-sm font-medium">
+                        Step 3: Setup Leave Policies
+                      </p>
                       <p className="text-xs text-gray-600">
-                        Average leave days used
+                        Define leave types and approval workflows
                       </p>
                     </div>
-                    <div className="text-right">
-                      <p className="text-lg font-bold">15.8</p>
-                      <Badge className="bg-orange-100 text-orange-800">
-                        63% utilized
-                      </Badge>
-                    </div>
-                  </div>
-
-                  <div className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
-                    <div>
-                      <p className="text-sm font-medium">Operations</p>
-                      <p className="text-xs text-gray-600">
-                        Average leave days used
-                      </p>
-                    </div>
-                    <div className="text-right">
-                      <p className="text-lg font-bold">10.3</p>
-                      <Badge className="bg-blue-100 text-blue-800">
-                        41% utilized
-                      </Badge>
-                    </div>
+                    <Badge className="bg-gray-100 text-gray-800">Pending</Badge>
                   </div>
                 </div>
               </CardContent>

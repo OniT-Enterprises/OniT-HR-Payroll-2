@@ -351,7 +351,7 @@ export default function Departments() {
                                 Manager:
                               </span>
                               <span className="font-medium">
-                                {departmentData.manager}
+                                {dept.department.manager}
                               </span>
                             </div>
                           )}

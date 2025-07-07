@@ -280,7 +280,7 @@ export default function CandidateSelection() {
                   <p className="text-sm font-medium text-muted-foreground">
                     Total Applications
                   </p>
-                  <p className="text-2xl font-bold">47</p>
+                  <p className="text-2xl font-bold">{candidates.length}</p>
                 </div>
                 <Users className="h-8 w-8 text-blue-500" />
               </div>
@@ -293,7 +293,12 @@ export default function CandidateSelection() {
                   <p className="text-sm font-medium text-muted-foreground">
                     Shortlisted
                   </p>
-                  <p className="text-2xl font-bold">12</p>
+                  <p className="text-2xl font-bold">
+                    {
+                      candidates.filter((c) => c.status === "Shortlisted")
+                        .length
+                    }
+                  </p>
                 </div>
                 <CheckCircle className="h-8 w-8 text-green-500" />
               </div>
@@ -306,7 +311,12 @@ export default function CandidateSelection() {
                   <p className="text-sm font-medium text-muted-foreground">
                     Under Review
                   </p>
-                  <p className="text-2xl font-bold">8</p>
+                  <p className="text-2xl font-bold">
+                    {
+                      candidates.filter((c) => c.status === "Under Review")
+                        .length
+                    }
+                  </p>
                 </div>
                 <Clock className="h-8 w-8 text-yellow-500" />
               </div>
@@ -319,7 +329,9 @@ export default function CandidateSelection() {
                   <p className="text-sm font-medium text-muted-foreground">
                     New Applications
                   </p>
-                  <p className="text-2xl font-bold">5</p>
+                  <p className="text-2xl font-bold">
+                    {candidates.filter((c) => c.status === "New").length}
+                  </p>
                 </div>
                 <Star className="h-8 w-8 text-blue-500" />
               </div>

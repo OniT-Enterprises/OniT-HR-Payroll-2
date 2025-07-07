@@ -948,8 +948,12 @@ export default function AddEmployee() {
                       </SelectTrigger>
                       <SelectContent>
                         {managers.map((manager) => (
-                          <SelectItem key={manager.id} value={manager.id}>
-                            {manager.name}
+                          <SelectItem
+                            key={manager.id}
+                            value={`${manager.personalInfo.firstName} ${manager.personalInfo.lastName}`}
+                          >
+                            {manager.personalInfo.firstName}{" "}
+                            {manager.personalInfo.lastName}
                           </SelectItem>
                         ))}
                       </SelectContent>

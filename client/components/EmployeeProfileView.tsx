@@ -251,7 +251,9 @@ export default function EmployeeProfileView({
                   <p className="font-medium text-lg">
                     {formatSalary(employee.compensation.annualSalary)}
                   </p>
-                  <p className="text-sm text-muted-foreground">Annual Salary</p>
+                  <p className="text-sm text-muted-foreground">
+                    Monthly Salary
+                  </p>
                 </div>
               </div>
               <div className="flex items-center gap-3">

@@ -153,7 +153,7 @@ export default function PayrollReports() {
                         Average Salary
                       </p>
                       <p className="text-2xl font-bold">
-                        {formatCurrency(averageSalary)}
+                        {formatCurrency(averageMonthlySalary)}
                       </p>
                       <p className="text-xs text-purple-600">Per employee</p>
                     </div>

@@ -48,12 +48,14 @@ export default function PayrollReports() {
     }
   };
 
-  const totalSalary = employees.reduce(
-    (sum, emp) => sum + emp.compensation.annualSalary,
+  const totalMonthlySalary = employees.reduce(
+    (sum, emp) => sum + emp.compensation.annualSalary / 12,
     0,
   );
-  const averageSalary =
-    employees.length > 0 ? Math.round(totalSalary / employees.length) : 0;
+  const averageMonthlySalary =
+    employees.length > 0
+      ? Math.round(totalMonthlySalary / employees.length)
+      : 0;
   const activeEmployees = employees.filter((emp) => emp.status === "active");
 
   const formatCurrency = (amount) => {

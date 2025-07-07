@@ -129,14 +129,21 @@ export default function DepartmentManager({
     }
 
     try {
+      // Convert 'none' values to empty strings for storage
+      const dataToSave = {
+        ...formData,
+        director: formData.director === "none" ? "" : formData.director,
+        manager: formData.manager === "none" ? "" : formData.manager,
+      };
+
       if (editingDept) {
-        await departmentService.updateDepartment(editingDept.id, formData);
+        await departmentService.updateDepartment(editingDept.id, dataToSave);
         toast({
           title: "Success",
           description: "Department updated successfully",
         });
       } else {
-        await departmentService.addDepartment(formData);
+        await departmentService.addDepartment(dataToSave);
         toast({
           title: "Success",
           description: "Department added successfully",

@@ -108,7 +108,6 @@ export default function DepartmentManager({
       director: "",
       manager: "",
       description: "",
-      budget: 0,
     });
     setEditingDept(null);
   };

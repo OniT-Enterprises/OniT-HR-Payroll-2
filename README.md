@@ -72,8 +72,8 @@ Before you begin, ensure you have the following installed:
 ### 1. Clone the Repository
 
 ```bash
-git clone https://github.com/OniT-Enterprises/OniT-HR-Payroll.git
-cd OniT-HR-Payroll
+git clone https://github.com/OniT-Enterprises/OniT-HR-Payroll-2.git
+cd OniT-HR-Payroll-2
 ```
 
 ### 2. Install Dependencies
@@ -141,7 +141,7 @@ OniT-HR-Payroll/
 ├── client/                 # Frontend application
 │   ├── components/         # Reusable UI components
 │   │   ├── ui/            # Base UI components
-│   │   ├���─ layout/        # Layout components
+│   │   ├── layout/        # Layout components
 │   │   └── ...            # Feature components
 │   ├── pages/             # Application pages
 │   │   ├── staff/         # Employee management

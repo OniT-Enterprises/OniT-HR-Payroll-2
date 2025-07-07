@@ -113,14 +113,13 @@ export default function OrganizationChart() {
     }
   };
 
-  // Group employees by department
-  const departmentGroups = employees.reduce(
-    (acc, employee) => {
-      const dept = employee.jobDetails.department;
-      if (!acc[dept]) {
-        acc[dept] = [];
-      }
-      acc[dept].push(employee);
+  // Group employees by managed departments only
+  const departmentGroups = departments.reduce(
+    (acc, department) => {
+      const deptEmployees = employees.filter(
+        (emp) => emp.jobDetails.department === department.name,
+      );
+      acc[department.name] = deptEmployees;
       return acc;
     },
     {} as Record<string, Employee[]>,

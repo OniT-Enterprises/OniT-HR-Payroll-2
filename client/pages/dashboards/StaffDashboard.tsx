@@ -120,8 +120,8 @@ export default function StaffDashboard() {
                     <p className="text-sm font-medium text-gray-600">
                       Total Employees
                     </p>
-                    <p className="text-2xl font-bold">156</p>
-                    <p className="text-xs text-green-600">+5 this month</p>
+                    <p className="text-2xl font-bold">{totalEmployees}</p>
+                    <p className="text-xs text-blue-600">In database</p>
                   </div>
                   <Users className="h-8 w-8 text-cyan-500" />
                 </div>
@@ -135,8 +135,10 @@ export default function StaffDashboard() {
                     <p className="text-sm font-medium text-gray-600">
                       Active Employees
                     </p>
-                    <p className="text-2xl font-bold">148</p>
-                    <p className="text-xs text-blue-600">94.9% active rate</p>
+                    <p className="text-2xl font-bold">{activeEmployees}</p>
+                    <p className="text-xs text-green-600">
+                      {activeRate}% active rate
+                    </p>
                   </div>
                   <UserCheck className="h-8 w-8 text-green-500" />
                 </div>
@@ -150,9 +152,9 @@ export default function StaffDashboard() {
                     <p className="text-sm font-medium text-gray-600">
                       Departments
                     </p>
-                    <p className="text-2xl font-bold">8</p>
+                    <p className="text-2xl font-bold">{totalDepartments}</p>
                     <p className="text-xs text-purple-600">
-                      Across all divisions
+                      Active departments
                     </p>
                   </div>
                   <Building className="h-8 w-8 text-purple-500" />
@@ -165,12 +167,19 @@ export default function StaffDashboard() {
                 <div className="flex items-center justify-between">
                   <div>
                     <p className="text-sm font-medium text-gray-600">
-                      On Leave
+                      Inactive/Terminated
                     </p>
-                    <p className="text-2xl font-bold">8</p>
-                    <p className="text-xs text-orange-600">5.1% of workforce</p>
+                    <p className="text-2xl font-bold">{inactiveEmployees}</p>
+                    <p className="text-xs text-orange-600">
+                      {totalEmployees > 0
+                        ? ((inactiveEmployees / totalEmployees) * 100).toFixed(
+                            1,
+                          )
+                        : "0"}
+                      % of workforce
+                    </p>
                   </div>
-                  <Calendar className="h-8 w-8 text-orange-500" />
+                  <UserX className="h-8 w-8 text-orange-500" />
                 </div>
               </CardContent>
             </Card>

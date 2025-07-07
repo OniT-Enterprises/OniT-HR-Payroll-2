@@ -107,6 +107,7 @@ export default function Offboarding() {
   );
   const [loading, setLoading] = useState(true);
   const [showDialog, setShowDialog] = useState(false);
+  const [isOffline, setIsOffline] = useState(false);
   const { toast } = useToast();
 
   // New offboarding form data

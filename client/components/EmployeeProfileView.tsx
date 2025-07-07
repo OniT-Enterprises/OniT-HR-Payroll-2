@@ -46,13 +46,14 @@ export default function EmployeeProfileView({
 }: EmployeeProfileViewProps) {
   if (!employee) return null;
 
-  const formatSalary = (salary: number) => {
+  const formatSalary = (annualSalary: number) => {
+    const monthlySalary = annualSalary / 12;
     return new Intl.NumberFormat("en-US", {
       style: "currency",
       currency: "USD",
       minimumFractionDigits: 0,
       maximumFractionDigits: 0,
-    }).format(salary);
+    }).format(monthlySalary);
   };
 
   const getStatusColor = (status: string) => {

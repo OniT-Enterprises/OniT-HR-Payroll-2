@@ -652,14 +652,27 @@ export default function Offboarding() {
         {employees.length === 0 ? (
           <div className="text-center py-16">
             <UserMinus className="h-16 w-16 mx-auto mb-4 text-gray-300" />
-            <h3 className="text-lg font-semibold mb-2">No Employee Data</h3>
+            <h3 className="text-lg font-semibold mb-2">
+              {isOffline ? "Connection Error" : "No Employee Data"}
+            </h3>
             <p className="text-muted-foreground mb-6">
-              Add employees to your database to manage offboarding processes
+              {isOffline
+                ? "Unable to connect to the database. Please check your internet connection and try again."
+                : "Add employees to your database to manage offboarding processes"}
             </p>
-            <Button onClick={() => (window.location.href = "/staff/add")}>
-              <User className="mr-2 h-4 w-4" />
-              Add Employees First
-            </Button>
+            <div className="flex gap-3 justify-center">
+              {isOffline ? (
+                <Button onClick={() => loadData()}>
+                  <Database className="mr-2 h-4 w-4" />
+                  Retry Connection
+                </Button>
+              ) : (
+                <Button onClick={() => (window.location.href = "/staff/add")}>
+                  <User className="mr-2 h-4 w-4" />
+                  Add Employees First
+                </Button>
+              )}
+            </div>
           </div>
         ) : (
           <div className="space-y-6">

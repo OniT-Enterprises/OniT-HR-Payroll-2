@@ -50,6 +50,9 @@ export default function Departments() {
       ]);
       setEmployees(employeesData);
       setDepartments(departmentsData);
+
+      // Auto-migrate departments that exist in employee records but not in departments collection
+      await migrateMissingDepartments(employeesData, departmentsData);
     } catch (error) {
       console.error("Error loading data:", error);
       toast({
@@ -59,6 +62,47 @@ export default function Departments() {
       });
     } finally {
       setLoading(false);
+    }
+  };
+
+  const migrateMissingDepartments = async (
+    employees: Employee[],
+    existingDepartments: Department[],
+  ) => {
+    try {
+      // Get unique department names from employees
+      const employeeDepartments = [
+        ...new Set(employees.map((emp) => emp.jobDetails.department)),
+      ];
+
+      // Get existing department names
+      const existingDeptNames = existingDepartments.map((dept) => dept.name);
+
+      // Find departments that exist in employee records but not in departments collection
+      const missingDepartments = employeeDepartments.filter(
+        (deptName) => deptName && !existingDeptNames.includes(deptName),
+      );
+
+      // Create missing departments
+      for (const deptName of missingDepartments) {
+        await departmentService.addDepartment({
+          name: deptName,
+          description: `Auto-migrated department from existing employee records`,
+        });
+      }
+
+      // If we created any departments, reload the data
+      if (missingDepartments.length > 0) {
+        const updatedDepartments = await departmentService.getAllDepartments();
+        setDepartments(updatedDepartments);
+
+        toast({
+          title: "Departments Migrated",
+          description: `Auto-created ${missingDepartments.length} departments from existing employee records`,
+        });
+      }
+    } catch (error) {
+      console.error("Error migrating departments:", error);
     }
   };
 

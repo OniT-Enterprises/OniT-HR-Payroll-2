@@ -106,44 +106,36 @@ export default function Departments() {
     }
   };
 
-  // Group employees by department
-  const departmentGroups = employees.reduce(
-    (acc, employee) => {
-      const dept = employee.jobDetails.department;
-      if (!acc[dept]) {
-        acc[dept] = [];
-      }
-      acc[dept].push(employee);
-      return acc;
-    },
-    {} as Record<string, Employee[]>,
-  );
+  // Calculate department statistics using only managed departments
+  const departmentStats = departments.map((department) => {
+    const deptEmployees = employees.filter(
+      (emp) => emp.jobDetails.department === department.name,
+    );
 
-  // Calculate department statistics
-  const departmentStats = Object.entries(departmentGroups).map(
-    ([name, deptEmployees]) => {
-      const activeCount = deptEmployees.filter(
-        (emp) => emp.status === "active",
-      ).length;
-      const inactiveCount = deptEmployees.filter(
-        (emp) => emp.status === "inactive",
-      ).length;
-      const averageSalary =
-        deptEmployees.reduce(
-          (sum, emp) => sum + emp.compensation.annualSalary,
-          0,
-        ) / deptEmployees.length;
+    const activeCount = deptEmployees.filter(
+      (emp) => emp.status === "active",
+    ).length;
+    const inactiveCount = deptEmployees.filter(
+      (emp) => emp.status === "inactive",
+    ).length;
+    const averageSalary =
+      deptEmployees.length > 0
+        ? deptEmployees.reduce(
+            (sum, emp) => sum + emp.compensation.annualSalary,
+            0,
+          ) / deptEmployees.length
+        : 0;
 
-      return {
-        name,
-        totalEmployees: deptEmployees.length,
-        activeEmployees: activeCount,
-        inactiveEmployees: inactiveCount,
-        averageSalary: Math.round(averageSalary),
-        employees: deptEmployees,
-      };
-    },
-  );
+    return {
+      name: department.name,
+      totalEmployees: deptEmployees.length,
+      activeEmployees: activeCount,
+      inactiveEmployees: inactiveCount,
+      averageSalary: Math.round(averageSalary),
+      employees: deptEmployees,
+      department, // Include the full department object
+    };
+  });
 
   // Sort departments by employee count
   departmentStats.sort((a, b) => b.totalEmployees - a.totalEmployees);

@@ -147,7 +147,7 @@ export default function AllEmployees() {
           emp.jobDetails.hireDate,
           emp.jobDetails.employmentType,
           emp.jobDetails.workLocation,
-          emp.compensation.annualSalary,
+          Math.round(emp.compensation.annualSalary / 12),
           emp.status,
         ].join(","),
       ),

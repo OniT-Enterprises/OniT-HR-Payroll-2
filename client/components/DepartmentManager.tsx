@@ -446,7 +446,7 @@ export default function DepartmentManager({
                           </Badge>
                         </div>
                         <div className="flex items-center gap-2 text-sm">
-                          <DollarSign className="h-4 w-4 text-orange-500" />
+                          <Users className="h-4 w-4 text-orange-500" />
                           <span className="text-muted-foreground">
                             Monthly Payroll:
                           </span>

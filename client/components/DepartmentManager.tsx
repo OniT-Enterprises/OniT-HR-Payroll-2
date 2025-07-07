@@ -309,7 +309,7 @@ export default function DepartmentManager({
                         <SelectValue placeholder="Select manager" />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="">No Manager</SelectItem>
+                        <SelectItem value="none">No Manager</SelectItem>
                         {employees
                           .filter((emp) => emp.status === "active")
                           .map((employee) => (

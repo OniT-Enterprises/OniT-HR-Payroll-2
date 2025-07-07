@@ -26,11 +26,26 @@ import {
 } from "lucide-react";
 
 export default function Dashboard() {
+  const [totalEmployees, setTotalEmployees] = useState(0);
+
+  useEffect(() => {
+    loadEmployeeCount();
+  }, []);
+
+  const loadEmployeeCount = async () => {
+    try {
+      const employees = await employeeService.getAllEmployees();
+      setTotalEmployees(employees.length);
+    } catch (error) {
+      console.error("Error loading employee count:", error);
+    }
+  };
+
   const stats = [
     {
       title: "Total Employees",
-      value: "247",
-      change: "+12%",
+      value: totalEmployees.toString(),
+      change: "Live data",
       changeType: "positive" as const,
       icon: <Users className="h-5 w-5" />,
     },

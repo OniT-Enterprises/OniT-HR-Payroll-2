@@ -165,7 +165,6 @@ export default function DepartmentManager({
       director: department.director || "",
       manager: department.manager || "",
       description: department.description || "",
-      budget: department.budget || 0,
     });
     setShowAddForm(true);
   };

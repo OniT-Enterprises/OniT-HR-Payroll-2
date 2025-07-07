@@ -123,6 +123,28 @@ export default function Offboarding() {
 
   useEffect(() => {
     loadData();
+
+    // Add online/offline detection
+    const handleOnline = () => {
+      setIsOffline(false);
+      // Retry loading data when coming back online
+      loadData();
+    };
+
+    const handleOffline = () => {
+      setIsOffline(true);
+    };
+
+    window.addEventListener("online", handleOnline);
+    window.addEventListener("offline", handleOffline);
+
+    // Check initial connection status
+    setIsOffline(!navigator.onLine);
+
+    return () => {
+      window.removeEventListener("online", handleOnline);
+      window.removeEventListener("offline", handleOffline);
+    };
   }, []);
 
   const loadData = async () => {

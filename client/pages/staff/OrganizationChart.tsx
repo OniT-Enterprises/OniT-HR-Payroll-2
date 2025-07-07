@@ -81,29 +81,33 @@ export default function OrganizationChart() {
     existingDepartments: Department[],
   ) => {
     try {
+      // Only run migration on initial load, not during updates
+      if (existingDepartments.length > 0) {
+        return; // Skip migration if departments already exist
+      }
+
       // Get unique department names from employees
       const employeeDepartments = [
         ...new Set(employees.map((emp) => emp.jobDetails.department)),
       ];
 
-      // Get existing department names
-      const existingDeptNames = existingDepartments.map((dept) => dept.name);
-
-      // Find departments that exist in employee records but not in departments collection
-      const missingDepartments = employeeDepartments.filter(
-        (deptName) => deptName && !existingDeptNames.includes(deptName),
+      // Filter out empty department names
+      const validDepartments = employeeDepartments.filter(
+        (deptName) => deptName && deptName.trim(),
       );
 
-      // Create missing departments
-      for (const deptName of missingDepartments) {
-        await departmentService.addDepartment({
-          name: deptName,
-          description: `Auto-migrated department from existing employee records`,
-        });
-      }
+      // Create missing departments only if we have employees but no departments
+      if (validDepartments.length > 0 && existingDepartments.length === 0) {
+        for (const deptName of validDepartments) {
+          await departmentService.addDepartment({
+            name: deptName,
+            icon: "building",
+            shape: "circle",
+            color: "#3B82F6",
+          });
+        }
 
-      // If we created any departments, reload the data
-      if (missingDepartments.length > 0) {
+        // Reload the data after initial migration
         const updatedDepartments = await departmentService.getAllDepartments();
         setDepartments(updatedDepartments);
         setExpandedDepts(updatedDepartments.map((dept) => dept.name));

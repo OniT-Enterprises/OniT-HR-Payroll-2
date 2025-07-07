@@ -16,6 +16,11 @@ import {
 } from "@/components/ui/collapsible";
 import MainNavigation from "@/components/layout/MainNavigation";
 import { employeeService, type Employee } from "@/services/employeeService";
+import {
+  departmentService,
+  type Department,
+} from "@/services/departmentService";
+import DepartmentManager from "@/components/DepartmentManager";
 import { useToast } from "@/hooks/use-toast";
 import {
   Building,
@@ -27,6 +32,8 @@ import {
   Grip,
   Database,
   AlertCircle,
+  Plus,
+  Edit,
 } from "lucide-react";
 
 export default function OrganizationChart() {

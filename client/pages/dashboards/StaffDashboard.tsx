@@ -191,86 +191,108 @@ export default function StaffDashboard() {
               <CardHeader>
                 <CardTitle>Department Breakdown</CardTitle>
                 <CardDescription>
-                  Employee distribution by department
+                  Employee distribution by department ({totalEmployees} total)
                 </CardDescription>
               </CardHeader>
               <CardContent>
                 <div className="space-y-4">
-                  <div className="flex items-center justify-between p-3 bg-blue-50 rounded-lg">
-                    <div className="flex items-center gap-3">
-                      <div className="w-3 h-3 bg-blue-500 rounded-full"></div>
-                      <div>
-                        <p className="text-sm font-medium">Engineering</p>
-                        <p className="text-xs text-gray-600">
-                          Software Development
-                        </p>
-                      </div>
+                  {totalEmployees === 0 ? (
+                    <div className="text-center text-gray-500 py-8">
+                      <Users className="h-12 w-12 mx-auto mb-4 text-gray-300" />
+                      <p className="text-sm">No employees in database</p>
+                      <p className="text-xs text-gray-400">
+                        Add employees to see department breakdown
+                      </p>
                     </div>
-                    <div className="text-right">
-                      <p className="text-lg font-bold">45</p>
-                      <p className="text-xs text-gray-600">28.8%</p>
+                  ) : topDepartments.length === 0 ? (
+                    <div className="text-center text-gray-500 py-4">
+                      <p className="text-sm">No department data available</p>
                     </div>
-                  </div>
+                  ) : (
+                    topDepartments.map(([department, count], index) => {
+                      const percentage =
+                        totalEmployees > 0
+                          ? ((count / totalEmployees) * 100).toFixed(1)
+                          : "0";
+                      const colors = [
+                        { bg: "bg-blue-50", dot: "bg-blue-500" },
+                        { bg: "bg-green-50", dot: "bg-green-500" },
+                        { bg: "bg-purple-50", dot: "bg-purple-500" },
+                        { bg: "bg-orange-50", dot: "bg-orange-500" },
+                      ];
+                      const color = colors[index] || {
+                        bg: "bg-gray-50",
+                        dot: "bg-gray-500",
+                      };
 
-                  <div className="flex items-center justify-between p-3 bg-green-50 rounded-lg">
-                    <div className="flex items-center gap-3">
-                      <div className="w-3 h-3 bg-green-500 rounded-full"></div>
-                      <div>
-                        <p className="text-sm font-medium">Sales</p>
-                        <p className="text-xs text-gray-600">
-                          Revenue Generation
-                        </p>
-                      </div>
-                    </div>
-                    <div className="text-right">
-                      <p className="text-lg font-bold">32</p>
-                      <p className="text-xs text-gray-600">20.5%</p>
-                    </div>
-                  </div>
+                      return (
+                        <div
+                          key={department}
+                          className={`flex items-center justify-between p-3 ${color.bg} rounded-lg`}
+                        >
+                          <div className="flex items-center gap-3">
+                            <div
+                              className={`w-3 h-3 ${color.dot} rounded-full`}
+                            ></div>
+                            <div>
+                              <p className="text-sm font-medium">
+                                {department}
+                              </p>
+                              <p className="text-xs text-gray-600">
+                                {count} employee{count !== 1 ? "s" : ""}
+                              </p>
+                            </div>
+                          </div>
+                          <div className="text-right">
+                            <p className="text-lg font-bold">{count}</p>
+                            <p className="text-xs text-gray-600">
+                              {percentage}%
+                            </p>
+                          </div>
+                        </div>
+                      );
+                    })
+                  )}
 
-                  <div className="flex items-center justify-between p-3 bg-purple-50 rounded-lg">
-                    <div className="flex items-center gap-3">
-                      <div className="w-3 h-3 bg-purple-500 rounded-full"></div>
-                      <div>
-                        <p className="text-sm font-medium">Marketing</p>
-                        <p className="text-xs text-gray-600">Brand & Growth</p>
+                  {topDepartments.length > 0 &&
+                    Object.keys(departmentStats).length > 4 && (
+                      <div className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                        <div className="flex items-center gap-3">
+                          <div className="w-3 h-3 bg-gray-500 rounded-full"></div>
+                          <div>
+                            <p className="text-sm font-medium">
+                              Other Departments
+                            </p>
+                            <p className="text-xs text-gray-600">
+                              {Object.keys(departmentStats).length - 4} more
+                              departments
+                            </p>
+                          </div>
+                        </div>
+                        <div className="text-right">
+                          <p className="text-lg font-bold">
+                            {Object.entries(departmentStats)
+                              .slice(4)
+                              .reduce((sum, [, count]) => sum + count, 0)}
+                          </p>
+                          <p className="text-xs text-gray-600">
+                            {totalEmployees > 0
+                              ? (
+                                  (Object.entries(departmentStats)
+                                    .slice(4)
+                                    .reduce(
+                                      (sum, [, count]) => sum + count,
+                                      0,
+                                    ) /
+                                    totalEmployees) *
+                                  100
+                                ).toFixed(1)
+                              : "0"}
+                            %
+                          </p>
+                        </div>
                       </div>
-                    </div>
-                    <div className="text-right">
-                      <p className="text-lg font-bold">24</p>
-                      <p className="text-xs text-gray-600">15.4%</p>
-                    </div>
-                  </div>
-
-                  <div className="flex items-center justify-between p-3 bg-orange-50 rounded-lg">
-                    <div className="flex items-center gap-3">
-                      <div className="w-3 h-3 bg-orange-500 rounded-full"></div>
-                      <div>
-                        <p className="text-sm font-medium">Operations</p>
-                        <p className="text-xs text-gray-600">Support & Admin</p>
-                      </div>
-                    </div>
-                    <div className="text-right">
-                      <p className="text-lg font-bold">18</p>
-                      <p className="text-xs text-gray-600">11.5%</p>
-                    </div>
-                  </div>
-
-                  <div className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
-                    <div className="flex items-center gap-3">
-                      <div className="w-3 h-3 bg-gray-500 rounded-full"></div>
-                      <div>
-                        <p className="text-sm font-medium">Other Departments</p>
-                        <p className="text-xs text-gray-600">
-                          HR, Finance, Legal
-                        </p>
-                      </div>
-                    </div>
-                    <div className="text-right">
-                      <p className="text-lg font-bold">37</p>
-                      <p className="text-xs text-gray-600">23.8%</p>
-                    </div>
-                  </div>
+                    )}
                 </div>
               </CardContent>
             </Card>

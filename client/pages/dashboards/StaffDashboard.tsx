@@ -299,73 +299,89 @@ export default function StaffDashboard() {
 
             <Card>
               <CardHeader>
-                <CardTitle>Recent Staff Activity</CardTitle>
+                <CardTitle>Database Status</CardTitle>
                 <CardDescription>
-                  Latest employee management updates
+                  Real-time employee data overview
                 </CardDescription>
               </CardHeader>
               <CardContent>
                 <div className="space-y-4">
-                  <div className="flex items-center gap-3 p-3 bg-green-50 rounded-lg">
-                    <UserCheck className="h-5 w-5 text-green-600" />
-                    <div className="flex-1">
-                      <p className="text-sm font-medium">New Employee Added</p>
-                      <p className="text-xs text-gray-600">
-                        Jessica Wong joined Engineering team
-                      </p>
-                    </div>
-                    <Badge className="bg-green-100 text-green-800">New</Badge>
-                  </div>
-
                   <div className="flex items-center gap-3 p-3 bg-blue-50 rounded-lg">
-                    <TrendingUp className="h-5 w-5 text-blue-600" />
+                    <Users className="h-5 w-5 text-blue-600" />
                     <div className="flex-1">
-                      <p className="text-sm font-medium">Promotion Updated</p>
+                      <p className="text-sm font-medium">
+                        Live Data Connection
+                      </p>
                       <p className="text-xs text-gray-600">
-                        Mike Chen promoted to Senior Developer
+                        Connected to Firebase database
                       </p>
                     </div>
-                    <Badge className="bg-blue-100 text-blue-800">
-                      Promoted
-                    </Badge>
+                    <Badge className="bg-blue-100 text-blue-800">Live</Badge>
                   </div>
 
-                  <div className="flex items-center gap-3 p-3 bg-purple-50 rounded-lg">
-                    <Building className="h-5 w-5 text-purple-600" />
-                    <div className="flex-1">
-                      <p className="text-sm font-medium">Department Transfer</p>
-                      <p className="text-xs text-gray-600">
-                        Sarah Miller moved to Product team
-                      </p>
-                    </div>
-                    <Badge className="bg-purple-100 text-purple-800">
-                      Transfer
-                    </Badge>
-                  </div>
+                  {totalEmployees > 0 ? (
+                    <>
+                      <div className="flex items-center gap-3 p-3 bg-green-50 rounded-lg">
+                        <UserCheck className="h-5 w-5 text-green-600" />
+                        <div className="flex-1">
+                          <p className="text-sm font-medium">
+                            Active Employees
+                          </p>
+                          <p className="text-xs text-gray-600">
+                            {activeEmployees} employees currently active
+                          </p>
+                        </div>
+                        <Badge className="bg-green-100 text-green-800">
+                          {activeEmployees}
+                        </Badge>
+                      </div>
 
-                  <div className="flex items-center gap-3 p-3 bg-orange-50 rounded-lg">
-                    <Calendar className="h-5 w-5 text-orange-600" />
-                    <div className="flex-1">
-                      <p className="text-sm font-medium">Leave Request</p>
-                      <p className="text-xs text-gray-600">
-                        3 employees on vacation this week
-                      </p>
-                    </div>
-                    <Badge className="bg-orange-100 text-orange-800">
-                      Leave
-                    </Badge>
-                  </div>
+                      {totalDepartments > 0 && (
+                        <div className="flex items-center gap-3 p-3 bg-purple-50 rounded-lg">
+                          <Building className="h-5 w-5 text-purple-600" />
+                          <div className="flex-1">
+                            <p className="text-sm font-medium">
+                              Departments Active
+                            </p>
+                            <p className="text-xs text-gray-600">
+                              {totalDepartments} departments with employees
+                            </p>
+                          </div>
+                          <Badge className="bg-purple-100 text-purple-800">
+                            {totalDepartments}
+                          </Badge>
+                        </div>
+                      )}
 
-                  <div className="flex items-center gap-3 p-3 bg-red-50 rounded-lg">
-                    <UserX className="h-5 w-5 text-red-600" />
-                    <div className="flex-1">
-                      <p className="text-sm font-medium">Employee Departure</p>
-                      <p className="text-xs text-gray-600">
-                        John Davis completed offboarding
-                      </p>
+                      {inactiveEmployees > 0 && (
+                        <div className="flex items-center gap-3 p-3 bg-orange-50 rounded-lg">
+                          <UserX className="h-5 w-5 text-orange-600" />
+                          <div className="flex-1">
+                            <p className="text-sm font-medium">
+                              Inactive Employees
+                            </p>
+                            <p className="text-xs text-gray-600">
+                              {inactiveEmployees} employees marked as inactive
+                            </p>
+                          </div>
+                          <Badge className="bg-orange-100 text-orange-800">
+                            {inactiveEmployees}
+                          </Badge>
+                        </div>
+                      )}
+                    </>
+                  ) : (
+                    <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg">
+                      <Users className="h-5 w-5 text-gray-600" />
+                      <div className="flex-1">
+                        <p className="text-sm font-medium">No Employee Data</p>
+                        <p className="text-xs text-gray-600">
+                          Add employees to see dashboard statistics
+                        </p>
+                      </div>
+                      <Badge className="bg-gray-100 text-gray-800">Empty</Badge>
                     </div>
-                    <Badge className="bg-red-100 text-red-800">Departed</Badge>
-                  </div>
+                  )}
                 </div>
               </CardContent>
             </Card>

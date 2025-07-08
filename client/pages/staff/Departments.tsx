@@ -192,8 +192,10 @@ export default function Departments() {
   };
 
   const handleViewEmployee = (employee: Employee) => {
-    // Open employee profile in new tab
-    window.open(`/staff/employees?view=${employee.id}`, "_blank");
+    // Open employee profile in new tab by navigating to AllEmployees page
+    window.open(`/staff/employees`, "_blank");
+    // Note: We could enhance this by passing the employee ID as a URL parameter
+    // and having AllEmployees automatically open that employee's profile
   };
 
   if (loading) {

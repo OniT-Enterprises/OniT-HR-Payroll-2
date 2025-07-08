@@ -557,8 +557,7 @@ export default function AllEmployees() {
                         </Badge>
                       </td>
                       <td className="p-3">
-                        <div className="flex items-center gap-2">
-                          <DollarSign className="h-4 w-4 text-muted-foreground" />
+                        <div>
                           <span className="font-semibold">
                             {formatSalary(
                               employee.compensation.monthlySalary ||
@@ -569,9 +568,9 @@ export default function AllEmployees() {
                                 0,
                             )}
                           </span>
-                        </div>
-                        <div className="text-xs text-muted-foreground mt-1">
-                          {employee.compensation.benefitsPackage} Benefits
+                          <div className="text-xs text-muted-foreground mt-1">
+                            {employee.compensation.benefitsPackage} Benefits
+                          </div>
                         </div>
                       </td>
                       <td className="p-3">

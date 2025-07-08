@@ -510,13 +510,18 @@ export default function EmployeeProfileView({
                       <FileText className="h-4 w-4 text-muted-foreground" />
                       <span className="font-medium">Work Contract</span>
                     </div>
-                    {employee.documents.workContract?.fileUrl ? (
+                    {employee.documents.workContract?.fileUrl &&
+                    employee.documents.workContract.fileUrl.trim() !== "" ? (
                       <div>
-                        <p className="text-sm text-green-600">
-                          Document uploaded
-                        </p>
+                        <Badge
+                          variant="default"
+                          className="bg-green-100 text-green-800"
+                        >
+                          ✓ Document uploaded
+                        </Badge>
                         {employee.documents.workContract.uploadDate && (
-                          <p className="text-xs text-muted-foreground">
+                          <p className="text-xs text-muted-foreground mt-1">
+                            Uploaded:{" "}
                             {new Date(
                               employee.documents.workContract.uploadDate,
                             ).toLocaleDateString()}
@@ -524,9 +529,12 @@ export default function EmployeeProfileView({
                         )}
                       </div>
                     ) : (
-                      <p className="text-sm text-muted-foreground">
-                        Not uploaded
-                      </p>
+                      <Badge
+                        variant="outline"
+                        className="bg-gray-50 text-gray-600"
+                      >
+                        📄 Not uploaded
+                      </Badge>
                     )}
                   </div>
 
@@ -540,13 +548,13 @@ export default function EmployeeProfileView({
                         </span>
                       </div>
                       {employee.documents.workingVisaResidency?.number ? (
-                        <div>
-                          <p className="text-sm">
+                        <div className="space-y-2">
+                          <p className="text-sm font-medium">
                             {employee.documents.workingVisaResidency.number}
                           </p>
                           {employee.documents.workingVisaResidency
                             .expiryDate && (
-                            <div className="mt-1">
+                            <div>
                               {(() => {
                                 const status = getExpiryStatus(
                                   employee.documents.workingVisaResidency
@@ -563,10 +571,22 @@ export default function EmployeeProfileView({
                               })()}
                             </div>
                           )}
-                          {employee.documents.workingVisaResidency.fileUrl && (
-                            <p className="text-xs text-green-600 mt-1">
-                              Document uploaded
-                            </p>
+                          {employee.documents.workingVisaResidency.fileUrl &&
+                          employee.documents.workingVisaResidency.fileUrl.trim() !==
+                            "" ? (
+                            <Badge
+                              variant="default"
+                              className="bg-green-100 text-green-800"
+                            >
+                              ✓ Document uploaded
+                            </Badge>
+                          ) : (
+                            <Badge
+                              variant="outline"
+                              className="bg-gray-50 text-gray-600"
+                            >
+                              📄 Not uploaded
+                            </Badge>
                           )}
                         </div>
                       ) : (

@@ -185,8 +185,8 @@ const EMPLOYEE_FIELDS: EmployeeField[] = [
   },
   // Compensation
   {
-    id: "annualSalary",
-    name: "Annual Salary",
+    id: "monthlySalary",
+    name: "Monthly Salary",
     category: "Compensation",
     required: false,
     type: "number",

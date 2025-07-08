@@ -213,10 +213,12 @@ export default function AddEmployee() {
             setAdditionalInfo((prev) => ({
               ...prev,
               nationality: employee.documents?.nationality || "Timor-Leste",
+              workContract: null, // File uploads can't be pre-populated, but we can show if exists
               workingVisaNumber:
                 employee.documents?.workingVisaResidency?.number || "",
               workingVisaExpiry:
                 employee.documents?.workingVisaResidency?.expiryDate || "",
+              workingVisaFile: null, // File uploads can't be pre-populated
             }));
           }
         }

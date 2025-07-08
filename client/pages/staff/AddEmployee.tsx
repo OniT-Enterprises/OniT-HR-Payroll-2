@@ -165,7 +165,11 @@ export default function AddEmployee() {
           startDate: employee.jobDetails.hireDate,
           employmentType: employee.jobDetails.employmentType,
           status: employee.status,
-          salary: employee.compensation.monthlySalary.toString(),
+          salary: (
+            employee.compensation.monthlySalary ||
+            Math.round((employee.compensation as any).annualSalary / 12) ||
+            0
+          ).toString(),
           leaveDays: employee.compensation.annualLeave?.toString() || "",
           benefits: employee.compensation.benefitsPackage || "",
         });

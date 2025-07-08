@@ -107,6 +107,7 @@ export default function AllEmployees() {
   const loadEmployees = async () => {
     try {
       setLoading(true);
+      setConnectionError(null);
       const employeesData = await employeeService.getAllEmployees();
       setEmployees(employeesData);
     } catch (error) {
@@ -115,6 +116,7 @@ export default function AllEmployees() {
       // Show specific error message from the service
       const errorMessage =
         error instanceof Error ? error.message : "Failed to load employees";
+      setConnectionError(errorMessage);
 
       toast({
         title: "Connection Error",

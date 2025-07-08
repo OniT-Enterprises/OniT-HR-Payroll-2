@@ -173,7 +173,7 @@ export default function EmployeeProfileView({
                       <p className="font-medium">
                         {(employee.personalInfo as any).phoneApp}
                       </p>
-                      <p className="text-sm text-muted-foreground">
+                      <div className="text-sm text-muted-foreground">
                         Phone App
                         {(employee.personalInfo as any).appEligible && (
                           <Badge
@@ -183,7 +183,7 @@ export default function EmployeeProfileView({
                             Eligible
                           </Badge>
                         )}
-                      </p>
+                      </div>
                     </div>
                   </div>
                 )}

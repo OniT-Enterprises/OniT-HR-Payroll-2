@@ -712,7 +712,6 @@ export default function AddEmployee() {
         manager: employeeData.manager || "",
         startDate: employeeData.startDate || "",
         employmentType: employeeData.employmentType || "Full-time",
-        status: "Active",
         salary: employeeData.salary || "",
         leaveDays: employeeData.leaveDays || "",
         benefits: employeeData.benefits || "",

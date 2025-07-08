@@ -387,7 +387,11 @@ export default function DepartmentManager({
                       className="w-4 h-4 rounded border"
                       style={{ backgroundColor: formData.color }}
                     />
-                    <span>Selected: {departmentColors.find(c => c.value === formData.color)?.name || 'Custom'}</span>
+                    <span>
+                      Selected:{" "}
+                      {departmentColors.find((c) => c.value === formData.color)
+                        ?.name || "Custom"}
+                    </span>
                   </div>
                 </div>
 
@@ -442,11 +446,19 @@ export default function DepartmentManager({
                   <table className="w-full">
                     <thead>
                       <tr className="border-b">
-                        <th className="text-left p-3 font-medium">Department</th>
-                        <th className="text-center p-3 font-medium">Director</th>
+                        <th className="text-left p-3 font-medium">
+                          Department
+                        </th>
+                        <th className="text-center p-3 font-medium">
+                          Director
+                        </th>
                         <th className="text-center p-3 font-medium">Manager</th>
-                        <th className="text-center p-3 font-medium">Employees</th>
-                        <th className="text-center p-3 font-medium">Monthly Payroll</th>
+                        <th className="text-center p-3 font-medium">
+                          Employees
+                        </th>
+                        <th className="text-center p-3 font-medium">
+                          Monthly Payroll
+                        </th>
                         <th className="text-center p-3 font-medium">Actions</th>
                       </tr>
                     </thead>
@@ -454,20 +466,31 @@ export default function DepartmentManager({
                       {departments.map((department) => {
                         const stats = getDepartmentStats(department.name);
                         return (
-                          <tr key={department.id} className="border-b hover:bg-muted/50">
+                          <tr
+                            key={department.id}
+                            className="border-b hover:bg-muted/50"
+                          >
                             <td className="p-3">
                               <div className="flex items-center gap-2">
                                 <div
                                   className="w-4 h-4 rounded-full border"
-                                  style={{ backgroundColor: department.color || "#3B82F6" }}
+                                  style={{
+                                    backgroundColor:
+                                      department.color || "#3B82F6",
+                                  }}
                                 />
                                 <Building className="h-4 w-4 text-muted-foreground" />
-                                <span className="font-medium">{department.name}</span>
+                                <span className="font-medium">
+                                  {department.name}
+                                </span>
                               </div>
                             </td>
                             <td className="p-3 text-center">
                               {department.director ? (
-                                <Badge variant="outline" className="text-blue-600">
+                                <Badge
+                                  variant="outline"
+                                  className="text-blue-600"
+                                >
                                   {department.director}
                                 </Badge>
                               ) : (
@@ -476,7 +499,10 @@ export default function DepartmentManager({
                             </td>
                             <td className="p-3 text-center">
                               {department.manager ? (
-                                <Badge variant="outline" className="text-green-600">
+                                <Badge
+                                  variant="outline"
+                                  className="text-green-600"
+                                >
                                   {department.manager}
                                 </Badge>
                               ) : (
@@ -524,9 +550,6 @@ export default function DepartmentManager({
                 </div>
               </CardContent>
             </Card>
-                })}
-              </div>
-            </div>
           )}
 
           {departments.length === 0 && (

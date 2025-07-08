@@ -53,7 +53,8 @@ const App = () => (
       <Toaster />
       <Sonner />
       <BrowserRouter>
-        <AuthProvider>
+        <FirebaseProvider>
+          <AuthProvider>
           <Routes>
             <Route path="/auth/login" element={<Login />} />
             <Route path="/" element={<Dashboard />} />

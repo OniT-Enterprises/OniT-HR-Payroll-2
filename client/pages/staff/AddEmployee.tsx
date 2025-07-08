@@ -174,9 +174,29 @@ export default function AddEmployee() {
         if (employee.documents) {
           setDocuments((prev) =>
             prev.map((doc) => {
-              const empDoc = employee.documents?.[
-                doc.type.toLowerCase().replace(/\s+/g, "")
-              ] as any;
+              let empDoc = null;
+
+              // Map form document types to database field names
+              switch (doc.type) {
+                case "Employee ID Card":
+                  empDoc = employee.documents?.employeeIdCard;
+                  break;
+                case "Social Security Number":
+                  empDoc = employee.documents?.socialSecurityNumber;
+                  break;
+                case "Electoral Card Number":
+                  empDoc = employee.documents?.electoralCard;
+                  break;
+                case "ID Card":
+                  empDoc = employee.documents?.idCard;
+                  break;
+                case "Passport":
+                  empDoc = employee.documents?.passport;
+                  break;
+                default:
+                  empDoc = null;
+              }
+
               if (empDoc) {
                 return {
                   ...doc,

@@ -414,13 +414,36 @@ export default function AllEmployees() {
               <table className="w-full">
                 <thead>
                   <tr className="border-b">
-                    <th className="text-left p-3 font-medium">Employee</th>
-                    <th className="text-left p-3 font-medium">Department</th>
-                    <th className="text-left p-3 font-medium">Position</th>
-                    <th className="text-left p-3 font-medium">Contact</th>
-                    <th className="text-left p-3 font-medium">Hire Date</th>
                     <th className="text-left p-3 font-medium">
-                      Monthly Salary
+                      <div className="flex items-center gap-1">
+                        Employee
+                        <Filter className="h-3 w-3 text-muted-foreground cursor-pointer hover:text-foreground" />
+                      </div>
+                    </th>
+                    <th className="text-left p-3 font-medium">
+                      <div className="flex items-center gap-1">
+                        Department
+                        <Filter className="h-3 w-3 text-muted-foreground cursor-pointer hover:text-foreground" />
+                      </div>
+                    </th>
+                    <th className="text-left p-3 font-medium">
+                      <div className="flex items-center gap-1">
+                        Position
+                        <Filter className="h-3 w-3 text-muted-foreground cursor-pointer hover:text-foreground" />
+                      </div>
+                    </th>
+                    <th className="text-left p-3 font-medium">Contact</th>
+                    <th className="text-left p-3 font-medium">
+                      <div className="flex items-center gap-1">
+                        Hire Date
+                        <Filter className="h-3 w-3 text-muted-foreground cursor-pointer hover:text-foreground" />
+                      </div>
+                    </th>
+                    <th className="text-left p-3 font-medium">
+                      <div className="flex items-center gap-1">
+                        Monthly Salary
+                        <Filter className="h-3 w-3 text-muted-foreground cursor-pointer hover:text-foreground" />
+                      </div>
                     </th>
                     <th className="text-center p-3 font-medium">Actions</th>
                   </tr>

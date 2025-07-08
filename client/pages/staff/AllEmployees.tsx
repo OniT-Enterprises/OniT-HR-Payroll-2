@@ -37,6 +37,8 @@ import {
   Download,
   Mail,
   Phone,
+  Smartphone,
+  Cross,
   MapPin,
   Calendar,
   Briefcase,

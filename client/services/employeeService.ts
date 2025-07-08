@@ -131,10 +131,15 @@ class EmployeeService {
         timeoutPromise,
       ])) as any;
 
-      return querySnapshot.docs.map((doc) => ({
+      const employees = querySnapshot.docs.map((doc) => ({
         id: doc.id,
         ...doc.data(),
       })) as Employee[];
+
+      // Cache successful results
+      this.cacheEmployees(employees);
+
+      return employees;
     } catch (error) {
       console.error("Error getting employees:", error);
 

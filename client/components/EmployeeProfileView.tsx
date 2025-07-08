@@ -143,15 +143,17 @@ export default function EmployeeProfileView({
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
-              <div className="flex items-center gap-3">
-                <Mail className="h-4 w-4 text-muted-foreground" />
-                <div>
-                  <p className="font-medium">{employee.personalInfo.email}</p>
-                  <p className="text-sm text-muted-foreground">Email</p>
+              {/* Personal Contact Information - One Row */}
+              <div className="grid grid-cols-3 gap-4">
+                {/* Email */}
+                <div className="flex items-center gap-3">
+                  <Mail className="h-4 w-4 text-blue-600" />
+                  <div>
+                    <p className="font-medium">{employee.personalInfo.email}</p>
+                    <p className="text-sm text-muted-foreground">Email</p>
+                  </div>
                 </div>
-              </div>
-              {/* Contact Grid - 2x2 layout */}
-              <div className="grid grid-cols-2 gap-4">
+
                 {/* Phone */}
                 {employee.personalInfo.phone && (
                   <div className="flex items-center gap-3">
@@ -187,10 +189,15 @@ export default function EmployeeProfileView({
                     </div>
                   </div>
                 )}
+              </div>
 
-                {/* Emergency Contact */}
-                {employee.personalInfo.emergencyContactName && (
-                  <div className="flex items-center gap-3 col-span-2">
+              {/* Separator Line */}
+              <div className="border-t border-gray-200 my-4"></div>
+
+              {/* Emergency Contact Information - One Row */}
+              {employee.personalInfo.emergencyContactName && (
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="flex items-center gap-3">
                     <Users className="h-4 w-4 text-red-600" />
                     <div>
                       <p className="font-medium">
@@ -199,15 +206,23 @@ export default function EmployeeProfileView({
                       <p className="text-sm text-muted-foreground">
                         Emergency Contact
                       </p>
-                      {employee.personalInfo.emergencyContactPhone && (
-                        <p className="text-sm text-muted-foreground">
-                          {employee.personalInfo.emergencyContactPhone}
-                        </p>
-                      )}
                     </div>
                   </div>
-                )}
-              </div>
+                  {employee.personalInfo.emergencyContactPhone && (
+                    <div className="flex items-center gap-3">
+                      <Phone className="h-4 w-4 text-red-600" />
+                      <div>
+                        <p className="font-medium">
+                          {employee.personalInfo.emergencyContactPhone}
+                        </p>
+                        <p className="text-sm text-muted-foreground">
+                          Emergency Phone
+                        </p>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              )}
             </CardContent>
           </Card>
 

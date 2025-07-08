@@ -764,7 +764,15 @@ export default function CSVColumnMapper({
               <Button variant="outline" onClick={onCancel}>
                 Cancel
               </Button>
-              <Button onClick={handleComplete} disabled={!status.complete}>
+              <Button
+                onClick={handleComplete}
+                disabled={!status.complete}
+                className={
+                  status.complete && mappings.length > 0
+                    ? "bg-green-600 hover:bg-green-700"
+                    : ""
+                }
+              >
                 <CheckCircle className="mr-2 h-4 w-4" />
                 Import {csvData.length} Employees
               </Button>

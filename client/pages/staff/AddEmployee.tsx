@@ -60,6 +60,7 @@ import {
   FileDown,
   FileUp,
   Info,
+  FileText,
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 

@@ -210,7 +210,7 @@ export default function PayrollReports() {
                         {formatCurrency(
                           Math.max(
                             ...employees.map(
-                              (emp) => emp.compensation.annualSalary / 12,
+                              (emp) => emp.compensation.monthlySalary,
                             ),
                           ),
                         )}
@@ -223,9 +223,9 @@ export default function PayrollReports() {
                           Math.min(
                             ...employees
                               .filter(
-                                (emp) => emp.compensation.annualSalary > 0,
+                                (emp) => emp.compensation.monthlySalary > 0,
                               )
-                              .map((emp) => emp.compensation.annualSalary / 12),
+                              .map((emp) => emp.compensation.monthlySalary),
                           ),
                         )}
                       </span>
@@ -345,8 +345,8 @@ export default function PayrollReports() {
                       {employees
                         .sort(
                           (a, b) =>
-                            b.compensation.annualSalary -
-                            a.compensation.annualSalary,
+                            b.compensation.monthlySalary -
+                            a.compensation.monthlySalary,
                         )
                         .slice(0, 10)
                         .map((employee) => (
@@ -373,7 +373,7 @@ export default function PayrollReports() {
                             </td>
                             <td className="p-3 text-right font-medium">
                               {formatCurrency(
-                                employee.compensation.annualSalary / 12,
+                                employee.compensation.monthlySalary,
                               )}
                             </td>
                             <td className="p-3 text-center">

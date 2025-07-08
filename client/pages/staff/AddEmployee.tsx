@@ -62,6 +62,10 @@ import {
   FileUp,
   Info,
   FileText,
+  Mail,
+  Phone,
+  Cross,
+  Smartphone,
 } from "lucide-react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 

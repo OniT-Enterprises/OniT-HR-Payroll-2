@@ -333,7 +333,7 @@ export default function PayrollReports() {
                         </th>
                         <th className="text-left p-3 font-medium">Position</th>
                         <th className="text-right p-3 font-medium">
-                          Annual Salary
+                          Monthly Salary
                         </th>
                         <th className="text-center p-3 font-medium">
                           Benefits

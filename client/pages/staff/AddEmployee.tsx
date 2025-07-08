@@ -1525,6 +1525,9 @@ export default function AddEmployee() {
                       }
                       placeholder="e.g., 6250"
                     />
+                    <p className="text-xs text-muted-foreground">
+                      Enter monthly salary amount
+                    </p>
                   </div>
                   <div className="space-y-2">
                     <Label htmlFor="leaveDays">Annual Leave Days</Label>

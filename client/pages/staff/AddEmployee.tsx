@@ -264,9 +264,9 @@ export default function AddEmployee() {
       );
 
       setDepartments(migrationResult.departments);
-      // Filter employees who could be managers (active employees)
+      // Filter employees who could be managers (exclude current employee from manager list)
       const potentialManagers = employeesData.filter(
-        (emp) => emp.status === "active" && emp.id !== editEmployeeId, // Exclude current employee from manager list
+        (emp) => emp.id !== editEmployeeId,
       );
       setManagers(potentialManagers);
     } catch (error) {

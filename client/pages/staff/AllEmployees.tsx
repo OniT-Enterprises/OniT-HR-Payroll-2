@@ -62,6 +62,8 @@ export default function AllEmployees() {
   );
   const [showProfileView, setShowProfileView] = useState(false);
   const [showIncompleteProfiles, setShowIncompleteProfiles] = useState(false);
+  const [connectionError, setConnectionError] = useState<string | null>(null);
+  const [isOnline, setIsOnline] = useState(navigator.onLine);
   const { toast } = useToast();
   const navigate = useNavigate();
 

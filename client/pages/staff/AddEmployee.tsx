@@ -1715,6 +1715,13 @@ export default function AddEmployee() {
                         <div className="space-y-2">
                           <Label htmlFor="workingVisaFile">
                             Upload Document
+                            {isEditMode &&
+                              editingEmployee?.documents?.workingVisaResidency
+                                ?.fileUrl && (
+                                <span className="ml-2 text-xs text-green-600">
+                                  (Current file exists)
+                                </span>
+                              )}
                           </Label>
                           <Input
                             id="workingVisaFile"

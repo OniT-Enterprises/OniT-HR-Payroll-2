@@ -86,11 +86,38 @@ export default function AddEmployee() {
   });
 
   const [documents, setDocuments] = useState([
-    { id: 1, type: "Social Security Number", number: "", expiryDate: "" },
-    { id: 2, type: "Electoral Card Number", number: "", expiryDate: "" },
-    { id: 3, type: "ID Card", number: "", expiryDate: "" },
-    { id: 4, type: "Passport", number: "", expiryDate: "" },
+    {
+      id: 1,
+      type: "Employee ID Card",
+      number: "",
+      expiryDate: "",
+      required: true,
+    },
+    {
+      id: 2,
+      type: "Social Security Number",
+      number: "",
+      expiryDate: "",
+      required: true,
+    },
+    {
+      id: 3,
+      type: "Electoral Card Number",
+      number: "",
+      expiryDate: "",
+      required: false,
+    },
+    { id: 4, type: "ID Card", number: "", expiryDate: "", required: true },
+    { id: 5, type: "Passport", number: "", expiryDate: "", required: false },
   ]);
+
+  const [additionalInfo, setAdditionalInfo] = useState({
+    nationality: "Timor-Leste",
+    workContract: null as File | null,
+    workingVisaNumber: "",
+    workingVisaExpiry: "",
+    workingVisaFile: null as File | null,
+  });
 
   const [showImportDialog, setShowImportDialog] = useState(false);
   const [importFile, setImportFile] = useState<File | null>(null);

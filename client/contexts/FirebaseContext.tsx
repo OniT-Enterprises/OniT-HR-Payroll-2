@@ -15,6 +15,7 @@ interface FirebaseContextType {
   isOnline: boolean;
   isConnected: boolean;
   error: string | null;
+  isUsingMockData: boolean;
   retryConnection: () => Promise<void>;
 }
 
@@ -40,26 +41,30 @@ export const FirebaseProvider: React.FC<FirebaseProviderProps> = ({
   const [isOnline, setIsOnline] = useState(navigator.onLine);
   const [isConnected, setIsConnected] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [isUsingMockData, setIsUsingMockData] = useState(false);
 
   const checkConnection = async () => {
     try {
       if (!isFirebaseReady()) {
         setError(getFirebaseError());
         setIsConnected(false);
+        setIsUsingMockData(true);
         return;
       }
 
       const connected = await testFirebaseConnection();
       setIsConnected(connected);
+      setIsUsingMockData(!connected);
 
       if (!connected) {
-        setError("Unable to connect to Firebase services");
+        setError("Unable to connect to Firebase services - using demo data");
       } else {
         setError(null);
       }
     } catch (err) {
       setError(err instanceof Error ? err.message : "Unknown Firebase error");
       setIsConnected(false);
+      setIsUsingMockData(true);
     }
   };
 
@@ -100,6 +105,7 @@ export const FirebaseProvider: React.FC<FirebaseProviderProps> = ({
     isOnline,
     isConnected,
     error,
+    isUsingMockData,
     retryConnection,
   };
 

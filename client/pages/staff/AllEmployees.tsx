@@ -82,11 +82,20 @@ export default function AllEmployees() {
       setEmployees(employeesData);
     } catch (error) {
       console.error("Error loading employees:", error);
+
+      // Show specific error message from the service
+      const errorMessage =
+        error instanceof Error ? error.message : "Failed to load employees";
+
       toast({
-        title: "Error",
-        description: "Failed to load employees",
+        title: "Connection Error",
+        description: errorMessage,
         variant: "destructive",
+        duration: 8000, // Show longer for network errors
       });
+
+      // Set empty employees array to show empty state instead of loading forever
+      setEmployees([]);
     } finally {
       setLoading(false);
     }

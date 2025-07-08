@@ -1266,6 +1266,12 @@ export default function AddEmployee() {
                   <div className="space-y-2">
                     <Label htmlFor="workContractJob">
                       Work Contract Document
+                      {isEditMode &&
+                        editingEmployee?.documents?.workContract?.fileUrl && (
+                          <span className="ml-2 text-xs text-green-600">
+                            (Current file exists)
+                          </span>
+                        )}
                     </Label>
                     <Input
                       id="workContractJob"

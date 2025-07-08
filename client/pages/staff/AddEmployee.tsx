@@ -165,9 +165,7 @@ export default function AddEmployee() {
           startDate: employee.jobDetails.hireDate,
           employmentType: employee.jobDetails.employmentType,
           status: employee.status,
-          salary: Math.round(
-            employee.compensation.annualSalary / 12,
-          ).toString(),
+          salary: employee.compensation.monthlySalary.toString(),
           leaveDays: employee.compensation.annualLeave?.toString() || "",
           benefits: employee.compensation.benefitsPackage || "",
         });
@@ -537,10 +535,7 @@ export default function AddEmployee() {
               manager: mappedData.manager || "",
             },
             compensation: {
-              annualSalary:
-                (parseInt(
-                  mappedData.monthlySalary || mappedData.annualSalary,
-                ) || 0) * (mappedData.monthlySalary ? 1 : 12),
+              monthlySalary: parseInt(mappedData.monthlySalary) || 0,
               annualLeaveDays: parseInt(mappedData.annualLeaveDays) || 25,
               benefitsPackage: mappedData.benefitsPackage || "Standard",
             },

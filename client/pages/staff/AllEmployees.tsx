@@ -54,7 +54,6 @@ export default function AllEmployees() {
   const [filteredEmployees, setFilteredEmployees] = useState<Employee[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
-  const [departmentFilter, setDepartmentFilter] = useState("all");
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage] = useState(20);
   const [selectedEmployee, setSelectedEmployee] = useState<Employee | null>(
@@ -102,7 +101,7 @@ export default function AllEmployees() {
   // Filter employees when search term or filters change
   useEffect(() => {
     filterEmployees();
-  }, [employees, searchTerm, departmentFilter]);
+  }, [employees, searchTerm]);
 
   const loadEmployees = async () => {
     try {
@@ -154,11 +153,7 @@ export default function AllEmployees() {
           .toLowerCase()
           .includes(searchTerm.toLowerCase());
 
-      const matchesDepartment =
-        departmentFilter === "all" ||
-        employee.jobDetails.department === departmentFilter;
-
-      return matchesSearch && matchesDepartment;
+      return matchesSearch;
     });
 
     setFilteredEmployees(filtered);

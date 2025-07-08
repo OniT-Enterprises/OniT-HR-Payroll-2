@@ -159,6 +159,19 @@ class EmployeeService {
           console.warn("Using cached employee data due to connection issue");
           return cachedEmployees;
         }
+
+        // Specific message for Failed to fetch
+        if (error.message?.includes("Failed to fetch")) {
+          throw new Error(
+            "🚫 Unable to connect to Firebase. This could be due to:\n" +
+              "• Network connectivity issues\n" +
+              "• Ad blockers or firewall blocking Firebase\n" +
+              "• CORS policy restrictions\n" +
+              "• Firebase project configuration issues\n\n" +
+              "Please check your internet connection and try refreshing the page.",
+          );
+        }
+
         throw new Error(
           "🔄 Connection issue detected. Please check your internet connection and try again.",
         );

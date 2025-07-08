@@ -1118,6 +1118,25 @@ export default function AddEmployee() {
                       </SelectContent>
                     </Select>
                   </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="workContractJob">
+                      Work Contract Document
+                    </Label>
+                    <Input
+                      id="workContractJob"
+                      type="file"
+                      accept=".pdf,.doc,.docx"
+                      onChange={(e) =>
+                        handleAdditionalInfoChange(
+                          "workContract",
+                          e.target.files?.[0] || null,
+                        )
+                      }
+                    />
+                    <p className="text-xs text-muted-foreground">
+                      Upload employment contract (PDF/DOC)
+                    </p>
+                  </div>
                 </div>
               </CardContent>
             </Card>

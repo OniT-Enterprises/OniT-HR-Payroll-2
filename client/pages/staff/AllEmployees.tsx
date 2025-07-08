@@ -45,6 +45,7 @@ import {
   Edit,
   Trash2,
   Plus,
+  AlertTriangle,
 } from "lucide-react";
 
 export default function AllEmployees() {

@@ -967,6 +967,7 @@ export default function AddEmployee() {
       <MainNavigation />
 
       <div className="p-6">
+        <OfflineStatusBanner />
         <div className="flex items-center justify-between mb-8">
           <div className="flex items-center gap-3">
             <Button
@@ -1591,7 +1592,7 @@ export default function AddEmployee() {
                             🇦🇷 Argentina
                           </SelectItem>
                           <SelectItem value="Armenia">🇦🇲 Armenia</SelectItem>
-                          <SelectItem value="Austria">🇦🇹 Austria</SelectItem>
+                          <SelectItem value="Austria">🇦���� Austria</SelectItem>
                           <SelectItem value="Azerbaijan">
                             🇦🇿 Azerbaijan
                           </SelectItem>

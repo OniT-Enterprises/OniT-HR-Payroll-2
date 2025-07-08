@@ -830,20 +830,28 @@ export default function AddEmployee() {
       };
 
       // Save to Firebase
-      const employeeId_returned =
-        await employeeService.addEmployee(newEmployee);
-
-      if (employeeId_returned) {
+      if (isEditMode && editingEmployee) {
+        // Update existing employee
+        await employeeService.updateEmployee(editingEmployee.id, newEmployee);
+        toast({
+          title: "Success",
+          description: `Employee ${formData.firstName} ${formData.lastName} updated successfully!`,
+        });
+      } else {
+        // Add new employee
+        const employeeId_returned =
+          await employeeService.addEmployee(newEmployee);
+        if (!employeeId_returned) {
+          throw new Error("Failed to save employee");
+        }
         toast({
           title: "Success",
           description: `Employee ${formData.firstName} ${formData.lastName} added successfully!`,
         });
-
-        // Navigate back to All Employees
-        navigate("/staff/employees");
-      } else {
-        throw new Error("Failed to save employee");
       }
+
+      // Navigate back to All Employees
+      navigate("/staff/employees");
     } catch (error) {
       console.error("Error adding employee:", error);
       toast({
@@ -886,9 +894,13 @@ export default function AddEmployee() {
             </Button>
             <UserPlus className="h-8 w-8 text-purple-400" />
             <div>
-              <h2 className="text-3xl font-bold">New Employee Profile</h2>
+              <h2 className="text-3xl font-bold">
+                {isEditMode ? "Edit Employee Profile" : "New Employee Profile"}
+              </h2>
               <p className="text-muted-foreground">
-                Add a new team member to your organization
+                {isEditMode
+                  ? "Update employee information and documents"
+                  : "Add a new team member to your organization"}
               </p>
             </div>
           </div>

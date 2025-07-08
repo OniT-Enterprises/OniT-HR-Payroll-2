@@ -19,7 +19,16 @@ import {
 } from "@/components/ui/select";
 import MainNavigation from "@/components/layout/MainNavigation";
 import { employeeService, type Employee } from "@/services/employeeService";
+import EmployeeProfileView from "@/components/EmployeeProfileView";
+import ContactInfoPopover from "@/components/ContactInfoPopover";
+import IncompleteProfilesDialog from "@/components/IncompleteProfilesDialog";
+import {
+  getProfileCompleteness,
+  getIncompleteEmployees,
+  getCompletionStatusIcon,
+} from "@/lib/employeeUtils";
 import { useToast } from "@/hooks/use-toast";
+import { useNavigate } from "react-router-dom";
 import {
   Users,
   Search,

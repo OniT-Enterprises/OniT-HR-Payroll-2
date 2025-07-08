@@ -64,6 +64,15 @@ import {
 } from "lucide-react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 
+// Helper function to get monthly salary with fallback for legacy data
+const getMonthlySalary = (compensation: any): number => {
+  return (
+    compensation.monthlySalary ||
+    Math.round((compensation.annualSalary || 0) / 12) ||
+    0
+  );
+};
+
 export default function AddEmployee() {
   const navigate = useNavigate();
   const { toast } = useToast();
@@ -165,11 +174,7 @@ export default function AddEmployee() {
           startDate: employee.jobDetails.hireDate,
           employmentType: employee.jobDetails.employmentType,
           status: employee.status,
-          salary: (
-            employee.compensation.monthlySalary ||
-            Math.round((employee.compensation as any).annualSalary / 12) ||
-            0
-          ).toString(),
+          salary: getMonthlySalary(employee.compensation).toString(),
           leaveDays: employee.compensation.annualLeave?.toString() || "",
           benefits: employee.compensation.benefitsPackage || "",
         });

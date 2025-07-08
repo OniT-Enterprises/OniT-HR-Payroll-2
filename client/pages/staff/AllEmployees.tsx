@@ -477,10 +477,19 @@ export default function AllEmployees() {
                           </div>
                         </div>
                       </td>
-                      <td className="p-3">
+                      <td className="p-3 max-w-[100px]">
                         <div className="flex items-center gap-2">
-                          <Building className="h-4 w-4 text-muted-foreground" />
-                          <span>{employee.jobDetails.department}</span>
+                          <Building className="h-4 w-4 text-muted-foreground flex-shrink-0" />
+                          <span className="text-sm leading-tight break-words">
+                            {employee.jobDetails.department
+                              .split(" ")
+                              .map((word, index, array) => (
+                                <span key={index}>
+                                  {word}
+                                  {index < array.length - 1 && <br />}
+                                </span>
+                              ))}
+                          </span>
                         </div>
                       </td>
                       <td className="p-3">

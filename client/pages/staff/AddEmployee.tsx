@@ -90,6 +90,7 @@ export default function AddEmployee() {
     email: "",
     phone: "",
     phoneApp: "",
+    appEligible: false,
     emergencyContactName: "",
     emergencyContactPhone: "",
     department: "",
@@ -170,6 +171,7 @@ export default function AddEmployee() {
           email: employee.personalInfo.email,
           phone: employee.personalInfo.phone,
           phoneApp: (employee.personalInfo as any).phoneApp || "",
+          appEligible: (employee.personalInfo as any).appEligible || false,
           emergencyContactName:
             employee.personalInfo.emergencyContactName || "",
           emergencyContactPhone:
@@ -801,6 +803,7 @@ export default function AddEmployee() {
           email: formData.email,
           phone: formData.phone,
           phoneApp: formData.phoneApp,
+          appEligible: formData.appEligible,
           address: "", // Could be added to form later
           dateOfBirth: "", // Could be added to form later
           socialSecurityNumber: documents[1]?.number || "",

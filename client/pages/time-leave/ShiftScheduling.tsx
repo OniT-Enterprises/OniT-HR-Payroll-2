@@ -75,96 +75,20 @@ export default function ShiftScheduling() {
     return startOfWeek.toISOString().split("T")[0];
   }
 
-  // Mock data
-  const departments = [
-    { id: "eng", name: "Engineering" },
-    { id: "marketing", name: "Marketing" },
-    { id: "hr", name: "Human Resources" },
-    { id: "sales", name: "Sales" },
-    { id: "finance", name: "Finance" },
-    { id: "support", name: "Customer Support" },
-  ];
-
-  const employees = [
-    { id: "1", name: "Sarah Johnson", department: "Engineering" },
-    { id: "2", name: "Michael Chen", department: "Engineering" },
-    { id: "3", name: "Emily Rodriguez", department: "Marketing" },
-    { id: "4", name: "James Miller", department: "Sales" },
-    { id: "5", name: "Jennifer Brown", department: "HR" },
-    { id: "6", name: "David Wilson", department: "Support" },
-    { id: "7", name: "Lisa Anderson", department: "Finance" },
-    { id: "8", name: "Robert Taylor", department: "Engineering" },
-  ];
-
-  // Mock shifts data
-  const shifts = [
-    {
-      id: 1,
-      employeeId: "1",
-      employeeName: "Sarah Johnson",
-      role: "Lead Developer",
-      department: "Engineering",
-      date: "2024-01-15",
-      startTime: "09:00",
-      endTime: "17:00",
-      published: true,
-    },
-    {
-      id: 2,
-      employeeId: "2",
-      employeeName: "Michael Chen",
-      role: "Frontend Developer",
-      department: "Engineering",
-      date: "2024-01-15",
-      startTime: "10:00",
-      endTime: "18:00",
-      published: true,
-    },
-    {
-      id: 3,
-      employeeId: "3",
-      employeeName: "Emily Rodriguez",
-      role: "Marketing Specialist",
-      department: "Marketing",
-      date: "2024-01-15",
-      startTime: "08:30",
-      endTime: "16:30",
-      published: false,
-    },
-    {
-      id: 4,
-      employeeId: "1",
-      employeeName: "Sarah Johnson",
-      role: "Lead Developer",
-      department: "Engineering",
-      date: "2024-01-16",
-      startTime: "09:00",
-      endTime: "17:00",
-      published: true,
-    },
-    {
-      id: 5,
-      employeeId: "4",
-      employeeName: "James Miller",
-      role: "Sales Representative",
-      department: "Sales",
-      date: "2024-01-16",
-      startTime: "08:00",
-      endTime: "16:00",
-      published: false,
-    },
-    {
-      id: 6,
-      employeeId: "5",
-      employeeName: "Jennifer Brown",
-      role: "HR Specialist",
-      department: "HR",
-      date: "2024-01-17",
-      startTime: "09:30",
-      endTime: "17:30",
-      published: true,
-    },
-  ];
+  // Data (will come from respective services)
+  const departments: { id: string; name: string }[] = [];
+  const employees: { id: string; name: string; department: string }[] = [];
+  const shifts: {
+    id: number;
+    employeeId: string;
+    employeeName: string;
+    role: string;
+    department: string;
+    date: string;
+    startTime: string;
+    endTime: string;
+    published: boolean;
+  }[] = [];
 
   const handleInputChange = (field: string, value: string) => {
     setFormData((prev) => ({

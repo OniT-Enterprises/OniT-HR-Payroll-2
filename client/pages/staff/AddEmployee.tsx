@@ -44,6 +44,7 @@ import {
 import { useToast } from "@/hooks/use-toast";
 import MainNavigation from "@/components/layout/MainNavigation";
 import { employeeService, type Employee } from "@/services/employeeService";
+import OfflineStatusBanner from "@/components/OfflineStatusBanner";
 import { fileUploadService } from "@/services/fileUploadService";
 import {
   departmentService,

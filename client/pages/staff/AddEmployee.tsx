@@ -1218,6 +1218,115 @@ export default function AddEmployee() {
                   </TableBody>
                 </Table>
 
+                {/* Additional Document Fields */}
+                <div className="mt-6 space-y-4">
+                  <div className="grid md:grid-cols-2 gap-4">
+                    {/* Nationality */}
+                    <div className="space-y-2">
+                      <Label htmlFor="nationality">Nationality *</Label>
+                      <Select
+                        value={additionalInfo.nationality}
+                        onValueChange={(value) =>
+                          handleAdditionalInfoChange("nationality", value)
+                        }
+                      >
+                        <SelectTrigger>
+                          <SelectValue placeholder="Select nationality" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="Timor-Leste">
+                            Timor-Leste
+                          </SelectItem>
+                          <SelectItem value="Indonesia">Indonesia</SelectItem>
+                          <SelectItem value="Australia">Australia</SelectItem>
+                          <SelectItem value="Portugal">Portugal</SelectItem>
+                          <SelectItem value="Brazil">Brazil</SelectItem>
+                          <SelectItem value="Other">Other</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+
+                    {/* Work Contract Upload */}
+                    <div className="space-y-2">
+                      <Label htmlFor="workContract">
+                        Work Contract Document
+                      </Label>
+                      <Input
+                        id="workContract"
+                        type="file"
+                        accept=".pdf,.doc,.docx"
+                        onChange={(e) =>
+                          handleAdditionalInfoChange(
+                            "workContract",
+                            e.target.files?.[0] || null,
+                          )
+                        }
+                      />
+                      <p className="text-xs text-muted-foreground">
+                        Upload PDF, DOC, or DOCX files only
+                      </p>
+                    </div>
+                  </div>
+
+                  {/* Working Visa/Residency - only show if not Timor-Leste */}
+                  {additionalInfo.nationality !== "Timor-Leste" && (
+                    <div className="mt-4 p-4 border rounded-lg bg-orange-50">
+                      <h4 className="font-medium mb-3 flex items-center gap-2">
+                        <FileText className="h-4 w-4" />
+                        Working Visa / Residency Documentation
+                      </h4>
+                      <div className="grid md:grid-cols-3 gap-4">
+                        <div className="space-y-2">
+                          <Label htmlFor="workingVisaNumber">
+                            Visa/Residency Number
+                          </Label>
+                          <Input
+                            id="workingVisaNumber"
+                            value={additionalInfo.workingVisaNumber}
+                            onChange={(e) =>
+                              handleAdditionalInfoChange(
+                                "workingVisaNumber",
+                                e.target.value,
+                              )
+                            }
+                            placeholder="Enter visa number"
+                          />
+                        </div>
+                        <div className="space-y-2">
+                          <Label htmlFor="workingVisaExpiry">Expiry Date</Label>
+                          <Input
+                            id="workingVisaExpiry"
+                            type="date"
+                            value={additionalInfo.workingVisaExpiry}
+                            onChange={(e) =>
+                              handleAdditionalInfoChange(
+                                "workingVisaExpiry",
+                                e.target.value,
+                              )
+                            }
+                          />
+                        </div>
+                        <div className="space-y-2">
+                          <Label htmlFor="workingVisaFile">
+                            Upload Document
+                          </Label>
+                          <Input
+                            id="workingVisaFile"
+                            type="file"
+                            accept=".pdf,.jpg,.jpeg,.png"
+                            onChange={(e) =>
+                              handleAdditionalInfoChange(
+                                "workingVisaFile",
+                                e.target.files?.[0] || null,
+                              )
+                            }
+                          />
+                        </div>
+                      </div>
+                    </div>
+                  )}
+                </div>
+
                 {/* Show expiry warnings */}
                 {documents.some((doc) => {
                   const status = getExpiryStatus(doc.expiryDate);

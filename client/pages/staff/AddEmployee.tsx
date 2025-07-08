@@ -1382,7 +1382,7 @@ export default function AddEmployee() {
 
                 {/* Additional Document Fields */}
                 <div className="mt-6 space-y-4">
-                  <div className="grid md:grid-cols-2 gap-4">
+                  <div className="grid md:grid-cols-1 gap-4">
                     {/* Nationality */}
                     <div className="space-y-2">
                       <Label htmlFor="nationality">Nationality *</Label>
@@ -1406,27 +1406,6 @@ export default function AddEmployee() {
                           <SelectItem value="Other">Other</SelectItem>
                         </SelectContent>
                       </Select>
-                    </div>
-
-                    {/* Work Contract Upload */}
-                    <div className="space-y-2">
-                      <Label htmlFor="workContract">
-                        Work Contract Document
-                      </Label>
-                      <Input
-                        id="workContract"
-                        type="file"
-                        accept=".pdf,.doc,.docx"
-                        onChange={(e) =>
-                          handleAdditionalInfoChange(
-                            "workContract",
-                            e.target.files?.[0] || null,
-                          )
-                        }
-                      />
-                      <p className="text-xs text-muted-foreground">
-                        Upload PDF, DOC, or DOCX files only
-                      </p>
                     </div>
                   </div>
 

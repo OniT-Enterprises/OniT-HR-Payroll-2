@@ -591,6 +591,21 @@ export default function AllEmployees() {
             )}
           </CardContent>
         </Card>
+
+        {/* Employee Profile View Dialog */}
+        <EmployeeProfileView
+          employee={selectedEmployee}
+          open={showProfileView}
+          onOpenChange={setShowProfileView}
+        />
+
+        {/* Incomplete Profiles Dialog */}
+        <IncompleteProfilesDialog
+          employees={employees}
+          open={showIncompleteProfiles}
+          onOpenChange={setShowIncompleteProfiles}
+          onEditEmployee={handleEditEmployee}
+        />
       </div>
     </div>
   );

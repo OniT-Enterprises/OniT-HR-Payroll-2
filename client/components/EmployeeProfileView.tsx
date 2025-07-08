@@ -474,6 +474,92 @@ export default function EmployeeProfileView({
                   )}
                 </div>
               </div>
+
+              {/* Additional Documents Section */}
+              <div className="mt-6 pt-6 border-t border-gray-200">
+                <h4 className="font-medium mb-4 flex items-center gap-2">
+                  <FileText className="h-4 w-4 text-muted-foreground" />
+                  Employment Documents
+                </h4>
+                <div className="grid md:grid-cols-2 gap-4">
+                  {/* Work Contract */}
+                  <div className="space-y-2">
+                    <div className="flex items-center gap-2">
+                      <FileText className="h-4 w-4 text-muted-foreground" />
+                      <span className="font-medium">Work Contract</span>
+                    </div>
+                    {(employee.documents as any).workContract?.fileUrl ? (
+                      <div>
+                        <p className="text-sm text-green-600">
+                          Document uploaded
+                        </p>
+                        <p className="text-xs text-muted-foreground">
+                          {new Date(
+                            (employee.documents as any).workContract.uploadDate,
+                          ).toLocaleDateString()}
+                        </p>
+                      </div>
+                    ) : (
+                      <p className="text-sm text-muted-foreground">
+                        Not uploaded
+                      </p>
+                    )}
+                  </div>
+
+                  {/* Working Visa/Residency */}
+                  {(employee.documents as any).nationality !==
+                    "Timor-Leste" && (
+                    <div className="space-y-2">
+                      <div className="flex items-center gap-2">
+                        <Globe className="h-4 w-4 text-muted-foreground" />
+                        <span className="font-medium">
+                          Working Visa/Residency
+                        </span>
+                      </div>
+                      {(employee.documents as any).workingVisaResidency
+                        ?.number ? (
+                        <div>
+                          <p className="text-sm">
+                            {
+                              (employee.documents as any).workingVisaResidency
+                                .number
+                            }
+                          </p>
+                          {(employee.documents as any).workingVisaResidency
+                            .expiryDate && (
+                            <div className="mt-1">
+                              {(() => {
+                                const status = getExpiryStatus(
+                                  (employee.documents as any)
+                                    .workingVisaResidency.expiryDate,
+                                );
+                                return status ? (
+                                  <Badge
+                                    variant={status.variant}
+                                    className="text-xs"
+                                  >
+                                    {status.message}
+                                  </Badge>
+                                ) : null;
+                              })()}
+                            </div>
+                          )}
+                          {(employee.documents as any).workingVisaResidency
+                            ?.fileUrl && (
+                            <p className="text-xs text-green-600 mt-1">
+                              Document uploaded
+                            </p>
+                          )}
+                        </div>
+                      ) : (
+                        <p className="text-sm text-muted-foreground">
+                          Not provided
+                        </p>
+                      )}
+                    </div>
+                  )}
+                </div>
+              </div>
             </CardContent>
           </Card>
         </div>

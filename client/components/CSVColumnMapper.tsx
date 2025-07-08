@@ -304,6 +304,26 @@ export default function CSVColumnMapper({
     }
   }, [csvFile]);
 
+  const autoMapColumns = (columns: CSVColumn[]): ColumnMapping[] => {
+    const mappings: ColumnMapping[] = [];
+
+    columns.forEach((csvColumn) => {
+      // Find exact match with employee field ID
+      const matchingField = EMPLOYEE_FIELDS.find(
+        (field) => field.id.toLowerCase() === csvColumn.name.toLowerCase(),
+      );
+
+      if (matchingField) {
+        mappings.push({
+          csvColumn: csvColumn.name,
+          employeeField: matchingField.id,
+        });
+      }
+    });
+
+    return mappings;
+  };
+
   const parseCSVFile = async () => {
     if (!csvFile) return;
 

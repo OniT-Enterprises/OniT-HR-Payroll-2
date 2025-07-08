@@ -306,12 +306,12 @@ export default function Departments() {
               </Card>
             </div>
 
-            {/* Department Summary */}
+            {/* Department Directory */}
             <Card>
               <CardHeader>
-                <CardTitle>Department Summary</CardTitle>
+                <CardTitle>Department Directory</CardTitle>
                 <CardDescription>
-                  Complete overview of all departments in your organization
+                  Manage departments and view employee assignments
                 </CardDescription>
               </CardHeader>
               <CardContent>
@@ -323,12 +323,13 @@ export default function Departments() {
                           Department
                         </th>
                         <th className="text-center p-3 font-medium">
+                          Director
+                        </th>
+                        <th className="text-center p-3 font-medium">Manager</th>
+                        <th className="text-center p-3 font-medium">
                           Total Employees
                         </th>
-                        <th className="text-center p-3 font-medium">Active</th>
-                        <th className="text-center p-3 font-medium">
-                          Avg Salary
-                        </th>
+                        <th className="text-center p-3 font-medium">Actions</th>
                       </tr>
                     </thead>
                     <tbody>
@@ -351,21 +352,52 @@ export default function Departments() {
                             </div>
                           </td>
                           <td className="p-3 text-center">
-                            <Badge variant="secondary">
+                            {dept.department?.director ? (
+                              <Badge
+                                variant="outline"
+                                className="text-blue-600"
+                              >
+                                {dept.department.director}
+                              </Badge>
+                            ) : (
+                              <span className="text-muted-foreground">-</span>
+                            )}
+                          </td>
+                          <td className="p-3 text-center">
+                            {dept.department?.manager ? (
+                              <Badge
+                                variant="outline"
+                                className="text-green-600"
+                              >
+                                {dept.department.manager}
+                              </Badge>
+                            ) : (
+                              <span className="text-muted-foreground">-</span>
+                            )}
+                          </td>
+                          <td className="p-3 text-center">
+                            <Badge
+                              variant="secondary"
+                              className="cursor-pointer hover:bg-blue-100 hover:text-blue-800 transition-colors"
+                              onClick={() =>
+                                handleViewDepartmentEmployees(dept)
+                              }
+                            >
                               {dept.totalEmployees}
                             </Badge>
                           </td>
-                          <td className="p-3 text-center">
-                            <Badge className="bg-green-100 text-green-800">
-                              {dept.activeEmployees}
-                            </Badge>
-                          </td>
-                          <td className="p-3 text-center">
-                            <span className="font-medium">
-                              {dept.averageSalary > 0
-                                ? formatSalary(dept.averageSalary)
-                                : "N/A"}
-                            </span>
+                          <td className="p-3">
+                            <div className="flex items-center justify-center gap-2">
+                              <Button
+                                variant="ghost"
+                                size="sm"
+                                onClick={() =>
+                                  handleEditDepartment(dept.department)
+                                }
+                              >
+                                <Edit className="h-4 w-4" />
+                              </Button>
+                            </div>
                           </td>
                         </tr>
                       ))}

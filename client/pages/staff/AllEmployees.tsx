@@ -306,6 +306,29 @@ export default function AllEmployees() {
           </div>
         </div>
 
+        {/* Connection Status */}
+        {(connectionError || !isOnline) && (
+          <Alert className="mb-6" variant="destructive">
+            <AlertTriangle className="h-4 w-4" />
+            <div className="flex items-center justify-between w-full">
+              <div>
+                <h4 className="font-medium">Connection Issue</h4>
+                <p className="text-sm">
+                  {!isOnline ? "You're currently offline" : connectionError}
+                </p>
+              </div>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={loadEmployees}
+                disabled={loading}
+              >
+                {loading ? "Retrying..." : "Retry"}
+              </Button>
+            </div>
+          </Alert>
+        )}
+
         {/* Statistics */}
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
           <Card>

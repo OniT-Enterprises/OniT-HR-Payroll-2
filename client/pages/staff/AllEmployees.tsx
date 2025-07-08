@@ -505,24 +505,46 @@ export default function AllEmployees() {
                         </div>
                       </td>
                       <td className="p-3">
-                        <div className="space-y-2">
-                          {/* Contact Info Popover */}
-                          <ContactInfoPopover
-                            email={employee.personalInfo.email}
-                            phone={employee.personalInfo.phone || "No phone"}
-                            employeeName={`${employee.personalInfo.firstName} ${employee.personalInfo.lastName}`}
-                          />
+                        <div className="grid grid-cols-2 gap-1 w-fit">
+                          {/* Email */}
+                          <div className="flex items-center justify-center p-1">
+                            <Mail
+                              className="h-4 w-4 text-blue-600 cursor-pointer hover:bg-blue-50 rounded"
+                              title={employee.personalInfo.email}
+                            />
+                          </div>
+
+                          {/* Phone */}
+                          <div className="flex items-center justify-center p-1">
+                            <Phone
+                              className="h-4 w-4 text-green-600 cursor-pointer hover:bg-green-50 rounded"
+                              title={employee.personalInfo.phone || "No phone"}
+                            />
+                          </div>
 
                           {/* Emergency Contact */}
-                          {employee.personalInfo.emergencyContactName && (
-                            <div className="flex items-center gap-2 text-xs text-muted-foreground">
-                              <Users className="h-3 w-3" />
-                              <span>
-                                Emergency:{" "}
-                                {employee.personalInfo.emergencyContactName}
-                              </span>
-                            </div>
-                          )}
+                          <div className="flex items-center justify-center p-1">
+                            <Cross
+                              className="h-4 w-4 text-red-600 cursor-pointer hover:bg-red-50 rounded"
+                              title={
+                                employee.personalInfo.emergencyContactName
+                                  ? `Emergency: ${employee.personalInfo.emergencyContactName}`
+                                  : "No emergency contact"
+                              }
+                            />
+                          </div>
+
+                          {/* Mobile App */}
+                          <div className="flex items-center justify-center p-1">
+                            <Smartphone
+                              className="h-4 w-4 text-purple-600 cursor-pointer hover:bg-purple-50 rounded"
+                              title={
+                                (employee.personalInfo as any).phoneApp
+                                  ? `App: ${(employee.personalInfo as any).phoneApp}`
+                                  : "No app phone"
+                              }
+                            />
+                          </div>
                         </div>
                       </td>
                       <td className="p-3">

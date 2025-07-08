@@ -341,7 +341,12 @@ export default function AllEmployees() {
                   <p className="text-sm font-medium text-muted-foreground">
                     Departments
                   </p>
-                  <p className="text-2xl font-bold">{departments.length}</p>
+                  <p className="text-2xl font-bold">
+                    {
+                      new Set(employees.map((emp) => emp.jobDetails.department))
+                        .size
+                    }
+                  </p>
                 </div>
                 <Briefcase className="h-8 w-8 text-purple-500" />
               </div>

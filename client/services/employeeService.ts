@@ -42,10 +42,22 @@ export interface Employee {
     benefitsPackage: string;
   };
   documents: {
-    socialSecurityNumber: { number: string; expiryDate: string };
-    electoralCard: { number: string; expiryDate: string };
-    idCard: { number: string; expiryDate: string };
-    passport: { number: string; expiryDate: string };
+    employeeIdCard: { number: string; expiryDate: string; required: boolean };
+    socialSecurityNumber: {
+      number: string;
+      expiryDate: string;
+      required: boolean;
+    };
+    electoralCard: { number: string; expiryDate: string; required: boolean };
+    idCard: { number: string; expiryDate: string; required: boolean };
+    passport: { number: string; expiryDate: string; required: boolean };
+    workContract: { fileUrl: string; uploadDate: string };
+    nationality: string;
+    workingVisaResidency: {
+      number: string;
+      expiryDate: string;
+      fileUrl: string;
+    };
   };
   status: "active" | "inactive" | "terminated";
   createdAt?: any;

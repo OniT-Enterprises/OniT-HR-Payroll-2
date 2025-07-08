@@ -55,7 +55,6 @@ export default function AllEmployees() {
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
   const [departmentFilter, setDepartmentFilter] = useState("all");
-  const [statusFilter, setStatusFilter] = useState("all");
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage] = useState(20);
   const [selectedEmployee, setSelectedEmployee] = useState<Employee | null>(
@@ -103,7 +102,7 @@ export default function AllEmployees() {
   // Filter employees when search term or filters change
   useEffect(() => {
     filterEmployees();
-  }, [employees, searchTerm, departmentFilter, statusFilter]);
+  }, [employees, searchTerm, departmentFilter]);
 
   const loadEmployees = async () => {
     try {
@@ -159,10 +158,7 @@ export default function AllEmployees() {
         departmentFilter === "all" ||
         employee.jobDetails.department === departmentFilter;
 
-      const matchesStatus =
-        statusFilter === "all" || employee.status === statusFilter;
-
-      return matchesSearch && matchesDepartment && matchesStatus;
+      return matchesSearch && matchesDepartment;
     });
 
     setFilteredEmployees(filtered);
@@ -187,7 +183,6 @@ export default function AllEmployees() {
       "Employment Type",
       "Work Location",
       "Monthly Salary",
-      "Status",
     ];
 
     const csvContent = [
@@ -207,7 +202,6 @@ export default function AllEmployees() {
           emp.compensation.monthlySalary ||
             Math.round((emp.compensation as any).annualSalary / 12) ||
             0,
-          emp.status,
         ].join(","),
       ),
     ].join("\n");
@@ -428,18 +422,6 @@ export default function AllEmployees() {
               </SelectContent>
             </Select>
 
-            <Select value={statusFilter} onValueChange={setStatusFilter}>
-              <SelectTrigger className="w-full lg:w-[140px]">
-                <SelectValue placeholder="Status" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">All Status</SelectItem>
-                <SelectItem value="active">Active</SelectItem>
-                <SelectItem value="inactive">Inactive</SelectItem>
-                <SelectItem value="terminated">Terminated</SelectItem>
-              </SelectContent>
-            </Select>
-
             <Button variant="outline" onClick={handleExport}>
               <Download className="mr-2 h-4 w-4" />
               Export
@@ -473,7 +455,6 @@ export default function AllEmployees() {
                     <th className="text-left p-3 font-medium">
                       Monthly Salary
                     </th>
-                    <th className="text-center p-3 font-medium">Status</th>
                     <th className="text-center p-3 font-medium">Actions</th>
                   </tr>
                 </thead>
@@ -572,12 +553,6 @@ export default function AllEmployees() {
                           {employee.compensation.benefitsPackage} Benefits
                         </div>
                       </td>
-                      <td className="p-3 text-center">
-                        <Badge className={getStatusColor(employee.status)}>
-                          {employee.status.charAt(0).toUpperCase() +
-                            employee.status.slice(1)}
-                        </Badge>
-                      </td>
                       <td className="p-3">
                         <div className="flex items-center justify-center gap-2">
                           {(() => {
@@ -649,9 +624,7 @@ export default function AllEmployees() {
                         No Employees Found
                       </h3>
                       <p className="text-muted-foreground mb-4">
-                        {searchTerm ||
-                        departmentFilter !== "all" ||
-                        statusFilter !== "all"
+                        {searchTerm || departmentFilter !== "all"
                           ? "No employees match your current filters."
                           : "Start by adding your first employee to the system."}
                       </p>

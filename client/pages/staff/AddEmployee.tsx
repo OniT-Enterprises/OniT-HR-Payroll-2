@@ -1074,9 +1074,14 @@ export default function AddEmployee() {
                   </div>
                 </div>
 
-                <div className="grid md:grid-cols-2 gap-4">
+                {/* Contact Information Grid - 2x2 Icon Layout */}
+                <div className="grid grid-cols-2 gap-4">
+                  {/* Email */}
                   <div className="space-y-2">
-                    <Label htmlFor="email">Email *</Label>
+                    <Label htmlFor="email" className="flex items-center gap-2">
+                      <Mail className="h-4 w-4 text-blue-600" />
+                      Email *
+                    </Label>
                     <Input
                       id="email"
                       type="email"
@@ -1085,10 +1090,16 @@ export default function AddEmployee() {
                         handleInputChange("email", e.target.value)
                       }
                       required
+                      placeholder="employee@company.com"
                     />
                   </div>
+
+                  {/* Phone */}
                   <div className="space-y-2">
-                    <Label htmlFor="phone">Phone</Label>
+                    <Label htmlFor="phone" className="flex items-center gap-2">
+                      <Phone className="h-4 w-4 text-green-600" />
+                      Phone
+                    </Label>
                     <Input
                       id="phone"
                       type="tel"
@@ -1096,31 +1107,32 @@ export default function AddEmployee() {
                       onChange={(e) =>
                         handleInputChange("phone", e.target.value)
                       }
+                      placeholder="+670 123 4567"
                     />
                   </div>
-                </div>
 
-                <div className="grid md:grid-cols-2 gap-4">
+                  {/* Emergency Contact */}
                   <div className="space-y-2">
-                    <div className="flex items-center gap-2">
-                      <Label htmlFor="emergencyContactName">
-                        Emergency Contact Name
-                      </Label>
+                    <Label
+                      htmlFor="emergencyContactName"
+                      className="flex items-center gap-2"
+                    >
+                      <Cross className="h-4 w-4 text-red-600" />
+                      Emergency Contact
                       <TooltipProvider>
                         <Tooltip>
                           <TooltipTrigger asChild>
-                            <Info className="h-4 w-4 text-muted-foreground cursor-help" />
+                            <Info className="h-3 w-3 text-muted-foreground cursor-help" />
                           </TooltipTrigger>
                           <TooltipContent>
                             <p className="max-w-xs">
                               Person to contact in case of emergency, medical
-                              situation, or urgent workplace incident involving
-                              this employee.
+                              situation, or urgent workplace incident.
                             </p>
                           </TooltipContent>
                         </Tooltip>
                       </TooltipProvider>
-                    </div>
+                    </Label>
                     <Input
                       id="emergencyContactName"
                       value={formData.emergencyContactName}
@@ -1130,13 +1142,8 @@ export default function AddEmployee() {
                           e.target.value,
                         )
                       }
-                      placeholder="Enter contact name"
+                      placeholder="Contact name"
                     />
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="emergencyContactPhone">
-                      Emergency Contact Phone
-                    </Label>
                     <Input
                       id="emergencyContactPhone"
                       type="tel"
@@ -1147,8 +1154,56 @@ export default function AddEmployee() {
                           e.target.value,
                         )
                       }
-                      placeholder="Enter contact phone number"
+                      placeholder="Contact phone"
+                      className="mt-2"
                     />
+                  </div>
+
+                  {/* Phone App */}
+                  <div className="space-y-2">
+                    <Label
+                      htmlFor="phoneApp"
+                      className="flex items-center gap-2"
+                    >
+                      <Smartphone className="h-4 w-4 text-purple-600" />
+                      Phone App
+                      <TooltipProvider>
+                        <Tooltip>
+                          <TooltipTrigger asChild>
+                            <Info className="h-3 w-3 text-muted-foreground cursor-help" />
+                          </TooltipTrigger>
+                          <TooltipContent>
+                            <p className="max-w-xs">
+                              Phone number for the company mobile app access.
+                              This will be used for app enrollment.
+                            </p>
+                          </TooltipContent>
+                        </Tooltip>
+                      </TooltipProvider>
+                    </Label>
+                    <Input
+                      id="phoneApp"
+                      type="tel"
+                      value={formData.phoneApp}
+                      onChange={(e) =>
+                        handleInputChange("phoneApp", e.target.value)
+                      }
+                      placeholder="+670 987 6543"
+                    />
+                    <div className="flex items-center gap-2 mt-2">
+                      <input
+                        type="checkbox"
+                        id={`app-eligible-form`}
+                        className="rounded border-gray-300"
+                        // We'll handle this state separately for app enrollment
+                      />
+                      <Label
+                        htmlFor={`app-eligible-form`}
+                        className="text-sm text-muted-foreground"
+                      >
+                        Eligible for mobile app enrollment
+                      </Label>
+                    </div>
                   </div>
                 </div>
               </CardContent>

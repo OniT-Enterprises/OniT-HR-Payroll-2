@@ -107,12 +107,12 @@ export default function CreateJob() {
               <CardContent className="space-y-4">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div className="space-y-2">
-                    <Label htmlFor="salaryMin">Minimum Salary</Label>
-                    <Input id="salaryMin" placeholder="$50,000" />
+                    <Label htmlFor="salaryMin">Minimum Monthly Salary</Label>
+                    <Input id="salaryMin" placeholder="$4,200" />
                   </div>
                   <div className="space-y-2">
-                    <Label htmlFor="salaryMax">Maximum Salary</Label>
-                    <Input id="salaryMax" placeholder="$70,000" />
+                    <Label htmlFor="salaryMax">Maximum Monthly Salary</Label>
+                    <Input id="salaryMax" placeholder="$5,800" />
                   </div>
                 </div>
                 <div className="space-y-2">

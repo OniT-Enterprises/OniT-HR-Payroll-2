@@ -204,7 +204,7 @@ export default function AllEmployees() {
           emp.jobDetails.hireDate,
           emp.jobDetails.employmentType,
           emp.jobDetails.workLocation,
-          Math.round(emp.compensation.annualSalary / 12),
+          emp.compensation.monthlySalary,
           emp.status,
         ].join(","),
       ),
@@ -251,8 +251,7 @@ export default function AllEmployees() {
     }
   };
 
-  const formatSalary = (annualSalary: number) => {
-    const monthlySalary = annualSalary / 12;
+  const formatSalary = (monthlySalary: number) => {
     return new Intl.NumberFormat("en-US", {
       style: "currency",
       currency: "USD",
@@ -557,7 +556,7 @@ export default function AllEmployees() {
                         <div className="flex items-center gap-2">
                           <DollarSign className="h-4 w-4 text-muted-foreground" />
                           <span className="font-semibold">
-                            {formatSalary(employee.compensation.annualSalary)}
+                            {formatSalary(employee.compensation.monthlySalary)}
                           </span>
                         </div>
                         <div className="text-xs text-muted-foreground mt-1">

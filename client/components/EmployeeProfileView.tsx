@@ -46,8 +46,7 @@ export default function EmployeeProfileView({
 }: EmployeeProfileViewProps) {
   if (!employee) return null;
 
-  const formatSalary = (annualSalary: number) => {
-    const monthlySalary = annualSalary / 12;
+  const formatSalary = (monthlySalary: number) => {
     return new Intl.NumberFormat("en-US", {
       style: "currency",
       currency: "USD",
@@ -249,7 +248,7 @@ export default function EmployeeProfileView({
                 <DollarSign className="h-4 w-4 text-muted-foreground" />
                 <div>
                   <p className="font-medium text-lg">
-                    {formatSalary(employee.compensation.annualSalary)}
+                    {formatSalary(employee.compensation.monthlySalary)}
                   </p>
                   <p className="text-sm text-muted-foreground">
                     Monthly Salary

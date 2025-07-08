@@ -242,7 +242,7 @@ export default function DepartmentManager({
       (emp) => emp.jobDetails.department === deptName,
     );
     const monthlyPayroll = deptEmployees.reduce(
-      (sum, emp) => sum + emp.compensation.annualSalary / 12,
+      (sum, emp) => sum + emp.compensation.monthlySalary,
       0,
     );
 

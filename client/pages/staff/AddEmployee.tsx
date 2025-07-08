@@ -812,7 +812,7 @@ export default function AddEmployee() {
           manager: formData.manager,
         },
         compensation: {
-          annualSalary: (parseInt(formData.salary) || 0) * 12,
+          monthlySalary: parseInt(formData.salary) || 0,
           annualLeaveDays: parseInt(formData.leaveDays) || 25,
           benefitsPackage: formData.benefits || "Standard",
         },

@@ -37,7 +37,7 @@ export interface Employee {
     manager: string;
   };
   compensation: {
-    annualSalary: number;
+    monthlySalary: number;
     annualLeaveDays: number;
     benefitsPackage: string;
   };

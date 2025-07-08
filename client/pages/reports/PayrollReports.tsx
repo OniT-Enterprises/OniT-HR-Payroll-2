@@ -49,7 +49,7 @@ export default function PayrollReports() {
   };
 
   const totalMonthlySalary = employees.reduce(
-    (sum, emp) => sum + emp.compensation.annualSalary / 12,
+    (sum, emp) => sum + emp.compensation.monthlySalary,
     0,
   );
   const averageMonthlySalary =

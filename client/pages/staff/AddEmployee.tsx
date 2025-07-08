@@ -698,21 +698,40 @@ export default function AddEmployee() {
           benefitsPackage: formData.benefits || "Standard",
         },
         documents: {
-          socialSecurityNumber: {
+          employeeIdCard: {
             number: documents[0]?.number || "",
             expiryDate: documents[0]?.expiryDate || "",
+            required: documents[0]?.required || true,
           },
-          electoralCard: {
+          socialSecurityNumber: {
             number: documents[1]?.number || "",
             expiryDate: documents[1]?.expiryDate || "",
+            required: documents[1]?.required || true,
           },
-          idCard: {
+          electoralCard: {
             number: documents[2]?.number || "",
             expiryDate: documents[2]?.expiryDate || "",
+            required: documents[2]?.required || false,
           },
-          passport: {
+          idCard: {
             number: documents[3]?.number || "",
             expiryDate: documents[3]?.expiryDate || "",
+            required: documents[3]?.required || true,
+          },
+          passport: {
+            number: documents[4]?.number || "",
+            expiryDate: documents[4]?.expiryDate || "",
+            required: documents[4]?.required || false,
+          },
+          workContract: {
+            fileUrl: "", // Will be updated after file upload
+            uploadDate: new Date().toISOString(),
+          },
+          nationality: additionalInfo.nationality,
+          workingVisaResidency: {
+            number: additionalInfo.workingVisaNumber,
+            expiryDate: additionalInfo.workingVisaExpiry,
+            fileUrl: "", // Will be updated after file upload
           },
         },
         status: formData.status === "Active" ? "active" : "inactive",

@@ -639,8 +639,8 @@ export default function AllEmployees() {
                         No Employees Found
                       </h3>
                       <p className="text-muted-foreground mb-4">
-                        {searchTerm || departmentFilter !== "all"
-                          ? "No employees match your current filters."
+                        {searchTerm
+                          ? "No employees match your search."
                           : "Start by adding your first employee to the system."}
                       </p>
                       <Button onClick={() => navigate("/staff/add")}>

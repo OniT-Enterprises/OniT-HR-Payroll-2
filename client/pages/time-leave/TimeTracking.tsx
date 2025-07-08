@@ -63,40 +63,21 @@ export default function TimeTracking() {
     endTime: "",
   });
 
-  // Mock data for employees (would come from Firestore)
-  const employees = [
-    { id: "1", name: "Sarah Johnson" },
-    { id: "2", name: "Michael Chen" },
-    { id: "3", name: "Emily Rodriguez" },
-    { id: "4", name: "James Miller" },
-    { id: "5", name: "Jennifer Brown" },
-    { id: "6", name: "David Wilson" },
-    { id: "7", name: "Lisa Anderson" },
-    { id: "8", name: "Robert Taylor" },
-  ];
+  // Employee data (will come from employee service)
+  const employees: { id: string; name: string }[] = [];
 
-  // Mock time entries data (would come from Firestore with filtering)
-  const timeEntries = [
-    {
-      id: 1,
-      employeeId: "1",
-      employeeName: "Sarah Johnson",
-      date: "2024-01-15",
-      project: "Website Redesign",
-      startTime: "09:00",
-      endTime: "17:30",
-      totalHours: 8.5,
-      status: "Approved",
-    },
-    {
-      id: 2,
-      employeeId: "2",
-      employeeName: "Michael Chen",
-      date: "2024-01-15",
-      project: "Mobile App Development",
-      startTime: "09:15",
-      endTime: "18:00",
-      totalHours: 8.75,
+  // Time entries data (will come from time tracking service)
+  const timeEntries: {
+    id: number;
+    employeeId: string;
+    employeeName: string;
+    date: string;
+    project: string;
+    startTime: string;
+    endTime: string;
+    totalHours: number;
+    status: string;
+  }[] = [];
       status: "Pending",
     },
     {

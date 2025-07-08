@@ -469,7 +469,9 @@ export default function AllEmployees() {
                     <th className="text-left p-3 font-medium">Position</th>
                     <th className="text-left p-3 font-medium">Contact</th>
                     <th className="text-left p-3 font-medium">Hire Date</th>
-                    <th className="text-left p-3 font-medium">Salary</th>
+                    <th className="text-left p-3 font-medium">
+                      Monthly Salary
+                    </th>
                     <th className="text-center p-3 font-medium">Status</th>
                     <th className="text-center p-3 font-medium">Actions</th>
                   </tr>

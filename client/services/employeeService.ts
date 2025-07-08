@@ -22,6 +22,7 @@ export interface Employee {
     email: string;
     phone: string;
     phoneApp: string;
+    appEligible: boolean;
     address: string;
     dateOfBirth: string;
     socialSecurityNumber: string;

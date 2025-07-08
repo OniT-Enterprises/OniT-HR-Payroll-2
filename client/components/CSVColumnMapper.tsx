@@ -342,6 +342,17 @@ export default function CSVColumnMapper({
       setCsvColumns(columns);
       setCsvData(data);
       setUnmappedColumns([...columns]);
+
+      // Auto-map columns that match exactly with employee field IDs
+      const autoMappings = autoMapColumns(columns);
+      setMappings(autoMappings);
+
+      // Remove auto-mapped columns from unmapped list
+      const mappedColumnNames = autoMappings.map((m) => m.csvColumn);
+      setUnmappedColumns(
+        columns.filter((col) => !mappedColumnNames.includes(col.name)),
+      );
+
       setStep("map");
     } catch (error) {
       console.error("Error parsing CSV:", error);

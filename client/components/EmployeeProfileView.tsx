@@ -142,81 +142,91 @@ export default function EmployeeProfileView({
                 Personal Information
               </CardTitle>
             </CardHeader>
-            <CardContent className="space-y-4">
-              {/* Personal Contact Information - One Row */}
-              <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
-                {/* Email */}
-                <div className="flex items-start gap-3">
-                  <Mail className="h-4 w-4 text-blue-600 mt-1 flex-shrink-0" />
-                  <div className="min-w-0 flex-1">
-                    <p className="font-medium break-all text-sm">
-                      {employee.personalInfo.email}
-                    </p>
-                    <p className="text-xs text-muted-foreground">Email</p>
+            <CardContent className="space-y-6">
+              {/* Personal Contact Information */}
+              <div className="space-y-4">
+                <h4 className="text-sm font-medium text-muted-foreground">
+                  Personal Contacts
+                </h4>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                  {/* Email */}
+                  <div className="flex items-center gap-3">
+                    <Mail className="h-4 w-4 text-blue-600 flex-shrink-0" />
+                    <div className="min-w-0">
+                      <p
+                        className="font-medium text-sm truncate"
+                        title={employee.personalInfo.email}
+                      >
+                        {employee.personalInfo.email}
+                      </p>
+                      <p className="text-xs text-muted-foreground">Email</p>
+                    </div>
                   </div>
-                </div>
 
-                {/* Phone */}
-                <div className="flex items-start gap-3">
-                  <Phone className="h-4 w-4 text-green-600 mt-1 flex-shrink-0" />
-                  <div className="min-w-0 flex-1">
-                    <p className="font-medium text-sm">
-                      {employee.personalInfo.phone || "Not provided"}
-                    </p>
-                    <p className="text-xs text-muted-foreground">Phone</p>
+                  {/* Phone */}
+                  <div className="flex items-center gap-3">
+                    <Phone className="h-4 w-4 text-green-600 flex-shrink-0" />
+                    <div className="min-w-0">
+                      <p className="font-medium text-sm whitespace-nowrap">
+                        {employee.personalInfo.phone || "Not provided"}
+                      </p>
+                      <p className="text-xs text-muted-foreground">Phone</p>
+                    </div>
                   </div>
-                </div>
 
-                {/* Phone App */}
-                <div className="flex items-start gap-3">
-                  <Smartphone className="h-4 w-4 text-purple-600 mt-1 flex-shrink-0" />
-                  <div className="min-w-0 flex-1">
-                    <p className="font-medium text-sm">
-                      {(employee.personalInfo as any).phoneApp ||
-                        "Not provided"}
-                    </p>
-                    <div className="text-xs text-muted-foreground">
-                      Phone App
-                      {(employee.personalInfo as any).appEligible && (
-                        <Badge
-                          variant="outline"
-                          className="ml-1 text-xs bg-green-50 text-green-700"
-                        >
-                          Eligible
-                        </Badge>
-                      )}
+                  {/* Phone App */}
+                  <div className="flex items-center gap-3">
+                    <Smartphone className="h-4 w-4 text-purple-600 flex-shrink-0" />
+                    <div className="min-w-0">
+                      <p className="font-medium text-sm whitespace-nowrap">
+                        {(employee.personalInfo as any).phoneApp ||
+                          "Not provided"}
+                      </p>
+                      <div className="text-xs text-muted-foreground">
+                        Phone App
+                        {(employee.personalInfo as any).appEligible && (
+                          <Badge
+                            variant="outline"
+                            className="ml-1 text-xs bg-green-50 text-green-700"
+                          >
+                            Eligible
+                          </Badge>
+                        )}
+                      </div>
                     </div>
                   </div>
                 </div>
               </div>
 
-              {/* Separator Line */}
-              <div className="border-t border-gray-200 my-4"></div>
-
-              {/* Emergency Contact Information - One Row */}
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-                <div className="flex items-start gap-3">
-                  <Users className="h-4 w-4 text-red-600 mt-1 flex-shrink-0" />
-                  <div className="min-w-0 flex-1">
-                    <p className="font-medium text-sm">
-                      {employee.personalInfo.emergencyContactName ||
-                        "Not provided"}
-                    </p>
-                    <p className="text-xs text-muted-foreground">
-                      Emergency Contact
-                    </p>
+              {/* Emergency Contact Information */}
+              <div className="space-y-4">
+                <h4 className="text-sm font-medium text-muted-foreground">
+                  Emergency Contacts
+                </h4>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div className="flex items-center gap-3">
+                    <Users className="h-4 w-4 text-red-600 flex-shrink-0" />
+                    <div className="min-w-0">
+                      <p className="font-medium text-sm">
+                        {employee.personalInfo.emergencyContactName ||
+                          "Not provided"}
+                      </p>
+                      <p className="text-xs text-muted-foreground">
+                        Emergency Contact
+                      </p>
+                    </div>
                   </div>
-                </div>
-                <div className="flex items-start gap-3">
-                  <Phone className="h-4 w-4 text-red-600 mt-1 flex-shrink-0" />
-                  <div className="min-w-0 flex-1">
-                    <p className="font-medium text-sm">
-                      {employee.personalInfo.emergencyContactPhone ||
-                        "Not provided"}
-                    </p>
-                    <p className="text-xs text-muted-foreground">
-                      Emergency Phone
-                    </p>
+                  <div className="flex items-center gap-3">
+                    <Phone className="h-4 w-4 text-red-600 flex-shrink-0" />
+                    <div className="min-w-0">
+                      <p className="font-medium text-sm whitespace-nowrap">
+                        {employee.personalInfo.emergencyContactPhone ||
+                          "Not provided"}
+                      </p>
+                      <p className="text-xs text-muted-foreground">
+                        Emergency Phone
+                      </p>
+                    </div>
                   </div>
                 </div>
               </div>

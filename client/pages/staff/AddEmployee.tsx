@@ -62,11 +62,13 @@ import {
   Info,
   FileText,
 } from "lucide-react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 
 export default function AddEmployee() {
   const navigate = useNavigate();
   const { toast } = useToast();
+  const [searchParams] = useSearchParams();
+  const editEmployeeId = searchParams.get("edit");
   const [formData, setFormData] = useState({
     profilePhoto: null,
     firstName: "",
@@ -127,10 +129,97 @@ export default function AddEmployee() {
   const [departments, setDepartments] = useState<Department[]>([]);
   const [managers, setManagers] = useState<Employee[]>([]);
   const [loading, setLoading] = useState(true);
+  const [isEditMode, setIsEditMode] = useState(false);
+  const [editingEmployee, setEditingEmployee] = useState<Employee | null>(null);
 
   useEffect(() => {
     loadDepartmentsAndManagers();
-  }, []);
+    // Check if we're in edit mode
+    if (editEmployeeId) {
+      loadEmployeeForEdit(editEmployeeId);
+    }
+  }, [editEmployeeId]);
+
+  const loadEmployeeForEdit = async (employeeId: string) => {
+    try {
+      setLoading(true);
+      const employee = await employeeService.getEmployeeById(employeeId);
+      if (employee) {
+        setIsEditMode(true);
+        setEditingEmployee(employee);
+
+        // Populate form with employee data
+        setFormData({
+          profilePhoto: null,
+          firstName: employee.personalInfo.firstName,
+          lastName: employee.personalInfo.lastName,
+          email: employee.personalInfo.email,
+          phone: employee.personalInfo.phone,
+          emergencyContactName:
+            employee.personalInfo.emergencyContact?.name || "",
+          emergencyContactPhone:
+            employee.personalInfo.emergencyContact?.phone || "",
+          department: employee.jobDetails.department,
+          jobTitle: employee.jobDetails.position,
+          manager: employee.jobDetails.manager || "",
+          startDate: employee.jobDetails.hireDate,
+          employmentType: employee.jobDetails.employmentType,
+          status: employee.status,
+          salary: employee.compensation.annualSalary.toString(),
+          leaveDays: employee.compensation.annualLeave?.toString() || "",
+          benefits: employee.compensation.benefitsPackage || "",
+        });
+
+        // Populate documents if they exist
+        if (employee.documents) {
+          setDocuments((prev) =>
+            prev.map((doc) => {
+              const empDoc = employee.documents?.[
+                doc.type.toLowerCase().replace(/\s+/g, "")
+              ] as any;
+              if (empDoc) {
+                return {
+                  ...doc,
+                  number: empDoc.number || "",
+                  expiryDate: empDoc.expiryDate || "",
+                  required: empDoc.required ?? doc.required,
+                };
+              }
+              return doc;
+            }),
+          );
+
+          if (employee.documents.nationality) {
+            setAdditionalInfo((prev) => ({
+              ...prev,
+              nationality: employee.documents?.nationality || "Timor-Leste",
+              workingVisaNumber:
+                employee.documents?.workingVisaResidency?.number || "",
+              workingVisaExpiry:
+                employee.documents?.workingVisaResidency?.expiryDate || "",
+            }));
+          }
+        }
+      } else {
+        toast({
+          title: "Error",
+          description: "Employee not found",
+          variant: "destructive",
+        });
+        navigate("/staff");
+      }
+    } catch (error) {
+      console.error("Error loading employee for edit:", error);
+      toast({
+        title: "Error",
+        description: "Failed to load employee data",
+        variant: "destructive",
+      });
+      navigate("/staff");
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const loadDepartmentsAndManagers = async () => {
     try {
@@ -148,7 +237,7 @@ export default function AddEmployee() {
       setDepartments(migrationResult.departments);
       // Filter employees who could be managers (active employees)
       const potentialManagers = employeesData.filter(
-        (emp) => emp.status === "active",
+        (emp) => emp.status === "active" && emp.id !== editEmployeeId, // Exclude current employee from manager list
       );
       setManagers(potentialManagers);
     } catch (error) {
@@ -159,7 +248,9 @@ export default function AddEmployee() {
         variant: "destructive",
       });
     } finally {
-      setLoading(false);
+      if (!editEmployeeId) {
+        setLoading(false);
+      }
     }
   };
 

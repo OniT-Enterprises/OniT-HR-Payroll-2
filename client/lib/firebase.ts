@@ -1,7 +1,12 @@
 // Import the functions you need from the SDKs you need
 import { initializeApp } from "firebase/app";
 import { getAnalytics } from "firebase/analytics";
-import { getFirestore, connectFirestoreEmulator } from "firebase/firestore";
+import {
+  getFirestore,
+  connectFirestoreEmulator,
+  enableNetwork,
+  disableNetwork,
+} from "firebase/firestore";
 import { getAuth } from "firebase/auth";
 import { getStorage } from "firebase/storage";
 
@@ -68,11 +73,14 @@ export const getFirebaseError = () => firebaseError;
 
 // Test Firebase connectivity
 export const testFirebaseConnection = async (): Promise<boolean> => {
-  if (!db) return false;
+  if (!db) {
+    console.warn("Firestore DB instance not available");
+    return false;
+  }
 
   try {
-    // Simple connectivity test
-    await db._delegate._databaseId;
+    // Test connectivity by enabling network (this will resolve immediately if already connected)
+    await enableNetwork(db);
     return true;
   } catch (error) {
     console.error("Firebase connectivity test failed:", error);

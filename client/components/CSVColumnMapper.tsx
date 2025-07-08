@@ -208,6 +208,27 @@ const EMPLOYEE_FIELDS: EmployeeField[] = [
   },
   // Documents
   {
+    id: "employeeIdCard",
+    name: "Employee ID Card Number",
+    category: "Documents",
+    required: false,
+    type: "text",
+  },
+  {
+    id: "employeeIdExpiryDate",
+    name: "Employee ID Expiry Date",
+    category: "Documents",
+    required: false,
+    type: "date",
+  },
+  {
+    id: "nationality",
+    name: "Nationality",
+    category: "Documents",
+    required: false,
+    type: "text",
+  },
+  {
     id: "socialSecurityNumber",
     name: "Social Security Number",
     category: "Documents",

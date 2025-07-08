@@ -512,10 +512,11 @@ export default function AddEmployee() {
             continue;
           }
 
-          // Generate employee ID if not provided
+          // Use Employee ID Card number as employeeId, fallback to mapped data or temp ID
           const employeeId =
+            mappedData.employeeIdCard ||
             mappedData.employeeId ||
-            `EMP${Math.floor(Math.random() * 900) + 100}`;
+            `TEMP${Date.now()}`;
           const currentDate = new Date();
 
           // Create employee object in the format expected by Firebase

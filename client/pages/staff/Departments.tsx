@@ -181,6 +181,21 @@ export default function Departments() {
     }).format(monthlySalary);
   };
 
+  const handleViewDepartmentEmployees = (dept: any) => {
+    setSelectedDepartment(dept);
+    setShowDepartmentEmployees(true);
+  };
+
+  const handleEditDepartment = (department: Department) => {
+    setManagerMode("edit");
+    setShowDepartmentManager(true);
+  };
+
+  const handleViewEmployee = (employee: Employee) => {
+    // Open employee profile in new tab
+    window.open(`/staff/employees?view=${employee.id}`, "_blank");
+  };
+
   if (loading) {
     return (
       <div className="min-h-screen bg-background">

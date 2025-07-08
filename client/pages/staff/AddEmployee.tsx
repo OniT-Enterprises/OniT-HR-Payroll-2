@@ -709,6 +709,7 @@ export default function AddEmployee() {
         email: employeeData.email || "",
         phone: employeeData.phone || "",
         phoneApp: employeeData.phoneApp || "",
+        appEligible: employeeData.appEligible || false,
         emergencyContactName: employeeData.emergencyContactName || "",
         emergencyContactPhone: employeeData.emergencyContactPhone || "",
         department: employeeData.department || "",
@@ -1572,7 +1573,7 @@ export default function AddEmployee() {
                           </SelectItem>
                           <SelectItem value="Kuwait">🇰🇼 Kuwait</SelectItem>
                           <SelectItem value="Laos">🇱🇦 Laos</SelectItem>
-                          <SelectItem value="Latvia">🇱🇻 Latvia</SelectItem>
+                          <SelectItem value="Latvia">🇱��� Latvia</SelectItem>
                           <SelectItem value="Lebanon">���🇧 Lebanon</SelectItem>
                           <SelectItem value="Lithuania">
                             🇱🇹 Lithuania

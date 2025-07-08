@@ -67,6 +67,33 @@ export default function AllEmployees() {
   const { toast } = useToast();
   const navigate = useNavigate();
 
+  // Monitor network status
+  useEffect(() => {
+    const handleOnline = () => {
+      setIsOnline(true);
+      setConnectionError(null);
+      // Try to reload data when coming back online
+      if (employees.length === 0) {
+        loadEmployees();
+      }
+    };
+
+    const handleOffline = () => {
+      setIsOnline(false);
+      setConnectionError(
+        "You're currently offline. Some features may not work.",
+      );
+    };
+
+    window.addEventListener("online", handleOnline);
+    window.addEventListener("offline", handleOffline);
+
+    return () => {
+      window.removeEventListener("online", handleOnline);
+      window.removeEventListener("offline", handleOffline);
+    };
+  }, [employees.length]);
+
   // Load employees from Firebase
   useEffect(() => {
     loadEmployees();

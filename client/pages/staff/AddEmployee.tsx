@@ -350,14 +350,6 @@ export default function AddEmployee() {
     }));
   };
 
-  const handleRequiredToggle = (id: number) => {
-    setDocuments((prev) =>
-      prev.map((doc) =>
-        doc.id === id ? { ...doc, required: !doc.required } : doc,
-      ),
-    );
-  };
-
   const getExpiryStatus = (expiryDate: string) => {
     if (!expiryDate) return null;
 

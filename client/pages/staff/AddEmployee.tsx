@@ -868,6 +868,50 @@ export default function AddEmployee() {
         status: "active", // Default all new employees to active
       };
 
+      // Upload files if they exist
+      let workContractUrl = "";
+      let workingVisaUrl = "";
+
+      const employeeIdForUpload = isEditMode
+        ? editingEmployee.id
+        : fileUploadService.generateTempEmployeeId();
+
+      try {
+        // Upload work contract file if provided
+        if (additionalInfo.workContract) {
+          workContractUrl = await fileUploadService.uploadEmployeeDocument(
+            additionalInfo.workContract,
+            employeeIdForUpload,
+            "workContract",
+          );
+        }
+
+        // Upload working visa file if provided
+        if (additionalInfo.workingVisaFile) {
+          workingVisaUrl = await fileUploadService.uploadEmployeeDocument(
+            additionalInfo.workingVisaFile,
+            employeeIdForUpload,
+            "workingVisa",
+          );
+        }
+      } catch (uploadError) {
+        console.error("Error uploading files:", uploadError);
+        toast({
+          title: "File Upload Error",
+          description:
+            "Some documents failed to upload. Employee will be saved without documents.",
+          variant: "destructive",
+        });
+      }
+
+      // Update document URLs in the employee object
+      if (workContractUrl) {
+        newEmployee.documents.workContract.fileUrl = workContractUrl;
+      }
+      if (workingVisaUrl) {
+        newEmployee.documents.workingVisaResidency.fileUrl = workingVisaUrl;
+      }
+
       // Save to Firebase
       if (isEditMode && editingEmployee) {
         // Update existing employee

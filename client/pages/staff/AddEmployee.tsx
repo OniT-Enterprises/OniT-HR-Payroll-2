@@ -156,9 +156,9 @@ export default function AddEmployee() {
           email: employee.personalInfo.email,
           phone: employee.personalInfo.phone,
           emergencyContactName:
-            employee.personalInfo.emergencyContact?.name || "",
+            employee.personalInfo.emergencyContactName || "",
           emergencyContactPhone:
-            employee.personalInfo.emergencyContact?.phone || "",
+            employee.personalInfo.emergencyContactPhone || "",
           department: employee.jobDetails.department,
           jobTitle: employee.jobDetails.position,
           manager: employee.jobDetails.manager || "",

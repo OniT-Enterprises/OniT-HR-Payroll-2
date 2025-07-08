@@ -71,9 +71,12 @@ class EmployeeService {
 
   async getAllEmployees(): Promise<Employee[]> {
     try {
+      // First, try a simple connection test
+      await this.testConnection();
+
       // Add timeout and retry logic
       const timeoutPromise = new Promise((_, reject) =>
-        setTimeout(() => reject(new Error("Request timeout")), 10000),
+        setTimeout(() => reject(new Error("Request timeout")), 15000),
       );
 
       const queryPromise = getDocs(

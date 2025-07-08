@@ -224,6 +224,15 @@ class EmployeeService {
   }
 
   async addEmployee(employee: Omit<Employee, "id">): Promise<string | null> {
+    // Check if Firebase is properly initialized
+    if (!isFirebaseReady() || !db) {
+      const error = getFirebaseError();
+      throw new Error(
+        error ||
+          "Cannot add employee: Firebase is not properly initialized. Please refresh the page and try again.",
+      );
+    }
+
     try {
       const docRef = await addDoc(this.collection, {
         ...employee,
@@ -233,6 +242,13 @@ class EmployeeService {
       return docRef.id;
     } catch (error) {
       console.error("Error adding employee:", error);
+
+      if (error.message?.includes("Failed to fetch")) {
+        throw new Error(
+          "Failed to add employee due to connection issues. Please check your internet connection and try again.",
+        );
+      }
+
       return null;
     }
   }

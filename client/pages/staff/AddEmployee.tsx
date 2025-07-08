@@ -218,6 +218,24 @@ export default function AddEmployee() {
     );
   };
 
+  const handleAdditionalInfoChange = (
+    field: string,
+    value: string | File | null,
+  ) => {
+    setAdditionalInfo((prev) => ({
+      ...prev,
+      [field]: value,
+    }));
+  };
+
+  const handleRequiredToggle = (id: number) => {
+    setDocuments((prev) =>
+      prev.map((doc) =>
+        doc.id === id ? { ...doc, required: !doc.required } : doc,
+      ),
+    );
+  };
+
   const getExpiryStatus = (expiryDate: string) => {
     if (!expiryDate) return null;
 

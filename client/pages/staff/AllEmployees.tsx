@@ -458,19 +458,24 @@ export default function AllEmployees() {
                         </div>
                       </td>
                       <td className="p-3">
-                        <div className="space-y-1">
-                          <div className="flex items-center gap-2">
-                            <Mail className="h-3 w-3 text-muted-foreground" />
-                            <span className="text-sm">
-                              {employee.personalInfo.email}
-                            </span>
-                          </div>
-                          <div className="flex items-center gap-2">
-                            <Phone className="h-3 w-3 text-muted-foreground" />
-                            <span className="text-sm">
-                              {employee.personalInfo.phone}
-                            </span>
-                          </div>
+                        <div className="space-y-2">
+                          {/* Contact Info Popover */}
+                          <ContactInfoPopover
+                            email={employee.personalInfo.email}
+                            phone={employee.personalInfo.phone || "No phone"}
+                            employeeName={`${employee.personalInfo.firstName} ${employee.personalInfo.lastName}`}
+                          />
+
+                          {/* Emergency Contact */}
+                          {employee.personalInfo.emergencyContactName && (
+                            <div className="flex items-center gap-2 text-xs text-muted-foreground">
+                              <Users className="h-3 w-3" />
+                              <span>
+                                Emergency:{" "}
+                                {employee.personalInfo.emergencyContactName}
+                              </span>
+                            </div>
+                          )}
                         </div>
                       </td>
                       <td className="p-3">

@@ -788,7 +788,8 @@ export default function AddEmployee() {
     try {
       // Generate employee ID
       const currentDate = new Date();
-      const employeeId = `EMP${Math.floor(Math.random() * 900) + 100}`;
+      // Use Employee ID Card number from documents as employeeId
+      const employeeId = documents[0]?.number || `TEMP${Date.now()}`;
 
       // Create employee object in the format expected by Firebase
       const newEmployee: Omit<Employee, "id"> = {
@@ -799,7 +800,7 @@ export default function AddEmployee() {
           phone: formData.phone,
           address: "", // Could be added to form later
           dateOfBirth: "", // Could be added to form later
-          socialSecurityNumber: documents[0]?.number || "",
+          socialSecurityNumber: documents[1]?.number || "",
           emergencyContactName: formData.emergencyContactName,
           emergencyContactPhone: formData.emergencyContactPhone,
         },

@@ -441,6 +441,112 @@ export default function Departments() {
           mode={managerMode}
           onDepartmentChange={loadData}
         />
+
+        {/* Department Employees Dialog */}
+        <Dialog
+          open={showDepartmentEmployees}
+          onOpenChange={setShowDepartmentEmployees}
+        >
+          <DialogContent className="max-w-4xl max-h-[80vh] overflow-auto">
+            <DialogHeader>
+              <DialogTitle className="flex items-center gap-2">
+                <Building className="h-5 w-5" />
+                {selectedDepartment?.name} Department - Employees
+              </DialogTitle>
+              <DialogDescription>
+                {selectedDepartment?.totalEmployees} employees in this
+                department
+              </DialogDescription>
+            </DialogHeader>
+
+            {selectedDepartment && (
+              <div className="space-y-4">
+                {selectedDepartment.employees.length > 0 ? (
+                  <div className="overflow-x-auto">
+                    <table className="w-full">
+                      <thead>
+                        <tr className="border-b">
+                          <th className="text-left p-3 font-medium">
+                            Employee
+                          </th>
+                          <th className="text-left p-3 font-medium">
+                            Position
+                          </th>
+                          <th className="text-left p-3 font-medium">Email</th>
+                          <th className="text-center p-3 font-medium">
+                            Actions
+                          </th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {selectedDepartment.employees.map(
+                          (employee: Employee) => (
+                            <tr
+                              key={employee.id}
+                              className="border-b hover:bg-muted/50"
+                            >
+                              <td className="p-3">
+                                <div className="flex items-center gap-3">
+                                  <Avatar className="h-8 w-8">
+                                    <AvatarImage
+                                      src="/placeholder.svg"
+                                      alt={employee.personalInfo.firstName}
+                                    />
+                                    <AvatarFallback className="text-xs">
+                                      {employee.personalInfo.firstName[0]}
+                                      {employee.personalInfo.lastName[0]}
+                                    </AvatarFallback>
+                                  </Avatar>
+                                  <div>
+                                    <p className="font-medium">
+                                      {employee.personalInfo.firstName}{" "}
+                                      {employee.personalInfo.lastName}
+                                    </p>
+                                    <p className="text-sm text-muted-foreground">
+                                      ID: {employee.jobDetails.employeeId}
+                                    </p>
+                                  </div>
+                                </div>
+                              </td>
+                              <td className="p-3">
+                                <span className="font-medium">
+                                  {employee.jobDetails.position}
+                                </span>
+                              </td>
+                              <td className="p-3">
+                                <span className="text-sm">
+                                  {employee.personalInfo.email}
+                                </span>
+                              </td>
+                              <td className="p-3 text-center">
+                                <Button
+                                  variant="ghost"
+                                  size="sm"
+                                  onClick={() => handleViewEmployee(employee)}
+                                  className="text-blue-600 hover:text-blue-700"
+                                >
+                                  <Eye className="h-4 w-4" />
+                                </Button>
+                              </td>
+                            </tr>
+                          ),
+                        )}
+                      </tbody>
+                    </table>
+                  </div>
+                ) : (
+                  <div className="text-center py-8">
+                    <Users className="h-16 w-16 mx-auto mb-4 text-gray-300" />
+                    <h3 className="text-lg font-semibold mb-2">No Employees</h3>
+                    <p className="text-muted-foreground">
+                      This department doesn't have any employees assigned yet.
+                    </p>
+                  </div>
+                )}
+              </div>
+            )}
+          </DialogContent>
+        </Dialog>
       </div>
     </div>
   );

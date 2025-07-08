@@ -144,85 +144,82 @@ export default function EmployeeProfileView({
             </CardHeader>
             <CardContent className="space-y-4">
               {/* Personal Contact Information - One Row */}
-              <div className="grid grid-cols-3 gap-4">
+              <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
                 {/* Email */}
-                <div className="flex items-center gap-3">
-                  <Mail className="h-4 w-4 text-blue-600" />
-                  <div>
-                    <p className="font-medium">{employee.personalInfo.email}</p>
-                    <p className="text-sm text-muted-foreground">Email</p>
+                <div className="flex items-start gap-3">
+                  <Mail className="h-4 w-4 text-blue-600 mt-1 flex-shrink-0" />
+                  <div className="min-w-0 flex-1">
+                    <p className="font-medium break-all text-sm">
+                      {employee.personalInfo.email}
+                    </p>
+                    <p className="text-xs text-muted-foreground">Email</p>
                   </div>
                 </div>
 
                 {/* Phone */}
-                {employee.personalInfo.phone && (
-                  <div className="flex items-center gap-3">
-                    <Phone className="h-4 w-4 text-green-600" />
-                    <div>
-                      <p className="font-medium">
-                        {employee.personalInfo.phone}
-                      </p>
-                      <p className="text-sm text-muted-foreground">Phone</p>
-                    </div>
+                <div className="flex items-start gap-3">
+                  <Phone className="h-4 w-4 text-green-600 mt-1 flex-shrink-0" />
+                  <div className="min-w-0 flex-1">
+                    <p className="font-medium text-sm">
+                      {employee.personalInfo.phone || "Not provided"}
+                    </p>
+                    <p className="text-xs text-muted-foreground">Phone</p>
                   </div>
-                )}
+                </div>
 
                 {/* Phone App */}
-                {(employee.personalInfo as any).phoneApp && (
-                  <div className="flex items-center gap-3">
-                    <Smartphone className="h-4 w-4 text-purple-600" />
-                    <div>
-                      <p className="font-medium">
-                        {(employee.personalInfo as any).phoneApp}
-                      </p>
-                      <div className="text-sm text-muted-foreground">
-                        Phone App
-                        {(employee.personalInfo as any).appEligible && (
-                          <Badge
-                            variant="outline"
-                            className="ml-2 text-xs bg-green-50 text-green-700"
-                          >
-                            Eligible
-                          </Badge>
-                        )}
-                      </div>
+                <div className="flex items-start gap-3">
+                  <Smartphone className="h-4 w-4 text-purple-600 mt-1 flex-shrink-0" />
+                  <div className="min-w-0 flex-1">
+                    <p className="font-medium text-sm">
+                      {(employee.personalInfo as any).phoneApp ||
+                        "Not provided"}
+                    </p>
+                    <div className="text-xs text-muted-foreground">
+                      Phone App
+                      {(employee.personalInfo as any).appEligible && (
+                        <Badge
+                          variant="outline"
+                          className="ml-1 text-xs bg-green-50 text-green-700"
+                        >
+                          Eligible
+                        </Badge>
+                      )}
                     </div>
                   </div>
-                )}
+                </div>
               </div>
 
               {/* Separator Line */}
               <div className="border-t border-gray-200 my-4"></div>
 
               {/* Emergency Contact Information - One Row */}
-              {employee.personalInfo.emergencyContactName && (
-                <div className="grid grid-cols-2 gap-4">
-                  <div className="flex items-center gap-3">
-                    <Users className="h-4 w-4 text-red-600" />
-                    <div>
-                      <p className="font-medium">
-                        {employee.personalInfo.emergencyContactName}
-                      </p>
-                      <p className="text-sm text-muted-foreground">
-                        Emergency Contact
-                      </p>
-                    </div>
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+                <div className="flex items-start gap-3">
+                  <Users className="h-4 w-4 text-red-600 mt-1 flex-shrink-0" />
+                  <div className="min-w-0 flex-1">
+                    <p className="font-medium text-sm">
+                      {employee.personalInfo.emergencyContactName ||
+                        "Not provided"}
+                    </p>
+                    <p className="text-xs text-muted-foreground">
+                      Emergency Contact
+                    </p>
                   </div>
-                  {employee.personalInfo.emergencyContactPhone && (
-                    <div className="flex items-center gap-3">
-                      <Phone className="h-4 w-4 text-red-600" />
-                      <div>
-                        <p className="font-medium">
-                          {employee.personalInfo.emergencyContactPhone}
-                        </p>
-                        <p className="text-sm text-muted-foreground">
-                          Emergency Phone
-                        </p>
-                      </div>
-                    </div>
-                  )}
                 </div>
-              )}
+                <div className="flex items-start gap-3">
+                  <Phone className="h-4 w-4 text-red-600 mt-1 flex-shrink-0" />
+                  <div className="min-w-0 flex-1">
+                    <p className="font-medium text-sm">
+                      {employee.personalInfo.emergencyContactPhone ||
+                        "Not provided"}
+                    </p>
+                    <p className="text-xs text-muted-foreground">
+                      Emergency Phone
+                    </p>
+                  </div>
+                </div>
+              </div>
             </CardContent>
           </Card>
 
@@ -503,16 +500,18 @@ export default function EmployeeProfileView({
                       <FileText className="h-4 w-4 text-muted-foreground" />
                       <span className="font-medium">Work Contract</span>
                     </div>
-                    {(employee.documents as any).workContract?.fileUrl ? (
+                    {employee.documents.workContract?.fileUrl ? (
                       <div>
                         <p className="text-sm text-green-600">
                           Document uploaded
                         </p>
-                        <p className="text-xs text-muted-foreground">
-                          {new Date(
-                            (employee.documents as any).workContract.uploadDate,
-                          ).toLocaleDateString()}
-                        </p>
+                        {employee.documents.workContract.uploadDate && (
+                          <p className="text-xs text-muted-foreground">
+                            {new Date(
+                              employee.documents.workContract.uploadDate,
+                            ).toLocaleDateString()}
+                          </p>
+                        )}
                       </div>
                     ) : (
                       <p className="text-sm text-muted-foreground">
@@ -522,8 +521,7 @@ export default function EmployeeProfileView({
                   </div>
 
                   {/* Working Visa/Residency */}
-                  {(employee.documents as any).nationality !==
-                    "Timor-Leste" && (
+                  {employee.documents.nationality !== "Timor-Leste" && (
                     <div className="space-y-2">
                       <div className="flex items-center gap-2">
                         <Globe className="h-4 w-4 text-muted-foreground" />
@@ -531,22 +529,18 @@ export default function EmployeeProfileView({
                           Working Visa/Residency
                         </span>
                       </div>
-                      {(employee.documents as any).workingVisaResidency
-                        ?.number ? (
+                      {employee.documents.workingVisaResidency?.number ? (
                         <div>
                           <p className="text-sm">
-                            {
-                              (employee.documents as any).workingVisaResidency
-                                .number
-                            }
+                            {employee.documents.workingVisaResidency.number}
                           </p>
-                          {(employee.documents as any).workingVisaResidency
+                          {employee.documents.workingVisaResidency
                             .expiryDate && (
                             <div className="mt-1">
                               {(() => {
                                 const status = getExpiryStatus(
-                                  (employee.documents as any)
-                                    .workingVisaResidency.expiryDate,
+                                  employee.documents.workingVisaResidency
+                                    .expiryDate,
                                 );
                                 return status ? (
                                   <Badge
@@ -559,8 +553,7 @@ export default function EmployeeProfileView({
                               })()}
                             </div>
                           )}
-                          {(employee.documents as any).workingVisaResidency
-                            ?.fileUrl && (
+                          {employee.documents.workingVisaResidency.fileUrl && (
                             <p className="text-xs text-green-600 mt-1">
                               Document uploaded
                             </p>

@@ -85,6 +85,7 @@ export default function AddEmployee() {
     lastName: "",
     email: "",
     phone: "",
+    phoneApp: "",
     emergencyContactName: "",
     emergencyContactPhone: "",
     department: "",
@@ -164,6 +165,7 @@ export default function AddEmployee() {
           lastName: employee.personalInfo.lastName,
           email: employee.personalInfo.email,
           phone: employee.personalInfo.phone,
+          phoneApp: (employee.personalInfo as any).phoneApp || "",
           emergencyContactName:
             employee.personalInfo.emergencyContactName || "",
           emergencyContactPhone:
@@ -1530,7 +1532,7 @@ export default function AddEmployee() {
                             🇵🇸 Palestine
                           </SelectItem>
                           <SelectItem value="Peru">🇵🇪 Peru</SelectItem>
-                          <SelectItem value="Poland">🇵🇱 Poland</SelectItem>
+                          <SelectItem value="Poland">��🇱 Poland</SelectItem>
                           <SelectItem value="Portugal">🇵🇹 Portugal</SelectItem>
                           <SelectItem value="Qatar">🇶🇦 Qatar</SelectItem>
                           <SelectItem value="Romania">🇷🇴 Romania</SelectItem>

@@ -1082,8 +1082,8 @@ export default function AddEmployee() {
                   </div>
                 </div>
 
-                {/* Contact Information Grid - 2x2 Icon Layout */}
-                <div className="grid grid-cols-2 gap-4">
+                {/* Personal Contact Information - One Row */}
+                <div className="grid grid-cols-3 gap-4">
                   {/* Email */}
                   <div className="space-y-2">
                     <Label htmlFor="email" className="flex items-center gap-2">
@@ -1116,54 +1116,6 @@ export default function AddEmployee() {
                         handleInputChange("phone", e.target.value)
                       }
                       placeholder="+670 123 4567"
-                    />
-                  </div>
-
-                  {/* Emergency Contact */}
-                  <div className="space-y-2">
-                    <Label
-                      htmlFor="emergencyContactName"
-                      className="flex items-center gap-2"
-                    >
-                      <Cross className="h-4 w-4 text-red-600" />
-                      Emergency Contact
-                      <TooltipProvider>
-                        <Tooltip>
-                          <TooltipTrigger asChild>
-                            <Info className="h-3 w-3 text-muted-foreground cursor-help" />
-                          </TooltipTrigger>
-                          <TooltipContent>
-                            <p className="max-w-xs">
-                              Person to contact in case of emergency, medical
-                              situation, or urgent workplace incident.
-                            </p>
-                          </TooltipContent>
-                        </Tooltip>
-                      </TooltipProvider>
-                    </Label>
-                    <Input
-                      id="emergencyContactName"
-                      value={formData.emergencyContactName}
-                      onChange={(e) =>
-                        handleInputChange(
-                          "emergencyContactName",
-                          e.target.value,
-                        )
-                      }
-                      placeholder="Contact name"
-                    />
-                    <Input
-                      id="emergencyContactPhone"
-                      type="tel"
-                      value={formData.emergencyContactPhone}
-                      onChange={(e) =>
-                        handleInputChange(
-                          "emergencyContactPhone",
-                          e.target.value,
-                        )
-                      }
-                      placeholder="Contact phone"
-                      className="mt-2"
                     />
                   </div>
 
@@ -1215,6 +1167,70 @@ export default function AddEmployee() {
                         Eligible for mobile app enrollment
                       </Label>
                     </div>
+                  </div>
+                </div>
+
+                {/* Separator Line */}
+                <div className="border-t border-gray-200 my-4"></div>
+
+                {/* Emergency Contact Information - One Row */}
+                <div className="grid grid-cols-2 gap-4">
+                  {/* Emergency Contact Name */}
+                  <div className="space-y-2">
+                    <Label
+                      htmlFor="emergencyContactName"
+                      className="flex items-center gap-2"
+                    >
+                      <Cross className="h-4 w-4 text-red-600" />
+                      Emergency Contact
+                      <TooltipProvider>
+                        <Tooltip>
+                          <TooltipTrigger asChild>
+                            <Info className="h-3 w-3 text-muted-foreground cursor-help" />
+                          </TooltipTrigger>
+                          <TooltipContent>
+                            <p className="max-w-xs">
+                              Person to contact in case of emergency, medical
+                              situation, or urgent workplace incident.
+                            </p>
+                          </TooltipContent>
+                        </Tooltip>
+                      </TooltipProvider>
+                    </Label>
+                    <Input
+                      id="emergencyContactName"
+                      value={formData.emergencyContactName}
+                      onChange={(e) =>
+                        handleInputChange(
+                          "emergencyContactName",
+                          e.target.value,
+                        )
+                      }
+                      placeholder="Contact name"
+                    />
+                  </div>
+
+                  {/* Emergency Contact Phone */}
+                  <div className="space-y-2">
+                    <Label
+                      htmlFor="emergencyContactPhone"
+                      className="flex items-center gap-2"
+                    >
+                      <Phone className="h-4 w-4 text-red-600" />
+                      Emergency Phone
+                    </Label>
+                    <Input
+                      id="emergencyContactPhone"
+                      type="tel"
+                      value={formData.emergencyContactPhone}
+                      onChange={(e) =>
+                        handleInputChange(
+                          "emergencyContactPhone",
+                          e.target.value,
+                        )
+                      }
+                      placeholder="Contact phone"
+                    />
                   </div>
                 </div>
               </CardContent>
@@ -1651,7 +1667,7 @@ export default function AddEmployee() {
                           <SelectItem value="Venezuela">
                             🇻🇪 Venezuela
                           </SelectItem>
-                          <SelectItem value="Vietnam">🇻🇳 Vietnam</SelectItem>
+                          <SelectItem value="Vietnam">���🇳 Vietnam</SelectItem>
                           <SelectItem value="Yemen">🇾🇪 Yemen</SelectItem>
                         </SelectContent>
                       </Select>

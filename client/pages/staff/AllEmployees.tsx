@@ -219,6 +219,23 @@ export default function AllEmployees() {
     }).format(monthlySalary);
   };
 
+  const handleViewEmployee = (employee: Employee) => {
+    setSelectedEmployee(employee);
+    setShowProfileView(true);
+  };
+
+  const handleEditEmployee = (employee: Employee) => {
+    // Navigate to edit employee page with employee ID
+    navigate(`/staff/add?edit=${employee.id}`);
+  };
+
+  const handleDeleteEmployee = async (employee: Employee) => {
+    // Navigate to offboarding page
+    navigate(`/hiring/offboarding?employee=${employee.id}`);
+  };
+
+  const incompleteEmployees = getIncompleteEmployees(employees);
+
   if (loading) {
     return (
       <div className="min-h-screen bg-background">

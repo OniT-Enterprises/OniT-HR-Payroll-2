@@ -387,11 +387,7 @@ export default function DepartmentManager({
                       className="w-4 h-4 rounded border"
                       style={{ backgroundColor: formData.color }}
                     />
-                    <span>
-                      Selected:{" "}
-                      {departmentColors.find((c) => c.value === formData.color)
-                        ?.name || "Custom"}
-                    </span>
+                    <span>Selected: {departmentColors.find(c => c.value === formData.color)?.name || 'Custom'}</span>
                   </div>
                 </div>
 
@@ -431,91 +427,103 @@ export default function DepartmentManager({
 
           {/* Existing Departments */}
           {departments.length > 0 && (
-            <div>
-              <h3 className="text-lg font-semibold mb-4">
-                Current Departments ({departments.length})
-              </h3>
-              <div className="grid md:grid-cols-2 gap-4">
-                {departments.map((department) => {
-                  const stats = getDepartmentStats(department.name);
-                  return (
-                    <Card key={department.id}>
-                      <CardHeader className="pb-3">
-                        <div className="flex items-start justify-between">
-                          <div>
-                            <CardTitle className="flex items-center gap-2 text-lg">
-                              <Building className="h-4 w-4" />
-                              {department.name}
-                            </CardTitle>
-                            {department.description && (
-                              <CardDescription>
-                                {department.description}
-                              </CardDescription>
-                            )}
-                          </div>
-                          <div className="flex gap-1">
-                            <Button
-                              variant="ghost"
-                              size="sm"
-                              onClick={() => handleEdit(department)}
-                            >
-                              <Edit className="h-4 w-4" />
-                            </Button>
-                            <Button
-                              variant="ghost"
-                              size="sm"
-                              onClick={() => handleDelete(department)}
-                            >
-                              <Trash2 className="h-4 w-4" />
-                            </Button>
-                          </div>
-                        </div>
-                      </CardHeader>
-                      <CardContent className="space-y-3">
-                        {department.director && (
-                          <div className="flex items-center gap-2 text-sm">
-                            <User className="h-4 w-4 text-blue-500" />
-                            <span className="text-muted-foreground">
-                              Director:
-                            </span>
-                            <span className="font-medium">
-                              {department.director}
-                            </span>
-                          </div>
-                        )}
-                        {department.manager && (
-                          <div className="flex items-center gap-2 text-sm">
-                            <User className="h-4 w-4 text-green-500" />
-                            <span className="text-muted-foreground">
-                              Manager:
-                            </span>
-                            <span className="font-medium">
-                              {department.manager}
-                            </span>
-                          </div>
-                        )}
-                        <div className="flex items-center gap-2 text-sm">
-                          <Users className="h-4 w-4 text-purple-500" />
-                          <span className="text-muted-foreground">Staff:</span>
-                          <Badge variant="secondary">
-                            {stats.employeeCount}
-                          </Badge>
-                        </div>
-                        <div className="flex items-center gap-2 text-sm">
-                          <Users className="h-4 w-4 text-orange-500" />
-                          <span className="text-muted-foreground">
-                            Monthly Payroll:
-                          </span>
-                          <span className="font-medium">
-                            {new Intl.NumberFormat("en-US", {
-                              style: "currency",
-                              currency: "USD",
-                            }).format(stats.monthlyPayroll)}
-                          </span>
-                        </div>
-                      </CardContent>
-                    </Card>
-                  );
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <Building className="h-5 w-5" />
+                  Current Departments ({departments.length})
+                </CardTitle>
+                <CardDescription>
+                  Manage and edit your organization's departments
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="overflow-x-auto">
+                  <table className="w-full">
+                    <thead>
+                      <tr className="border-b">
+                        <th className="text-left p-3 font-medium">Department</th>
+                        <th className="text-center p-3 font-medium">Director</th>
+                        <th className="text-center p-3 font-medium">Manager</th>
+                        <th className="text-center p-3 font-medium">Employees</th>
+                        <th className="text-center p-3 font-medium">Monthly Payroll</th>
+                        <th className="text-center p-3 font-medium">Actions</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {departments.map((department) => {
+                        const stats = getDepartmentStats(department.name);
+                        return (
+                          <tr key={department.id} className="border-b hover:bg-muted/50">
+                            <td className="p-3">
+                              <div className="flex items-center gap-2">
+                                <div
+                                  className="w-4 h-4 rounded-full border"
+                                  style={{ backgroundColor: department.color || "#3B82F6" }}
+                                />
+                                <Building className="h-4 w-4 text-muted-foreground" />
+                                <span className="font-medium">{department.name}</span>
+                              </div>
+                            </td>
+                            <td className="p-3 text-center">
+                              {department.director ? (
+                                <Badge variant="outline" className="text-blue-600">
+                                  {department.director}
+                                </Badge>
+                              ) : (
+                                <span className="text-muted-foreground">-</span>
+                              )}
+                            </td>
+                            <td className="p-3 text-center">
+                              {department.manager ? (
+                                <Badge variant="outline" className="text-green-600">
+                                  {department.manager}
+                                </Badge>
+                              ) : (
+                                <span className="text-muted-foreground">-</span>
+                              )}
+                            </td>
+                            <td className="p-3 text-center">
+                              <Badge variant="secondary">
+                                {stats.employeeCount}
+                              </Badge>
+                            </td>
+                            <td className="p-3 text-center">
+                              <span className="font-medium">
+                                {new Intl.NumberFormat("en-US", {
+                                  style: "currency",
+                                  currency: "USD",
+                                  maximumFractionDigits: 0,
+                                }).format(stats.monthlyPayroll)}
+                              </span>
+                            </td>
+                            <td className="p-3">
+                              <div className="flex items-center justify-center gap-1">
+                                <Button
+                                  variant="ghost"
+                                  size="sm"
+                                  onClick={() => handleEdit(department)}
+                                >
+                                  <Edit className="h-4 w-4" />
+                                </Button>
+                                <Button
+                                  variant="ghost"
+                                  size="sm"
+                                  onClick={() => handleDelete(department)}
+                                  className="text-red-600 hover:text-red-700"
+                                >
+                                  <Trash2 className="h-4 w-4" />
+                                </Button>
+                              </div>
+                            </td>
+                          </tr>
+                        );
+                      })}
+                    </tbody>
+                  </table>
+                </div>
+              </CardContent>
+            </Card>
                 })}
               </div>
             </div>

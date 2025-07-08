@@ -552,6 +552,17 @@ export default function Departments() {
             )}
           </DialogContent>
         </Dialog>
+
+        {/* Employee Profile View Dialog */}
+        <EmployeeProfileView
+          employee={selectedEmployee}
+          open={showEmployeeProfile}
+          onOpenChange={setShowEmployeeProfile}
+          onEditEmployee={(employee) => {
+            // Navigate to edit employee
+            window.open(`/staff/add?edit=${employee.id}`, "_blank");
+          }}
+        />
       </div>
     </div>
   );

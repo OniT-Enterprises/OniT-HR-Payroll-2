@@ -1566,7 +1566,13 @@ export default function AddEmployee() {
             </Button>
             <Button type="submit" disabled={isSubmitting}>
               <Save className="mr-2 h-4 w-4" />
-              {isSubmitting ? "Saving..." : "Save Employee"}
+              {isSubmitting
+                ? isEditMode
+                  ? "Updating..."
+                  : "Saving..."
+                : isEditMode
+                  ? "Update Employee"
+                  : "Save Employee"}
             </Button>
           </div>
         </form>

@@ -63,80 +63,20 @@ export default function Attendance() {
     checkOut: "",
   });
 
-  // Mock data
-  const departments = [
-    { id: "eng", name: "Engineering" },
-    { id: "marketing", name: "Marketing" },
-    { id: "hr", name: "Human Resources" },
-    { id: "sales", name: "Sales" },
-    { id: "finance", name: "Finance" },
-  ];
-
-  const employees = [
-    { id: "1", name: "Sarah Johnson", department: "Engineering" },
-    { id: "2", name: "Michael Chen", department: "Engineering" },
-    { id: "3", name: "Emily Rodriguez", department: "Marketing" },
-    { id: "4", name: "James Miller", department: "Sales" },
-    { id: "5", name: "Jennifer Brown", department: "HR" },
-  ];
-
-  const attendanceRecords = [
-    {
-      id: 1,
-      employeeId: "1",
-      employeeName: "Sarah Johnson",
-      department: "Engineering",
-      date: "2024-01-15",
-      checkIn: "09:00",
-      checkOut: "17:30",
-      totalHours: 8.5,
-      status: "On-time",
-    },
-    {
-      id: 2,
-      employeeId: "2",
-      employeeName: "Michael Chen",
-      department: "Engineering",
-      date: "2024-01-15",
-      checkIn: "09:15",
-      checkOut: "18:00",
-      totalHours: 8.75,
-      status: "Late",
-    },
-    {
-      id: 3,
-      employeeId: "3",
-      employeeName: "Emily Rodriguez",
-      department: "Marketing",
-      date: "2024-01-15",
-      checkIn: null,
-      checkOut: null,
-      totalHours: 0,
-      status: "Absent",
-    },
-    {
-      id: 4,
-      employeeId: "4",
-      employeeName: "James Miller",
-      department: "Sales",
-      date: "2024-01-15",
-      checkIn: "08:45",
-      checkOut: "17:15",
-      totalHours: 8.5,
-      status: "On-time",
-    },
-    {
-      id: 5,
-      employeeId: "5",
-      employeeName: "Jennifer Brown",
-      department: "HR",
-      date: "2024-01-15",
-      checkIn: "09:30",
-      checkOut: "18:30",
-      totalHours: 9.0,
-      status: "Late",
-    },
-  ];
+  // Data (will come from respective services)
+  const departments: { id: string; name: string }[] = [];
+  const employees: { id: string; name: string; department: string }[] = [];
+  const attendanceRecords: {
+    id: number;
+    employeeId: string;
+    employeeName: string;
+    department: string;
+    date: string;
+    checkIn: string | null;
+    checkOut: string | null;
+    totalHours: number;
+    status: string;
+  }[] = [];
 
   const getStatusBadge = (status: string) => {
     switch (status) {

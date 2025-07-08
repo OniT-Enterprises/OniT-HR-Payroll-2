@@ -23,6 +23,7 @@ import {
   type Department,
 } from "@/services/departmentService";
 import DepartmentManager from "@/components/DepartmentManager";
+import EmployeeProfileView from "@/components/EmployeeProfileView";
 import { useToast } from "@/hooks/use-toast";
 import {
   Building,
@@ -45,6 +46,10 @@ export default function Departments() {
   const [managerMode, setManagerMode] = useState<"add" | "edit">("edit");
   const [selectedDepartment, setSelectedDepartment] = useState<any>(null);
   const [showDepartmentEmployees, setShowDepartmentEmployees] = useState(false);
+  const [selectedEmployee, setSelectedEmployee] = useState<Employee | null>(
+    null,
+  );
+  const [showEmployeeProfile, setShowEmployeeProfile] = useState(false);
   const { toast } = useToast();
 
   useEffect(() => {
@@ -192,10 +197,8 @@ export default function Departments() {
   };
 
   const handleViewEmployee = (employee: Employee) => {
-    // Open employee profile in new tab by navigating to AllEmployees page
-    window.open(`/staff/employees`, "_blank");
-    // Note: We could enhance this by passing the employee ID as a URL parameter
-    // and having AllEmployees automatically open that employee's profile
+    setSelectedEmployee(employee);
+    setShowEmployeeProfile(true);
   };
 
   if (loading) {

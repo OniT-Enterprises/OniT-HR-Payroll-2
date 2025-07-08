@@ -82,6 +82,36 @@ class EmployeeService {
     }
   }
 
+  private cacheEmployees(employees: Employee[]): void {
+    try {
+      localStorage.setItem(
+        "cachedEmployees",
+        JSON.stringify({
+          data: employees,
+          timestamp: Date.now(),
+        }),
+      );
+    } catch (error) {
+      console.warn("Failed to cache employees:", error);
+    }
+  }
+
+  private getOfflineEmployees(): Employee[] {
+    try {
+      const cached = localStorage.getItem("cachedEmployees");
+      if (cached) {
+        const { data, timestamp } = JSON.parse(cached);
+        // Use cached data if it's less than 1 hour old
+        if (Date.now() - timestamp < 3600000) {
+          return data;
+        }
+      }
+    } catch (error) {
+      console.warn("Failed to retrieve cached employees:", error);
+    }
+    return [];
+  }
+
   async getAllEmployees(): Promise<Employee[]> {
     try {
       // First, try a simple connection test

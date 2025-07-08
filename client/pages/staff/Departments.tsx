@@ -335,6 +335,13 @@ export default function Departments() {
                         >
                           <td className="p-3">
                             <div className="flex items-center gap-2">
+                              <div
+                                className="w-4 h-4 rounded-full border"
+                                style={{
+                                  backgroundColor:
+                                    dept.department?.color || "#3B82F6",
+                                }}
+                              />
                               <Building className="h-4 w-4 text-muted-foreground" />
                               <span className="font-medium">{dept.name}</span>
                             </div>

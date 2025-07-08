@@ -1412,14 +1412,168 @@ export default function AddEmployee() {
                           <SelectValue placeholder="Select nationality" />
                         </SelectTrigger>
                         <SelectContent>
+                          {/* Most Popular Countries */}
                           <SelectItem value="Timor-Leste">
-                            Timor-Leste
+                            🇹🇱 Timor-Leste
                           </SelectItem>
-                          <SelectItem value="Indonesia">Indonesia</SelectItem>
-                          <SelectItem value="Australia">Australia</SelectItem>
-                          <SelectItem value="Portugal">Portugal</SelectItem>
-                          <SelectItem value="Brazil">Brazil</SelectItem>
-                          <SelectItem value="Other">Other</SelectItem>
+                          <SelectItem value="Australia">
+                            🇦🇺 Australia
+                          </SelectItem>
+                          <SelectItem value="Chinese">🇨🇳 Chinese</SelectItem>
+                          <SelectItem value="Indonesian">
+                            🇮🇩 Indonesian
+                          </SelectItem>
+                          <SelectItem value="Filipino">🇵🇭 Filipino</SelectItem>
+                          <SelectItem value="Malaysian">
+                            🇲🇾 Malaysian
+                          </SelectItem>
+                          <SelectItem value="Singaporean">
+                            🇸🇬 Singaporean
+                          </SelectItem>
+                          <SelectItem value="Portuguese">
+                            🇵🇹 Portuguese
+                          </SelectItem>
+
+                          {/* Separator */}
+                          <div className="px-2 py-1 text-xs text-muted-foreground font-medium border-t mt-1">
+                            Other Countries
+                          </div>
+
+                          {/* All Other Countries */}
+                          <SelectItem value="Afghanistan">
+                            🇦🇫 Afghanistan
+                          </SelectItem>
+                          <SelectItem value="Albania">🇦🇱 Albania</SelectItem>
+                          <SelectItem value="Algeria">🇩🇿 Algeria</SelectItem>
+                          <SelectItem value="Argentina">
+                            🇦🇷 Argentina
+                          </SelectItem>
+                          <SelectItem value="Armenia">🇦🇲 Armenia</SelectItem>
+                          <SelectItem value="Austria">🇦🇹 Austria</SelectItem>
+                          <SelectItem value="Azerbaijan">
+                            🇦🇿 Azerbaijan
+                          </SelectItem>
+                          <SelectItem value="Bahrain">🇧🇭 Bahrain</SelectItem>
+                          <SelectItem value="Bangladesh">
+                            🇧🇩 Bangladesh
+                          </SelectItem>
+                          <SelectItem value="Belarus">🇧🇾 Belarus</SelectItem>
+                          <SelectItem value="Belgium">🇧🇪 Belgium</SelectItem>
+                          <SelectItem value="Bolivia">🇧🇴 Bolivia</SelectItem>
+                          <SelectItem value="Bosnia and Herzegovina">
+                            🇧🇦 Bosnia and Herzegovina
+                          </SelectItem>
+                          <SelectItem value="Brazil">🇧🇷 Brazil</SelectItem>
+                          <SelectItem value="Brunei">🇧🇳 Brunei</SelectItem>
+                          <SelectItem value="Bulgaria">🇧🇬 Bulgaria</SelectItem>
+                          <SelectItem value="Cambodia">🇰🇭 Cambodia</SelectItem>
+                          <SelectItem value="Canada">🇨🇦 Canada</SelectItem>
+                          <SelectItem value="Chile">🇨🇱 Chile</SelectItem>
+                          <SelectItem value="Colombia">🇨🇴 Colombia</SelectItem>
+                          <SelectItem value="Croatia">🇭🇷 Croatia</SelectItem>
+                          <SelectItem value="Czech Republic">
+                            🇨🇿 Czech Republic
+                          </SelectItem>
+                          <SelectItem value="Denmark">🇩🇰 Denmark</SelectItem>
+                          <SelectItem value="Egypt">🇪🇬 Egypt</SelectItem>
+                          <SelectItem value="Estonia">🇪🇪 Estonia</SelectItem>
+                          <SelectItem value="Finland">🇫🇮 Finland</SelectItem>
+                          <SelectItem value="France">🇫🇷 France</SelectItem>
+                          <SelectItem value="Georgia">��🇪 Georgia</SelectItem>
+                          <SelectItem value="Germany">🇩🇪 Germany</SelectItem>
+                          <SelectItem value="Greece">🇬🇷 Greece</SelectItem>
+                          <SelectItem value="Hungary">🇭🇺 Hungary</SelectItem>
+                          <SelectItem value="Iceland">🇮🇸 Iceland</SelectItem>
+                          <SelectItem value="India">🇮🇳 India</SelectItem>
+                          <SelectItem value="Iran">🇮🇷 Iran</SelectItem>
+                          <SelectItem value="Iraq">🇮🇶 Iraq</SelectItem>
+                          <SelectItem value="Ireland">🇮🇪 Ireland</SelectItem>
+                          <SelectItem value="Israel">🇮🇱 Israel</SelectItem>
+                          <SelectItem value="Italy">🇮🇹 Italy</SelectItem>
+                          <SelectItem value="Japan">🇯🇵 Japan</SelectItem>
+                          <SelectItem value="Jordan">🇯🇴 Jordan</SelectItem>
+                          <SelectItem value="Kazakhstan">
+                            🇰🇿 Kazakhstan
+                          </SelectItem>
+                          <SelectItem value="Kuwait">🇰🇼 Kuwait</SelectItem>
+                          <SelectItem value="Laos">🇱🇦 Laos</SelectItem>
+                          <SelectItem value="Latvia">🇱🇻 Latvia</SelectItem>
+                          <SelectItem value="Lebanon">🇱🇧 Lebanon</SelectItem>
+                          <SelectItem value="Lithuania">
+                            🇱🇹 Lithuania
+                          </SelectItem>
+                          <SelectItem value="Luxembourg">
+                            🇱🇺 Luxembourg
+                          </SelectItem>
+                          <SelectItem value="Mexico">🇲🇽 Mexico</SelectItem>
+                          <SelectItem value="Mongolia">🇲🇳 Mongolia</SelectItem>
+                          <SelectItem value="Morocco">🇲🇦 Morocco</SelectItem>
+                          <SelectItem value="Myanmar">🇲🇲 Myanmar</SelectItem>
+                          <SelectItem value="Nepal">🇳🇵 Nepal</SelectItem>
+                          <SelectItem value="Netherlands">
+                            🇳🇱 Netherlands
+                          </SelectItem>
+                          <SelectItem value="New Zealand">
+                            🇳🇿 New Zealand
+                          </SelectItem>
+                          <SelectItem value="North Korea">
+                            🇰🇵 North Korea
+                          </SelectItem>
+                          <SelectItem value="Norway">🇳🇴 Norway</SelectItem>
+                          <SelectItem value="Oman">🇴🇲 Oman</SelectItem>
+                          <SelectItem value="Pakistan">🇵🇰 Pakistan</SelectItem>
+                          <SelectItem value="Palestine">
+                            🇵��� Palestine
+                          </SelectItem>
+                          <SelectItem value="Peru">🇵🇪 Peru</SelectItem>
+                          <SelectItem value="Poland">🇵🇱 Poland</SelectItem>
+                          <SelectItem value="Portugal">🇵🇹 Portugal</SelectItem>
+                          <SelectItem value="Qatar">🇶🇦 Qatar</SelectItem>
+                          <SelectItem value="Romania">🇷🇴 Romania</SelectItem>
+                          <SelectItem value="Russia">🇷🇺 Russia</SelectItem>
+                          <SelectItem value="Saudi Arabia">
+                            🇸🇦 Saudi Arabia
+                          </SelectItem>
+                          <SelectItem value="Serbia">🇷🇸 Serbia</SelectItem>
+                          <SelectItem value="Slovakia">🇸🇰 Slovakia</SelectItem>
+                          <SelectItem value="Slovenia">🇸🇮 Slovenia</SelectItem>
+                          <SelectItem value="South Africa">
+                            🇿🇦 South Africa
+                          </SelectItem>
+                          <SelectItem value="South Korea">
+                            🇰🇷 South Korea
+                          </SelectItem>
+                          <SelectItem value="Spain">🇪🇸 Spain</SelectItem>
+                          <SelectItem value="Sri Lanka">
+                            🇱🇰 Sri Lanka
+                          </SelectItem>
+                          <SelectItem value="Sweden">🇸🇪 Sweden</SelectItem>
+                          <SelectItem value="Switzerland">
+                            🇨🇭 Switzerland
+                          </SelectItem>
+                          <SelectItem value="Syria">🇸🇾 Syria</SelectItem>
+                          <SelectItem value="Taiwan">🇹🇼 Taiwan</SelectItem>
+                          <SelectItem value="Thailand">🇹🇭 Thailand</SelectItem>
+                          <SelectItem value="Turkey">🇹🇷 Turkey</SelectItem>
+                          <SelectItem value="Ukraine">🇺🇦 Ukraine</SelectItem>
+                          <SelectItem value="United Arab Emirates">
+                            🇦🇪 United Arab Emirates
+                          </SelectItem>
+                          <SelectItem value="United Kingdom">
+                            🇬🇧 United Kingdom
+                          </SelectItem>
+                          <SelectItem value="United States">
+                            🇺🇸 United States
+                          </SelectItem>
+                          <SelectItem value="Uruguay">🇺🇾 Uruguay</SelectItem>
+                          <SelectItem value="Uzbekistan">
+                            🇺🇿 Uzbekistan
+                          </SelectItem>
+                          <SelectItem value="Venezuela">
+                            🇻🇪 Venezuela
+                          </SelectItem>
+                          <SelectItem value="Vietnam">🇻🇳 Vietnam</SelectItem>
+                          <SelectItem value="Yemen">🇾🇪 Yemen</SelectItem>
                         </SelectContent>
                       </Select>
                     </div>

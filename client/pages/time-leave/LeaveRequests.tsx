@@ -95,77 +95,23 @@ export default function LeaveRequests() {
     { id: "other", name: "Other" },
   ];
 
-  // Mock leave requests data
-  const leaveRequests = [
-    {
-      id: 1,
-      requesterId: "1",
-      employeeName: "Sarah Johnson",
-      leaveType: "Vacation",
-      startDate: "2024-02-15",
-      endDate: "2024-02-20",
-      duration: 6,
-      reason:
-        "Family vacation to Europe. Will complete all pending tasks before departure.",
-      status: "Pending",
-      requestDate: "2024-01-10",
-    },
-    {
-      id: 2,
-      requesterId: "2",
-      employeeName: "Michael Chen",
-      leaveType: "Sick Leave",
-      startDate: "2024-01-20",
-      endDate: "2024-01-22",
-      duration: 3,
-      reason: "Medical appointment and recovery time needed.",
-      status: "Approved",
-      requestDate: "2024-01-18",
-      approvedBy: "HR Manager",
-      approvedDate: "2024-01-19",
-    },
-    {
-      id: 3,
-      requesterId: "3",
-      employeeName: "Emily Rodriguez",
-      leaveType: "Personal Leave",
-      startDate: "2024-01-25",
-      endDate: "2024-01-25",
-      duration: 1,
-      reason: "Personal matters that require immediate attention.",
-      status: "Rejected",
-      requestDate: "2024-01-23",
-      rejectedBy: "Direct Manager",
-      rejectionReason: "Insufficient notice period",
-    },
-    {
-      id: 4,
-      requesterId: "4",
-      employeeName: "James Miller",
-      leaveType: "Vacation",
-      startDate: "2024-03-01",
-      endDate: "2024-03-10",
-      duration: 10,
-      reason:
-        "Annual vacation with family. All projects will be handed over to team members.",
-      status: "Pending",
-      requestDate: "2024-01-15",
-    },
-    {
-      id: 5,
-      requesterId: "1",
-      employeeName: "Sarah Johnson",
-      leaveType: "Sick Leave",
-      startDate: "2024-01-12",
-      endDate: "2024-01-14",
-      duration: 3,
-      reason: "Flu symptoms and doctor recommended rest.",
-      status: "Approved",
-      requestDate: "2024-01-11",
-      approvedBy: "HR Manager",
-      approvedDate: "2024-01-12",
-    },
-  ];
+  // Leave requests data (will come from leave service)
+  const leaveRequests: {
+    id: number;
+    requesterId: string;
+    employeeName: string;
+    leaveType: string;
+    startDate: string;
+    endDate: string;
+    duration: number;
+    reason: string;
+    status: string;
+    requestDate: string;
+    approvedBy?: string;
+    approvedDate?: string;
+    rejectedBy?: string;
+    rejectionReason?: string;
+  }[] = [];
 
   const getStatusBadge = (status: string) => {
     switch (status) {

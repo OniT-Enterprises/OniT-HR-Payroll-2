@@ -118,6 +118,12 @@ class EmployeeService {
         error.code?.includes("resource-exhausted") ||
         error.code?.includes("deadline-exceeded")
       ) {
+        // Try offline fallback
+        const cachedEmployees = this.getOfflineEmployees();
+        if (cachedEmployees.length > 0) {
+          console.warn("Using cached employee data due to connection issue");
+          return cachedEmployees;
+        }
         throw new Error(
           "🔄 Connection issue detected. Please check your internet connection and try again.",
         );

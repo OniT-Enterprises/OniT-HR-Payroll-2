@@ -1435,9 +1435,13 @@ export default function AddEmployee() {
                           </SelectItem>
 
                           {/* Separator */}
-                          <div className="px-2 py-1 text-xs text-muted-foreground font-medium border-t mt-1">
-                            Other Countries
-                          </div>
+                          <SelectItem
+                            value="separator"
+                            disabled
+                            className="px-2 py-1 text-xs text-muted-foreground font-medium border-t mt-1 justify-center"
+                          >
+                            ────── Other Countries ──────
+                          </SelectItem>
 
                           {/* All Other Countries */}
                           <SelectItem value="Afghanistan">

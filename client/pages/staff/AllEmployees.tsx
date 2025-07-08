@@ -56,7 +56,13 @@ export default function AllEmployees() {
   const [statusFilter, setStatusFilter] = useState("all");
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage] = useState(20);
+  const [selectedEmployee, setSelectedEmployee] = useState<Employee | null>(
+    null,
+  );
+  const [showProfileView, setShowProfileView] = useState(false);
+  const [showIncompleteProfiles, setShowIncompleteProfiles] = useState(false);
   const { toast } = useToast();
+  const navigate = useNavigate();
 
   // Load employees from Firebase
   useEffect(() => {

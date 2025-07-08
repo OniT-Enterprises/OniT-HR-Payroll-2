@@ -613,6 +613,46 @@ export default function AllEmployees() {
                   ))}
                 </tbody>
               </table>
+
+              {/* Empty State */}
+              {paginatedEmployees.length === 0 && !loading && (
+                <div className="text-center py-12">
+                  {connectionError ? (
+                    <>
+                      <AlertTriangle className="h-16 w-16 mx-auto mb-4 text-red-400" />
+                      <h3 className="text-lg font-semibold mb-2">
+                        Connection Problem
+                      </h3>
+                      <p className="text-muted-foreground mb-4">
+                        Unable to load employee data. Please check your
+                        connection.
+                      </p>
+                      <Button onClick={loadEmployees} disabled={loading}>
+                        <Users className="mr-2 h-4 w-4" />
+                        Retry Loading
+                      </Button>
+                    </>
+                  ) : (
+                    <>
+                      <Users className="h-16 w-16 mx-auto mb-4 text-gray-300" />
+                      <h3 className="text-lg font-semibold mb-2">
+                        No Employees Found
+                      </h3>
+                      <p className="text-muted-foreground mb-4">
+                        {searchTerm ||
+                        departmentFilter !== "all" ||
+                        statusFilter !== "all"
+                          ? "No employees match your current filters."
+                          : "Start by adding your first employee to the system."}
+                      </p>
+                      <Button onClick={() => navigate("/staff/add")}>
+                        <Plus className="mr-2 h-4 w-4" />
+                        Add First Employee
+                      </Button>
+                    </>
+                  )}
+                </div>
+              )}
             </div>
 
             {/* Pagination */}

@@ -223,10 +223,21 @@ class EmployeeService {
     // Check if Firebase is properly initialized
     if (!isFirebaseReady() || !db) {
       const error = getFirebaseError();
-      throw new Error(
-        error ||
-          "Cannot add employee: Firebase is not properly initialized. Please refresh the page and try again.",
+      console.warn(
+        "Firebase not ready, using mock service for adding employee:",
+        error,
       );
+
+      // Use mock service when Firebase is unavailable
+      try {
+        const id = await mockDataService.addEmployee(employee);
+        return id;
+      } catch (mockError) {
+        console.error("Mock service also failed:", mockError);
+        throw new Error(
+          "Unable to add employee: Both Firebase and local storage are unavailable.",
+        );
+      }
     }
 
     try {
@@ -237,12 +248,19 @@ class EmployeeService {
       });
       return docRef.id;
     } catch (error) {
-      console.error("Error adding employee:", error);
+      console.error("Error adding employee to Firebase:", error);
 
       if (error.message?.includes("Failed to fetch")) {
-        throw new Error(
-          "Failed to add employee due to connection issues. Please check your internet connection and try again.",
-        );
+        console.warn("Firebase failed, trying mock service fallback");
+        try {
+          const id = await mockDataService.addEmployee(employee);
+          return id;
+        } catch (mockError) {
+          console.error("Mock service also failed:", mockError);
+          throw new Error(
+            "Failed to add employee: Connection issues and local storage unavailable. Please try again later.",
+          );
+        }
       }
 
       return null;

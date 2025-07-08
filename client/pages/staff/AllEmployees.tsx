@@ -308,18 +308,21 @@ export default function AllEmployees() {
               </div>
             </CardContent>
           </Card>
-          <Card>
+          <Card
+            className="cursor-pointer hover:bg-muted/50 transition-colors"
+            onClick={() => setShowIncompleteProfiles(true)}
+          >
             <CardContent className="p-6">
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-sm font-medium text-muted-foreground">
-                    Showing Results
+                    Incomplete Profiles
                   </p>
-                  <p className="text-2xl font-bold">
-                    {filteredEmployees.length}
+                  <p className="text-2xl font-bold text-orange-600">
+                    {incompleteEmployees.length}
                   </p>
                 </div>
-                <Filter className="h-8 w-8 text-orange-500" />
+                <AlertTriangle className="h-8 w-8 text-orange-500" />
               </div>
             </CardContent>
           </Card>

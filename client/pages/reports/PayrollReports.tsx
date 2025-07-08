@@ -49,7 +49,11 @@ export default function PayrollReports() {
   };
 
   const totalMonthlySalary = employees.reduce(
-    (sum, emp) => sum + emp.compensation.monthlySalary,
+    (sum, emp) =>
+      sum +
+      (emp.compensation.monthlySalary ||
+        Math.round((emp.compensation as any).annualSalary / 12) ||
+        0),
     0,
   );
   const averageMonthlySalary =
@@ -210,7 +214,12 @@ export default function PayrollReports() {
                         {formatCurrency(
                           Math.max(
                             ...employees.map(
-                              (emp) => emp.compensation.monthlySalary,
+                              (emp) =>
+                                emp.compensation.monthlySalary ||
+                                Math.round(
+                                  (emp.compensation as any).annualSalary / 12,
+                                ) ||
+                                0,
                             ),
                           ),
                         )}
@@ -223,9 +232,22 @@ export default function PayrollReports() {
                           Math.min(
                             ...employees
                               .filter(
-                                (emp) => emp.compensation.monthlySalary > 0,
+                                (emp) =>
+                                  (emp.compensation.monthlySalary ||
+                                    Math.round(
+                                      (emp.compensation as any).annualSalary /
+                                        12,
+                                    ) ||
+                                    0) > 0,
                               )
-                              .map((emp) => emp.compensation.monthlySalary),
+                              .map(
+                                (emp) =>
+                                  emp.compensation.monthlySalary ||
+                                  Math.round(
+                                    (emp.compensation as any).annualSalary / 12,
+                                  ) ||
+                                  0,
+                              ),
                           ),
                         )}
                       </span>
@@ -345,8 +367,16 @@ export default function PayrollReports() {
                       {employees
                         .sort(
                           (a, b) =>
-                            b.compensation.monthlySalary -
-                            a.compensation.monthlySalary,
+                            (b.compensation.monthlySalary ||
+                              Math.round(
+                                (b.compensation as any).annualSalary / 12,
+                              ) ||
+                              0) -
+                            (a.compensation.monthlySalary ||
+                              Math.round(
+                                (a.compensation as any).annualSalary / 12,
+                              ) ||
+                              0),
                         )
                         .slice(0, 10)
                         .map((employee) => (
@@ -373,7 +403,12 @@ export default function PayrollReports() {
                             </td>
                             <td className="p-3 text-right font-medium">
                               {formatCurrency(
-                                employee.compensation.monthlySalary,
+                                employee.compensation.monthlySalary ||
+                                  Math.round(
+                                    (employee.compensation as any)
+                                      .annualSalary / 12,
+                                  ) ||
+                                  0,
                               )}
                             </td>
                             <td className="p-3 text-center">

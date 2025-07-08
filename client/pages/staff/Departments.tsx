@@ -125,7 +125,11 @@ export default function Departments() {
     const averageMonthlySalary =
       deptEmployees.length > 0
         ? deptEmployees.reduce(
-            (sum, emp) => sum + emp.compensation.monthlySalary,
+            (sum, emp) =>
+              sum +
+              (emp.compensation.monthlySalary ||
+                Math.round((emp.compensation as any).annualSalary / 12) ||
+                0),
             0,
           ) / deptEmployees.length
         : 0;

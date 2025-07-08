@@ -248,7 +248,13 @@ export default function EmployeeProfileView({
                 <DollarSign className="h-4 w-4 text-muted-foreground" />
                 <div>
                   <p className="font-medium text-lg">
-                    {formatSalary(employee.compensation.monthlySalary)}
+                    {formatSalary(
+                      employee.compensation.monthlySalary ||
+                        Math.round(
+                          (employee.compensation as any).annualSalary / 12,
+                        ) ||
+                        0,
+                    )}
                   </p>
                   <p className="text-sm text-muted-foreground">
                     Monthly Salary

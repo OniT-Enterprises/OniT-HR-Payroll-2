@@ -204,7 +204,9 @@ export default function AllEmployees() {
           emp.jobDetails.hireDate,
           emp.jobDetails.employmentType,
           emp.jobDetails.workLocation,
-          emp.compensation.monthlySalary,
+          emp.compensation.monthlySalary ||
+            Math.round((emp.compensation as any).annualSalary / 12) ||
+            0,
           emp.status,
         ].join(","),
       ),
@@ -556,7 +558,14 @@ export default function AllEmployees() {
                         <div className="flex items-center gap-2">
                           <DollarSign className="h-4 w-4 text-muted-foreground" />
                           <span className="font-semibold">
-                            {formatSalary(employee.compensation.monthlySalary)}
+                            {formatSalary(
+                              employee.compensation.monthlySalary ||
+                                Math.round(
+                                  (employee.compensation as any).annualSalary /
+                                    12,
+                                ) ||
+                                0,
+                            )}
                           </span>
                         </div>
                         <div className="text-xs text-muted-foreground mt-1">

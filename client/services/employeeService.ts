@@ -90,18 +90,37 @@ class EmployeeService {
     } catch (error) {
       console.error("Error getting employees:", error);
 
-      // If it's a network error, throw it so the calling code can handle it
+      // Handle different types of errors
       if (
         error.message?.includes("fetch") ||
+        error.message?.includes("Failed to fetch") ||
+        error.message?.includes("network") ||
         error.message?.includes("timeout") ||
-        error.code?.includes("unavailable")
+        error.code?.includes("unavailable") ||
+        error.code?.includes("resource-exhausted") ||
+        error.code?.includes("deadline-exceeded")
       ) {
         throw new Error(
-          "Firebase connection failed. Please check your internet connection.",
+          "🔄 Connection issue detected. Please check your internet connection and try again.",
         );
       }
 
-      return [];
+      // Handle permission errors
+      if (error.code?.includes("permission-denied")) {
+        throw new Error("❌ Access denied. Please check your authentication.");
+      }
+
+      // Handle quota errors
+      if (error.code?.includes("quota-exceeded")) {
+        throw new Error(
+          "⚠️ Service temporarily unavailable. Please try again later.",
+        );
+      }
+
+      // Generic error fallback
+      throw new Error(
+        "⚠️ Unable to load employee data. Please refresh the page and try again.",
+      );
     }
   }
 

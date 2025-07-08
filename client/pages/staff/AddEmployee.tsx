@@ -855,7 +855,7 @@ export default function AddEmployee() {
             fileUrl: "", // Will be updated after file upload
           },
         },
-        status: formData.status === "Active" ? "active" : "inactive",
+        status: "active", // Default all new employees to active
       };
 
       // Save to Firebase

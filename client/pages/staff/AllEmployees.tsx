@@ -506,16 +506,40 @@ export default function AllEmployees() {
                       </td>
                       <td className="p-3">
                         <div className="flex items-center justify-center gap-2">
-                          <Button variant="ghost" size="sm">
-                            <Eye className="h-4 w-4" />
-                          </Button>
-                          <Button variant="ghost" size="sm">
+                          {(() => {
+                            const completeness =
+                              getProfileCompleteness(employee);
+                            const isComplete =
+                              getCompletionStatusIcon(
+                                completeness.completionPercentage,
+                              ) === "complete";
+                            return (
+                              <Button
+                                variant="ghost"
+                                size="sm"
+                                onClick={() => handleViewEmployee(employee)}
+                                className={
+                                  isComplete
+                                    ? "text-green-600 hover:text-green-700"
+                                    : "text-red-600 hover:text-red-700"
+                                }
+                              >
+                                <Eye className="h-4 w-4" />
+                              </Button>
+                            );
+                          })()}
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => handleEditEmployee(employee)}
+                          >
                             <Edit className="h-4 w-4" />
                           </Button>
                           <Button
                             variant="ghost"
                             size="sm"
                             className="text-red-600 hover:text-red-700"
+                            onClick={() => handleDeleteEmployee(employee)}
                           >
                             <Trash2 className="h-4 w-4" />
                           </Button>

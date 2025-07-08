@@ -91,7 +91,6 @@ export default function AddEmployee() {
     manager: "",
     startDate: "",
     employmentType: "Full-time",
-    status: "Active",
     salary: "",
     leaveDays: "",
     benefits: "",

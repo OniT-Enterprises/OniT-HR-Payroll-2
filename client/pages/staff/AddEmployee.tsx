@@ -1201,11 +1201,14 @@ export default function AddEmployee() {
                         type="checkbox"
                         id={`app-eligible-form`}
                         className="rounded border-gray-300"
-                        // We'll handle this state separately for app enrollment
+                        checked={formData.appEligible}
+                        onChange={(e) =>
+                          handleInputChange("appEligible", e.target.checked)
+                        }
                       />
                       <Label
                         htmlFor={`app-eligible-form`}
-                        className="text-sm text-muted-foreground"
+                        className="text-sm text-muted-foreground cursor-pointer"
                       >
                         Eligible for mobile app enrollment
                       </Label>
@@ -1580,7 +1583,7 @@ export default function AddEmployee() {
                           <SelectItem value="Mexico">🇲🇽 Mexico</SelectItem>
                           <SelectItem value="Mongolia">🇲🇳 Mongolia</SelectItem>
                           <SelectItem value="Morocco">🇲🇦 Morocco</SelectItem>
-                          <SelectItem value="Myanmar">🇲🇲 Myanmar</SelectItem>
+                          <SelectItem value="Myanmar">🇲���� Myanmar</SelectItem>
                           <SelectItem value="Nepal">🇳🇵 Nepal</SelectItem>
                           <SelectItem value="Netherlands">
                             🇳🇱 Netherlands

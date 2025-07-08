@@ -153,7 +153,7 @@ export default function Dashboard() {
       <div className="p-6">
         <div className="flex items-center justify-between mb-8">
           <div>
-            <h1 className="text-3xl font-bold">Main Dashboard</h1>
+            <h1 className="text-3xl font-bold">Main Dashboard!</h1>
             <p className="text-muted-foreground">
               Welcome back! Here's what's happening with your HR operations.
             </p>

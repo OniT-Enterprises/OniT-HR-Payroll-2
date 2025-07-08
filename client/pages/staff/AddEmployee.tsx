@@ -172,7 +172,6 @@ export default function AddEmployee() {
           manager: employee.jobDetails.manager || "",
           startDate: employee.jobDetails.hireDate,
           employmentType: employee.jobDetails.employmentType,
-          status: employee.status,
           salary: getMonthlySalary(employee.compensation).toString(),
           leaveDays: employee.compensation.annualLeave?.toString() || "",
           benefits: employee.compensation.benefitsPackage || "",

@@ -1140,6 +1140,7 @@ export default function AddEmployee() {
                       <TableHead>Document Type</TableHead>
                       <TableHead>Number/ID</TableHead>
                       <TableHead>Expiry Date</TableHead>
+                      <TableHead>Required</TableHead>
                       <TableHead>Status</TableHead>
                     </TableRow>
                   </TableHeader>

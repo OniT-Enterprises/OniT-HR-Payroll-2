@@ -1509,7 +1509,7 @@ export default function AddEmployee() {
                   Compensation & Benefits
                 </CardTitle>
                 <CardDescription>
-                  Salary, leave allowance, and benefits information
+                  Monthly salary, leave allowance, and benefits information
                 </CardDescription>
               </CardHeader>
               <CardContent className="space-y-4">

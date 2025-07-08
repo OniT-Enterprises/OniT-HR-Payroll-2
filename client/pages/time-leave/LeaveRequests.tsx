@@ -74,8 +74,8 @@ export default function LeaveRequests() {
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 10;
 
-  // Mock current user
-  const currentUser = { id: "1", name: "Sarah Johnson" };
+  // Current user (will come from auth context)
+  const currentUser = { id: "", name: "" };
 
   const [formData, setFormData] = useState({
     leaveType: "",
@@ -84,7 +84,7 @@ export default function LeaveRequests() {
     reason: "",
   });
 
-  // Mock leave types
+  // Leave types (will come from settings service)
   const leaveTypes = [
     { id: "vacation", name: "Vacation" },
     { id: "sick", name: "Sick Leave" },

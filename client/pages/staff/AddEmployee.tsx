@@ -1053,6 +1053,9 @@ export default function AddEmployee() {
             {/* CSV Column Mapper Dialog */}
             <Dialog open={showColumnMapper} onOpenChange={setShowColumnMapper}>
               <DialogContent className="max-w-7xl max-h-[90vh] overflow-auto">
+                <DialogHeader>
+                  <DialogTitle>Import Employees from CSV</DialogTitle>
+                </DialogHeader>
                 <CSVColumnMapper
                   csvFile={importFile}
                   onMappingComplete={handleMappingComplete}

@@ -597,6 +597,20 @@ export default function CSVColumnMapper({
             </div>
           </div>
 
+          {/* Auto-mapping notification */}
+          {mappings.length > 0 && (
+            <Alert>
+              <CheckCircle className="h-4 w-4" />
+              <AlertDescription>
+                Great! {mappings.length} columns were automatically mapped based
+                on the template format.
+                {status.complete
+                  ? " All required fields are mapped - you can proceed directly."
+                  : ` ${status.total - status.mapped} required fields still need mapping.`}
+              </AlertDescription>
+            </Alert>
+          )}
+
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
             {/* CSV Columns */}
             <Card>

@@ -218,11 +218,6 @@ export default function AllEmployees() {
     });
   };
 
-  // Get unique departments for filter
-  const departments = Array.from(
-    new Set(employees.map((emp) => emp.jobDetails.department)),
-  ).sort();
-
   // Pagination
   const totalPages = Math.ceil(filteredEmployees.length / itemsPerPage);
   const startIndex = (currentPage - 1) * itemsPerPage;

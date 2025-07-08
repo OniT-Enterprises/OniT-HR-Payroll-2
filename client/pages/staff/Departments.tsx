@@ -9,6 +9,13 @@ import {
 } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import MainNavigation from "@/components/layout/MainNavigation";
 import { employeeService, type Employee } from "@/services/employeeService";
 import {
@@ -27,6 +34,7 @@ import {
   Edit,
   DollarSign,
   Crown,
+  Eye,
 } from "lucide-react";
 
 export default function Departments() {
@@ -35,6 +43,8 @@ export default function Departments() {
   const [loading, setLoading] = useState(true);
   const [showDepartmentManager, setShowDepartmentManager] = useState(false);
   const [managerMode, setManagerMode] = useState<"add" | "edit">("edit");
+  const [selectedDepartment, setSelectedDepartment] = useState<any>(null);
+  const [showDepartmentEmployees, setShowDepartmentEmployees] = useState(false);
   const { toast } = useToast();
 
   useEffect(() => {

@@ -31,7 +31,7 @@ export default function HiringDashboard() {
               <UserPlus className="h-8 w-8 text-green-400" />
               <div>
                 <h1 className="text-3xl font-bold text-gray-900">
-                  HHHHiring Dashboard
+                  Hiring Dashboard
                 </h1>
                 <p className="text-gray-600">
                   Overview of recruitment and hiring activities

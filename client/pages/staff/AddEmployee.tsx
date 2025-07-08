@@ -165,7 +165,9 @@ export default function AddEmployee() {
           startDate: employee.jobDetails.hireDate,
           employmentType: employee.jobDetails.employmentType,
           status: employee.status,
-          salary: employee.compensation.annualSalary.toString(),
+          salary: Math.round(
+            employee.compensation.annualSalary / 12,
+          ).toString(),
           leaveDays: employee.compensation.annualLeave?.toString() || "",
           benefits: employee.compensation.benefitsPackage || "",
         });
@@ -535,7 +537,10 @@ export default function AddEmployee() {
               manager: mappedData.manager || "",
             },
             compensation: {
-              annualSalary: parseInt(mappedData.annualSalary) || 0,
+              annualSalary:
+                (parseInt(
+                  mappedData.monthlySalary || mappedData.annualSalary,
+                ) || 0) * (mappedData.monthlySalary ? 1 : 12),
               annualLeaveDays: parseInt(mappedData.annualLeaveDays) || 25,
               benefitsPackage: mappedData.benefitsPackage || "Standard",
             },
@@ -807,7 +812,7 @@ export default function AddEmployee() {
           manager: formData.manager,
         },
         compensation: {
-          annualSalary: parseInt(formData.salary) || 0,
+          annualSalary: (parseInt(formData.salary) || 0) * 12,
           annualLeaveDays: parseInt(formData.leaveDays) || 25,
           benefitsPackage: formData.benefits || "Standard",
         },
@@ -1510,7 +1515,7 @@ export default function AddEmployee() {
               <CardContent className="space-y-4">
                 <div className="grid md:grid-cols-3 gap-4">
                   <div className="space-y-2">
-                    <Label htmlFor="salary">Annual Salary</Label>
+                    <Label htmlFor="salary">Monthly Salary</Label>
                     <Input
                       id="salary"
                       type="number"

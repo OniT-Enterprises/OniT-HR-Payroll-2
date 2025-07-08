@@ -793,6 +793,7 @@ export default function AddEmployee() {
           lastName: formData.lastName,
           email: formData.email,
           phone: formData.phone,
+          phoneApp: formData.phoneApp,
           address: "", // Could be added to form later
           dateOfBirth: "", // Could be added to form later
           socialSecurityNumber: documents[1]?.number || "",
@@ -1504,7 +1505,7 @@ export default function AddEmployee() {
                           <SelectItem value="Kuwait">🇰🇼 Kuwait</SelectItem>
                           <SelectItem value="Laos">🇱🇦 Laos</SelectItem>
                           <SelectItem value="Latvia">🇱🇻 Latvia</SelectItem>
-                          <SelectItem value="Lebanon">🇱🇧 Lebanon</SelectItem>
+                          <SelectItem value="Lebanon">���🇧 Lebanon</SelectItem>
                           <SelectItem value="Lithuania">
                             🇱🇹 Lithuania
                           </SelectItem>

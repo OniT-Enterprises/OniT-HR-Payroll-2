@@ -363,17 +363,36 @@ export default function DepartmentManager({
                   </div>
                 </div>
 
+                {/* Department Color */}
                 <div className="space-y-2">
-                  <Label htmlFor="deptDescription">Description</Label>
-                  <Textarea
-                    id="deptDescription"
-                    value={formData.description}
-                    onChange={(e) =>
-                      handleInputChange("description", e.target.value)
-                    }
-                    placeholder="Brief description of the department"
-                    rows={3}
-                  />
+                  <Label htmlFor="deptColor">Department Color</Label>
+                  <div className="flex flex-wrap gap-2">
+                    {departmentColors.map((color) => (
+                      <button
+                        key={color.value}
+                        type="button"
+                        onClick={() => handleInputChange("color", color.value)}
+                        className={`w-8 h-8 rounded-full border-2 transition-all ${
+                          formData.color === color.value
+                            ? "border-gray-800 scale-110"
+                            : "border-gray-300 hover:border-gray-500"
+                        }`}
+                        style={{ backgroundColor: color.value }}
+                        title={color.name}
+                      />
+                    ))}
+                  </div>
+                  <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                    <div
+                      className="w-4 h-4 rounded border"
+                      style={{ backgroundColor: formData.color }}
+                    />
+                    <span>
+                      Selected:{" "}
+                      {departmentColors.find((c) => c.value === formData.color)
+                        ?.name || "Custom"}
+                    </span>
+                  </div>
                 </div>
 
                 <div className="flex gap-2">

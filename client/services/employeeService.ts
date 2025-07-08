@@ -12,7 +12,7 @@ import {
   limit,
   serverTimestamp,
 } from "firebase/firestore";
-import { db } from "@/lib/firebase";
+import { db, isFirebaseReady, getFirebaseError } from "@/lib/firebase";
 
 export interface Employee {
   id?: string;
@@ -113,6 +113,20 @@ class EmployeeService {
   }
 
   async getAllEmployees(): Promise<Employee[]> {
+    // Check if Firebase is properly initialized
+    if (!isFirebaseReady() || !db) {
+      const error = getFirebaseError();
+      console.warn("Firebase not ready, using cached data:", error);
+      const cachedEmployees = this.getOfflineEmployees();
+      if (cachedEmployees.length > 0) {
+        return cachedEmployees;
+      }
+      throw new Error(
+        error ||
+          "Firebase is not properly initialized. Please refresh the page and try again.",
+      );
+    }
+
     try {
       // First, try a simple connection test
       await this.testConnection();

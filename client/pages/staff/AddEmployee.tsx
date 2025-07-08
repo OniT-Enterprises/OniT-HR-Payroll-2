@@ -1181,6 +1181,28 @@ export default function AddEmployee() {
                             />
                           </TableCell>
                           <TableCell>
+                            <div className="flex items-center gap-2">
+                              <button
+                                type="button"
+                                onClick={() =>
+                                  handleRequiredToggle(document.id)
+                                }
+                                className={`w-4 h-4 rounded-full border-2 flex items-center justify-center ${
+                                  document.required
+                                    ? "bg-green-500 border-green-500"
+                                    : "bg-gray-200 border-gray-300"
+                                }`}
+                              >
+                                {document.required && (
+                                  <div className="w-2 h-2 bg-white rounded-full"></div>
+                                )}
+                              </button>
+                              <span className="text-sm text-muted-foreground">
+                                {document.required ? "Required" : "Optional"}
+                              </span>
+                            </div>
+                          </TableCell>
+                          <TableCell>
                             {expiryStatus && (
                               <Badge variant={expiryStatus.variant}>
                                 {expiryStatus.status === "expiring" && (

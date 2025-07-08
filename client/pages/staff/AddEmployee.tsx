@@ -529,6 +529,7 @@ export default function AddEmployee() {
               email: mappedData.email,
               phone: mappedData.phone || "",
               phoneApp: mappedData.phoneApp || "",
+              appEligible: mappedData.appEligible === "true" || false,
               address: mappedData.address || "",
               dateOfBirth: mappedData.dateOfBirth || "",
               socialSecurityNumber: mappedData.socialSecurityNumber || "",
@@ -1573,8 +1574,10 @@ export default function AddEmployee() {
                           </SelectItem>
                           <SelectItem value="Kuwait">🇰🇼 Kuwait</SelectItem>
                           <SelectItem value="Laos">🇱🇦 Laos</SelectItem>
-                          <SelectItem value="Latvia">🇱��� Latvia</SelectItem>
-                          <SelectItem value="Lebanon">���🇧 Lebanon</SelectItem>
+                          <SelectItem value="Latvia">🇱🇻 Latvia</SelectItem>
+                          <SelectItem value="Lebanon">
+                            ������� Lebanon
+                          </SelectItem>
                           <SelectItem value="Lithuania">
                             🇱🇹 Lithuania
                           </SelectItem>

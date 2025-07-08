@@ -1352,30 +1352,30 @@ export default function AddEmployee() {
                               }}
                               className="flex flex-col gap-2"
                             >
-                              <div className="flex items-center space-x-2">
+                              <div className="flex items-center space-x-2 p-1 rounded hover:bg-green-50">
                                 <RadioGroupItem
                                   value="required"
                                   id={`required-${document.id}`}
-                                  className="text-green-600 border-green-600 data-[state=checked]:bg-green-600"
+                                  className="text-green-600 border-green-600 data-[state=checked]:bg-green-600 data-[state=checked]:border-green-600"
                                 />
                                 <Label
                                   htmlFor={`required-${document.id}`}
-                                  className="text-sm text-green-600 font-medium cursor-pointer"
+                                  className="text-sm text-green-600 font-medium cursor-pointer select-none"
                                 >
-                                  Required
+                                  ✓ Required
                                 </Label>
                               </div>
-                              <div className="flex items-center space-x-2">
+                              <div className="flex items-center space-x-2 p-1 rounded hover:bg-red-50">
                                 <RadioGroupItem
                                   value="optional"
                                   id={`optional-${document.id}`}
-                                  className="text-red-600 border-red-600 data-[state=checked]:bg-red-600"
+                                  className="text-red-600 border-red-600 data-[state=checked]:bg-red-600 data-[state=checked]:border-red-600"
                                 />
                                 <Label
                                   htmlFor={`optional-${document.id}`}
-                                  className="text-sm text-red-600 font-medium cursor-pointer"
+                                  className="text-sm text-red-600 font-medium cursor-pointer select-none"
                                 >
-                                  Optional
+                                  ✗ Optional
                                 </Label>
                               </div>
                             </RadioGroup>
@@ -1479,7 +1479,7 @@ export default function AddEmployee() {
                           <SelectItem value="Estonia">🇪🇪 Estonia</SelectItem>
                           <SelectItem value="Finland">🇫🇮 Finland</SelectItem>
                           <SelectItem value="France">🇫🇷 France</SelectItem>
-                          <SelectItem value="Georgia">��🇪 Georgia</SelectItem>
+                          <SelectItem value="Georgia">🇬🇪 Georgia</SelectItem>
                           <SelectItem value="Germany">🇩🇪 Germany</SelectItem>
                           <SelectItem value="Greece">🇬🇷 Greece</SelectItem>
                           <SelectItem value="Hungary">🇭🇺 Hungary</SelectItem>
@@ -1523,7 +1523,7 @@ export default function AddEmployee() {
                           <SelectItem value="Oman">🇴🇲 Oman</SelectItem>
                           <SelectItem value="Pakistan">🇵🇰 Pakistan</SelectItem>
                           <SelectItem value="Palestine">
-                            🇵��� Palestine
+                            🇵🇸 Palestine
                           </SelectItem>
                           <SelectItem value="Peru">🇵🇪 Peru</SelectItem>
                           <SelectItem value="Poland">🇵🇱 Poland</SelectItem>

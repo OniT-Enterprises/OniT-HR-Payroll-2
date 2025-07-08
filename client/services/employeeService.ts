@@ -69,6 +69,19 @@ export interface Employee {
 class EmployeeService {
   private collection = collection(db, "employees");
 
+  private async testConnection(): Promise<void> {
+    try {
+      // Try to read a simple query to test connectivity
+      const testQuery = query(this.collection, limit(1));
+      await getDocs(testQuery);
+    } catch (error) {
+      console.error("Firebase connection test failed:", error);
+      throw new Error(
+        "Unable to connect to database. Please check your internet connection.",
+      );
+    }
+  }
+
   async getAllEmployees(): Promise<Employee[]> {
     try {
       // First, try a simple connection test

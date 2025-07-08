@@ -149,33 +149,54 @@ export default function EmployeeProfileView({
                   <p className="text-sm text-muted-foreground">Email</p>
                 </div>
               </div>
-              {employee.personalInfo.phone && (
-                <div className="flex items-center gap-3">
-                  <Phone className="h-4 w-4 text-muted-foreground" />
-                  <div>
-                    <p className="font-medium">{employee.personalInfo.phone}</p>
-                    <p className="text-sm text-muted-foreground">Phone</p>
-                  </div>
-                </div>
-              )}
-              {employee.personalInfo.emergencyContactName && (
-                <div className="flex items-center gap-3">
-                  <Users className="h-4 w-4 text-muted-foreground" />
-                  <div>
-                    <p className="font-medium">
-                      {employee.personalInfo.emergencyContactName}
-                    </p>
-                    <p className="text-sm text-muted-foreground">
-                      Emergency Contact
-                    </p>
-                    {employee.personalInfo.emergencyContactPhone && (
-                      <p className="text-sm text-muted-foreground">
-                        {employee.personalInfo.emergencyContactPhone}
+              {/* Contact Grid - 2x2 layout */}
+              <div className="grid grid-cols-2 gap-4">
+                {/* Phone */}
+                {employee.personalInfo.phone && (
+                  <div className="flex items-center gap-3">
+                    <Phone className="h-4 w-4 text-green-600" />
+                    <div>
+                      <p className="font-medium">
+                        {employee.personalInfo.phone}
                       </p>
-                    )}
+                      <p className="text-sm text-muted-foreground">Phone</p>
+                    </div>
                   </div>
-                </div>
-              )}
+                )}
+
+                {/* Phone App */}
+                {(employee.personalInfo as any).phoneApp && (
+                  <div className="flex items-center gap-3">
+                    <Smartphone className="h-4 w-4 text-purple-600" />
+                    <div>
+                      <p className="font-medium">
+                        {(employee.personalInfo as any).phoneApp}
+                      </p>
+                      <p className="text-sm text-muted-foreground">Phone App</p>
+                    </div>
+                  </div>
+                )}
+
+                {/* Emergency Contact */}
+                {employee.personalInfo.emergencyContactName && (
+                  <div className="flex items-center gap-3 col-span-2">
+                    <Users className="h-4 w-4 text-red-600" />
+                    <div>
+                      <p className="font-medium">
+                        {employee.personalInfo.emergencyContactName}
+                      </p>
+                      <p className="text-sm text-muted-foreground">
+                        Emergency Contact
+                      </p>
+                      {employee.personalInfo.emergencyContactPhone && (
+                        <p className="text-sm text-muted-foreground">
+                          {employee.personalInfo.emergencyContactPhone}
+                        </p>
+                      )}
+                    </div>
+                  </div>
+                )}
+              </div>
             </CardContent>
           </Card>
 

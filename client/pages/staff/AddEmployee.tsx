@@ -1523,7 +1523,7 @@ export default function AddEmployee() {
                       onChange={(e) =>
                         handleInputChange("salary", e.target.value)
                       }
-                      placeholder="e.g., 75000"
+                      placeholder="e.g., 6250"
                     />
                   </div>
                   <div className="space-y-2">

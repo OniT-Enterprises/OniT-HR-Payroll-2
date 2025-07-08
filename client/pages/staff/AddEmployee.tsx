@@ -16,6 +16,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import {
   Table,
   TableBody,
@@ -1341,26 +1342,51 @@ export default function AddEmployee() {
                             />
                           </TableCell>
                           <TableCell>
-                            <div className="flex items-center gap-2">
-                              <button
-                                type="button"
-                                onClick={() =>
-                                  handleRequiredToggle(document.id)
-                                }
-                                className={`w-4 h-4 rounded-full border-2 flex items-center justify-center ${
-                                  document.required
-                                    ? "bg-green-500 border-green-500"
-                                    : "bg-gray-200 border-gray-300"
-                                }`}
-                              >
-                                {document.required && (
-                                  <div className="w-2 h-2 bg-white rounded-full"></div>
-                                )}
-                              </button>
-                              <span className="text-sm text-muted-foreground">
-                                {document.required ? "Required" : "Optional"}
-                              </span>
-                            </div>
+                            <RadioGroup
+                              value={
+                                document.required ? "required" : "optional"
+                              }
+                              onValueChange={(value) => {
+                                setDocuments((prev) =>
+                                  prev.map((doc) =>
+                                    doc.id === document.id
+                                      ? {
+                                          ...doc,
+                                          required: value === "required",
+                                        }
+                                      : doc,
+                                  ),
+                                );
+                              }}
+                              className="flex flex-col gap-2"
+                            >
+                              <div className="flex items-center space-x-2">
+                                <RadioGroupItem
+                                  value="required"
+                                  id={`required-${document.id}`}
+                                  className="text-green-600 border-green-600 data-[state=checked]:bg-green-600"
+                                />
+                                <Label
+                                  htmlFor={`required-${document.id}`}
+                                  className="text-sm text-green-600 font-medium cursor-pointer"
+                                >
+                                  Required
+                                </Label>
+                              </div>
+                              <div className="flex items-center space-x-2">
+                                <RadioGroupItem
+                                  value="optional"
+                                  id={`optional-${document.id}`}
+                                  className="text-red-600 border-red-600 data-[state=checked]:bg-red-600"
+                                />
+                                <Label
+                                  htmlFor={`optional-${document.id}`}
+                                  className="text-sm text-red-600 font-medium cursor-pointer"
+                                >
+                                  Optional
+                                </Label>
+                              </div>
+                            </RadioGroup>
                           </TableCell>
                           <TableCell>
                             {expiryStatus && (

@@ -82,6 +82,20 @@ export default function DepartmentManager({
     color: "#3B82F6",
   });
 
+  // Predefined colors for departments
+  const departmentColors = [
+    { name: "Blue", value: "#3B82F6" },
+    { name: "Green", value: "#10B981" },
+    { name: "Purple", value: "#8B5CF6" },
+    { name: "Orange", value: "#F97316" },
+    { name: "Pink", value: "#EC4899" },
+    { name: "Indigo", value: "#6366F1" },
+    { name: "Yellow", value: "#EAB308" },
+    { name: "Red", value: "#EF4444" },
+    { name: "Teal", value: "#14B8A6" },
+    { name: "Cyan", value: "#06B6D4" },
+  ];
+
   useEffect(() => {
     if (open) {
       loadData();
@@ -118,7 +132,9 @@ export default function DepartmentManager({
       name: "",
       director: "none",
       manager: "none",
-      description: "",
+      icon: "building",
+      shape: "circle",
+      color: "#3B82F6",
     });
     setEditingDept(null);
   };
@@ -182,7 +198,9 @@ export default function DepartmentManager({
       name: department.name,
       director: department.director || "none",
       manager: department.manager || "none",
-      description: department.description || "",
+      icon: department.icon || "building",
+      shape: department.shape || "circle",
+      color: department.color || "#3B82F6",
     });
     setShowAddForm(true);
   };

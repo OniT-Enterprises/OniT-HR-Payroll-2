@@ -78,42 +78,6 @@ export default function TimeTracking() {
     totalHours: number;
     status: string;
   }[] = [];
-      status: "Pending",
-    },
-    {
-      id: 3,
-      employeeId: "1",
-      employeeName: "Sarah Johnson",
-      date: "2024-01-14",
-      project: "Database Optimization",
-      startTime: "08:30",
-      endTime: "17:00",
-      totalHours: 8.5,
-      status: "Approved",
-    },
-    {
-      id: 4,
-      employeeId: "3",
-      employeeName: "Emily Rodriguez",
-      date: "2024-01-14",
-      project: "Marketing Campaign",
-      startTime: "10:00",
-      endTime: "19:00",
-      totalHours: 9.0,
-      status: "Rejected",
-    },
-    {
-      id: 5,
-      employeeId: "4",
-      employeeName: "James Miller",
-      date: "2024-01-13",
-      project: "Client Consultation",
-      startTime: "09:00",
-      endTime: "17:30",
-      totalHours: 8.5,
-      status: "Pending",
-    },
-  ];
 
   const getStatusBadge = (status: string) => {
     switch (status) {

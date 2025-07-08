@@ -20,6 +20,7 @@ import {
   User,
   Mail,
   Phone,
+  Smartphone,
   MapPin,
   Calendar,
   Briefcase,

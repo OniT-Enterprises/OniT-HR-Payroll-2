@@ -870,42 +870,44 @@ export default function AllEmployees() {
                         <div className="grid grid-cols-2 gap-1 w-fit">
                           {/* Email */}
                           <div className="flex items-center justify-center p-1">
-                            <Mail
-                              className="h-4 w-4 text-blue-600 cursor-pointer hover:bg-blue-50 rounded"
-                              title={employee.personalInfo.email}
-                            />
+                            <div title={employee.personalInfo.email}>
+                              <Mail className="h-4 w-4 text-blue-600 cursor-pointer hover:bg-blue-50 rounded" />
+                            </div>
                           </div>
 
                           {/* Phone */}
                           <div className="flex items-center justify-center p-1">
-                            <Phone
-                              className="h-4 w-4 text-green-600 cursor-pointer hover:bg-green-50 rounded"
+                            <div
                               title={employee.personalInfo.phone || "No phone"}
-                            />
+                            >
+                              <Phone className="h-4 w-4 text-green-600 cursor-pointer hover:bg-green-50 rounded" />
+                            </div>
                           </div>
 
                           {/* Emergency Contact */}
                           <div className="flex items-center justify-center p-1">
-                            <Cross
-                              className="h-4 w-4 text-red-600 cursor-pointer hover:bg-red-50 rounded"
+                            <div
                               title={
                                 employee.personalInfo.emergencyContactName
                                   ? `Emergency: ${employee.personalInfo.emergencyContactName}`
                                   : "No emergency contact"
                               }
-                            />
+                            >
+                              <Cross className="h-4 w-4 text-red-600 cursor-pointer hover:bg-red-50 rounded" />
+                            </div>
                           </div>
 
                           {/* Mobile App */}
                           <div className="flex items-center justify-center p-1">
-                            <Smartphone
-                              className="h-4 w-4 text-purple-600 cursor-pointer hover:bg-purple-50 rounded"
+                            <div
                               title={
                                 (employee.personalInfo as any).phoneApp
                                   ? `App: ${(employee.personalInfo as any).phoneApp}`
                                   : "No app phone"
                               }
-                            />
+                            >
+                              <Smartphone className="h-4 w-4 text-purple-600 cursor-pointer hover:bg-purple-50 rounded" />
+                            </div>
                           </div>
                         </div>
                       </td>

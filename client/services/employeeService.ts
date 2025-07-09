@@ -134,12 +134,14 @@ class EmployeeService {
     }
 
     try {
-      // Skip connection test temporarily due to network issues
-      // await this.testConnection(); // Disabled due to network connectivity issues
+      console.log("🔍 Attempting to load employees from Firebase...");
 
-      // Add timeout and retry logic
+      // Add timeout with shorter duration for better UX
       const timeoutPromise = new Promise((_, reject) =>
-        setTimeout(() => reject(new Error("Request timeout")), 15000),
+        setTimeout(
+          () => reject(new Error("Request timeout after 10 seconds")),
+          10000,
+        ),
       );
 
       const queryPromise = getDocs(
@@ -161,7 +163,9 @@ class EmployeeService {
 
       return employees;
     } catch (error) {
-      console.error("Error getting employees:", error);
+      console.error("❌ Error getting employees from Firebase:", error);
+      console.error("Error type:", typeof error);
+      console.error("Error name:", error?.constructor?.name);
 
       // Handle different types of errors
       if (

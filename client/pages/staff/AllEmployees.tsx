@@ -58,6 +58,16 @@ export default function AllEmployees() {
   const [searchTerm, setSearchTerm] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage] = useState(20);
+
+  // Filter states
+  const [departmentFilter, setDepartmentFilter] = useState<string>("");
+  const [positionFilter, setPositionFilter] = useState<string>("");
+  const [employmentTypeFilter, setEmploymentTypeFilter] = useState<string>("");
+  const [workLocationFilter, setWorkLocationFilter] = useState<string>("");
+  const [statusFilter, setStatusFilter] = useState<string>("");
+  const [minSalary, setMinSalary] = useState<string>("");
+  const [maxSalary, setMaxSalary] = useState<string>("");
+  const [showFilters, setShowFilters] = useState(false);
   const [selectedEmployee, setSelectedEmployee] = useState<Employee | null>(
     null,
   );
@@ -103,7 +113,17 @@ export default function AllEmployees() {
   // Filter employees when search term or filters change
   useEffect(() => {
     filterEmployees();
-  }, [employees, searchTerm]);
+  }, [
+    employees,
+    searchTerm,
+    departmentFilter,
+    positionFilter,
+    employmentTypeFilter,
+    workLocationFilter,
+    statusFilter,
+    minSalary,
+    maxSalary,
+  ]);
 
   const loadEmployees = async () => {
     try {
@@ -135,7 +155,9 @@ export default function AllEmployees() {
 
   const filterEmployees = () => {
     let filtered = employees.filter((employee) => {
+      // Search filter
       const matchesSearch =
+        !searchTerm ||
         employee.personalInfo.firstName
           .toLowerCase()
           .includes(searchTerm.toLowerCase()) ||
@@ -155,12 +177,102 @@ export default function AllEmployees() {
           .toLowerCase()
           .includes(searchTerm.toLowerCase());
 
-      return matchesSearch;
+      // Department filter
+      const matchesDepartment =
+        !departmentFilter ||
+        employee.jobDetails.department === departmentFilter;
+
+      // Position filter
+      const matchesPosition =
+        !positionFilter || employee.jobDetails.position === positionFilter;
+
+      // Employment type filter
+      const matchesEmploymentType =
+        !employmentTypeFilter ||
+        employee.jobDetails.employmentType === employmentTypeFilter;
+
+      // Work location filter
+      const matchesWorkLocation =
+        !workLocationFilter ||
+        employee.jobDetails.workLocation === workLocationFilter;
+
+      // Status filter
+      const matchesStatus = !statusFilter || employee.status === statusFilter;
+
+      // Salary range filter
+      const salary =
+        employee.compensation.monthlySalary ||
+        Math.round((employee.compensation as any).annualSalary / 12) ||
+        0;
+      const matchesMinSalary = !minSalary || salary >= parseInt(minSalary);
+      const matchesMaxSalary = !maxSalary || salary <= parseInt(maxSalary);
+
+      return (
+        matchesSearch &&
+        matchesDepartment &&
+        matchesPosition &&
+        matchesEmploymentType &&
+        matchesWorkLocation &&
+        matchesStatus &&
+        matchesMinSalary &&
+        matchesMaxSalary
+      );
     });
 
     setFilteredEmployees(filtered);
     setCurrentPage(1); // Reset to first page when filtering
   };
+
+  // Clear all filters
+  const clearFilters = () => {
+    setSearchTerm("");
+    setDepartmentFilter("");
+    setPositionFilter("");
+    setEmploymentTypeFilter("");
+    setWorkLocationFilter("");
+    setStatusFilter("");
+    setMinSalary("");
+    setMaxSalary("");
+  };
+
+  // Get unique values for filter options
+  const getUniqueValues = (field: keyof Employee | string) => {
+    const values = new Set<string>();
+    employees.forEach((employee) => {
+      let value: string;
+      switch (field) {
+        case "department":
+          value = employee.jobDetails.department;
+          break;
+        case "position":
+          value = employee.jobDetails.position;
+          break;
+        case "employmentType":
+          value = employee.jobDetails.employmentType;
+          break;
+        case "workLocation":
+          value = employee.jobDetails.workLocation;
+          break;
+        case "status":
+          value = employee.status;
+          break;
+        default:
+          return;
+      }
+      if (value) values.add(value);
+    });
+    return Array.from(values).sort();
+  };
+
+  // Check if any filters are active
+  const hasActiveFilters =
+    departmentFilter ||
+    positionFilter ||
+    employmentTypeFilter ||
+    workLocationFilter ||
+    statusFilter ||
+    minSalary ||
+    maxSalary;
 
   const handleSearch = () => {
     filterEmployees();

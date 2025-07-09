@@ -706,27 +706,27 @@ export default function AllEmployees() {
                     of {employees.length} employees shown
                   </p>
                   <div className="flex flex-wrap gap-2 mt-2">
-                    {departmentFilter && (
+                    {departmentFilter && departmentFilter !== "all" && (
                       <Badge variant="secondary" className="text-xs">
                         Department: {departmentFilter}
                       </Badge>
                     )}
-                    {positionFilter && (
+                    {positionFilter && positionFilter !== "all" && (
                       <Badge variant="secondary" className="text-xs">
                         Position: {positionFilter}
                       </Badge>
                     )}
-                    {employmentTypeFilter && (
+                    {employmentTypeFilter && employmentTypeFilter !== "all" && (
                       <Badge variant="secondary" className="text-xs">
                         Type: {employmentTypeFilter}
                       </Badge>
                     )}
-                    {workLocationFilter && (
+                    {workLocationFilter && workLocationFilter !== "all" && (
                       <Badge variant="secondary" className="text-xs">
                         Location: {workLocationFilter}
                       </Badge>
                     )}
-                    {statusFilter && (
+                    {statusFilter && statusFilter !== "all" && (
                       <Badge variant="secondary" className="text-xs">
                         Status: {statusFilter}
                       </Badge>

@@ -821,7 +821,7 @@ export default function AllEmployees() {
                     </th>
                     <th className="text-left p-3 font-medium">
                       <div className="flex items-center gap-1">
-                        Monthly Salary
+                        MonthlySalary
                         <Filter
                           className={`h-3 w-3 cursor-pointer hover:text-foreground ${
                             minSalary || maxSalary

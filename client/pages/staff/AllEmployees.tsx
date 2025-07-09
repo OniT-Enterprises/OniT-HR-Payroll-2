@@ -60,11 +60,12 @@ export default function AllEmployees() {
   const [itemsPerPage] = useState(20);
 
   // Filter states
-  const [departmentFilter, setDepartmentFilter] = useState<string>("");
-  const [positionFilter, setPositionFilter] = useState<string>("");
-  const [employmentTypeFilter, setEmploymentTypeFilter] = useState<string>("");
-  const [workLocationFilter, setWorkLocationFilter] = useState<string>("");
-  const [statusFilter, setStatusFilter] = useState<string>("");
+  const [departmentFilter, setDepartmentFilter] = useState<string>("all");
+  const [positionFilter, setPositionFilter] = useState<string>("all");
+  const [employmentTypeFilter, setEmploymentTypeFilter] =
+    useState<string>("all");
+  const [workLocationFilter, setWorkLocationFilter] = useState<string>("all");
+  const [statusFilter, setStatusFilter] = useState<string>("all");
   const [minSalary, setMinSalary] = useState<string>("");
   const [maxSalary, setMaxSalary] = useState<string>("");
   const [showFilters, setShowFilters] = useState(false);
@@ -180,24 +181,32 @@ export default function AllEmployees() {
       // Department filter
       const matchesDepartment =
         !departmentFilter ||
+        departmentFilter === "all" ||
         employee.jobDetails.department === departmentFilter;
 
       // Position filter
       const matchesPosition =
-        !positionFilter || employee.jobDetails.position === positionFilter;
+        !positionFilter ||
+        positionFilter === "all" ||
+        employee.jobDetails.position === positionFilter;
 
       // Employment type filter
       const matchesEmploymentType =
         !employmentTypeFilter ||
+        employmentTypeFilter === "all" ||
         employee.jobDetails.employmentType === employmentTypeFilter;
 
       // Work location filter
       const matchesWorkLocation =
         !workLocationFilter ||
+        workLocationFilter === "all" ||
         employee.jobDetails.workLocation === workLocationFilter;
 
       // Status filter
-      const matchesStatus = !statusFilter || employee.status === statusFilter;
+      const matchesStatus =
+        !statusFilter ||
+        statusFilter === "all" ||
+        employee.status === statusFilter;
 
       // Salary range filter
       const salary =
@@ -226,11 +235,11 @@ export default function AllEmployees() {
   // Clear all filters
   const clearFilters = () => {
     setSearchTerm("");
-    setDepartmentFilter("");
-    setPositionFilter("");
-    setEmploymentTypeFilter("");
-    setWorkLocationFilter("");
-    setStatusFilter("");
+    setDepartmentFilter("all");
+    setPositionFilter("all");
+    setEmploymentTypeFilter("all");
+    setWorkLocationFilter("all");
+    setStatusFilter("all");
     setMinSalary("");
     setMaxSalary("");
   };
@@ -266,11 +275,11 @@ export default function AllEmployees() {
 
   // Check if any filters are active
   const hasActiveFilters =
-    departmentFilter ||
-    positionFilter ||
-    employmentTypeFilter ||
-    workLocationFilter ||
-    statusFilter ||
+    (departmentFilter && departmentFilter !== "all") ||
+    (positionFilter && positionFilter !== "all") ||
+    (employmentTypeFilter && employmentTypeFilter !== "all") ||
+    (workLocationFilter && workLocationFilter !== "all") ||
+    (statusFilter && statusFilter !== "all") ||
     minSalary ||
     maxSalary;
 

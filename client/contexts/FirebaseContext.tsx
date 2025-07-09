@@ -92,7 +92,7 @@ export const FirebaseProvider: React.FC<FirebaseProviderProps> = ({
     window.addEventListener("offline", handleOffline);
 
     // Periodic connection check
-    const interval = setInterval(checkConnection, 30000); // Check every 30 seconds
+    const interval = setInterval(checkConnection, 120000); // Check every 2 minutes (reduced to prevent assertion errors)
 
     return () => {
       window.removeEventListener("online", handleOnline);

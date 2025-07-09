@@ -552,7 +552,7 @@ export default function AllEmployees() {
                       <SelectValue placeholder="All departments" />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="">All departments</SelectItem>
+                      <SelectItem value="all">All departments</SelectItem>
                       {getUniqueValues("department").map((dept) => (
                         <SelectItem key={dept} value={dept}>
                           {dept}
@@ -575,7 +575,7 @@ export default function AllEmployees() {
                       <SelectValue placeholder="All positions" />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="">All positions</SelectItem>
+                      <SelectItem value="all">All positions</SelectItem>
                       {getUniqueValues("position").map((position) => (
                         <SelectItem key={position} value={position}>
                           {position}
@@ -598,7 +598,7 @@ export default function AllEmployees() {
                       <SelectValue placeholder="All types" />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="">All types</SelectItem>
+                      <SelectItem value="all">All types</SelectItem>
                       {getUniqueValues("employmentType").map((type) => (
                         <SelectItem key={type} value={type}>
                           {type}
@@ -621,7 +621,7 @@ export default function AllEmployees() {
                       <SelectValue placeholder="All locations" />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="">All locations</SelectItem>
+                      <SelectItem value="all">All locations</SelectItem>
                       {getUniqueValues("workLocation").map((location) => (
                         <SelectItem key={location} value={location}>
                           {location}
@@ -641,7 +641,7 @@ export default function AllEmployees() {
                       <SelectValue placeholder="All statuses" />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="">All statuses</SelectItem>
+                      <SelectItem value="all">All statuses</SelectItem>
                       {getUniqueValues("status").map((status) => (
                         <SelectItem key={status} value={status}>
                           {status.charAt(0).toUpperCase() + status.slice(1)}

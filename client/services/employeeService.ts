@@ -191,37 +191,12 @@ class EmployeeService {
       console.error("Error type:", typeof error);
       console.error("Error name:", error?.constructor?.name);
 
-      // Handle TypeError (like Failed to fetch) immediately
-      if (error instanceof TypeError) {
-        console.warn(
-          "🌐 Network TypeError detected, falling back to mock data",
-        );
-        return await mockDataService.getAllEmployees();
-      }
-
-      // Handle different types of errors
-      if (
-        error.message?.includes("fetch") ||
-        error.message?.includes("Failed to fetch") ||
-        error.message?.includes("network") ||
-        error.message?.includes("timeout") ||
-        error.code?.includes("unavailable") ||
-        error.code?.includes("resource-exhausted") ||
-        error.code?.includes("deadline-exceeded")
-      ) {
-        // Try offline fallback first
-        const cachedEmployees = this.getOfflineEmployees();
-        if (cachedEmployees.length > 0) {
-          console.warn("Using cached employee data due to connection issue");
-          return cachedEmployees;
-        }
-
-        // Fall back to mock data if Firebase fails
-        console.warn(
-          "Firebase connection failed, using mock data for demo purposes",
-        );
-        return await mockDataService.getAllEmployees();
-      }
+      // Any Firebase error - immediately fallback to mock data
+      console.warn(
+        "⚠️ Firebase operation failed, using mock data:",
+        error.message || error,
+      );
+      return await mockDataService.getAllEmployees();
 
       // Handle permission errors
       if (error.code?.includes("permission-denied")) {

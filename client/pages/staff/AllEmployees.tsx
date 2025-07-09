@@ -498,20 +498,243 @@ export default function AllEmployees() {
               />
             </div>
             <Button onClick={handleSearch}>Search</Button>
+            <Button
+              variant={showFilters ? "default" : "outline"}
+              onClick={() => setShowFilters(!showFilters)}
+              className={hasActiveFilters ? "bg-blue-100 border-blue-300" : ""}
+            >
+              <Filter className="mr-2 h-4 w-4" />
+              Filters{" "}
+              {hasActiveFilters &&
+                `(${Object.values({ departmentFilter, positionFilter, employmentTypeFilter, workLocationFilter, statusFilter, minSalary, maxSalary }).filter(Boolean).length})`}
+            </Button>
           </div>
 
           <div className="flex items-center gap-3 w-full lg:w-auto">
+            {hasActiveFilters && (
+              <Button variant="ghost" size="sm" onClick={clearFilters}>
+                Clear Filters
+              </Button>
+            )}
             <Button variant="outline" onClick={handleExport}>
               <Download className="mr-2 h-4 w-4" />
               Export
             </Button>
 
-            <Button>
+            <Button onClick={() => navigate("/staff/add")}>
               <Plus className="mr-2 h-4 w-4" />
               Add Employee
             </Button>
           </div>
         </div>
+
+        {/* Filter Panel */}
+        {showFilters && (
+          <Card className="mb-6">
+            <CardHeader>
+              <CardTitle className="text-lg">Filter Employees</CardTitle>
+              <CardDescription>
+                Use filters to narrow down the employee list
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                {/* Department Filter */}
+                <div>
+                  <label className="text-sm font-medium mb-2 block">
+                    Department
+                  </label>
+                  <Select
+                    value={departmentFilter}
+                    onValueChange={setDepartmentFilter}
+                  >
+                    <SelectTrigger>
+                      <SelectValue placeholder="All departments" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="">All departments</SelectItem>
+                      {getUniqueValues("department").map((dept) => (
+                        <SelectItem key={dept} value={dept}>
+                          {dept}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                {/* Position Filter */}
+                <div>
+                  <label className="text-sm font-medium mb-2 block">
+                    Position
+                  </label>
+                  <Select
+                    value={positionFilter}
+                    onValueChange={setPositionFilter}
+                  >
+                    <SelectTrigger>
+                      <SelectValue placeholder="All positions" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="">All positions</SelectItem>
+                      {getUniqueValues("position").map((position) => (
+                        <SelectItem key={position} value={position}>
+                          {position}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                {/* Employment Type Filter */}
+                <div>
+                  <label className="text-sm font-medium mb-2 block">
+                    Employment Type
+                  </label>
+                  <Select
+                    value={employmentTypeFilter}
+                    onValueChange={setEmploymentTypeFilter}
+                  >
+                    <SelectTrigger>
+                      <SelectValue placeholder="All types" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="">All types</SelectItem>
+                      {getUniqueValues("employmentType").map((type) => (
+                        <SelectItem key={type} value={type}>
+                          {type}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                {/* Work Location Filter */}
+                <div>
+                  <label className="text-sm font-medium mb-2 block">
+                    Work Location
+                  </label>
+                  <Select
+                    value={workLocationFilter}
+                    onValueChange={setWorkLocationFilter}
+                  >
+                    <SelectTrigger>
+                      <SelectValue placeholder="All locations" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="">All locations</SelectItem>
+                      {getUniqueValues("workLocation").map((location) => (
+                        <SelectItem key={location} value={location}>
+                          {location}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                {/* Status Filter */}
+                <div>
+                  <label className="text-sm font-medium mb-2 block">
+                    Status
+                  </label>
+                  <Select value={statusFilter} onValueChange={setStatusFilter}>
+                    <SelectTrigger>
+                      <SelectValue placeholder="All statuses" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="">All statuses</SelectItem>
+                      {getUniqueValues("status").map((status) => (
+                        <SelectItem key={status} value={status}>
+                          {status.charAt(0).toUpperCase() + status.slice(1)}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                {/* Salary Range */}
+                <div>
+                  <label className="text-sm font-medium mb-2 block">
+                    Min Salary
+                  </label>
+                  <Input
+                    type="number"
+                    placeholder="Min monthly salary"
+                    value={minSalary}
+                    onChange={(e) => setMinSalary(e.target.value)}
+                  />
+                </div>
+
+                <div>
+                  <label className="text-sm font-medium mb-2 block">
+                    Max Salary
+                  </label>
+                  <Input
+                    type="number"
+                    placeholder="Max monthly salary"
+                    value={maxSalary}
+                    onChange={(e) => setMaxSalary(e.target.value)}
+                  />
+                </div>
+
+                {/* Clear Filters Button */}
+                <div className="flex items-end">
+                  <Button
+                    variant="outline"
+                    onClick={clearFilters}
+                    disabled={!hasActiveFilters}
+                    className="w-full"
+                  >
+                    Clear All Filters
+                  </Button>
+                </div>
+              </div>
+
+              {/* Filter Summary */}
+              {hasActiveFilters && (
+                <div className="mt-4 p-3 bg-blue-50 rounded-lg">
+                  <p className="text-sm text-blue-800">
+                    <strong>Active Filters:</strong> {filteredEmployees.length}{" "}
+                    of {employees.length} employees shown
+                  </p>
+                  <div className="flex flex-wrap gap-2 mt-2">
+                    {departmentFilter && (
+                      <Badge variant="secondary" className="text-xs">
+                        Department: {departmentFilter}
+                      </Badge>
+                    )}
+                    {positionFilter && (
+                      <Badge variant="secondary" className="text-xs">
+                        Position: {positionFilter}
+                      </Badge>
+                    )}
+                    {employmentTypeFilter && (
+                      <Badge variant="secondary" className="text-xs">
+                        Type: {employmentTypeFilter}
+                      </Badge>
+                    )}
+                    {workLocationFilter && (
+                      <Badge variant="secondary" className="text-xs">
+                        Location: {workLocationFilter}
+                      </Badge>
+                    )}
+                    {statusFilter && (
+                      <Badge variant="secondary" className="text-xs">
+                        Status: {statusFilter}
+                      </Badge>
+                    )}
+                    {(minSalary || maxSalary) && (
+                      <Badge variant="secondary" className="text-xs">
+                        Salary: {minSalary ? `$${minSalary}+` : ""}
+                        {minSalary && maxSalary ? " - " : ""}
+                        {maxSalary ? `$${maxSalary}` : ""}
+                      </Badge>
+                    )}
+                  </div>
+                </div>
+              )}
+            </CardContent>
+          </Card>
+        )}
 
         {/* Employees Table */}
         <Card>

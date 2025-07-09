@@ -134,7 +134,7 @@ class EmployeeService {
     }
 
     try {
-      // First, try a simple connection test
+      // Skip connection test temporarily due to network issues
       await this.testConnection();
 
       // Add timeout and retry logic
@@ -189,7 +189,7 @@ class EmployeeService {
 
       // Handle permission errors
       if (error.code?.includes("permission-denied")) {
-        throw new Error("❌ Access denied. Please check your authentication.");
+        throw new Error("�� Access denied. Please check your authentication.");
       }
 
       // Handle quota errors

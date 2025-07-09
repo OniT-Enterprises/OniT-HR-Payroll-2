@@ -515,7 +515,23 @@ export default function AllEmployees() {
               <Filter className="mr-2 h-4 w-4" />
               Filters{" "}
               {hasActiveFilters &&
-                `(${Object.values({ departmentFilter, positionFilter, employmentTypeFilter, workLocationFilter, statusFilter, minSalary, maxSalary }).filter(Boolean).length})`}
+                `(${
+                  Object.values({
+                    departmentFilter:
+                      departmentFilter !== "all" ? departmentFilter : null,
+                    positionFilter:
+                      positionFilter !== "all" ? positionFilter : null,
+                    employmentTypeFilter:
+                      employmentTypeFilter !== "all"
+                        ? employmentTypeFilter
+                        : null,
+                    workLocationFilter:
+                      workLocationFilter !== "all" ? workLocationFilter : null,
+                    statusFilter: statusFilter !== "all" ? statusFilter : null,
+                    minSalary,
+                    maxSalary,
+                  }).filter(Boolean).length
+                })`}
             </Button>
           </div>
 

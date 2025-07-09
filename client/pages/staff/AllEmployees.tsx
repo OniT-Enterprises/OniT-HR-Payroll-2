@@ -752,32 +752,59 @@ export default function AllEmployees() {
                     <th className="text-left p-3 font-medium">
                       <div className="flex items-center gap-1">
                         Employee
-                        <Filter className="h-3 w-3 text-muted-foreground cursor-pointer hover:text-foreground" />
+                        <Filter
+                          className="h-3 w-3 text-muted-foreground cursor-pointer hover:text-foreground"
+                          onClick={() => setShowFilters(!showFilters)}
+                        />
                       </div>
                     </th>
                     <th className="text-left p-3 font-medium">
                       <div className="flex items-center gap-1">
                         Department
-                        <Filter className="h-3 w-3 text-muted-foreground cursor-pointer hover:text-foreground" />
+                        <Filter
+                          className={`h-3 w-3 cursor-pointer hover:text-foreground ${
+                            departmentFilter
+                              ? "text-blue-600"
+                              : "text-muted-foreground"
+                          }`}
+                          onClick={() => setShowFilters(!showFilters)}
+                        />
                       </div>
                     </th>
                     <th className="text-left p-3 font-medium">
                       <div className="flex items-center gap-1">
                         Position
-                        <Filter className="h-3 w-3 text-muted-foreground cursor-pointer hover:text-foreground" />
+                        <Filter
+                          className={`h-3 w-3 cursor-pointer hover:text-foreground ${
+                            positionFilter
+                              ? "text-blue-600"
+                              : "text-muted-foreground"
+                          }`}
+                          onClick={() => setShowFilters(!showFilters)}
+                        />
                       </div>
                     </th>
                     <th className="text-left p-3 font-medium">Contact</th>
                     <th className="text-left p-3 font-medium">
                       <div className="flex items-center gap-1">
                         Hire Date
-                        <Filter className="h-3 w-3 text-muted-foreground cursor-pointer hover:text-foreground" />
+                        <Filter
+                          className="h-3 w-3 text-muted-foreground cursor-pointer hover:text-foreground"
+                          onClick={() => setShowFilters(!showFilters)}
+                        />
                       </div>
                     </th>
                     <th className="text-left p-3 font-medium">
                       <div className="flex items-center gap-1">
                         Monthly Salary
-                        <Filter className="h-3 w-3 text-muted-foreground cursor-pointer hover:text-foreground" />
+                        <Filter
+                          className={`h-3 w-3 cursor-pointer hover:text-foreground ${
+                            minSalary || maxSalary
+                              ? "text-blue-600"
+                              : "text-muted-foreground"
+                          }`}
+                          onClick={() => setShowFilters(!showFilters)}
+                        />
                       </div>
                     </th>
                     <th className="text-center p-3 font-medium">Actions</th>

@@ -114,6 +114,12 @@ class EmployeeService {
   }
 
   async getAllEmployees(): Promise<Employee[]> {
+    // First check network connectivity
+    if (!navigator.onLine) {
+      console.warn("🚫 No internet connection, using mock data");
+      return await mockDataService.getAllEmployees();
+    }
+
     // Check if Firebase is properly initialized
     if (!isFirebaseReady() || !db) {
       const error = getFirebaseError();
@@ -130,6 +136,24 @@ class EmployeeService {
 
       // Fall back to mock data for development/demo
       console.warn("Using mock data - Firebase unavailable");
+      return await mockDataService.getAllEmployees();
+    }
+
+    // Quick network test before attempting Firebase operations
+    try {
+      // Test if we can reach a simple endpoint
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 3000);
+
+      await fetch("https://www.google.com/favicon.ico", {
+        method: "HEAD",
+        mode: "no-cors",
+        signal: controller.signal,
+      });
+
+      clearTimeout(timeoutId);
+    } catch (networkError) {
+      console.warn("🌐 Network connectivity test failed, using mock data");
       return await mockDataService.getAllEmployees();
     }
 

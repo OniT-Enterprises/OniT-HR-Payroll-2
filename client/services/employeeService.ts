@@ -135,7 +135,7 @@ class EmployeeService {
 
     try {
       // Skip connection test temporarily due to network issues
-      await this.testConnection();
+      // await this.testConnection(); // Disabled due to network connectivity issues
 
       // Add timeout and retry logic
       const timeoutPromise = new Promise((_, reject) =>
@@ -189,7 +189,7 @@ class EmployeeService {
 
       // Handle permission errors
       if (error.code?.includes("permission-denied")) {
-        throw new Error("�� Access denied. Please check your authentication.");
+        throw new Error("❌ Access denied. Please check your authentication.");
       }
 
       // Handle quota errors

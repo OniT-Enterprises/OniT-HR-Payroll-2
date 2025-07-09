@@ -13,6 +13,8 @@ import { getStorage } from "firebase/storage";
 // Global Firebase status
 let firebaseInitialized = false;
 let firebaseError: string | null = null;
+let networkEnabled = false;
+let connectivityCheckInProgress = false;
 
 // Your web app's Firebase configuration
 const firebaseConfig = {
@@ -78,13 +80,26 @@ export const testFirebaseConnection = async (): Promise<boolean> => {
     return false;
   }
 
+  // Prevent concurrent connectivity checks
+  if (connectivityCheckInProgress) {
+    return networkEnabled;
+  }
+
+  connectivityCheckInProgress = true;
+
   try {
-    // Test connectivity by enabling network (this will resolve immediately if already connected)
-    await enableNetwork(db);
+    // Only enable network if not already enabled
+    if (!networkEnabled) {
+      await enableNetwork(db);
+      networkEnabled = true;
+    }
     return true;
   } catch (error) {
     console.error("Firebase connectivity test failed:", error);
+    networkEnabled = false;
     return false;
+  } finally {
+    connectivityCheckInProgress = false;
   }
 };
 

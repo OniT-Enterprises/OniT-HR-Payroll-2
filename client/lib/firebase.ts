@@ -72,6 +72,41 @@ try {
 // Export Firebase status checking functions
 export const isFirebaseReady = () => firebaseInitialized;
 export const getFirebaseError = () => firebaseError;
+export const isNetworkEnabled = () => networkEnabled;
+
+// Network management functions
+export const enableFirebaseNetwork = async (): Promise<boolean> => {
+  if (!db || networkEnabled || connectivityCheckInProgress) {
+    return networkEnabled;
+  }
+
+  connectivityCheckInProgress = true;
+  try {
+    await enableNetwork(db);
+    networkEnabled = true;
+    return true;
+  } catch (error) {
+    console.error("Failed to enable Firebase network:", error);
+    return false;
+  } finally {
+    connectivityCheckInProgress = false;
+  }
+};
+
+export const disableFirebaseNetwork = async (): Promise<boolean> => {
+  if (!db || !networkEnabled) {
+    return true;
+  }
+
+  try {
+    await disableNetwork(db);
+    networkEnabled = false;
+    return true;
+  } catch (error) {
+    console.error("Failed to disable Firebase network:", error);
+    return false;
+  }
+};
 
 // Test Firebase connectivity
 export const testFirebaseConnection = async (): Promise<boolean> => {

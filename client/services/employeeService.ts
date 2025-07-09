@@ -167,6 +167,14 @@ class EmployeeService {
       console.error("Error type:", typeof error);
       console.error("Error name:", error?.constructor?.name);
 
+      // Handle TypeError (like Failed to fetch) immediately
+      if (error instanceof TypeError) {
+        console.warn(
+          "🌐 Network TypeError detected, falling back to mock data",
+        );
+        return await mockDataService.getAllEmployees();
+      }
+
       // Handle different types of errors
       if (
         error.message?.includes("fetch") ||

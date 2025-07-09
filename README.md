@@ -1,6 +1,6 @@
 # OniT HR Payroll System
 
-A comprehensive, modern HR and Payroll management system built with React, TypeScript, and Firebase. Designed for companies to efficiently manage employees, departments, payroll, and organizational data.
+A comprehensive, modern HR and Payroll management system built with React, TypeScript, and Firebase. Designed for companies to efficiently manage employees, departments, payroll, and organizational data..
 
 ![OniT HR Payroll](https://img.shields.io/badge/OniT-HR%20Payroll-blue)
 ![React](https://img.shields.io/badge/React-18.x-blue)

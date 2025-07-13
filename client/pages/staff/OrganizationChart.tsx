@@ -79,67 +79,26 @@ export default function OrganizationChart() {
       let employeesData: Employee[] = [];
       let departmentsData: Department[] = [];
 
-      // Load employees with comprehensive error handling
+      // Use ultra-safe offline-first service to completely avoid Firebase network errors
       try {
-        employeesData = await Promise.race([
-          employeeService.getAllEmployees(),
-          new Promise<Employee[]>((_, reject) =>
-            setTimeout(() => reject(new Error("Employee load timeout")), 8000),
-          ),
-        ]);
-        console.log("✅ Employees loaded successfully:", employeesData.length);
-      } catch (error) {
-        console.warn("⚠️ Failed to load employees, using empty array:", error);
+        console.log("🛡️ Using offline-first service for ultimate safety");
 
-        // Check for specific error types
-        if (
-          error instanceof TypeError ||
-          error.message?.includes("Failed to fetch")
-        ) {
-          console.warn(
-            "🌐 Network error loading employees - using offline mode",
-          );
-        }
+        employeesData = await offlineFirstService.getEmployees();
+        console.log("✅ Employees loaded safely:", employeesData.length);
 
-        employeesData = [];
-      }
-
-      // Load departments with comprehensive error handling
-      try {
-        departmentsData = await Promise.race([
-          departmentService.getAllDepartments(),
-          new Promise<Department[]>((_, reject) =>
-            setTimeout(
-              () => reject(new Error("Department load timeout")),
-              8000,
-            ),
-          ),
-        ]);
-        console.log(
-          "✅ Departments loaded successfully:",
-          departmentsData.length,
-          "departments",
-        );
+        departmentsData = await offlineFirstService.getDepartments();
+        console.log("✅ Departments loaded safely:", departmentsData.length);
         console.log(
           "📋 Department names:",
           departmentsData.map((d) => d.name),
         );
       } catch (error) {
+        // Even the offline-first service failed - use minimal fallbacks
         console.warn(
-          "⚠️ Failed to load departments, using empty array:",
+          "⚠️ Even offline-first service failed, using minimal data:",
           error,
         );
-
-        // Check for specific error types
-        if (
-          error instanceof TypeError ||
-          error.message?.includes("Failed to fetch")
-        ) {
-          console.warn(
-            "🌐 Network error loading departments - using offline mode",
-          );
-        }
-
+        employeesData = [];
         departmentsData = [];
       }
 

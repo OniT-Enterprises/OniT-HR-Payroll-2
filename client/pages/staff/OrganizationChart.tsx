@@ -33,8 +33,7 @@ import {
   Plus,
   Edit,
   Move,
-  ChevronDown,
-  ChevronUp,
+  Building2,
 } from "lucide-react";
 
 interface DepartmentNode extends Department {
@@ -42,7 +41,7 @@ interface DepartmentNode extends Department {
   children: DepartmentNode[];
   parentId?: string;
   level: number;
-  expanded?: boolean;
+  totalEmployees: number;
 }
 
 export default function OrganizationChart() {
@@ -69,10 +68,7 @@ export default function OrganizationChart() {
       setEmployees(employeesData);
       setDepartments(departmentsData);
 
-      // Auto-migrate departments that exist in employee records but not in departments collection
       await migrateMissingDepartments(employeesData, departmentsData);
-
-      // Build the organization tree
       buildDepartmentTree(employeesData, departmentsData);
     } catch (error) {
       console.error("Error loading data:", error);
@@ -92,7 +88,7 @@ export default function OrganizationChart() {
   ) => {
     try {
       if (existingDepartments.length > 0) {
-        return; // Skip migration if departments already exist
+        return;
       }
 
       const employeeDepartments = [
@@ -124,7 +120,6 @@ export default function OrganizationChart() {
 
   const buildDepartmentTree = useCallback(
     (employeesData: Employee[], departmentsData: Department[]) => {
-      // Group employees by department
       const employeesByDept = employeesData.reduce(
         (acc, emp) => {
           const deptName = emp.jobDetails.department;
@@ -135,31 +130,33 @@ export default function OrganizationChart() {
         {} as Record<string, Employee[]>,
       );
 
-      // Create department nodes
-      const nodes: DepartmentNode[] = departmentsData.map((dept) => ({
-        ...dept,
-        employees: employeesByDept[dept.name] || [],
-        children: [],
-        level: 0,
-        expanded: true,
-      }));
+      // Create department nodes with employee counts
+      const nodes: DepartmentNode[] = departmentsData.map((dept) => {
+        const deptEmployees = employeesByDept[dept.name] || [];
+        return {
+          ...dept,
+          employees: deptEmployees,
+          children: [],
+          level: 0,
+          totalEmployees: deptEmployees.length,
+        };
+      });
 
-      // For now, create a simple hierarchy based on department size
-      // In a real app, you'd have parentId relationships in the department data
+      // Sort by department size for better visual hierarchy
       const sortedNodes = nodes.sort(
-        (a, b) => b.employees.length - a.employees.length,
+        (a, b) => b.totalEmployees - a.totalEmployees,
       );
 
-      // Set up a simple hierarchy: largest departments at top level
+      // Create a simple two-level hierarchy
       const tree: DepartmentNode[] = [];
-      const maxTopLevel = Math.min(3, sortedNodes.length); // Max 3 top-level departments
+      const maxTopLevel = Math.min(5, sortedNodes.length);
 
+      // Top level departments
       for (let i = 0; i < maxTopLevel; i++) {
-        const node = { ...sortedNodes[i], level: 0 };
-        tree.push(node);
+        tree.push({ ...sortedNodes[i], level: 0 });
       }
 
-      // Add remaining departments as children of the first top-level department
+      // Remaining departments as second level under the largest department
       if (sortedNodes.length > maxTopLevel && tree.length > 0) {
         for (let i = maxTopLevel; i < sortedNodes.length; i++) {
           const node = { ...sortedNodes[i], level: 1, parentId: tree[0].id };
@@ -175,59 +172,56 @@ export default function OrganizationChart() {
   const handleDragEnd = (result: DropResult) => {
     if (!result.destination) return;
 
-    const { source, destination, draggableId } = result;
-
-    // Handle reordering within the same container
-    if (source.droppableId === destination.droppableId) {
-      // Reorder logic here
-      toast({
-        title: "Department Moved",
-        description: "Department hierarchy updated successfully",
-      });
-      return;
-    }
-
-    // Handle moving between different containers (levels)
     toast({
-      title: "Department Reorganized",
-      description: "Department moved to new position in hierarchy",
+      title: "Department Moved",
+      description: "Department hierarchy updated successfully",
     });
   };
 
-  const toggleDepartmentExpansion = (deptId: string) => {
-    const updateNodes = (nodes: DepartmentNode[]): DepartmentNode[] => {
-      return nodes.map((node) => {
-        if (node.id === deptId) {
-          return { ...node, expanded: !node.expanded };
-        }
-        return { ...node, children: updateNodes(node.children) };
-      });
-    };
+  const getManagerInfo = (dept: DepartmentNode) => {
+    // Find employees with management roles
+    const managers = dept.employees.filter(
+      (emp) =>
+        emp.jobDetails.position.toLowerCase().includes("manager") ||
+        emp.jobDetails.position.toLowerCase().includes("director") ||
+        emp.jobDetails.position.toLowerCase().includes("head") ||
+        emp.jobDetails.position.toLowerCase().includes("lead"),
+    );
 
-    setDepartmentTree(updateNodes(departmentTree));
+    const director =
+      dept.director ||
+      managers.find((m) =>
+        m.jobDetails.position.toLowerCase().includes("director"),
+      )?.personalInfo.firstName +
+        " " +
+        managers.find((m) =>
+          m.jobDetails.position.toLowerCase().includes("director"),
+        )?.personalInfo.lastName;
+
+    const manager =
+      dept.manager ||
+      managers.find(
+        (m) =>
+          m.jobDetails.position.toLowerCase().includes("manager") &&
+          !m.jobDetails.position.toLowerCase().includes("director"),
+      )?.personalInfo.firstName +
+        " " +
+        managers.find(
+          (m) =>
+            m.jobDetails.position.toLowerCase().includes("manager") &&
+            !m.jobDetails.position.toLowerCase().includes("director"),
+        )?.personalInfo.lastName;
+
+    return { director, manager, totalManagers: managers.length };
   };
 
-  const getDepartmentColor = (index: number) => {
-    const colors = [
-      "bg-blue-50 border-blue-200 text-blue-900",
-      "bg-green-50 border-green-200 text-green-900",
-      "bg-purple-50 border-purple-200 text-purple-900",
-      "bg-orange-50 border-orange-200 text-orange-900",
-      "bg-pink-50 border-pink-200 text-pink-900",
-      "bg-indigo-50 border-indigo-200 text-indigo-900",
-      "bg-yellow-50 border-yellow-200 text-yellow-900",
-      "bg-red-50 border-red-200 text-red-900",
-    ];
-    return colors[index % colors.length];
-  };
-
-  const renderDepartmentNode = (
+  const renderOrgChartNode = (
     node: DepartmentNode,
     index: number,
     level: number = 0,
   ) => {
+    const { director, manager, totalManagers } = getManagerInfo(node);
     const hasChildren = node.children.length > 0;
-    const isExpanded = node.expanded !== false;
 
     return (
       <Draggable
@@ -237,140 +231,149 @@ export default function OrganizationChart() {
         isDragDisabled={!dragMode}
       >
         {(provided, snapshot) => (
-          <div
-            ref={provided.innerRef}
-            {...provided.draggableProps}
-            className={`relative ${level > 0 ? "ml-8" : ""}`}
-            style={{
-              ...provided.draggableProps.style,
-              marginLeft: level > 0 ? `${level * 2}rem` : "0",
-            }}
-          >
-            {/* Connecting lines */}
-            {level > 0 && (
-              <>
-                <div className="absolute -left-8 top-8 w-8 h-0.5 bg-gray-300"></div>
-                <div className="absolute -left-8 top-0 w-0.5 h-8 bg-gray-300"></div>
-              </>
-            )}
+          <div className="flex flex-col items-center relative">
+            {/* Connecting line from parent */}
+            {level > 0 && <div className="w-0.5 h-8 bg-gray-400 mb-2"></div>}
 
-            <Card
-              className={`mb-4 ${getDepartmentColor(index)} ${
-                snapshot.isDragging ? "rotate-2 shadow-lg scale-105" : ""
-              } transition-all duration-200 ${dragMode ? "cursor-move" : ""}`}
+            {/* Department Box */}
+            <div
+              ref={provided.innerRef}
+              {...provided.draggableProps}
+              className={`relative ${
+                snapshot.isDragging ? "rotate-1 shadow-xl scale-105" : ""
+              } transition-all duration-200`}
             >
-              <CardHeader className="pb-2">
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-3">
-                    {dragMode && (
-                      <div {...provided.dragHandleProps}>
-                        <Grip className="h-5 w-5 text-gray-400" />
-                      </div>
-                    )}
-                    <Building className="h-6 w-6" />
-                    <div>
-                      <CardTitle className="text-lg flex items-center gap-2">
-                        {node.name}
-                        <Badge variant="secondary">
-                          {node.employees.length}
-                        </Badge>
-                      </CardTitle>
-                      <CardDescription>
-                        {node.employees.length} employee
-                        {node.employees.length !== 1 ? "s" : ""}
-                      </CardDescription>
+              <Card className="w-72 border-2 border-gray-300 bg-white shadow-md hover:shadow-lg transition-shadow">
+                <CardHeader className="text-center pb-2">
+                  {dragMode && (
+                    <div
+                      {...provided.dragHandleProps}
+                      className="absolute top-2 right-2"
+                    >
+                      <Grip className="h-4 w-4 text-gray-400" />
                     </div>
+                  )}
+
+                  {/* Department Title */}
+                  <div className="flex items-center justify-center gap-2 mb-2">
+                    <Building2 className="h-5 w-5 text-blue-600" />
+                    <CardTitle className="text-lg font-bold text-gray-800">
+                      {node.name}
+                    </CardTitle>
                   </div>
 
-                  <div className="flex items-center gap-2">
-                    {hasChildren && (
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        onClick={() => toggleDepartmentExpansion(node.id)}
-                      >
-                        {isExpanded ? (
-                          <ChevronUp className="h-4 w-4" />
-                        ) : (
-                          <ChevronDown className="h-4 w-4" />
-                        )}
-                      </Button>
-                    )}
+                  {/* Employee Count Badge */}
+                  <div className="flex justify-center">
+                    <Badge variant="secondary" className="text-sm">
+                      {node.totalEmployees} Employee
+                      {node.totalEmployees !== 1 ? "s" : ""}
+                    </Badge>
                   </div>
-                </div>
-              </CardHeader>
+                </CardHeader>
 
-              <CardContent className="pt-0">
-                {/* Department Head/Manager */}
-                {(node.director || node.manager) && (
-                  <div className="mb-3 p-2 bg-white/50 rounded border border-dashed">
-                    <div className="flex items-center gap-2">
-                      <Crown className="h-4 w-4 text-amber-600" />
-                      <span className="text-sm font-medium">
-                        {node.director || node.manager}
-                      </span>
-                      <Badge variant="outline" className="text-xs">
-                        {node.director ? "Director" : "Manager"}
-                      </Badge>
+                <CardContent className="pt-0 space-y-3">
+                  {/* Director */}
+                  {director && (
+                    <div className="text-center p-2 bg-blue-50 rounded border border-blue-200">
+                      <div className="flex items-center justify-center gap-2 mb-1">
+                        <Crown className="h-4 w-4 text-amber-600" />
+                        <span className="text-xs font-medium text-blue-800">
+                          DIRECTOR
+                        </span>
+                      </div>
+                      <p className="font-semibold text-sm text-gray-800">
+                        {director}
+                      </p>
                     </div>
-                  </div>
-                )}
+                  )}
 
-                {/* Employee Grid */}
-                {node.employees.length > 0 && (
-                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2">
-                    {node.employees.slice(0, 6).map((employee) => (
-                      <div
-                        key={employee.id}
-                        className="flex items-center gap-2 p-2 bg-white/60 rounded border text-xs"
-                      >
-                        <Avatar className="h-6 w-6">
-                          <AvatarImage
-                            src="/placeholder.svg"
-                            alt={employee.personalInfo.firstName}
-                          />
-                          <AvatarFallback className="text-xs">
-                            {employee.personalInfo.firstName[0]}
-                            {employee.personalInfo.lastName[0]}
-                          </AvatarFallback>
-                        </Avatar>
-                        <div className="flex-1 min-w-0">
-                          <p className="truncate font-medium">
-                            {employee.personalInfo.firstName}{" "}
-                            {employee.personalInfo.lastName}
-                          </p>
-                          <p className="text-gray-600 truncate">
-                            {employee.jobDetails.position}
-                          </p>
-                        </div>
+                  {/* Manager */}
+                  {manager && (
+                    <div className="text-center p-2 bg-green-50 rounded border border-green-200">
+                      <div className="flex items-center justify-center gap-2 mb-1">
+                        <User className="h-4 w-4 text-green-600" />
+                        <span className="text-xs font-medium text-green-800">
+                          MANAGER
+                        </span>
                       </div>
-                    ))}
-                    {node.employees.length > 6 && (
-                      <div className="flex items-center justify-center p-2 bg-gray-100 rounded border border-dashed text-xs text-gray-600">
-                        +{node.employees.length - 6} more
-                      </div>
-                    )}
-                  </div>
-                )}
-              </CardContent>
-            </Card>
+                      <p className="font-semibold text-sm text-gray-800">
+                        {manager}
+                      </p>
+                    </div>
+                  )}
+
+                  {/* Additional Managers Count */}
+                  {totalManagers > (director ? 1 : 0) + (manager ? 1 : 0) && (
+                    <div className="text-center p-2 bg-gray-50 rounded border border-gray-200">
+                      <p className="text-xs text-gray-600">
+                        +
+                        {totalManagers - (director ? 1 : 0) - (manager ? 1 : 0)}{" "}
+                        more manager
+                        {totalManagers -
+                          (director ? 1 : 0) -
+                          (manager ? 1 : 0) !==
+                        1
+                          ? "s"
+                          : ""}
+                      </p>
+                    </div>
+                  )}
+
+                  {/* No Management */}
+                  {!director && !manager && totalManagers === 0 && (
+                    <div className="text-center p-2 bg-gray-50 rounded border border-gray-200">
+                      <p className="text-xs text-gray-500">
+                        No assigned management
+                      </p>
+                    </div>
+                  )}
+                </CardContent>
+              </Card>
+            </div>
 
             {/* Render children */}
-            {hasChildren && isExpanded && (
-              <Droppable droppableId={`children-${node.id}`} type="department">
-                {(provided) => (
-                  <div
-                    ref={provided.innerRef}
-                    {...provided.droppableProps}
-                    className="relative"
-                  >
-                    {node.children.map((child, childIndex) =>
-                      renderDepartmentNode(child, childIndex, level + 1),
-                    )}
-                    {provided.placeholder}
+            {hasChildren && (
+              <>
+                {/* Connecting line down to children */}
+                <div className="w-0.5 h-8 bg-gray-400 mt-2"></div>
+
+                {/* Horizontal line for multiple children */}
+                {node.children.length > 1 && (
+                  <div className="relative">
+                    <div
+                      className="h-0.5 bg-gray-400"
+                      style={{
+                        width: `${(node.children.length - 1) * 320}px`,
+                        marginLeft: `-${((node.children.length - 1) * 320) / 2}px`,
+                      }}
+                    ></div>
                   </div>
                 )}
-              </Droppable>
+
+                <Droppable
+                  droppableId={`children-${node.id}`}
+                  type="department"
+                >
+                  {(provided) => (
+                    <div
+                      ref={provided.innerRef}
+                      {...provided.droppableProps}
+                      className="flex gap-8 mt-2"
+                    >
+                      {node.children.map((child, childIndex) => (
+                        <div key={child.id} className="relative">
+                          {/* Vertical line to each child */}
+                          {node.children.length > 1 && (
+                            <div className="w-0.5 h-8 bg-gray-400 mx-auto mb-2"></div>
+                          )}
+                          {renderOrgChartNode(child, childIndex, level + 1)}
+                        </div>
+                      ))}
+                      {provided.placeholder}
+                    </div>
+                  )}
+                </Droppable>
+              </>
             )}
           </div>
         )}
@@ -397,16 +400,15 @@ export default function OrganizationChart() {
       <MainNavigation />
 
       <div className="p-6">
-        {/* Header with controls */}
-        <div className="flex justify-between items-center mb-6">
-          <div className="flex items-center gap-3">
-            <Building className="h-8 w-8 text-purple-600" />
-            <div>
-              <h1 className="text-3xl font-bold">Organization Chart</h1>
-              <p className="text-muted-foreground">
-                Interactive hierarchical view of company structure
-              </p>
-            </div>
+        {/* Header */}
+        <div className="flex justify-between items-center mb-8">
+          <div className="text-center flex-1">
+            <h1 className="text-4xl font-bold text-gray-800 mb-2">
+              Organization Chart
+            </h1>
+            <p className="text-lg text-gray-600">
+              Company Hierarchical Structure
+            </p>
           </div>
 
           <div className="flex items-center gap-2">
@@ -453,7 +455,7 @@ export default function OrganizationChart() {
             </Button>
           </div>
         ) : (
-          <div className="space-y-6">
+          <div className="space-y-8">
             {/* Statistics */}
             <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
               <Card>
@@ -505,14 +507,23 @@ export default function OrganizationChart() {
                   <div className="flex items-center justify-between">
                     <div>
                       <p className="text-sm font-medium text-muted-foreground">
-                        Hierarchy Levels
+                        Management Roles
                       </p>
                       <p className="text-2xl font-bold">
-                        {Math.max(
-                          ...departmentTree.map((dept) =>
-                            Math.max(1, dept.children.length > 0 ? 2 : 1),
-                          ),
-                        )}
+                        {
+                          employees.filter(
+                            (emp) =>
+                              emp.jobDetails.position
+                                .toLowerCase()
+                                .includes("manager") ||
+                              emp.jobDetails.position
+                                .toLowerCase()
+                                .includes("director") ||
+                              emp.jobDetails.position
+                                .toLowerCase()
+                                .includes("head"),
+                          ).length
+                        }
                       </p>
                     </div>
                     <Crown className="h-8 w-8 text-orange-500" />
@@ -522,34 +533,26 @@ export default function OrganizationChart() {
             </div>
 
             {/* Organization Chart */}
-            <Card>
-              <CardHeader>
-                <CardTitle>Department Hierarchy</CardTitle>
-                <CardDescription>
-                  {dragMode
-                    ? "Drag departments to reorganize the hierarchy"
-                    : "Visual representation of organizational structure"}
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <DragDropContext onDragEnd={handleDragEnd}>
-                  <Droppable droppableId="root" type="department">
-                    {(provided) => (
-                      <div
-                        ref={provided.innerRef}
-                        {...provided.droppableProps}
-                        className="space-y-4"
-                      >
+            <div className="bg-gray-50 rounded-lg p-8 overflow-x-auto">
+              <DragDropContext onDragEnd={handleDragEnd}>
+                <Droppable droppableId="root" type="department">
+                  {(provided) => (
+                    <div
+                      ref={provided.innerRef}
+                      {...provided.droppableProps}
+                      className="flex justify-center"
+                    >
+                      <div className="flex gap-12 items-start">
                         {departmentTree.map((dept, index) =>
-                          renderDepartmentNode(dept, index, 0),
+                          renderOrgChartNode(dept, index, 0),
                         )}
-                        {provided.placeholder}
                       </div>
-                    )}
-                  </Droppable>
-                </DragDropContext>
-              </CardContent>
-            </Card>
+                      {provided.placeholder}
+                    </div>
+                  )}
+                </Droppable>
+              </DragDropContext>
+            </div>
           </div>
         )}
 

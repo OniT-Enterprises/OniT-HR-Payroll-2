@@ -35,7 +35,34 @@ let auth: any = null;
 let storage: any = null;
 let analytics: any = null;
 
+// Check network before even attempting Firebase initialization
+const shouldInitializeFirebase = () => {
+  // Don't initialize if offline
+  if (!navigator.onLine) {
+    console.warn("🌐 Browser offline, skipping Firebase initialization");
+    firebaseError = "Offline - Firebase disabled";
+    return false;
+  }
+
+  // Quick network test before Firebase initialization
+  try {
+    // This will throw immediately if network is severely broken
+    fetch("data:text/plain,test", { method: "HEAD" });
+  } catch (error) {
+    console.warn("🚫 Network test failed, skipping Firebase initialization");
+    firebaseError = "Network issues - Firebase disabled";
+    firebaseBlocked = true;
+    return false;
+  }
+
+  return true;
+};
+
 try {
+  if (!shouldInitializeFirebase()) {
+    throw new Error("Firebase initialization skipped due to network issues");
+  }
+
   app = initializeApp(firebaseConfig);
 
   // Initialize Firebase services with error handling

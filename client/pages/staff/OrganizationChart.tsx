@@ -476,21 +476,6 @@ export default function OrganizationChart() {
                   <div className="flex items-center justify-between">
                     <div>
                       <p className="text-sm font-medium text-gray-600">
-                        Total Employees
-                      </p>
-                      <p className="text-2xl font-bold text-blue-700">
-                        {employees.length}
-                      </p>
-                    </div>
-                    <Users className="h-8 w-8 text-blue-500" />
-                  </div>
-                </CardContent>
-              </Card>
-              <Card className="w-48">
-                <CardContent className="p-4">
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <p className="text-sm font-medium text-gray-600">
                         Executives
                       </p>
                       <p className="text-2xl font-bold text-purple-700">
@@ -506,13 +491,26 @@ export default function OrganizationChart() {
                   <div className="flex items-center justify-between">
                     <div>
                       <p className="text-sm font-medium text-gray-600">
-                        Departments
+                        Managers
                       </p>
                       <p className="text-2xl font-bold text-green-700">
-                        {departmentGroups.length}
+                        {
+                          employees.filter(
+                            (emp) =>
+                              emp.jobDetails.position
+                                .toLowerCase()
+                                .includes("manager") ||
+                              emp.jobDetails.position
+                                .toLowerCase()
+                                .includes("director") ||
+                              emp.jobDetails.position
+                                .toLowerCase()
+                                .includes("head"),
+                          ).length
+                        }
                       </p>
                     </div>
-                    <Building className="h-8 w-8 text-green-500" />
+                    <UserCheck className="h-8 w-8 text-green-500" />
                   </div>
                 </CardContent>
               </Card>
@@ -521,16 +519,41 @@ export default function OrganizationChart() {
                   <div className="flex items-center justify-between">
                     <div>
                       <p className="text-sm font-medium text-gray-600">
-                        Team Members
+                        Senior Staff
                       </p>
-                      <p className="text-2xl font-bold text-orange-700">
-                        {departmentGroups.reduce(
-                          (sum, group) => sum + group.members.length,
-                          0,
-                        )}
+                      <p className="text-2xl font-bold text-blue-700">
+                        {
+                          employees.filter(
+                            (emp) =>
+                              emp.jobDetails.position
+                                .toLowerCase()
+                                .includes("senior") ||
+                              emp.jobDetails.position
+                                .toLowerCase()
+                                .includes("lead") ||
+                              emp.jobDetails.position
+                                .toLowerCase()
+                                .includes("principal"),
+                          ).length
+                        }
                       </p>
                     </div>
-                    <Building2 className="h-8 w-8 text-orange-500" />
+                    <GraduationCap className="h-8 w-8 text-blue-500" />
+                  </div>
+                </CardContent>
+              </Card>
+              <Card className="w-48">
+                <CardContent className="p-4">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <p className="text-sm font-medium text-gray-600">
+                        Total Employees
+                      </p>
+                      <p className="text-2xl font-bold text-orange-700">
+                        {employees.length}
+                      </p>
+                    </div>
+                    <Users className="h-8 w-8 text-orange-500" />
                   </div>
                 </CardContent>
               </Card>

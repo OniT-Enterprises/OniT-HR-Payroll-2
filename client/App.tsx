@@ -86,7 +86,7 @@ const App = () => (
                 element={<ShiftScheduling />}
               />
               <Route path="/performance/reviews" element={<Reviews />} />
-              <Route path="/performance/goals" element={<GoalsOKRs />} />
+              <Route path="/performance/goals" element={<Goals />} />
               <Route
                 path="/performance/training"
                 element={<TrainingCertifications />}

@@ -875,6 +875,150 @@ export default function TimeTracking() {
           </CardContent>
         </Card>
       </div>
+
+      {/* Additional Dashboard Widgets */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        {/* Notifications */}
+        <Card>
+          <CardHeader>
+            <div className="flex items-center justify-between">
+              <CardTitle className="flex items-center gap-2">
+                <Bell className="h-5 w-5" />
+                Notifications
+              </CardTitle>
+              <Badge className="bg-red-100 text-red-800">
+                {notifications.filter((n) => !n.read).length}
+              </Badge>
+            </div>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-3">
+              {notifications.slice(0, 4).map((notification) => (
+                <div
+                  key={notification.id}
+                  className={`flex items-start gap-3 p-2 rounded-lg ${!notification.read ? "bg-blue-50" : "bg-gray-50"}`}
+                >
+                  {getNotificationIcon(notification.type)}
+                  <div className="flex-1 space-y-1">
+                    <p className="text-sm">{notification.message}</p>
+                    <p className="text-xs text-muted-foreground">
+                      {notification.time}
+                    </p>
+                  </div>
+                  {!notification.read && (
+                    <div className="w-2 h-2 bg-blue-600 rounded-full"></div>
+                  )}
+                </div>
+              ))}
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Productivity Metrics */}
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <TrendingUp className="h-5 w-5" />
+              Productivity
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-4">
+              <div className="text-center">
+                <div className="text-3xl font-bold">
+                  {productivity.current}h
+                </div>
+                <p className="text-sm text-muted-foreground">This week</p>
+              </div>
+              <div className="flex items-center justify-center gap-2">
+                {productivity.change > 0 ? (
+                  <ArrowUpRight className="h-4 w-4 text-green-600" />
+                ) : productivity.change < 0 ? (
+                  <ArrowDownRight className="h-4 w-4 text-red-600" />
+                ) : (
+                  <Minus className="h-4 w-4 text-gray-600" />
+                )}
+                <span
+                  className={`text-sm font-medium ${
+                    productivity.change > 0
+                      ? "text-green-600"
+                      : productivity.change < 0
+                        ? "text-red-600"
+                        : "text-gray-600"
+                  }`}
+                >
+                  {productivity.change > 0 ? "+" : ""}
+                  {productivity.change}%
+                </span>
+                <span className="text-sm text-muted-foreground">
+                  vs last week
+                </span>
+              </div>
+              <div className="space-y-2">
+                <div className="flex justify-between text-sm">
+                  <span>Daily average</span>
+                  <span>
+                    {Math.round((productivity.current / 7) * 10) / 10}h
+                  </span>
+                </div>
+                <div className="flex justify-between text-sm">
+                  <span>Efficiency</span>
+                  <span className="text-green-600">92%</span>
+                </div>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Quick Actions */}
+        <Card>
+          <CardHeader>
+            <CardTitle>Quick Actions</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-3">
+              <Button
+                onClick={() => openDialog("task")}
+                variant="outline"
+                className="w-full justify-start"
+              >
+                <Plus className="h-4 w-4 mr-2" />
+                Assign New Task
+              </Button>
+              <Button
+                onClick={() => openDialog("timeEntry")}
+                variant="outline"
+                className="w-full justify-start"
+              >
+                <Clock className="h-4 w-4 mr-2" />
+                Log Time Entry
+              </Button>
+              <Button
+                onClick={() => openDialog("team")}
+                variant="outline"
+                className="w-full justify-start"
+              >
+                <Users className="h-4 w-4 mr-2" />
+                Create Team
+              </Button>
+              <Button
+                onClick={() => {
+                  toast({
+                    title: "Report Generated",
+                    description:
+                      "Weekly performance report has been generated.",
+                  });
+                }}
+                variant="outline"
+                className="w-full justify-start"
+              >
+                <FileText className="h-4 w-4 mr-2" />
+                Generate Report
+              </Button>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
     </div>
   );
 

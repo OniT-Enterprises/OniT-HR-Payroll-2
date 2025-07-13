@@ -55,9 +55,16 @@ class DepartmentService {
   }
 
   async getAllDepartments(): Promise<Department[]> {
-    // Check network connectivity first
-    if (!navigator.onLine) {
+    // Check network connectivity first using our utility
+    if (!isOnline()) {
       console.warn("🌐 No internet connection, using mock departments");
+      return this.getMockDepartments();
+    }
+
+    // Additional network check for more reliability
+    const networkAvailable = await checkNetwork();
+    if (!networkAvailable) {
+      console.warn("🌐 Network check failed, using mock departments");
       return this.getMockDepartments();
     }
 

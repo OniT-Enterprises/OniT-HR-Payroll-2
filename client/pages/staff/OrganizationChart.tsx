@@ -71,22 +71,65 @@ export default function OrganizationChart() {
   const loadData = async () => {
     try {
       setLoading(true);
-      const [employeesData, departmentsData] = await Promise.all([
-        employeeService.getAllEmployees(),
-        departmentService.getAllDepartments(),
-      ]);
+
+      // Load data with individual error handling for better resilience
+      let employeesData: Employee[] = [];
+      let departmentsData: Department[] = [];
+
+      try {
+        employeesData = await employeeService.getAllEmployees();
+        console.log("✅ Employees loaded successfully");
+      } catch (error) {
+        console.warn("⚠️ Failed to load employees, using empty array:", error);
+        employeesData = [];
+      }
+
+      try {
+        departmentsData = await departmentService.getAllDepartments();
+        console.log("✅ Departments loaded successfully");
+      } catch (error) {
+        console.warn(
+          "⚠️ Failed to load departments, using empty array:",
+          error,
+        );
+        departmentsData = [];
+      }
+
       setEmployees(employeesData);
       setDepartments(departmentsData);
 
-      await migrateMissingDepartments(employeesData, departmentsData);
+      // Only attempt migration if we have some data
+      if (employeesData.length > 0 || departmentsData.length > 0) {
+        try {
+          await migrateMissingDepartments(employeesData, departmentsData);
+        } catch (error) {
+          console.warn("⚠️ Migration failed, continuing without it:", error);
+        }
+      }
+
       buildAppleOrgChart(employeesData, departmentsData);
     } catch (error) {
-      console.error("Error loading data:", error);
+      console.error("❌ Critical error loading organization data:", error);
+
+      // Provide user-friendly error message
+      const errorMessage =
+        error instanceof Error
+          ? error.message.includes("network") || error.message.includes("fetch")
+            ? "Unable to connect to database. Showing demo data."
+            : "Failed to load organization data. Please try again."
+          : "An unexpected error occurred while loading data.";
+
       toast({
-        title: "Error",
-        description: "Failed to load data",
+        title: "Connection Issue",
+        description: errorMessage,
         variant: "destructive",
+        duration: 6000,
       });
+
+      // Set empty data so the component can still render
+      setEmployees([]);
+      setDepartments([]);
+      buildAppleOrgChart([], []);
     } finally {
       setLoading(false);
     }

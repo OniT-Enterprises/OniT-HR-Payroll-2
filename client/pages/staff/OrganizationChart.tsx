@@ -140,7 +140,12 @@ export default function OrganizationChart() {
     existingDepartments: Department[],
   ) => {
     try {
-      if (existingDepartments.length > 0) return;
+      // Skip migration if departments already exist or no employees
+      if (existingDepartments.length > 0 || employees.length === 0) {
+        return;
+      }
+
+      console.log("🔄 Attempting to migrate missing departments...");
 
       const employeeDepartments = [
         ...new Set(employees.map((emp) => emp.jobDetails.department)),
@@ -149,22 +154,43 @@ export default function OrganizationChart() {
         (deptName) => deptName && deptName.trim(),
       );
 
-      if (validDepartments.length > 0 && existingDepartments.length === 0) {
+      if (validDepartments.length > 0) {
+        console.log(`📝 Creating ${validDepartments.length} departments...`);
+
+        // Add departments one by one with individual error handling
         for (const deptName of validDepartments) {
-          await departmentService.addDepartment({
-            name: deptName,
-            icon: "building",
-            shape: "circle",
-            color: "#3B82F6",
-          });
+          try {
+            await departmentService.addDepartment({
+              name: deptName,
+              icon: "building",
+              shape: "circle",
+              color: "#3B82F6",
+            });
+            console.log(`✅ Created department: ${deptName}`);
+          } catch (error) {
+            console.warn(`⚠️ Failed to create department ${deptName}:`, error);
+            // Continue with other departments even if one fails
+          }
         }
 
-        const updatedDepartments = await departmentService.getAllDepartments();
-        setDepartments(updatedDepartments);
-        buildAppleOrgChart(employees, updatedDepartments);
+        // Try to reload departments after migration
+        try {
+          const updatedDepartments =
+            await departmentService.getAllDepartments();
+          setDepartments(updatedDepartments);
+          buildAppleOrgChart(employees, updatedDepartments);
+          console.log("✅ Migration completed successfully");
+        } catch (error) {
+          console.warn(
+            "⚠️ Failed to reload departments after migration:",
+            error,
+          );
+          // Continue with existing data
+        }
       }
     } catch (error) {
-      console.error("Error migrating departments:", error);
+      console.error("❌ Error during department migration:", error);
+      // Don't throw the error - just log it and continue
     }
   };
 

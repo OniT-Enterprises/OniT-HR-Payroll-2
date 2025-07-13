@@ -224,8 +224,9 @@ export default function DepartmentManager({
     try {
       await departmentService.deleteDepartment(department.id);
       toast({
-        title: "Success",
-        description: "Department deleted successfully",
+        title: "Department Deleted",
+        description:
+          "Department removed from both Organization Chart and Departments page",
       });
       loadData();
       onDepartmentChange?.();

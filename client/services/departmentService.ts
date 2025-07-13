@@ -33,8 +33,14 @@ export interface DepartmentInput {
 }
 
 class DepartmentService {
-  private collection = collection(db, "departments");
   private cacheKey = "departments_cache";
+
+  private getCollection() {
+    if (!db || !isFirebaseReady()) {
+      throw new Error("Firebase not ready");
+    }
+    return collection(db, "departments");
+  }
 
   async getAllDepartments(): Promise<Department[]> {
     // Check network connectivity first
@@ -69,7 +75,7 @@ class DepartmentService {
       );
 
       const queryPromise = getDocs(
-        query(this.collection, orderBy("name", "asc")),
+        query(this.getCollection(), orderBy("name", "asc")),
       );
 
       const querySnapshot = (await Promise.race([
@@ -204,7 +210,7 @@ class DepartmentService {
 
     try {
       const now = Timestamp.now();
-      const docRef = await addDoc(this.collection, {
+      const docRef = await addDoc(this.getCollection(), {
         ...departmentData,
         createdAt: now,
         updatedAt: now,

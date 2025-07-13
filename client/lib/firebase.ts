@@ -213,6 +213,11 @@ if (typeof window !== "undefined") {
     if (isNetworkError) {
       console.warn("🌐 Caught unhandled network/Firebase error:", error);
 
+      // Block Firebase operations to prevent further errors
+      firebaseBlocked = true;
+      networkEnabled = false;
+      console.warn("🚫 Firebase operations blocked due to network issues");
+
       // Prevent the error from propagating and crashing the app
       event.preventDefault();
 

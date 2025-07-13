@@ -108,7 +108,7 @@ export const disableFirebaseNetwork = async (): Promise<boolean> => {
   }
 };
 
-// Test Firebase connectivity
+// Test Firebase connectivity with enhanced error handling
 export const testFirebaseConnection = async (): Promise<boolean> => {
   if (!db) {
     console.warn("Firestore DB instance not available");
@@ -117,20 +117,59 @@ export const testFirebaseConnection = async (): Promise<boolean> => {
 
   // Prevent concurrent connectivity checks
   if (connectivityCheckInProgress) {
+    console.log(
+      "🔄 Connection test already in progress, returning current state",
+    );
     return networkEnabled;
   }
 
   connectivityCheckInProgress = true;
 
   try {
+    // Quick network check first
+    if (!navigator.onLine) {
+      console.warn("🌐 Browser reports offline, skipping Firebase test");
+      networkEnabled = false;
+      return false;
+    }
+
     // Only enable network if not already enabled
     if (!networkEnabled) {
-      await enableNetwork(db);
+      // Wrap enableNetwork with timeout and error handling
+      await Promise.race([
+        enableNetwork(db).catch((error) => {
+          if (
+            error instanceof TypeError ||
+            error.message?.includes("Failed to fetch")
+          ) {
+            throw new Error("Network error during Firebase enable");
+          }
+          throw error;
+        }),
+        new Promise((_, reject) =>
+          setTimeout(() => reject(new Error("Firebase enable timeout")), 3000),
+        ),
+      ]);
+
       networkEnabled = true;
+      console.log("✅ Firebase network enabled successfully");
     }
     return true;
   } catch (error) {
-    console.error("Firebase connectivity test failed:", error);
+    console.warn("🚫 Firebase connectivity test failed:", error);
+
+    // Handle specific error types
+    if (
+      error instanceof TypeError ||
+      error.message?.includes("Failed to fetch")
+    ) {
+      console.warn("🌐 Network error detected in Firebase test");
+    } else if (error.message?.includes("timeout")) {
+      console.warn("⏱️ Firebase connection timeout");
+    } else {
+      console.warn("❓ Unknown Firebase error:", error);
+    }
+
     networkEnabled = false;
     return false;
   } finally {

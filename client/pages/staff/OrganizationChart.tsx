@@ -34,6 +34,8 @@ import {
   Edit,
   Move,
   Building2,
+  UserCheck,
+  GraduationCap,
 } from "lucide-react";
 
 interface OrgPerson {

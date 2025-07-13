@@ -86,7 +86,15 @@ export default function OrganizationChart() {
 
       try {
         departmentsData = await departmentService.getAllDepartments();
-        console.log("✅ Departments loaded successfully");
+        console.log(
+          "✅ Departments loaded successfully:",
+          departmentsData.length,
+          "departments",
+        );
+        console.log(
+          "📋 Department names:",
+          departmentsData.map((d) => d.name),
+        );
       } catch (error) {
         console.warn(
           "⚠️ Failed to load departments, using empty array:",

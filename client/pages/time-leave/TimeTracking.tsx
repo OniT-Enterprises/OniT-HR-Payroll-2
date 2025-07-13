@@ -68,6 +68,14 @@ import {
   PauseCircle,
   CheckCircle,
   XCircle,
+  Bell,
+  MessageSquare,
+  FileText,
+  Award,
+  Calendar as CalendarIcon,
+  ArrowUpRight,
+  ArrowDownRight,
+  Minus,
 } from "lucide-react";
 
 // Types for our task management system

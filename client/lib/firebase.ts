@@ -95,6 +95,80 @@ try {
 } catch (error) {
   console.error("❌ Failed to initialize Firebase:", error);
   firebaseError = `Firebase initialization failed: ${error}`;
+  firebaseBlocked = true;
+}
+
+// Aggressive fetch override to prevent Firebase operations when blocked
+if (typeof window !== "undefined") {
+  const originalFetch = window.fetch;
+
+  window.fetch = function (
+    input: RequestInfo | URL,
+    init?: RequestInit,
+  ): Promise<Response> {
+    // Check if this looks like a Firebase request
+    const url =
+      typeof input === "string"
+        ? input
+        : input instanceof URL
+          ? input.toString()
+          : input.url;
+
+    const isFirebaseRequest =
+      url &&
+      (url.includes("firestore.googleapis.com") ||
+        url.includes("firebase.googleapis.com") ||
+        url.includes("firebaseapp.com") ||
+        url.includes("google-analytics.com"));
+
+    // If Firebase is blocked and this is a Firebase request, reject immediately
+    if (firebaseBlocked && isFirebaseRequest) {
+      console.warn("🚫 Firebase request blocked:", url);
+      return Promise.reject(
+        new Error("Firebase operations blocked due to network issues"),
+      );
+    }
+
+    // If not online and this is any external request, be more careful
+    if (
+      !navigator.onLine &&
+      url &&
+      (url.startsWith("http://") || url.startsWith("https://"))
+    ) {
+      console.warn("🌐 External request blocked due to offline status:", url);
+      return Promise.reject(new Error("Offline - external requests blocked"));
+    }
+
+    // Proceed with original fetch but add timeout for external requests
+    if (url && (url.startsWith("http://") || url.startsWith("https://"))) {
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 3000);
+
+      const modifiedInit = {
+        ...init,
+        signal: controller.signal,
+      };
+
+      return originalFetch
+        .call(this, input, modifiedInit)
+        .finally(() => clearTimeout(timeoutId))
+        .catch((error) => {
+          if (error.name === "AbortError") {
+            console.warn("🚫 Request timeout:", url);
+            // Block Firebase if this was a Firebase request that timed out
+            if (isFirebaseRequest) {
+              firebaseBlocked = true;
+              console.warn("🚫 Firebase blocked due to timeout");
+            }
+            throw new Error("Request timeout");
+          }
+          throw error;
+        });
+    }
+
+    // For local/data URLs, proceed normally
+    return originalFetch.apply(this, arguments);
+  };
 }
 
 // Export Firebase status checking functions

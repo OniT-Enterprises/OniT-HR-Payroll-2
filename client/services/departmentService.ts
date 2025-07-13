@@ -60,6 +60,12 @@ class DepartmentService {
   }
 
   async getAllDepartments(): Promise<Department[]> {
+    // Check if Firebase is blocked due to previous errors
+    if (isFirebaseBlocked()) {
+      console.warn("🚫 Firebase blocked, using mock departments");
+      return this.getMockDepartments();
+    }
+
     // Check network connectivity first using our utility
     if (!isOnline()) {
       console.warn("🌐 No internet connection, using mock departments");

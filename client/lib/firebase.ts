@@ -15,6 +15,7 @@ let firebaseInitialized = false;
 let firebaseError: string | null = null;
 let networkEnabled = false;
 let connectivityCheckInProgress = false;
+let firebaseBlocked = false; // Flag to completely block Firebase operations
 
 // Your web app's Firebase configuration
 const firebaseConfig = {

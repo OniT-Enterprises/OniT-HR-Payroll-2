@@ -39,7 +39,18 @@ class DepartmentService {
     if (!db || !isFirebaseReady()) {
       throw new Error("Firebase not ready");
     }
-    return collection(db, "departments");
+    try {
+      return collection(db, "departments");
+    } catch (error) {
+      // Catch any collection access errors
+      if (
+        error instanceof TypeError ||
+        error.message?.includes("Failed to fetch")
+      ) {
+        throw new Error("Network error - Firebase collection not accessible");
+      }
+      throw error;
+    }
   }
 
   async getAllDepartments(): Promise<Department[]> {

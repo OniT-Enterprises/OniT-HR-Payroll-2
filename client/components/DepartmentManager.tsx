@@ -167,14 +167,16 @@ export default function DepartmentManager({
       if (editingDept) {
         await departmentService.updateDepartment(editingDept.id, dataToSave);
         toast({
-          title: "Success",
-          description: "Department updated successfully",
+          title: "Department Updated",
+          description:
+            "Changes will be reflected in both the Organization Chart and Departments page",
         });
       } else {
         await departmentService.addDepartment(dataToSave);
         toast({
-          title: "Success",
-          description: "Department added successfully",
+          title: "Department Added",
+          description:
+            "New department will appear in both the Organization Chart and Departments page",
         });
       }
 

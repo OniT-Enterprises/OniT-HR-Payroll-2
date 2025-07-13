@@ -10,6 +10,9 @@ import {
 import { getAuth } from "firebase/auth";
 import { getStorage } from "firebase/storage";
 
+// Import Firebase blocker for aggressive error prevention
+import "./firebaseBlocker";
+
 // Global Firebase status
 let firebaseInitialized = false;
 let firebaseError: string | null = null;

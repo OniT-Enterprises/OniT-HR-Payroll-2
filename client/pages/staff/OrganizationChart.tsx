@@ -349,73 +349,82 @@ export default function OrganizationChart() {
                 <div className="flex flex-col items-center space-y-8">
                   {/* 1. Executive Chain (Vertical) */}
                   {executives.length > 0 && (
-                    <div className="flex flex-col items-center space-y-4">
-                      {executives.map((exec, index) => (
-                        <Draggable
-                          key={exec.id}
-                          draggableId={exec.id}
-                          index={index}
-                          isDragDisabled={!dragMode}
+                    <Droppable droppableId="executives" type="executive">
+                      {(provided) => (
+                        <div
+                          ref={provided.innerRef}
+                          {...provided.droppableProps}
+                          className="flex flex-col items-center space-y-4"
                         >
-                          {(provided, snapshot) => (
-                            <div
-                              ref={provided.innerRef}
-                              {...provided.draggableProps}
-                              className={`relative ${
-                                snapshot.isDragging
-                                  ? "rotate-1 shadow-2xl scale-105"
-                                  : ""
-                              } transition-all duration-200`}
+                          {executives.map((exec, index) => (
+                            <Draggable
+                              key={exec.id}
+                              draggableId={exec.id}
+                              index={index}
+                              isDragDisabled={!dragMode}
                             >
-                              {dragMode && (
+                              {(provided, snapshot) => (
                                 <div
-                                  {...provided.dragHandleProps}
-                                  className="absolute top-2 right-2 z-10"
+                                  ref={provided.innerRef}
+                                  {...provided.draggableProps}
+                                  className={`relative ${
+                                    snapshot.isDragging
+                                      ? "rotate-1 shadow-2xl scale-105"
+                                      : ""
+                                  } transition-all duration-200`}
                                 >
-                                  <Grip className="h-4 w-4 text-gray-400" />
-                                </div>
-                              )}
+                                  {dragMode && (
+                                    <div
+                                      {...provided.dragHandleProps}
+                                      className="absolute top-2 right-2 z-10"
+                                    >
+                                      <Grip className="h-4 w-4 text-gray-400" />
+                                    </div>
+                                  )}
 
-                              {/* Executive Card */}
-                              <div className="w-56 h-32 border-2 border-blue-300 rounded-lg bg-gradient-to-b from-blue-50 to-white shadow-md">
-                                <div className="p-4 text-center h-full flex flex-col justify-center">
-                                  <div className="flex justify-center mb-2">
-                                    <Avatar className="h-12 w-12 border-2 border-blue-400">
-                                      <AvatarImage
-                                        src="/placeholder.svg"
-                                        alt={exec.name}
-                                      />
-                                      <AvatarFallback className="bg-blue-100 text-blue-800 font-bold text-sm">
-                                        {exec.name
-                                          .split(" ")
-                                          .map((n) => n[0])
-                                          .join("")}
-                                      </AvatarFallback>
-                                    </Avatar>
+                                  {/* Executive Card */}
+                                  <div className="w-56 h-32 border-2 border-blue-300 rounded-lg bg-gradient-to-b from-blue-50 to-white shadow-md">
+                                    <div className="p-4 text-center h-full flex flex-col justify-center">
+                                      <div className="flex justify-center mb-2">
+                                        <Avatar className="h-12 w-12 border-2 border-blue-400">
+                                          <AvatarImage
+                                            src="/placeholder.svg"
+                                            alt={exec.name}
+                                          />
+                                          <AvatarFallback className="bg-blue-100 text-blue-800 font-bold text-sm">
+                                            {exec.name
+                                              .split(" ")
+                                              .map((n) => n[0])
+                                              .join("")}
+                                          </AvatarFallback>
+                                        </Avatar>
+                                      </div>
+                                      <h3 className="font-bold text-sm text-gray-900 mb-1">
+                                        {exec.name}
+                                      </h3>
+                                      <p className="text-xs text-blue-700 font-medium">
+                                        {exec.title}
+                                      </p>
+                                    </div>
                                   </div>
-                                  <h3 className="font-bold text-sm text-gray-900 mb-1">
-                                    {exec.name}
-                                  </h3>
-                                  <p className="text-xs text-blue-700 font-medium">
-                                    {exec.title}
-                                  </p>
+
+                                  {/* Connecting line to next */}
+                                  {index < executives.length - 1 && (
+                                    <div className="w-0.5 h-6 bg-gray-400 mx-auto"></div>
+                                  )}
                                 </div>
-                              </div>
-
-                              {/* Connecting line to next */}
-                              {index < executives.length - 1 && (
-                                <div className="w-0.5 h-6 bg-gray-400 mx-auto"></div>
                               )}
-                            </div>
-                          )}
-                        </Draggable>
-                      ))}
+                            </Draggable>
+                          ))}
+                          {provided.placeholder}
 
-                      {/* Line to departments */}
-                      {departmentGroups.length > 0 && (
-                        <div className="w-0.5 h-8 bg-gray-400"></div>
+                          {/* Line to departments */}
+                          {departmentGroups.length > 0 && (
+                            <div className="w-0.5 h-8 bg-gray-400"></div>
+                          )}
+                        </div>
                       )}
-                    </div>
+                    </Droppable>
                   )}
 
                   {/* 2. Department Heads Row (Horizontal) */}

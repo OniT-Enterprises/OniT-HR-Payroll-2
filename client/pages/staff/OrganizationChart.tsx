@@ -420,48 +420,120 @@ export default function OrganizationChart() {
       <MainNavigation />
 
       <div className="p-8">
-        {/* Header */}
-        <div className="text-center mb-8">
-          <h1 className="text-4xl font-bold text-gray-900 mb-2">
-            Company Organizational Chart
-          </h1>
-        </div>
+        {/* Header with Title, Controls and Stats */}
+        <div className="flex justify-between items-start mb-8">
+          {/* Left side - Title and Controls */}
+          <div className="flex flex-col gap-4">
+            <h1 className="text-4xl font-bold text-gray-900">
+              Company Organizational Chart
+            </h1>
 
-        {/* Controls */}
-        <div className="flex justify-center items-center gap-4 mb-12">
-          <Button
-            variant={dragMode ? "default" : "outline"}
-            onClick={() => setDragMode(!dragMode)}
-          >
-            <Move className="mr-2 h-4 w-4" />
-            {dragMode ? "Exit Reorganize" : "Reorganize"}
-          </Button>
-          <Button
-            variant="outline"
-            onClick={() => {
-              setManagerMode("add");
-              setShowDepartmentManager(true);
-            }}
-          >
-            <Plus className="mr-2 h-4 w-4" />
-            Add Department
-          </Button>
-          <Button
-            onClick={() => {
-              setManagerMode("edit");
-              setShowDepartmentManager(true);
-            }}
-          >
-            <Edit className="mr-2 h-4 w-4" />
-            Manage
-          </Button>
-          <Button
-            variant="secondary"
-            onClick={() => (window.location.href = "/staff/departments")}
-          >
-            <Building className="mr-2 h-4 w-4" />
-            Departments Page
-          </Button>
+            {/* Controls - Horizontal inline */}
+            <div className="flex items-center gap-4">
+              <Button
+                variant={dragMode ? "default" : "outline"}
+                onClick={() => setDragMode(!dragMode)}
+              >
+                <Move className="mr-2 h-4 w-4" />
+                {dragMode ? "Exit Reorganize" : "Reorganize"}
+              </Button>
+              <Button
+                variant="outline"
+                onClick={() => {
+                  setManagerMode("add");
+                  setShowDepartmentManager(true);
+                }}
+              >
+                <Plus className="mr-2 h-4 w-4" />
+                Add Department
+              </Button>
+              <Button
+                onClick={() => {
+                  setManagerMode("edit");
+                  setShowDepartmentManager(true);
+                }}
+              >
+                <Edit className="mr-2 h-4 w-4" />
+                Manage
+              </Button>
+              <Button
+                variant="secondary"
+                onClick={() => (window.location.href = "/staff/departments")}
+              >
+                <Building className="mr-2 h-4 w-4" />
+                Departments Page
+              </Button>
+            </div>
+          </div>
+
+          {/* Right side - Statistics Dashboard */}
+          {employees.length > 0 && (
+            <div className="grid grid-cols-2 gap-4">
+              <Card className="w-48">
+                <CardContent className="p-4">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <p className="text-sm font-medium text-gray-600">
+                        Total Employees
+                      </p>
+                      <p className="text-2xl font-bold text-blue-700">
+                        {employees.length}
+                      </p>
+                    </div>
+                    <Users className="h-8 w-8 text-blue-500" />
+                  </div>
+                </CardContent>
+              </Card>
+              <Card className="w-48">
+                <CardContent className="p-4">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <p className="text-sm font-medium text-gray-600">
+                        Executives
+                      </p>
+                      <p className="text-2xl font-bold text-purple-700">
+                        {executives.length}
+                      </p>
+                    </div>
+                    <Crown className="h-8 w-8 text-purple-500" />
+                  </div>
+                </CardContent>
+              </Card>
+              <Card className="w-48">
+                <CardContent className="p-4">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <p className="text-sm font-medium text-gray-600">
+                        Departments
+                      </p>
+                      <p className="text-2xl font-bold text-green-700">
+                        {departmentGroups.length}
+                      </p>
+                    </div>
+                    <Building className="h-8 w-8 text-green-500" />
+                  </div>
+                </CardContent>
+              </Card>
+              <Card className="w-48">
+                <CardContent className="p-4">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <p className="text-sm font-medium text-gray-600">
+                        Team Members
+                      </p>
+                      <p className="text-2xl font-bold text-orange-700">
+                        {departmentGroups.reduce(
+                          (sum, group) => sum + group.members.length,
+                          0,
+                        )}
+                      </p>
+                    </div>
+                    <Building2 className="h-8 w-8 text-orange-500" />
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
+          )}
         </div>
 
         {employees.length === 0 ? (
@@ -477,7 +549,7 @@ export default function OrganizationChart() {
             </Button>
           </div>
         ) : (
-          <div className="space-y-12">
+          <div className="space-y-8">
             {/* Apple-Style Organization Chart */}
             <div className="bg-white rounded-lg shadow-sm border p-12 mx-auto overflow-x-auto min-w-max">
               <DragDropContext onDragEnd={handleDragEnd}>
@@ -700,73 +772,6 @@ export default function OrganizationChart() {
                   )}
                 </div>
               </DragDropContext>
-            </div>
-
-            {/* Statistics */}
-            <div className="grid grid-cols-1 md:grid-cols-4 gap-4 max-w-4xl mx-auto">
-              <Card>
-                <CardContent className="p-6">
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <p className="text-sm font-medium text-gray-600">
-                        Total Employees
-                      </p>
-                      <p className="text-2xl font-bold text-blue-700">
-                        {employees.length}
-                      </p>
-                    </div>
-                    <Users className="h-8 w-8 text-blue-500" />
-                  </div>
-                </CardContent>
-              </Card>
-              <Card>
-                <CardContent className="p-6">
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <p className="text-sm font-medium text-gray-600">
-                        Executives
-                      </p>
-                      <p className="text-2xl font-bold text-purple-700">
-                        {executives.length}
-                      </p>
-                    </div>
-                    <Crown className="h-8 w-8 text-purple-500" />
-                  </div>
-                </CardContent>
-              </Card>
-              <Card>
-                <CardContent className="p-6">
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <p className="text-sm font-medium text-gray-600">
-                        Departments
-                      </p>
-                      <p className="text-2xl font-bold text-green-700">
-                        {departmentGroups.length}
-                      </p>
-                    </div>
-                    <Building className="h-8 w-8 text-green-500" />
-                  </div>
-                </CardContent>
-              </Card>
-              <Card>
-                <CardContent className="p-6">
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <p className="text-sm font-medium text-gray-600">
-                        Team Members
-                      </p>
-                      <p className="text-2xl font-bold text-orange-700">
-                        {departmentGroups.reduce(
-                          (sum, group) => sum + group.members.length,
-                          0,
-                        )}
-                      </p>
-                    </div>
-                    <Building2 className="h-8 w-8 text-orange-500" />
-                  </div>
-                </CardContent>
-              </Card>
             </div>
           </div>
         )}

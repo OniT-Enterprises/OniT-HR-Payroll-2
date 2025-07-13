@@ -207,7 +207,7 @@ export default function OrganizationChart() {
   const buildAppleOrgChart = useCallback(
     (employeesData: Employee[], departmentsData: Department[]) => {
       console.log(
-        "🏗��� Building org chart with:",
+        "🏗����� Building org chart with:",
         employeesData.length,
         "employees and",
         departmentsData.length,
@@ -468,93 +468,103 @@ export default function OrganizationChart() {
           {/* Statistics Dashboard - Horizontal Blue Container */}
           {employees.length > 0 && (
             <div className="bg-blue-500 rounded-lg p-6">
-              <div className="grid grid-cols-4 gap-6">
-                <Card className="bg-white">
-                  <CardContent className="p-4">
-                    <div className="flex items-center justify-between">
-                      <div>
-                        <p className="text-sm font-medium text-gray-600">
-                          Executives
-                        </p>
-                        <p className="text-2xl font-bold text-purple-700">
-                          {executives.length}
-                        </p>
-                      </div>
-                      <Crown className="h-8 w-8 text-purple-500" />
-                    </div>
-                  </CardContent>
-                </Card>
-                <Card className="bg-white">
-                  <CardContent className="p-4">
-                    <div className="flex items-center justify-between">
-                      <div>
-                        <p className="text-sm font-medium text-gray-600">
-                          Managers
-                        </p>
-                        <p className="text-2xl font-bold text-green-700">
-                          {
-                            employees.filter(
-                              (emp) =>
-                                emp.jobDetails.position
-                                  .toLowerCase()
-                                  .includes("manager") ||
-                                emp.jobDetails.position
-                                  .toLowerCase()
-                                  .includes("director") ||
-                                emp.jobDetails.position
-                                  .toLowerCase()
-                                  .includes("head"),
-                            ).length
-                          }
-                        </p>
-                      </div>
-                      <UserCheck className="h-8 w-8 text-green-500" />
-                    </div>
-                  </CardContent>
-                </Card>
-                <Card className="bg-white">
-                  <CardContent className="p-4">
-                    <div className="flex items-center justify-between">
-                      <div>
-                        <p className="text-sm font-medium text-gray-600">
-                          Senior Staff
-                        </p>
-                        <p className="text-2xl font-bold text-blue-700">
-                          {
-                            employees.filter(
-                              (emp) =>
-                                emp.jobDetails.position
-                                  .toLowerCase()
-                                  .includes("senior") ||
-                                emp.jobDetails.position
-                                  .toLowerCase()
-                                  .includes("lead") ||
-                                emp.jobDetails.position
-                                  .toLowerCase()
-                                  .includes("principal"),
-                            ).length
-                          }
-                        </p>
-                      </div>
-                      <GraduationCap className="h-8 w-8 text-blue-500" />
-                    </div>
-                  </CardContent>
-                </Card>
-                <Card className="bg-white">
-                  <CardContent className="p-4">
-                    <div className="flex items-center justify-between">
-                      <div>
-                        <p className="text-sm font-medium text-gray-600">
-                          Total Employees
-                        </p>
-                        <p className="text-2xl font-bold text-orange-700">
-                          {employees.length}
-                        </p>
-                      </div>
-                      <Users className="h-8 w-8 text-orange-500" />
-                    </div>
-                  </CardContent>
-                </Card>
+              <div className="flex flex-col gap-6">
+                <div className="flex gap-5 max-md:flex-col max-md:items-stretch max-md:gap-0">
+                  <div className="flex flex-col leading-normal w-[20%] ml-0 max-md:w-full max-md:ml-0">
+                    <Card className="bg-white">
+                      <CardContent className="p-4">
+                        <div className="flex items-center justify-between">
+                          <div>
+                            <p className="text-sm font-medium text-gray-600">
+                              Executives
+                            </p>
+                            <p className="text-2xl font-bold text-purple-700">
+                              {executives.length}
+                            </p>
+                          </div>
+                          <Crown className="h-8 w-8 text-purple-500" />
+                        </div>
+                      </CardContent>
+                    </Card>
+                  </div>
+                  <div className="flex flex-col leading-normal w-[20%] ml-5 max-md:w-full max-md:ml-0">
+                    <Card className="bg-white">
+                      <CardContent className="p-4">
+                        <div className="flex items-center justify-between">
+                          <div>
+                            <p className="text-sm font-medium text-gray-600">
+                              Managers
+                            </p>
+                            <p className="text-2xl font-bold text-green-700">
+                              {
+                                employees.filter(
+                                  (emp) =>
+                                    emp.jobDetails.position
+                                      .toLowerCase()
+                                      .includes("manager") ||
+                                    emp.jobDetails.position
+                                      .toLowerCase()
+                                      .includes("director") ||
+                                    emp.jobDetails.position
+                                      .toLowerCase()
+                                      .includes("head"),
+                                ).length
+                              }
+                            </p>
+                          </div>
+                          <UserCheck className="h-8 w-8 text-green-500" />
+                        </div>
+                      </CardContent>
+                    </Card>
+                  </div>
+                  <div className="flex flex-col leading-normal w-[20%] ml-5 max-md:w-full max-md:ml-0">
+                    <Card className="bg-white">
+                      <CardContent className="p-4">
+                        <div className="flex items-center justify-between">
+                          <div>
+                            <p className="text-sm font-medium text-gray-600">
+                              Senior Staff
+                            </p>
+                            <p className="text-2xl font-bold text-blue-700">
+                              {
+                                employees.filter(
+                                  (emp) =>
+                                    emp.jobDetails.position
+                                      .toLowerCase()
+                                      .includes("senior") ||
+                                    emp.jobDetails.position
+                                      .toLowerCase()
+                                      .includes("lead") ||
+                                    emp.jobDetails.position
+                                      .toLowerCase()
+                                      .includes("principal"),
+                                ).length
+                              }
+                            </p>
+                          </div>
+                          <GraduationCap className="h-8 w-8 text-blue-500" />
+                        </div>
+                      </CardContent>
+                    </Card>
+                  </div>
+                  <div className="flex flex-col leading-normal w-[20%] ml-5 max-md:w-full max-md:ml-0">
+                    <Card className="bg-white">
+                      <CardContent className="p-4">
+                        <div className="flex items-center justify-between">
+                          <div>
+                            <p className="text-sm font-medium text-gray-600">
+                              Total Employees
+                            </p>
+                            <p className="text-2xl font-bold text-orange-700">
+                              {employees.length}
+                            </p>
+                          </div>
+                          <Users className="h-8 w-8 text-orange-500" />
+                        </div>
+                      </CardContent>
+                    </Card>
+                  </div>
+                </div>
               </div>
             </div>
           )}

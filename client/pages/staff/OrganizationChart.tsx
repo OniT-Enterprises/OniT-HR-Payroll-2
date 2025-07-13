@@ -405,6 +405,13 @@ export default function OrganizationChart() {
             <Edit className="mr-2 h-4 w-4" />
             Manage
           </Button>
+          <Button
+            variant="secondary"
+            onClick={() => (window.location.href = "/staff/departments")}
+          >
+            <Building className="mr-2 h-4 w-4" />
+            Departments Page
+          </Button>
         </div>
 
         {employees.length === 0 ? (

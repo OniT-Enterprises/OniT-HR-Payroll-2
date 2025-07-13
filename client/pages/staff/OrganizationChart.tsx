@@ -36,29 +36,28 @@ import {
   Building2,
 } from "lucide-react";
 
-interface OrgNode {
+interface OrgPerson {
   id: string;
   name: string;
   title: string;
   department: string;
   employee?: Employee;
-  avatar?: string;
 }
 
-interface DepartmentSection {
+interface DepartmentGroup {
   id: string;
   name: string;
-  head: OrgNode;
-  members: OrgNode[];
+  head: OrgPerson;
+  members: OrgPerson[];
 }
 
 export default function OrganizationChart() {
   const [employees, setEmployees] = useState<Employee[]>([]);
   const [departments, setDepartments] = useState<Department[]>([]);
-  const [executives, setExecutives] = useState<OrgNode[]>([]);
-  const [departmentSections, setDepartmentSections] = useState<
-    DepartmentSection[]
-  >([]);
+  const [executives, setExecutives] = useState<OrgPerson[]>([]);
+  const [departmentGroups, setDepartmentGroups] = useState<DepartmentGroup[]>(
+    [],
+  );
   const [loading, setLoading] = useState(true);
   const [showDepartmentManager, setShowDepartmentManager] = useState(false);
   const [managerMode, setManagerMode] = useState<"add" | "edit">("edit");
@@ -80,7 +79,7 @@ export default function OrganizationChart() {
       setDepartments(departmentsData);
 
       await migrateMissingDepartments(employeesData, departmentsData);
-      buildAppleStyleChart(employeesData, departmentsData);
+      buildAppleOrgChart(employeesData, departmentsData);
     } catch (error) {
       console.error("Error loading data:", error);
       toast({
@@ -119,16 +118,15 @@ export default function OrganizationChart() {
 
         const updatedDepartments = await departmentService.getAllDepartments();
         setDepartments(updatedDepartments);
-        buildAppleStyleChart(employees, updatedDepartments);
+        buildAppleOrgChart(employees, updatedDepartments);
       }
     } catch (error) {
       console.error("Error migrating departments:", error);
     }
   };
 
-  const buildAppleStyleChart = useCallback(
+  const buildAppleOrgChart = useCallback(
     (employeesData: Employee[], departmentsData: Department[]) => {
-      // Group employees by department
       const employeesByDept = employeesData.reduce(
         (acc, emp) => {
           const deptName = emp.jobDetails.department;
@@ -139,15 +137,16 @@ export default function OrganizationChart() {
         {} as Record<string, Employee[]>,
       );
 
-      // 1. Build Executive Chain (vertical)
-      const execChain: OrgNode[] = [];
+      // 1. Build Executive Chain (3 levels max, vertical)
+      const execChain: OrgPerson[] = [];
+      const usedIds = new Set<string>();
 
-      // Find CEO
+      // CEO/President
       const ceo = employeesData.find(
         (emp) =>
           emp.jobDetails.position.toLowerCase().includes("ceo") ||
-          emp.jobDetails.position.toLowerCase().includes("chief executive") ||
-          emp.jobDetails.position.toLowerCase().includes("president"),
+          emp.jobDetails.position.toLowerCase().includes("president") ||
+          emp.jobDetails.position.toLowerCase().includes("chief executive"),
       );
 
       if (ceo) {
@@ -158,14 +157,16 @@ export default function OrganizationChart() {
           department: "Executive",
           employee: ceo,
         });
+        usedIds.add(ceo.id);
       }
 
-      // Find CFO
+      // CFO or top financial officer
       const cfo = employeesData.find(
         (emp) =>
-          emp.id !== ceo?.id &&
+          !usedIds.has(emp.id) &&
           (emp.jobDetails.position.toLowerCase().includes("cfo") ||
-            emp.jobDetails.position.toLowerCase().includes("chief financial")),
+            emp.jobDetails.position.toLowerCase().includes("chief financial") ||
+            emp.jobDetails.position.toLowerCase().includes("chief finance")),
       );
 
       if (cfo) {
@@ -173,60 +174,61 @@ export default function OrganizationChart() {
           id: `exec-${cfo.id}`,
           name: `${cfo.personalInfo.firstName} ${cfo.personalInfo.lastName}`,
           title: cfo.jobDetails.position,
-          department: "Finance",
+          department: "Executive",
           employee: cfo,
         });
+        usedIds.add(cfo.id);
       }
 
-      // Find COO or other C-level
-      const coo = employeesData.find(
+      // COO/CTO or other C-level
+      const otherExec = employeesData.find(
         (emp) =>
-          emp.id !== ceo?.id &&
-          emp.id !== cfo?.id &&
+          !usedIds.has(emp.id) &&
           (emp.jobDetails.position.toLowerCase().includes("coo") ||
-            emp.jobDetails.position.toLowerCase().includes("chief operating") ||
             emp.jobDetails.position.toLowerCase().includes("cto") ||
-            emp.jobDetails.position.toLowerCase().includes("chief technology")),
+            emp.jobDetails.position.toLowerCase().includes("chief operating") ||
+            emp.jobDetails.position
+              .toLowerCase()
+              .includes("chief technology") ||
+            emp.jobDetails.position.toLowerCase().includes("chief")),
       );
 
-      if (coo) {
+      if (otherExec) {
         execChain.push({
-          id: `exec-${coo.id}`,
-          name: `${coo.personalInfo.firstName} ${coo.personalInfo.lastName}`,
-          title: coo.jobDetails.position,
-          department: coo.jobDetails.department,
-          employee: coo,
+          id: `exec-${otherExec.id}`,
+          name: `${otherExec.personalInfo.firstName} ${otherExec.personalInfo.lastName}`,
+          title: otherExec.jobDetails.position,
+          department: "Executive",
+          employee: otherExec,
         });
+        usedIds.add(otherExec.id);
       }
 
       setExecutives(execChain);
 
-      // 2. Build Department Sections (horizontal row + members grid)
-      const deptSections: DepartmentSection[] = [];
-      const usedEmployeeIds = new Set(
-        execChain.map((exec) => exec.employee?.id).filter(Boolean),
-      );
+      // 2. Build Department Groups (5 max, horizontal)
+      const deptGroups: DepartmentGroup[] = [];
 
       departmentsData.slice(0, 5).forEach((dept) => {
         const deptEmployees = employeesByDept[dept.name] || [];
 
-        // Find department head (excluding executives)
+        // Find department head
         const head = deptEmployees.find(
           (emp) =>
-            !usedEmployeeIds.has(emp.id) &&
+            !usedIds.has(emp.id) &&
             (emp.jobDetails.position.toLowerCase().includes("director") ||
               emp.jobDetails.position.toLowerCase().includes("vp") ||
               emp.jobDetails.position
                 .toLowerCase()
                 .includes("vice president") ||
-              emp.jobDetails.position.toLowerCase().includes("head of") ||
+              emp.jobDetails.position.toLowerCase().includes("head") ||
               emp.jobDetails.position.toLowerCase().includes("manager")),
         );
 
         if (head) {
-          usedEmployeeIds.add(head.id);
+          usedIds.add(head.id);
 
-          const headNode: OrgNode = {
+          const headPerson: OrgPerson = {
             id: `head-${head.id}`,
             name: `${head.personalInfo.firstName} ${head.personalInfo.lastName}`,
             title: head.jobDetails.position,
@@ -234,28 +236,31 @@ export default function OrganizationChart() {
             employee: head,
           };
 
-          // Find team members (excluding head and executives)
+          // Find team members (limit to 6 for clean layout)
           const members = deptEmployees
-            .filter((emp) => !usedEmployeeIds.has(emp.id))
-            .slice(0, 6) // Limit to 6 like Apple chart
-            .map((emp) => ({
-              id: `member-${emp.id}`,
-              name: `${emp.personalInfo.firstName} ${emp.personalInfo.lastName}`,
-              title: emp.jobDetails.position,
-              department: dept.name,
-              employee: emp,
-            }));
+            .filter((emp) => !usedIds.has(emp.id))
+            .slice(0, 6)
+            .map((emp) => {
+              usedIds.add(emp.id);
+              return {
+                id: `member-${emp.id}`,
+                name: `${emp.personalInfo.firstName} ${emp.personalInfo.lastName}`,
+                title: emp.jobDetails.position,
+                department: dept.name,
+                employee: emp,
+              };
+            });
 
-          deptSections.push({
+          deptGroups.push({
             id: dept.id,
             name: dept.name,
-            head: headNode,
+            head: headPerson,
             members,
           });
         }
       });
 
-      setDepartmentSections(deptSections);
+      setDepartmentGroups(deptGroups);
     },
     [],
   );
@@ -263,65 +268,9 @@ export default function OrganizationChart() {
   const handleDragEnd = (result: DropResult) => {
     if (!result.destination) return;
     toast({
-      title: "Position Updated",
-      description: "Organization structure updated successfully",
+      title: "Organization Updated",
+      description: "Position moved successfully",
     });
-  };
-
-  const renderPersonCard = (
-    person: OrgNode,
-    size: "large" | "medium" | "small" = "medium",
-  ) => {
-    const sizeClasses = {
-      large: "w-56 h-32",
-      medium: "w-48 h-28",
-      small: "w-40 h-24",
-    };
-
-    const avatarSizes = {
-      large: "h-12 w-12",
-      medium: "h-10 w-10",
-      small: "h-8 w-8",
-    };
-
-    const textSizes = {
-      large: { name: "text-sm", title: "text-xs" },
-      medium: { name: "text-sm", title: "text-xs" },
-      small: { name: "text-xs", title: "text-xs" },
-    };
-
-    return (
-      <Card
-        className={`${sizeClasses[size]} border-2 border-blue-200 bg-gradient-to-b from-blue-50 to-white shadow-md hover:shadow-lg transition-all`}
-      >
-        <CardContent className="p-3 text-center h-full flex flex-col justify-center">
-          {/* Avatar */}
-          <div className="flex justify-center mb-2">
-            <Avatar className={`${avatarSizes[size]} border border-blue-300`}>
-              <AvatarImage src="/placeholder.svg" alt={person.name} />
-              <AvatarFallback className="bg-blue-100 text-blue-700 font-semibold text-xs">
-                {person.name
-                  .split(" ")
-                  .map((n) => n[0])
-                  .join("")}
-              </AvatarFallback>
-            </Avatar>
-          </div>
-
-          {/* Name */}
-          <h3
-            className={`font-semibold ${textSizes[size].name} text-gray-800 mb-1 leading-tight`}
-          >
-            {person.name}
-          </h3>
-
-          {/* Title */}
-          <p className={`${textSizes[size].title} text-blue-700 leading-tight`}>
-            {person.title}
-          </p>
-        </CardContent>
-      </Card>
-    );
   };
 
   if (loading) {
@@ -339,22 +288,19 @@ export default function OrganizationChart() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-slate-50 to-white">
+    <div className="min-h-screen bg-gray-50">
       <MainNavigation />
 
-      <div className="p-6">
+      <div className="p-8">
         {/* Header */}
         <div className="text-center mb-8">
-          <h1 className="text-4xl font-bold text-gray-800 mb-2">
+          <h1 className="text-4xl font-bold text-gray-900 mb-2">
             Company Organizational Chart
           </h1>
-          <p className="text-lg text-gray-600">
-            Executive Leadership & Department Structure
-          </p>
         </div>
 
         {/* Controls */}
-        <div className="flex justify-center items-center gap-4 mb-8">
+        <div className="flex justify-center items-center gap-4 mb-12">
           <Button
             variant={dragMode ? "default" : "outline"}
             onClick={() => setDragMode(!dragMode)}
@@ -396,76 +342,12 @@ export default function OrganizationChart() {
             </Button>
           </div>
         ) : (
-          <div className="space-y-8">
-            {/* Stats */}
-            <div className="grid grid-cols-1 md:grid-cols-4 gap-4 max-w-4xl mx-auto">
-              <Card className="border-blue-200">
-                <CardContent className="p-6">
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <p className="text-sm font-medium text-gray-600">
-                        Total Employees
-                      </p>
-                      <p className="text-2xl font-bold text-blue-700">
-                        {employees.length}
-                      </p>
-                    </div>
-                    <Users className="h-8 w-8 text-blue-500" />
-                  </div>
-                </CardContent>
-              </Card>
-              <Card className="border-green-200">
-                <CardContent className="p-6">
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <p className="text-sm font-medium text-gray-600">
-                        Departments
-                      </p>
-                      <p className="text-2xl font-bold text-green-700">
-                        {departments.length}
-                      </p>
-                    </div>
-                    <Building className="h-8 w-8 text-green-500" />
-                  </div>
-                </CardContent>
-              </Card>
-              <Card className="border-purple-200">
-                <CardContent className="p-6">
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <p className="text-sm font-medium text-gray-600">
-                        Executives
-                      </p>
-                      <p className="text-2xl font-bold text-purple-700">
-                        {executives.length}
-                      </p>
-                    </div>
-                    <Crown className="h-8 w-8 text-purple-500" />
-                  </div>
-                </CardContent>
-              </Card>
-              <Card className="border-orange-200">
-                <CardContent className="p-6">
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <p className="text-sm font-medium text-gray-600">
-                        Department Heads
-                      </p>
-                      <p className="text-2xl font-bold text-orange-700">
-                        {departmentSections.length}
-                      </p>
-                    </div>
-                    <Building2 className="h-8 w-8 text-orange-500" />
-                  </div>
-                </CardContent>
-              </Card>
-            </div>
-
-            {/* Organization Chart */}
-            <div className="bg-white rounded-lg shadow-lg p-8 mx-auto overflow-x-auto">
+          <div className="space-y-12">
+            {/* Apple-Style Organization Chart */}
+            <div className="bg-white rounded-lg shadow-sm border p-12 mx-auto overflow-x-auto min-w-max">
               <DragDropContext onDragEnd={handleDragEnd}>
                 <div className="flex flex-col items-center space-y-8">
-                  {/* Executive Chain (Vertical) */}
+                  {/* 1. Executive Chain (Vertical) */}
                   {executives.length > 0 && (
                     <div className="flex flex-col items-center space-y-4">
                       {executives.map((exec, index) => (
@@ -494,16 +376,16 @@ export default function OrganizationChart() {
                                 </div>
                               )}
 
-                              {/* Executive Card - Larger */}
-                              <Card className="w-64 h-36 border-2 border-blue-300 bg-gradient-to-b from-blue-100 to-blue-50 shadow-lg">
-                                <CardContent className="p-4 text-center h-full flex flex-col justify-center">
-                                  <div className="flex justify-center mb-3">
-                                    <Avatar className="h-14 w-14 border-2 border-blue-400">
+                              {/* Executive Card */}
+                              <div className="w-56 h-32 border-2 border-blue-300 rounded-lg bg-gradient-to-b from-blue-50 to-white shadow-md">
+                                <div className="p-4 text-center h-full flex flex-col justify-center">
+                                  <div className="flex justify-center mb-2">
+                                    <Avatar className="h-12 w-12 border-2 border-blue-400">
                                       <AvatarImage
                                         src="/placeholder.svg"
                                         alt={exec.name}
                                       />
-                                      <AvatarFallback className="bg-blue-200 text-blue-800 font-bold">
+                                      <AvatarFallback className="bg-blue-100 text-blue-800 font-bold text-sm">
                                         {exec.name
                                           .split(" ")
                                           .map((n) => n[0])
@@ -511,59 +393,58 @@ export default function OrganizationChart() {
                                       </AvatarFallback>
                                     </Avatar>
                                   </div>
-                                  <h3 className="font-bold text-lg text-gray-800 mb-1">
+                                  <h3 className="font-bold text-sm text-gray-900 mb-1">
                                     {exec.name}
                                   </h3>
-                                  <p className="text-sm font-medium text-blue-800">
+                                  <p className="text-xs text-blue-700 font-medium">
                                     {exec.title}
                                   </p>
-                                  {exec.department !== "Executive" && (
-                                    <p className="text-xs text-gray-600 mt-1">
-                                      {exec.department}
-                                    </p>
-                                  )}
-                                </CardContent>
-                              </Card>
+                                </div>
+                              </div>
 
-                              {/* Connecting line to next executive */}
+                              {/* Connecting line to next */}
                               {index < executives.length - 1 && (
-                                <div className="w-0.5 h-6 bg-blue-400 mx-auto"></div>
+                                <div className="w-0.5 h-6 bg-gray-400 mx-auto"></div>
                               )}
                             </div>
                           )}
                         </Draggable>
                       ))}
 
-                      {/* Line to department heads */}
-                      <div className="w-0.5 h-8 bg-blue-400"></div>
+                      {/* Line to departments */}
+                      {departmentGroups.length > 0 && (
+                        <div className="w-0.5 h-8 bg-gray-400"></div>
+                      )}
                     </div>
                   )}
 
-                  {/* Department Heads Row (Horizontal) */}
-                  {departmentSections.length > 0 && (
-                    <>
+                  {/* 2. Department Heads Row (Horizontal) */}
+                  {departmentGroups.length > 0 && (
+                    <div className="flex flex-col items-center space-y-6">
                       {/* Horizontal connector line */}
                       <div
-                        className="h-0.5 bg-blue-400"
+                        className="h-0.5 bg-gray-400"
                         style={{
-                          width: `${(departmentSections.length - 1) * 200}px`,
+                          width: `${Math.max(0, (departmentGroups.length - 1) * 240)}px`,
                         }}
                       ></div>
 
+                      {/* Department Heads */}
                       <Droppable
                         droppableId="department-heads"
-                        type="department-head"
+                        type="department"
+                        direction="horizontal"
                       >
                         {(provided) => (
                           <div
                             ref={provided.innerRef}
                             {...provided.droppableProps}
-                            className="flex gap-8"
+                            className="flex space-x-12"
                           >
-                            {departmentSections.map((section, index) => (
+                            {departmentGroups.map((group, index) => (
                               <Draggable
-                                key={section.head.id}
-                                draggableId={section.head.id}
+                                key={group.head.id}
+                                draggableId={group.head.id}
                                 index={index}
                                 isDragDisabled={!dragMode}
                               >
@@ -573,10 +454,10 @@ export default function OrganizationChart() {
                                     {...provided.draggableProps}
                                     className="flex flex-col items-center space-y-4"
                                   >
-                                    {/* Vertical line from horizontal connector */}
-                                    <div className="w-0.5 h-6 bg-blue-400"></div>
+                                    {/* Line up to horizontal connector */}
+                                    <div className="w-0.5 h-6 bg-gray-400"></div>
 
-                                    {/* Department Head */}
+                                    {/* Department Head Card (Gray) */}
                                     <div
                                       className={`relative ${
                                         snapshot.isDragging
@@ -589,60 +470,79 @@ export default function OrganizationChart() {
                                           {...provided.dragHandleProps}
                                           className="absolute top-1 right-1 z-10"
                                         >
-                                          <Grip className="h-3 w-3 text-gray-400" />
+                                          <Grip className="h-3 w-3 text-gray-500" />
                                         </div>
                                       )}
 
-                                      {/* Department Head Card */}
-                                      <Card className="w-44 h-32 border-2 border-gray-300 bg-gradient-to-b from-gray-50 to-white shadow-md">
-                                        <CardContent className="p-3 text-center h-full flex flex-col justify-center">
-                                          <div className="mb-1">
-                                            <Badge
-                                              variant="outline"
-                                              className="text-xs mb-2"
-                                            >
-                                              {section.name}
-                                            </Badge>
-                                          </div>
+                                      <div className="w-48 h-28 border-2 border-gray-400 rounded-lg bg-gradient-to-b from-gray-100 to-gray-50 shadow-md">
+                                        <div className="p-3 text-center h-full flex flex-col justify-center">
                                           <div className="flex justify-center mb-2">
-                                            <Avatar className="h-10 w-10 border border-gray-400">
+                                            <Avatar className="h-10 w-10 border border-gray-500">
                                               <AvatarImage
                                                 src="/placeholder.svg"
-                                                alt={section.head.name}
+                                                alt={group.head.name}
                                               />
-                                              <AvatarFallback className="bg-gray-100 text-gray-700 font-semibold text-xs">
-                                                {section.head.name
+                                              <AvatarFallback className="bg-gray-200 text-gray-800 font-semibold text-xs">
+                                                {group.head.name
                                                   .split(" ")
                                                   .map((n) => n[0])
                                                   .join("")}
                                               </AvatarFallback>
                                             </Avatar>
                                           </div>
-                                          <h3 className="font-semibold text-sm text-gray-800 mb-1 leading-tight">
-                                            {section.head.name}
+                                          <h3 className="font-bold text-xs text-gray-900 mb-1">
+                                            {group.head.name}
                                           </h3>
-                                          <p className="text-xs text-gray-600 leading-tight">
-                                            {section.head.title}
+                                          <p className="text-xs text-gray-600">
+                                            {group.head.title}
                                           </p>
-                                        </CardContent>
-                                      </Card>
+                                          <div className="mt-1">
+                                            <span className="text-xs bg-gray-200 px-2 py-0.5 rounded">
+                                              {group.name}
+                                            </span>
+                                          </div>
+                                        </div>
+                                      </div>
                                     </div>
 
-                                    {/* Department Members Grid */}
-                                    {section.members.length > 0 && (
-                                      <>
-                                        <div className="w-0.5 h-4 bg-blue-300"></div>
-                                        <div className="grid grid-cols-2 gap-3 max-w-xs">
-                                          {section.members.map((member) => (
-                                            <div key={member.id}>
-                                              {renderPersonCard(
-                                                member,
-                                                "small",
-                                              )}
+                                    {/* 3. Team Members Grid (Blue) */}
+                                    {group.members.length > 0 && (
+                                      <div className="flex flex-col items-center space-y-3">
+                                        <div className="w-0.5 h-4 bg-gray-300"></div>
+                                        <div className="grid grid-cols-2 gap-3">
+                                          {group.members.map((member) => (
+                                            <div
+                                              key={member.id}
+                                              className="w-36 h-24 border border-blue-300 rounded-lg bg-gradient-to-b from-blue-50 to-white shadow-sm"
+                                            >
+                                              <div className="p-2 text-center h-full flex flex-col justify-center">
+                                                <div className="flex justify-center mb-1">
+                                                  <Avatar className="h-8 w-8 border border-blue-300">
+                                                    <AvatarImage
+                                                      src="/placeholder.svg"
+                                                      alt={member.name}
+                                                    />
+                                                    <AvatarFallback className="bg-blue-100 text-blue-700 font-medium text-xs">
+                                                      {member.name
+                                                        .split(" ")
+                                                        .map((n) => n[0])
+                                                        .join("")}
+                                                    </AvatarFallback>
+                                                  </Avatar>
+                                                </div>
+                                                <h4 className="font-medium text-xs text-gray-900 mb-0.5 leading-tight">
+                                                  {member.name}
+                                                </h4>
+                                                <p className="text-xs text-blue-600 leading-tight">
+                                                  {member.title.length > 20
+                                                    ? `${member.title.substring(0, 17)}...`
+                                                    : member.title}
+                                                </p>
+                                              </div>
                                             </div>
                                           ))}
                                         </div>
-                                      </>
+                                      </div>
                                     )}
                                   </div>
                                 )}
@@ -652,10 +552,77 @@ export default function OrganizationChart() {
                           </div>
                         )}
                       </Droppable>
-                    </>
+                    </div>
                   )}
                 </div>
               </DragDropContext>
+            </div>
+
+            {/* Statistics */}
+            <div className="grid grid-cols-1 md:grid-cols-4 gap-4 max-w-4xl mx-auto">
+              <Card>
+                <CardContent className="p-6">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <p className="text-sm font-medium text-gray-600">
+                        Total Employees
+                      </p>
+                      <p className="text-2xl font-bold text-blue-700">
+                        {employees.length}
+                      </p>
+                    </div>
+                    <Users className="h-8 w-8 text-blue-500" />
+                  </div>
+                </CardContent>
+              </Card>
+              <Card>
+                <CardContent className="p-6">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <p className="text-sm font-medium text-gray-600">
+                        Executives
+                      </p>
+                      <p className="text-2xl font-bold text-purple-700">
+                        {executives.length}
+                      </p>
+                    </div>
+                    <Crown className="h-8 w-8 text-purple-500" />
+                  </div>
+                </CardContent>
+              </Card>
+              <Card>
+                <CardContent className="p-6">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <p className="text-sm font-medium text-gray-600">
+                        Departments
+                      </p>
+                      <p className="text-2xl font-bold text-green-700">
+                        {departmentGroups.length}
+                      </p>
+                    </div>
+                    <Building className="h-8 w-8 text-green-500" />
+                  </div>
+                </CardContent>
+              </Card>
+              <Card>
+                <CardContent className="p-6">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <p className="text-sm font-medium text-gray-600">
+                        Team Members
+                      </p>
+                      <p className="text-2xl font-bold text-orange-700">
+                        {departmentGroups.reduce(
+                          (sum, group) => sum + group.members.length,
+                          0,
+                        )}
+                      </p>
+                    </div>
+                    <Building2 className="h-8 w-8 text-orange-500" />
+                  </div>
+                </CardContent>
+              </Card>
             </div>
           </div>
         )}

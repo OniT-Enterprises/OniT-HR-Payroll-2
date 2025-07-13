@@ -15,6 +15,7 @@ import {
   departmentService,
   type Department,
 } from "@/services/departmentService";
+import { offlineFirstService } from "@/services/offlineFirstService";
 import DepartmentManager from "@/components/DepartmentManager";
 import { useToast } from "@/hooks/use-toast";
 import {

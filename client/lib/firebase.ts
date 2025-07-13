@@ -71,9 +71,19 @@ try {
 }
 
 // Export Firebase status checking functions
-export const isFirebaseReady = () => firebaseInitialized;
+export const isFirebaseReady = () => firebaseInitialized && !firebaseBlocked;
 export const getFirebaseError = () => firebaseError;
-export const isNetworkEnabled = () => networkEnabled;
+export const isNetworkEnabled = () => networkEnabled && !firebaseBlocked;
+export const isFirebaseBlocked = () => firebaseBlocked;
+export const blockFirebase = () => {
+  firebaseBlocked = true;
+  networkEnabled = false;
+  console.warn("🚫 Firebase operations blocked due to network issues");
+};
+export const unblockFirebase = () => {
+  firebaseBlocked = false;
+  console.log("✅ Firebase operations unblocked");
+};
 
 // Network management functions
 export const enableFirebaseNetwork = async (): Promise<boolean> => {

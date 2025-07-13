@@ -459,9 +459,9 @@ export default function OrganizationChart() {
       <MainNavigation />
 
       <div className="p-8">
-        {/* Header with Title, Controls and Stats */}
-        <div className="flex justify-between items-start mb-8">
-          {/* Left side - Title and Controls */}
+        {/* Header with Title and Controls */}
+        <div className="flex flex-col gap-6 mb-8">
+          {/* Title and Controls */}
           <div className="flex flex-col gap-4">
             <h1 className="text-4xl font-bold text-gray-900">
               Company Organizational Chart
@@ -505,95 +505,97 @@ export default function OrganizationChart() {
             </div>
           </div>
 
-          {/* Right side - Statistics Dashboard */}
+          {/* Statistics Dashboard - Horizontal Blue Container */}
           {employees.length > 0 && (
-            <div className="grid grid-cols-2 gap-4">
-              <Card className="w-48">
-                <CardContent className="p-4">
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <p className="text-sm font-medium text-gray-600">
-                        Executives
-                      </p>
-                      <p className="text-2xl font-bold text-purple-700">
-                        {executives.length}
-                      </p>
+            <div className="bg-blue-500 rounded-lg p-6">
+              <div className="grid grid-cols-4 gap-6">
+                <Card className="bg-white">
+                  <CardContent className="p-4">
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <p className="text-sm font-medium text-gray-600">
+                          Executives
+                        </p>
+                        <p className="text-2xl font-bold text-purple-700">
+                          {executives.length}
+                        </p>
+                      </div>
+                      <Crown className="h-8 w-8 text-purple-500" />
                     </div>
-                    <Crown className="h-8 w-8 text-purple-500" />
-                  </div>
-                </CardContent>
-              </Card>
-              <Card className="w-48">
-                <CardContent className="p-4">
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <p className="text-sm font-medium text-gray-600">
-                        Managers
-                      </p>
-                      <p className="text-2xl font-bold text-green-700">
-                        {
-                          employees.filter(
-                            (emp) =>
-                              emp.jobDetails.position
-                                .toLowerCase()
-                                .includes("manager") ||
-                              emp.jobDetails.position
-                                .toLowerCase()
-                                .includes("director") ||
-                              emp.jobDetails.position
-                                .toLowerCase()
-                                .includes("head"),
-                          ).length
-                        }
-                      </p>
+                  </CardContent>
+                </Card>
+                <Card className="bg-white">
+                  <CardContent className="p-4">
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <p className="text-sm font-medium text-gray-600">
+                          Managers
+                        </p>
+                        <p className="text-2xl font-bold text-green-700">
+                          {
+                            employees.filter(
+                              (emp) =>
+                                emp.jobDetails.position
+                                  .toLowerCase()
+                                  .includes("manager") ||
+                                emp.jobDetails.position
+                                  .toLowerCase()
+                                  .includes("director") ||
+                                emp.jobDetails.position
+                                  .toLowerCase()
+                                  .includes("head"),
+                            ).length
+                          }
+                        </p>
+                      </div>
+                      <UserCheck className="h-8 w-8 text-green-500" />
                     </div>
-                    <UserCheck className="h-8 w-8 text-green-500" />
-                  </div>
-                </CardContent>
-              </Card>
-              <Card className="w-48">
-                <CardContent className="p-4">
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <p className="text-sm font-medium text-gray-600">
-                        Senior Staff
-                      </p>
-                      <p className="text-2xl font-bold text-blue-700">
-                        {
-                          employees.filter(
-                            (emp) =>
-                              emp.jobDetails.position
-                                .toLowerCase()
-                                .includes("senior") ||
-                              emp.jobDetails.position
-                                .toLowerCase()
-                                .includes("lead") ||
-                              emp.jobDetails.position
-                                .toLowerCase()
-                                .includes("principal"),
-                          ).length
-                        }
-                      </p>
+                  </CardContent>
+                </Card>
+                <Card className="bg-white">
+                  <CardContent className="p-4">
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <p className="text-sm font-medium text-gray-600">
+                          Senior Staff
+                        </p>
+                        <p className="text-2xl font-bold text-blue-700">
+                          {
+                            employees.filter(
+                              (emp) =>
+                                emp.jobDetails.position
+                                  .toLowerCase()
+                                  .includes("senior") ||
+                                emp.jobDetails.position
+                                  .toLowerCase()
+                                  .includes("lead") ||
+                                emp.jobDetails.position
+                                  .toLowerCase()
+                                  .includes("principal"),
+                            ).length
+                          }
+                        </p>
+                      </div>
+                      <GraduationCap className="h-8 w-8 text-blue-500" />
                     </div>
-                    <GraduationCap className="h-8 w-8 text-blue-500" />
-                  </div>
-                </CardContent>
-              </Card>
-              <Card className="w-48">
-                <CardContent className="p-4">
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <p className="text-sm font-medium text-gray-600">
-                        Total Employees
-                      </p>
-                      <p className="text-2xl font-bold text-orange-700">
-                        {employees.length}
-                      </p>
+                  </CardContent>
+                </Card>
+                <Card className="bg-white">
+                  <CardContent className="p-4">
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <p className="text-sm font-medium text-gray-600">
+                          Total Employees
+                        </p>
+                        <p className="text-2xl font-bold text-orange-700">
+                          {employees.length}
+                        </p>
+                      </div>
+                      <Users className="h-8 w-8 text-orange-500" />
                     </div>
-                    <Users className="h-8 w-8 text-orange-500" />
-                  </div>
-                </CardContent>
-              </Card>
+                  </CardContent>
+                </Card>
+              </div>
             </div>
           )}
         </div>

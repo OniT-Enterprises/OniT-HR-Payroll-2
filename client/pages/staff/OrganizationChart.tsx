@@ -423,45 +423,54 @@ export default function OrganizationChart() {
         <div className="flex flex-col gap-6 mb-8">
           {/* Title and Controls */}
           <div className="flex flex-col gap-4">
-            <h1 className="text-4xl font-bold text-gray-900">
-              Company Organizational Chart
-            </h1>
-
-            {/* Controls - Horizontal inline */}
-            <div className="flex items-center gap-4">
-              <Button
-                variant={dragMode ? "default" : "outline"}
-                onClick={() => setDragMode(!dragMode)}
-              >
-                <Move className="mr-2 h-4 w-4" />
-                {dragMode ? "Exit Reorganize" : "Reorganize"}
-              </Button>
-              <Button
-                variant="outline"
-                onClick={() => {
-                  setManagerMode("add");
-                  setShowDepartmentManager(true);
-                }}
-              >
-                <Plus className="mr-2 h-4 w-4" />
-                Add Department
-              </Button>
-              <Button
-                onClick={() => {
-                  setManagerMode("edit");
-                  setShowDepartmentManager(true);
-                }}
-              >
-                <Edit className="mr-2 h-4 w-4" />
-                Manage
-              </Button>
-              <Button
-                variant="secondary"
-                onClick={() => (window.location.href = "/staff/departments")}
-              >
-                <Building className="mr-2 h-4 w-4" />
-                Departments Page
-              </Button>
+            <div className="flex flex-col relative mt-5">
+              <div className="flex gap-5 max-md:flex-col max-md:items-stretch max-md:gap-0">
+                <div className="flex flex-col leading-normal w-[33%] ml-0 max-md:w-full max-md:ml-0">
+                  <h1 className="text-4xl font-bold text-gray-900">
+                    &nbsp;Organizational Chart
+                  </h1>
+                </div>
+                <div className="flex flex-col leading-normal w-[67%] ml-5 max-md:w-full max-md:ml-0">
+                  {/* Controls - Horizontal inline */}
+                  <div className="flex items-center gap-4">
+                    <Button
+                      variant={dragMode ? "default" : "outline"}
+                      onClick={() => setDragMode(!dragMode)}
+                    >
+                      <Move className="mr-2 h-4 w-4" />
+                      {dragMode ? "Exit Reorganize" : "Reorganize"}
+                    </Button>
+                    <Button
+                      variant="outline"
+                      onClick={() => {
+                        setManagerMode("add");
+                        setShowDepartmentManager(true);
+                      }}
+                    >
+                      <Plus className="mr-2 h-4 w-4" />
+                      Add Department
+                    </Button>
+                    <Button
+                      onClick={() => {
+                        setManagerMode("edit");
+                        setShowDepartmentManager(true);
+                      }}
+                    >
+                      <Edit className="mr-2 h-4 w-4" />
+                      Manage
+                    </Button>
+                    <Button
+                      variant="secondary"
+                      onClick={() =>
+                        (window.location.href = "/staff/departments")
+                      }
+                    >
+                      <Building className="mr-2 h-4 w-4" />
+                      Departments Page
+                    </Button>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
 

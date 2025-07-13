@@ -647,6 +647,67 @@ export default function TimeTracking() {
 
   const stats = getDashboardStats();
 
+  // Notification system
+  const notifications = [
+    {
+      id: 1,
+      type: "invite",
+      message: "Sarah Johnson invited you to join Growth Marketing Team",
+      time: "2h ago",
+      read: false,
+    },
+    {
+      id: 2,
+      type: "deadline",
+      message: 'Task "Setup authentication API" is due tomorrow',
+      time: "4h ago",
+      read: false,
+    },
+    {
+      id: 3,
+      type: "approval",
+      message: "Time entry for 8 hours approved by John Smith",
+      time: "1d ago",
+      read: true,
+    },
+    {
+      id: 4,
+      type: "goal",
+      message: "Q4 Product Launch goal updated - now 65% complete",
+      time: "2d ago",
+      read: true,
+    },
+  ];
+
+  const getNotificationIcon = (type: string) => {
+    switch (type) {
+      case "invite":
+        return <UserPlus className="h-4 w-4 text-blue-600" />;
+      case "deadline":
+        return <AlertCircle className="h-4 w-4 text-orange-600" />;
+      case "approval":
+        return <CheckCircle className="h-4 w-4 text-green-600" />;
+      case "goal":
+        return <Target className="h-4 w-4 text-purple-600" />;
+      default:
+        return <Bell className="h-4 w-4" />;
+    }
+  };
+
+  const getProductivityTrend = () => {
+    // Mock productivity data
+    const thisWeek = 42;
+    const lastWeek = 38;
+    const change = ((thisWeek - lastWeek) / lastWeek) * 100;
+    return {
+      current: thisWeek,
+      previous: lastWeek,
+      change: Math.round(change),
+    };
+  };
+
+  const productivity = getProductivityTrend();
+
   const handleFilter = () => {
     // In production, this would trigger a Firestore query with the date range and employee filter
     console.log("Filtering time entries:", {

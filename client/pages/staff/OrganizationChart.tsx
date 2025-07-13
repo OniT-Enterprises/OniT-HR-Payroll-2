@@ -207,6 +207,14 @@ export default function OrganizationChart() {
 
   const buildAppleOrgChart = useCallback(
     (employeesData: Employee[], departmentsData: Department[]) => {
+      console.log(
+        "🏗️ Building org chart with:",
+        employeesData.length,
+        "employees and",
+        departmentsData.length,
+        "departments",
+      );
+
       const employeesByDept = employeesData.reduce(
         (acc, emp) => {
           const deptName = emp.jobDetails.department;

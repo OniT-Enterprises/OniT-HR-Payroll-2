@@ -121,64 +121,32 @@ class DepartmentService {
       return cachedDepartments;
     }
 
-    try {
-      console.log("🔍 Attempting to load departments from Firebase...");
+    // Use safe Firebase operation wrapper
+    return await safeFirestoreQuery(
+      async () => {
+        console.log("🔍 Attempting to load departments from Firebase...");
 
-      // Add timeout for quick fallback
-      const timeoutPromise = new Promise((_, reject) =>
-        setTimeout(
-          () => reject(new Error("Request timeout after 3 seconds")),
-          3000,
-        ),
-      );
+        const querySnapshot = await getDocs(
+          query(this.getCollection(), orderBy("name", "asc")),
+        );
 
-      const queryPromise = getDocs(
-        query(this.getCollection(), orderBy("name", "asc")),
-      ).catch((error) => {
-        // Immediately catch TypeError and network errors
-        if (
-          error instanceof TypeError ||
-          error.message?.includes("Failed to fetch")
-        ) {
-          console.warn(
-            "🌐 Network error detected during query, falling back to mock data",
-          );
-          throw new Error("Network error - using fallback data");
-        }
-        throw error;
-      });
+        const departments = querySnapshot.docs.map((doc) => {
+          const data = doc.data();
+          return {
+            id: doc.id,
+            ...data,
+            createdAt: data.createdAt?.toDate() || new Date(),
+            updatedAt: data.updatedAt?.toDate() || new Date(),
+          } as Department;
+        });
 
-      const querySnapshot = (await Promise.race([
-        queryPromise,
-        timeoutPromise,
-      ])) as any;
-
-      const departments = querySnapshot.docs.map((doc) => {
-        const data = doc.data();
-        return {
-          id: doc.id,
-          ...data,
-          createdAt: data.createdAt?.toDate() || new Date(),
-          updatedAt: data.updatedAt?.toDate() || new Date(),
-        } as Department;
-      });
-
-      // Cache successful results
-      this.cacheDepartments(departments);
-      console.log("✅ Successfully loaded departments from Firebase");
-      return departments;
-    } catch (error) {
-      console.error("❌ Error getting departments from Firebase:", error);
-      console.error("Error type:", typeof error);
-      console.error("Error name:", error?.constructor?.name);
-
-      // Any Firebase error - immediately fallback to mock data
-      console.warn(
-        "⚠️ Firebase operation failed, using mock departments:",
-        error.message || error,
-      );
-      return this.getMockDepartments();
-    }
+        // Cache successful results
+        this.cacheDepartments(departments);
+        return departments;
+      },
+      this.getMockDepartments(),
+      "Load departments",
+    );
   }
 
   private getCachedDepartments(): Department[] {

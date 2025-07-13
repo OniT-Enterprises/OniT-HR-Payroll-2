@@ -250,6 +250,12 @@ if (typeof window !== "undefined") {
       error.message?.includes("Failed to fetch")
     ) {
       console.warn("🌐 Caught uncaught TypeError fetch error:", error);
+
+      // Block Firebase operations
+      firebaseBlocked = true;
+      networkEnabled = false;
+      console.warn("🚫 Firebase blocked due to TypeError");
+
       event.preventDefault();
     }
   });

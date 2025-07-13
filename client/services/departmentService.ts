@@ -16,6 +16,7 @@ import {
   isFirebaseBlocked,
 } from "@/lib/firebase";
 import { isOnline, checkNetwork } from "@/lib/networkState";
+import { safeFirestoreQuery } from "@/lib/firebaseProxy";
 
 export interface Department {
   id: string;

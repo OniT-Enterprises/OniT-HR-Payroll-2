@@ -12,7 +12,12 @@ import {
   limit,
   serverTimestamp,
 } from "firebase/firestore";
-import { db, isFirebaseReady, getFirebaseError } from "@/lib/firebase";
+import {
+  db,
+  isFirebaseReady,
+  getFirebaseError,
+  isFirebaseBlocked,
+} from "@/lib/firebase";
 import { mockDataService } from "./mockDataService";
 
 export interface Employee {

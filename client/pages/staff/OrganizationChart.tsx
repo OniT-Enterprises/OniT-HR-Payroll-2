@@ -297,8 +297,9 @@ export default function OrganizationChart() {
       // 2. Build Department Groups (5 max, horizontal)
       const deptGroups: DepartmentGroup[] = [];
 
-      departmentsData.slice(0, 5).forEach((dept) => {
+            departmentsData.slice(0, 5).forEach((dept) => {
         const deptEmployees = employeesByDept[dept.name] || [];
+        console.log(`🏢 Processing department: ${dept.name} with ${deptEmployees.length} employees`);
 
         // Find department head
         const head = deptEmployees.find(
@@ -313,7 +314,53 @@ export default function OrganizationChart() {
               emp.jobDetails.position.toLowerCase().includes("manager")),
         );
 
+        // Use assigned director/manager from department data if no head found in employees
+        let headPerson: OrgPerson;
+
         if (head) {
+          console.log(`👤 Found department head for ${dept.name}: ${head.personalInfo.firstName} ${head.personalInfo.lastName}`);
+          usedIds.add(head.id);
+          headPerson = {
+            id: `head-${head.id}`,
+            name: `${head.personalInfo.firstName} ${head.personalInfo.lastName}`,
+            title: head.jobDetails.position,
+            department: dept.name,
+            employee: head,
+          };
+        } else {
+          // Create a placeholder head using department's assigned director/manager or a generic placeholder
+          const assignedHead = dept.director || dept.manager || "No Head Assigned";
+          console.log(`📋 No employee head found for ${dept.name}, using assigned: ${assignedHead}`);
+          headPerson = {
+            id: `head-placeholder-${dept.id}`,
+            name: assignedHead,
+            title: dept.director ? "Director" : dept.manager ? "Manager" : "Department Head",
+            department: dept.name,
+          };
+        }
+
+        // Find team members (limit to 6 for clean layout)
+        const members = deptEmployees
+          .filter((emp) => !usedIds.has(emp.id))
+          .slice(0, 6)
+          .map((emp) => {
+            usedIds.add(emp.id);
+            return {
+              id: `member-${emp.id}`,
+              name: `${emp.personalInfo.firstName} ${emp.personalInfo.lastName}`,
+              title: emp.jobDetails.position,
+              department: dept.name,
+              employee: emp,
+            };
+          });
+
+        console.log(`➕ Adding department group: ${dept.name} with ${members.length} members`);
+        deptGroups.push({
+          id: dept.id,
+          name: dept.name,
+          head: headPerson,
+          members,
+        });
           usedIds.add(head.id);
 
           const headPerson: OrgPerson = {

@@ -196,6 +196,12 @@ class DepartmentService {
   }
 
   async addDepartment(departmentData: DepartmentInput): Promise<string> {
+    // Check if Firebase is ready
+    if (!isFirebaseReady() || !db) {
+      console.warn("⚠️ Firebase not ready, cannot add department");
+      throw new Error("Unable to add department - Firebase not available");
+    }
+
     try {
       const now = Timestamp.now();
       const docRef = await addDoc(this.collection, {
@@ -203,10 +209,19 @@ class DepartmentService {
         createdAt: now,
         updatedAt: now,
       });
+      console.log("✅ Department added successfully");
       return docRef.id;
     } catch (error) {
-      console.error("Error adding department:", error);
-      throw error;
+      console.error("❌ Error adding department:", error);
+      if (
+        error instanceof TypeError ||
+        error.message?.includes("Failed to fetch")
+      ) {
+        throw new Error(
+          "Network error - unable to add department. Please check your connection.",
+        );
+      }
+      throw new Error(`Failed to add department: ${error.message || error}`);
     }
   }
 
@@ -214,25 +229,55 @@ class DepartmentService {
     id: string,
     updates: Partial<DepartmentInput>,
   ): Promise<void> {
+    // Check if Firebase is ready
+    if (!isFirebaseReady() || !db) {
+      console.warn("⚠️ Firebase not ready, cannot update department");
+      throw new Error("Unable to update department - Firebase not available");
+    }
+
     try {
       const departmentRef = doc(db, "departments", id);
       await updateDoc(departmentRef, {
         ...updates,
         updatedAt: Timestamp.now(),
       });
+      console.log("✅ Department updated successfully");
     } catch (error) {
-      console.error("Error updating department:", error);
-      throw error;
+      console.error("❌ Error updating department:", error);
+      if (
+        error instanceof TypeError ||
+        error.message?.includes("Failed to fetch")
+      ) {
+        throw new Error(
+          "Network error - unable to update department. Please check your connection.",
+        );
+      }
+      throw new Error(`Failed to update department: ${error.message || error}`);
     }
   }
 
   async deleteDepartment(id: string): Promise<void> {
+    // Check if Firebase is ready
+    if (!isFirebaseReady() || !db) {
+      console.warn("⚠️ Firebase not ready, cannot delete department");
+      throw new Error("Unable to delete department - Firebase not available");
+    }
+
     try {
       const departmentRef = doc(db, "departments", id);
       await deleteDoc(departmentRef);
+      console.log("✅ Department deleted successfully");
     } catch (error) {
-      console.error("Error deleting department:", error);
-      throw error;
+      console.error("❌ Error deleting department:", error);
+      if (
+        error instanceof TypeError ||
+        error.message?.includes("Failed to fetch")
+      ) {
+        throw new Error(
+          "Network error - unable to delete department. Please check your connection.",
+        );
+      }
+      throw new Error(`Failed to delete department: ${error.message || error}`);
     }
   }
 }

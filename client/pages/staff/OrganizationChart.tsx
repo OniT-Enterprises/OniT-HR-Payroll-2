@@ -140,8 +140,11 @@ export default function OrganizationChart() {
     existingDepartments: Department[],
   ) => {
     try {
-      // Skip migration if departments already exist or no employees
+      // Only run migration if NO departments exist but we have employees with department assignments
       if (existingDepartments.length > 0 || employees.length === 0) {
+        console.log(
+          `📊 Using existing ${existingDepartments.length} departments`,
+        );
         return;
       }
 

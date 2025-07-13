@@ -76,7 +76,19 @@ class DepartmentService {
 
       const queryPromise = getDocs(
         query(this.getCollection(), orderBy("name", "asc")),
-      );
+      ).catch((error) => {
+        // Immediately catch TypeError and network errors
+        if (
+          error instanceof TypeError ||
+          error.message?.includes("Failed to fetch")
+        ) {
+          console.warn(
+            "🌐 Network error detected during query, falling back to mock data",
+          );
+          throw new Error("Network error - using fallback data");
+        }
+        throw error;
+      });
 
       const querySnapshot = (await Promise.race([
         queryPromise,

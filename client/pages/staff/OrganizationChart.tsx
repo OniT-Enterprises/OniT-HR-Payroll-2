@@ -376,6 +376,9 @@ export default function OrganizationChart() {
         });
       });
 
+      console.log(
+        `✅ Org chart built: ${execChain.length} executives, ${deptGroups.length} department groups`,
+      );
       setDepartmentGroups(deptGroups);
     },
     [],

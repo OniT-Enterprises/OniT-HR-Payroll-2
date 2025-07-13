@@ -430,9 +430,9 @@ export default function OrganizationChart() {
                     &nbsp;Organizational Chart
                   </h1>
                 </div>
-                <div className="flex flex-col leading-normal w-[67%] ml-5 max-md:w-full max-md:ml-0">
+                <div className="flex flex-col leading-normal w-[67%] ml-auto max-md:w-full max-md:ml-0">
                   {/* Controls - Horizontal inline */}
-                  <div className="flex items-center gap-4">
+                  <div className="flex items-center gap-4 ml-auto">
                     <Button
                       variant={dragMode ? "default" : "outline"}
                       onClick={() => setDragMode(!dragMode)}
@@ -458,15 +458,6 @@ export default function OrganizationChart() {
                     >
                       <Edit className="mr-2 h-4 w-4" />
                       Manage
-                    </Button>
-                    <Button
-                      variant="secondary"
-                      onClick={() =>
-                        (window.location.href = "/staff/departments")
-                      }
-                    >
-                      <Building className="mr-2 h-4 w-4" />
-                      Departments Page
                     </Button>
                   </div>
                 </div>

@@ -42,15 +42,23 @@ interface OrgNode {
   title: string;
   department: string;
   employee?: Employee;
-  children: OrgNode[];
-  level: number;
-  type: "executive" | "department-head" | "manager" | "individual";
+  avatar?: string;
+}
+
+interface DepartmentSection {
+  id: string;
+  name: string;
+  head: OrgNode;
+  members: OrgNode[];
 }
 
 export default function OrganizationChart() {
   const [employees, setEmployees] = useState<Employee[]>([]);
   const [departments, setDepartments] = useState<Department[]>([]);
-  const [orgChart, setOrgChart] = useState<OrgNode[]>([]);
+  const [executives, setExecutives] = useState<OrgNode[]>([]);
+  const [departmentSections, setDepartmentSections] = useState<
+    DepartmentSection[]
+  >([]);
   const [loading, setLoading] = useState(true);
   const [showDepartmentManager, setShowDepartmentManager] = useState(false);
   const [managerMode, setManagerMode] = useState<"add" | "edit">("edit");
@@ -72,7 +80,7 @@ export default function OrganizationChart() {
       setDepartments(departmentsData);
 
       await migrateMissingDepartments(employeesData, departmentsData);
-      buildExecutiveChart(employeesData, departmentsData);
+      buildAppleStyleChart(employeesData, departmentsData);
     } catch (error) {
       console.error("Error loading data:", error);
       toast({
@@ -111,14 +119,14 @@ export default function OrganizationChart() {
 
         const updatedDepartments = await departmentService.getAllDepartments();
         setDepartments(updatedDepartments);
-        buildExecutiveChart(employees, updatedDepartments);
+        buildAppleStyleChart(employees, updatedDepartments);
       }
     } catch (error) {
       console.error("Error migrating departments:", error);
     }
   };
 
-  const buildExecutiveChart = useCallback(
+  const buildAppleStyleChart = useCallback(
     (employeesData: Employee[], departmentsData: Department[]) => {
       // Group employees by department
       const employeesByDept = employeesData.reduce(
@@ -131,9 +139,10 @@ export default function OrganizationChart() {
         {} as Record<string, Employee[]>,
       );
 
-      const chart: OrgNode[] = [];
+      // 1. Build Executive Chain (vertical)
+      const execChain: OrgNode[] = [];
 
-      // 1. Find CEO/Top Executive
+      // Find CEO
       const ceo = employeesData.find(
         (emp) =>
           emp.jobDetails.position.toLowerCase().includes("ceo") ||
@@ -142,175 +151,111 @@ export default function OrganizationChart() {
       );
 
       if (ceo) {
-        const ceoNode: OrgNode = {
+        execChain.push({
           id: `exec-${ceo.id}`,
           name: `${ceo.personalInfo.firstName} ${ceo.personalInfo.lastName}`,
           title: ceo.jobDetails.position,
           department: "Executive",
           employee: ceo,
-          children: [],
-          level: 0,
-          type: "executive",
-        };
-
-        // 2. Find C-Level executives (CTO, CFO, etc.)
-        const cLevelExecs = employeesData.filter(
-          (emp) =>
-            emp.id !== ceo.id &&
-            (emp.jobDetails.position.toLowerCase().includes("cto") ||
-              emp.jobDetails.position.toLowerCase().includes("cfo") ||
-              emp.jobDetails.position.toLowerCase().includes("coo") ||
-              emp.jobDetails.position.toLowerCase().includes("chief")),
-        );
-
-        cLevelExecs.forEach((exec) => {
-          const execNode: OrgNode = {
-            id: `exec-${exec.id}`,
-            name: `${exec.personalInfo.firstName} ${exec.personalInfo.lastName}`,
-            title: exec.jobDetails.position,
-            department: exec.jobDetails.department,
-            employee: exec,
-            children: [],
-            level: 1,
-            type: "executive",
-          };
-          ceoNode.children.push(execNode);
-        });
-
-        // 3. Find Department Heads/VPs
-        const departmentHeads: OrgNode[] = [];
-        departmentsData.forEach((dept) => {
-          const deptEmployees = employeesByDept[dept.name] || [];
-
-          // Find department head (excluding already assigned C-level)
-          const head = deptEmployees.find(
-            (emp) =>
-              !cLevelExecs.some((exec) => exec.id === emp.id) &&
-              emp.id !== ceo.id &&
-              (emp.jobDetails.position.toLowerCase().includes("vp") ||
-                emp.jobDetails.position
-                  .toLowerCase()
-                  .includes("vice president") ||
-                emp.jobDetails.position.toLowerCase().includes("director") ||
-                emp.jobDetails.position.toLowerCase().includes("head of")),
-          );
-
-          if (head) {
-            const headNode: OrgNode = {
-              id: `head-${head.id}`,
-              name: `${head.personalInfo.firstName} ${head.personalInfo.lastName}`,
-              title: head.jobDetails.position,
-              department: dept.name,
-              employee: head,
-              children: [],
-              level: 2,
-              type: "department-head",
-            };
-
-            // 4. Find Managers under this department head
-            const managers = deptEmployees.filter(
-              (emp) =>
-                emp.id !== head.id &&
-                !cLevelExecs.some((exec) => exec.id === emp.id) &&
-                emp.id !== ceo.id &&
-                (emp.jobDetails.position.toLowerCase().includes("manager") ||
-                  emp.jobDetails.position.toLowerCase().includes("lead") ||
-                  emp.jobDetails.position
-                    .toLowerCase()
-                    .includes("supervisor") ||
-                  emp.jobDetails.position.toLowerCase().includes("senior")),
-            );
-
-            managers.slice(0, 4).forEach((manager) => {
-              // Limit to 4 direct reports like Apple
-              const managerNode: OrgNode = {
-                id: `mgr-${manager.id}`,
-                name: `${manager.personalInfo.firstName} ${manager.personalInfo.lastName}`,
-                title: manager.jobDetails.position,
-                department: dept.name,
-                employee: manager,
-                children: [],
-                level: 3,
-                type: "manager",
-              };
-              headNode.children.push(managerNode);
-            });
-
-            departmentHeads.push(headNode);
-          }
-        });
-
-        // Attach department heads to appropriate C-level exec or directly to CEO
-        if (ceoNode.children.length > 0) {
-          // Distribute department heads under C-level executives
-          departmentHeads.forEach((head, index) => {
-            const targetExec =
-              ceoNode.children[index % ceoNode.children.length];
-            targetExec.children.push(head);
-          });
-        } else {
-          // No C-level execs, attach directly to CEO
-          departmentHeads.forEach((head) => {
-            ceoNode.children.push(head);
-          });
-        }
-
-        chart.push(ceoNode);
-      } else {
-        // No CEO found, create department-based structure
-        const sortedDepartments = departmentsData.sort(
-          (a, b) =>
-            (employeesByDept[b.name]?.length || 0) -
-            (employeesByDept[a.name]?.length || 0),
-        );
-
-        sortedDepartments.slice(0, 5).forEach((dept) => {
-          const deptEmployees = employeesByDept[dept.name] || [];
-          const head = deptEmployees.find(
-            (emp) =>
-              emp.jobDetails.position.toLowerCase().includes("director") ||
-              emp.jobDetails.position.toLowerCase().includes("manager") ||
-              emp.jobDetails.position.toLowerCase().includes("head"),
-          );
-
-          if (head) {
-            const headNode: OrgNode = {
-              id: `head-${head.id}`,
-              name: `${head.personalInfo.firstName} ${head.personalInfo.lastName}`,
-              title: head.jobDetails.position,
-              department: dept.name,
-              employee: head,
-              children: [],
-              level: 0,
-              type: "department-head",
-            };
-
-            const managers = deptEmployees.filter(
-              (emp) =>
-                emp.id !== head.id &&
-                emp.jobDetails.position.toLowerCase().includes("manager"),
-            );
-
-            managers.slice(0, 3).forEach((manager) => {
-              const managerNode: OrgNode = {
-                id: `mgr-${manager.id}`,
-                name: `${manager.personalInfo.firstName} ${manager.personalInfo.lastName}`,
-                title: manager.jobDetails.position,
-                department: dept.name,
-                employee: manager,
-                children: [],
-                level: 1,
-                type: "manager",
-              };
-              headNode.children.push(managerNode);
-            });
-
-            chart.push(headNode);
-          }
         });
       }
 
-      setOrgChart(chart);
+      // Find CFO
+      const cfo = employeesData.find(
+        (emp) =>
+          emp.id !== ceo?.id &&
+          (emp.jobDetails.position.toLowerCase().includes("cfo") ||
+            emp.jobDetails.position.toLowerCase().includes("chief financial")),
+      );
+
+      if (cfo) {
+        execChain.push({
+          id: `exec-${cfo.id}`,
+          name: `${cfo.personalInfo.firstName} ${cfo.personalInfo.lastName}`,
+          title: cfo.jobDetails.position,
+          department: "Finance",
+          employee: cfo,
+        });
+      }
+
+      // Find COO or other C-level
+      const coo = employeesData.find(
+        (emp) =>
+          emp.id !== ceo?.id &&
+          emp.id !== cfo?.id &&
+          (emp.jobDetails.position.toLowerCase().includes("coo") ||
+            emp.jobDetails.position.toLowerCase().includes("chief operating") ||
+            emp.jobDetails.position.toLowerCase().includes("cto") ||
+            emp.jobDetails.position.toLowerCase().includes("chief technology")),
+      );
+
+      if (coo) {
+        execChain.push({
+          id: `exec-${coo.id}`,
+          name: `${coo.personalInfo.firstName} ${coo.personalInfo.lastName}`,
+          title: coo.jobDetails.position,
+          department: coo.jobDetails.department,
+          employee: coo,
+        });
+      }
+
+      setExecutives(execChain);
+
+      // 2. Build Department Sections (horizontal row + members grid)
+      const deptSections: DepartmentSection[] = [];
+      const usedEmployeeIds = new Set(
+        execChain.map((exec) => exec.employee?.id).filter(Boolean),
+      );
+
+      departmentsData.slice(0, 5).forEach((dept) => {
+        const deptEmployees = employeesByDept[dept.name] || [];
+
+        // Find department head (excluding executives)
+        const head = deptEmployees.find(
+          (emp) =>
+            !usedEmployeeIds.has(emp.id) &&
+            (emp.jobDetails.position.toLowerCase().includes("director") ||
+              emp.jobDetails.position.toLowerCase().includes("vp") ||
+              emp.jobDetails.position
+                .toLowerCase()
+                .includes("vice president") ||
+              emp.jobDetails.position.toLowerCase().includes("head of") ||
+              emp.jobDetails.position.toLowerCase().includes("manager")),
+        );
+
+        if (head) {
+          usedEmployeeIds.add(head.id);
+
+          const headNode: OrgNode = {
+            id: `head-${head.id}`,
+            name: `${head.personalInfo.firstName} ${head.personalInfo.lastName}`,
+            title: head.jobDetails.position,
+            department: dept.name,
+            employee: head,
+          };
+
+          // Find team members (excluding head and executives)
+          const members = deptEmployees
+            .filter((emp) => !usedEmployeeIds.has(emp.id))
+            .slice(0, 6) // Limit to 6 like Apple chart
+            .map((emp) => ({
+              id: `member-${emp.id}`,
+              name: `${emp.personalInfo.firstName} ${emp.personalInfo.lastName}`,
+              title: emp.jobDetails.position,
+              department: dept.name,
+              employee: emp,
+            }));
+
+          deptSections.push({
+            id: dept.id,
+            name: dept.name,
+            head: headNode,
+            members,
+          });
+        }
+      });
+
+      setDepartmentSections(deptSections);
     },
     [],
   );
@@ -319,156 +264,63 @@ export default function OrganizationChart() {
     if (!result.destination) return;
     toast({
       title: "Position Updated",
-      description: "Leadership position moved successfully",
+      description: "Organization structure updated successfully",
     });
   };
 
-  const renderExecutiveNode = (
-    node: OrgNode,
-    index: number,
-    level: number = 0,
+  const renderPersonCard = (
+    person: OrgNode,
+    size: "large" | "medium" | "small" = "medium",
   ) => {
-    const hasChildren = node.children.length > 0;
-    const isTopLevel = level === 0;
-    const isDepartmentHead = node.type === "department-head" && level >= 2;
+    const sizeClasses = {
+      large: "w-56 h-32",
+      medium: "w-48 h-28",
+      small: "w-40 h-24",
+    };
+
+    const avatarSizes = {
+      large: "h-12 w-12",
+      medium: "h-10 w-10",
+      small: "h-8 w-8",
+    };
+
+    const textSizes = {
+      large: { name: "text-sm", title: "text-xs" },
+      medium: { name: "text-sm", title: "text-xs" },
+      small: { name: "text-xs", title: "text-xs" },
+    };
 
     return (
-      <Draggable
-        key={node.id}
-        draggableId={node.id}
-        index={index}
-        isDragDisabled={!dragMode}
+      <Card
+        className={`${sizeClasses[size]} border-2 border-blue-200 bg-gradient-to-b from-blue-50 to-white shadow-md hover:shadow-lg transition-all`}
       >
-        {(provided, snapshot) => (
-          <div className="flex flex-col items-center">
-            {/* Connecting line from parent */}
-            {level > 0 && !isTopLevel && (
-              <div className="w-0.5 h-8 bg-blue-400 mb-2"></div>
-            )}
-
-            {/* Executive Box */}
-            <div
-              ref={provided.innerRef}
-              {...provided.draggableProps}
-              className={`relative ${
-                snapshot.isDragging ? "rotate-1 shadow-2xl scale-105" : ""
-              } transition-all duration-200`}
-            >
-              <Card
-                className={`
-                ${isTopLevel ? "w-72" : isDepartmentHead ? "w-64" : "w-56"} 
-                border-2 
-                ${
-                  isTopLevel
-                    ? "border-blue-300 bg-gradient-to-b from-blue-100 to-blue-50"
-                    : isDepartmentHead
-                      ? "border-gray-300 bg-gradient-to-b from-gray-50 to-white"
-                      : "border-blue-200 bg-gradient-to-b from-blue-50 to-white"
-                }
-                shadow-lg hover:shadow-xl transition-all
-              `}
-              >
-                <CardContent className="p-4 text-center">
-                  {dragMode && (
-                    <div
-                      {...provided.dragHandleProps}
-                      className="absolute top-2 right-2"
-                    >
-                      <Grip className="h-4 w-4 text-gray-400" />
-                    </div>
-                  )}
-
-                  {/* Avatar */}
-                  <div className="flex justify-center mb-3">
-                    <Avatar
-                      className={`${isTopLevel ? "h-20 w-20" : "h-16 w-16"} border-2 border-blue-300`}
-                    >
-                      <AvatarImage src="/placeholder.svg" alt={node.name} />
-                      <AvatarFallback className="bg-blue-100 text-blue-700 font-semibold">
-                        {node.name
-                          .split(" ")
-                          .map((n) => n[0])
-                          .join("")}
-                      </AvatarFallback>
-                    </Avatar>
-                  </div>
-
-                  {/* Name */}
-                  <h3
-                    className={`font-bold ${isTopLevel ? "text-xl" : "text-lg"} text-gray-800 mb-1`}
-                  >
-                    {node.name}
-                  </h3>
-
-                  {/* Title */}
-                  <p
-                    className={`${isTopLevel ? "text-sm" : "text-xs"} font-medium text-blue-700 mb-2`}
-                  >
-                    {node.title}
-                  </p>
-
-                  {/* Department */}
-                  {node.department !== "Executive" && (
-                    <p className="text-xs text-gray-600 mb-2">
-                      {node.department}
-                    </p>
-                  )}
-
-                  {/* Team indicator for department heads */}
-                  {isDepartmentHead && (
-                    <Badge variant="secondary" className="text-xs">
-                      {node.children.length} Direct Report
-                      {node.children.length !== 1 ? "s" : ""}
-                    </Badge>
-                  )}
-                </CardContent>
-              </Card>
-            </div>
-
-            {/* Render children */}
-            {hasChildren && (
-              <>
-                {/* Connecting line down */}
-                <div className="w-0.5 h-8 bg-blue-400 mt-2"></div>
-
-                {/* Horizontal connector for multiple children */}
-                {node.children.length > 1 && (
-                  <div className="relative">
-                    <div
-                      className="h-0.5 bg-blue-400"
-                      style={{
-                        width: `${(node.children.length - 1) * (isDepartmentHead ? 280 : 240)}px`,
-                        marginLeft: `-${((node.children.length - 1) * (isDepartmentHead ? 280 : 240)) / 2}px`,
-                      }}
-                    ></div>
-                  </div>
-                )}
-
-                <Droppable droppableId={`children-${node.id}`} type="executive">
-                  {(provided) => (
-                    <div
-                      ref={provided.innerRef}
-                      {...provided.droppableProps}
-                      className={`flex ${isDepartmentHead ? "gap-8" : "gap-6"} mt-2`}
-                    >
-                      {node.children.map((child, childIndex) => (
-                        <div key={child.id} className="relative">
-                          {/* Vertical line to each child */}
-                          {node.children.length > 1 && (
-                            <div className="w-0.5 h-8 bg-blue-400 mx-auto -mt-2 mb-0"></div>
-                          )}
-                          {renderExecutiveNode(child, childIndex, level + 1)}
-                        </div>
-                      ))}
-                      {provided.placeholder}
-                    </div>
-                  )}
-                </Droppable>
-              </>
-            )}
+        <CardContent className="p-3 text-center h-full flex flex-col justify-center">
+          {/* Avatar */}
+          <div className="flex justify-center mb-2">
+            <Avatar className={`${avatarSizes[size]} border border-blue-300`}>
+              <AvatarImage src="/placeholder.svg" alt={person.name} />
+              <AvatarFallback className="bg-blue-100 text-blue-700 font-semibold text-xs">
+                {person.name
+                  .split(" ")
+                  .map((n) => n[0])
+                  .join("")}
+              </AvatarFallback>
+            </Avatar>
           </div>
-        )}
-      </Draggable>
+
+          {/* Name */}
+          <h3
+            className={`font-semibold ${textSizes[size].name} text-gray-800 mb-1 leading-tight`}
+          >
+            {person.name}
+          </h3>
+
+          {/* Title */}
+          <p className={`${textSizes[size].title} text-blue-700 leading-tight`}>
+            {person.title}
+          </p>
+        </CardContent>
+      </Card>
     );
   };
 
@@ -497,7 +349,7 @@ export default function OrganizationChart() {
             Company Organizational Chart
           </h1>
           <p className="text-lg text-gray-600">
-            Executive Leadership & Management Structure
+            Executive Leadership & Department Structure
           </p>
         </div>
 
@@ -582,29 +434,10 @@ export default function OrganizationChart() {
                   <div className="flex items-center justify-between">
                     <div>
                       <p className="text-sm font-medium text-gray-600">
-                        Leadership
+                        Executives
                       </p>
                       <p className="text-2xl font-bold text-purple-700">
-                        {
-                          employees.filter(
-                            (emp) =>
-                              emp.jobDetails.position
-                                .toLowerCase()
-                                .includes("manager") ||
-                              emp.jobDetails.position
-                                .toLowerCase()
-                                .includes("director") ||
-                              emp.jobDetails.position
-                                .toLowerCase()
-                                .includes("head") ||
-                              emp.jobDetails.position
-                                .toLowerCase()
-                                .includes("lead") ||
-                              emp.jobDetails.position
-                                .toLowerCase()
-                                .includes("chief"),
-                          ).length
-                        }
+                        {executives.length}
                       </p>
                     </div>
                     <Crown className="h-8 w-8 text-purple-500" />
@@ -616,24 +449,10 @@ export default function OrganizationChart() {
                   <div className="flex items-center justify-between">
                     <div>
                       <p className="text-sm font-medium text-gray-600">
-                        Hierarchy Levels
+                        Department Heads
                       </p>
                       <p className="text-2xl font-bold text-orange-700">
-                        {Math.max(
-                          ...orgChart.map((node) =>
-                            Math.max(
-                              node.level,
-                              ...node.children.map((child) =>
-                                Math.max(
-                                  child.level,
-                                  ...child.children.map(
-                                    (grandchild) => grandchild.level,
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ),
-                        ) + 1 || 1}
+                        {departmentSections.length}
                       </p>
                     </div>
                     <Building2 className="h-8 w-8 text-orange-500" />
@@ -645,22 +464,197 @@ export default function OrganizationChart() {
             {/* Organization Chart */}
             <div className="bg-white rounded-lg shadow-lg p-8 mx-auto overflow-x-auto">
               <DragDropContext onDragEnd={handleDragEnd}>
-                <Droppable droppableId="root" type="executive">
-                  {(provided) => (
-                    <div
-                      ref={provided.innerRef}
-                      {...provided.droppableProps}
-                      className="flex justify-center min-w-max"
-                    >
-                      <div className="space-y-8">
-                        {orgChart.map((node, index) =>
-                          renderExecutiveNode(node, index, 0),
-                        )}
-                      </div>
-                      {provided.placeholder}
+                <div className="flex flex-col items-center space-y-8">
+                  {/* Executive Chain (Vertical) */}
+                  {executives.length > 0 && (
+                    <div className="flex flex-col items-center space-y-4">
+                      {executives.map((exec, index) => (
+                        <Draggable
+                          key={exec.id}
+                          draggableId={exec.id}
+                          index={index}
+                          isDragDisabled={!dragMode}
+                        >
+                          {(provided, snapshot) => (
+                            <div
+                              ref={provided.innerRef}
+                              {...provided.draggableProps}
+                              className={`relative ${
+                                snapshot.isDragging
+                                  ? "rotate-1 shadow-2xl scale-105"
+                                  : ""
+                              } transition-all duration-200`}
+                            >
+                              {dragMode && (
+                                <div
+                                  {...provided.dragHandleProps}
+                                  className="absolute top-2 right-2 z-10"
+                                >
+                                  <Grip className="h-4 w-4 text-gray-400" />
+                                </div>
+                              )}
+
+                              {/* Executive Card - Larger */}
+                              <Card className="w-64 h-36 border-2 border-blue-300 bg-gradient-to-b from-blue-100 to-blue-50 shadow-lg">
+                                <CardContent className="p-4 text-center h-full flex flex-col justify-center">
+                                  <div className="flex justify-center mb-3">
+                                    <Avatar className="h-14 w-14 border-2 border-blue-400">
+                                      <AvatarImage
+                                        src="/placeholder.svg"
+                                        alt={exec.name}
+                                      />
+                                      <AvatarFallback className="bg-blue-200 text-blue-800 font-bold">
+                                        {exec.name
+                                          .split(" ")
+                                          .map((n) => n[0])
+                                          .join("")}
+                                      </AvatarFallback>
+                                    </Avatar>
+                                  </div>
+                                  <h3 className="font-bold text-lg text-gray-800 mb-1">
+                                    {exec.name}
+                                  </h3>
+                                  <p className="text-sm font-medium text-blue-800">
+                                    {exec.title}
+                                  </p>
+                                  {exec.department !== "Executive" && (
+                                    <p className="text-xs text-gray-600 mt-1">
+                                      {exec.department}
+                                    </p>
+                                  )}
+                                </CardContent>
+                              </Card>
+
+                              {/* Connecting line to next executive */}
+                              {index < executives.length - 1 && (
+                                <div className="w-0.5 h-6 bg-blue-400 mx-auto"></div>
+                              )}
+                            </div>
+                          )}
+                        </Draggable>
+                      ))}
+
+                      {/* Line to department heads */}
+                      <div className="w-0.5 h-8 bg-blue-400"></div>
                     </div>
                   )}
-                </Droppable>
+
+                  {/* Department Heads Row (Horizontal) */}
+                  {departmentSections.length > 0 && (
+                    <>
+                      {/* Horizontal connector line */}
+                      <div
+                        className="h-0.5 bg-blue-400"
+                        style={{
+                          width: `${(departmentSections.length - 1) * 200}px`,
+                        }}
+                      ></div>
+
+                      <Droppable
+                        droppableId="department-heads"
+                        type="department-head"
+                      >
+                        {(provided) => (
+                          <div
+                            ref={provided.innerRef}
+                            {...provided.droppableProps}
+                            className="flex gap-8"
+                          >
+                            {departmentSections.map((section, index) => (
+                              <Draggable
+                                key={section.head.id}
+                                draggableId={section.head.id}
+                                index={index}
+                                isDragDisabled={!dragMode}
+                              >
+                                {(provided, snapshot) => (
+                                  <div
+                                    ref={provided.innerRef}
+                                    {...provided.draggableProps}
+                                    className="flex flex-col items-center space-y-4"
+                                  >
+                                    {/* Vertical line from horizontal connector */}
+                                    <div className="w-0.5 h-6 bg-blue-400"></div>
+
+                                    {/* Department Head */}
+                                    <div
+                                      className={`relative ${
+                                        snapshot.isDragging
+                                          ? "rotate-1 shadow-2xl scale-105"
+                                          : ""
+                                      } transition-all duration-200`}
+                                    >
+                                      {dragMode && (
+                                        <div
+                                          {...provided.dragHandleProps}
+                                          className="absolute top-1 right-1 z-10"
+                                        >
+                                          <Grip className="h-3 w-3 text-gray-400" />
+                                        </div>
+                                      )}
+
+                                      {/* Department Head Card */}
+                                      <Card className="w-44 h-32 border-2 border-gray-300 bg-gradient-to-b from-gray-50 to-white shadow-md">
+                                        <CardContent className="p-3 text-center h-full flex flex-col justify-center">
+                                          <div className="mb-1">
+                                            <Badge
+                                              variant="outline"
+                                              className="text-xs mb-2"
+                                            >
+                                              {section.name}
+                                            </Badge>
+                                          </div>
+                                          <div className="flex justify-center mb-2">
+                                            <Avatar className="h-10 w-10 border border-gray-400">
+                                              <AvatarImage
+                                                src="/placeholder.svg"
+                                                alt={section.head.name}
+                                              />
+                                              <AvatarFallback className="bg-gray-100 text-gray-700 font-semibold text-xs">
+                                                {section.head.name
+                                                  .split(" ")
+                                                  .map((n) => n[0])
+                                                  .join("")}
+                                              </AvatarFallback>
+                                            </Avatar>
+                                          </div>
+                                          <h3 className="font-semibold text-sm text-gray-800 mb-1 leading-tight">
+                                            {section.head.name}
+                                          </h3>
+                                          <p className="text-xs text-gray-600 leading-tight">
+                                            {section.head.title}
+                                          </p>
+                                        </CardContent>
+                                      </Card>
+                                    </div>
+
+                                    {/* Department Members Grid */}
+                                    {section.members.length > 0 && (
+                                      <>
+                                        <div className="w-0.5 h-4 bg-blue-300"></div>
+                                        <div className="grid grid-cols-2 gap-3 max-w-xs">
+                                          {section.members.map((member) => (
+                                            <div key={member.id}>
+                                              {renderPersonCard(
+                                                member,
+                                                "small",
+                                              )}
+                                            </div>
+                                          ))}
+                                        </div>
+                                      </>
+                                    )}
+                                  </div>
+                                )}
+                              </Draggable>
+                            ))}
+                            {provided.placeholder}
+                          </div>
+                        )}
+                      </Droppable>
+                    </>
+                  )}
+                </div>
               </DragDropContext>
             </div>
           </div>

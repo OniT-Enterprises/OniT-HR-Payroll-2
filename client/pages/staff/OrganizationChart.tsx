@@ -36,21 +36,21 @@ import {
   Building2,
 } from "lucide-react";
 
-interface LeadershipNode {
+interface OrgNode {
   id: string;
   name: string;
   title: string;
   department: string;
   employee?: Employee;
-  children: LeadershipNode[];
+  children: OrgNode[];
   level: number;
-  employeeCount: number;
+  type: "executive" | "department-head" | "manager" | "individual";
 }
 
 export default function OrganizationChart() {
   const [employees, setEmployees] = useState<Employee[]>([]);
   const [departments, setDepartments] = useState<Department[]>([]);
-  const [orgChart, setOrgChart] = useState<LeadershipNode[]>([]);
+  const [orgChart, setOrgChart] = useState<OrgNode[]>([]);
   const [loading, setLoading] = useState(true);
   const [showDepartmentManager, setShowDepartmentManager] = useState(false);
   const [managerMode, setManagerMode] = useState<"add" | "edit">("edit");
@@ -72,7 +72,7 @@ export default function OrganizationChart() {
       setDepartments(departmentsData);
 
       await migrateMissingDepartments(employeesData, departmentsData);
-      buildLeadershipChart(employeesData, departmentsData);
+      buildExecutiveChart(employeesData, departmentsData);
     } catch (error) {
       console.error("Error loading data:", error);
       toast({
@@ -90,14 +90,11 @@ export default function OrganizationChart() {
     existingDepartments: Department[],
   ) => {
     try {
-      if (existingDepartments.length > 0) {
-        return;
-      }
+      if (existingDepartments.length > 0) return;
 
       const employeeDepartments = [
         ...new Set(employees.map((emp) => emp.jobDetails.department)),
       ];
-
       const validDepartments = employeeDepartments.filter(
         (deptName) => deptName && deptName.trim(),
       );
@@ -114,14 +111,14 @@ export default function OrganizationChart() {
 
         const updatedDepartments = await departmentService.getAllDepartments();
         setDepartments(updatedDepartments);
-        buildLeadershipChart(employees, updatedDepartments);
+        buildExecutiveChart(employees, updatedDepartments);
       }
     } catch (error) {
       console.error("Error migrating departments:", error);
     }
   };
 
-  const buildLeadershipChart = useCallback(
+  const buildExecutiveChart = useCallback(
     (employeesData: Employee[], departmentsData: Department[]) => {
       // Group employees by department
       const employeesByDept = employeesData.reduce(
@@ -134,124 +131,184 @@ export default function OrganizationChart() {
         {} as Record<string, Employee[]>,
       );
 
-      const chart: LeadershipNode[] = [];
+      const chart: OrgNode[] = [];
 
-      // Find CEO/Top Executive (look for titles containing CEO, President, etc.)
-      const topExecutive = employeesData.find(
+      // 1. Find CEO/Top Executive
+      const ceo = employeesData.find(
         (emp) =>
           emp.jobDetails.position.toLowerCase().includes("ceo") ||
-          emp.jobDetails.position.toLowerCase().includes("president") ||
-          emp.jobDetails.position.toLowerCase().includes("chief executive"),
+          emp.jobDetails.position.toLowerCase().includes("chief executive") ||
+          emp.jobDetails.position.toLowerCase().includes("president"),
       );
 
-      if (topExecutive) {
-        const ceoNode: LeadershipNode = {
-          id: `leader-${topExecutive.id}`,
-          name: `${topExecutive.personalInfo.firstName} ${topExecutive.personalInfo.lastName}`,
-          title: topExecutive.jobDetails.position,
+      if (ceo) {
+        const ceoNode: OrgNode = {
+          id: `exec-${ceo.id}`,
+          name: `${ceo.personalInfo.firstName} ${ceo.personalInfo.lastName}`,
+          title: ceo.jobDetails.position,
           department: "Executive",
-          employee: topExecutive,
+          employee: ceo,
           children: [],
           level: 0,
-          employeeCount: employeesData.length,
+          type: "executive",
         };
-        chart.push(ceoNode);
-      }
 
-      // Build department leadership hierarchy
-      const sortedDepartments = departmentsData.sort(
-        (a, b) =>
-          (employeesByDept[b.name]?.length || 0) -
-          (employeesByDept[a.name]?.length || 0),
-      );
+        // 2. Find C-Level executives (CTO, CFO, etc.)
+        const cLevelExecs = employeesData.filter(
+          (emp) =>
+            emp.id !== ceo.id &&
+            (emp.jobDetails.position.toLowerCase().includes("cto") ||
+              emp.jobDetails.position.toLowerCase().includes("cfo") ||
+              emp.jobDetails.position.toLowerCase().includes("coo") ||
+              emp.jobDetails.position.toLowerCase().includes("chief")),
+        );
 
-      sortedDepartments.forEach((dept, index) => {
-        const deptEmployees = employeesByDept[dept.name] || [];
-
-        // Find department head (Director, VP, etc.)
-        const departmentHead =
-          deptEmployees.find(
-            (emp) =>
-              emp.jobDetails.position.toLowerCase().includes("director") ||
-              emp.jobDetails.position.toLowerCase().includes("head") ||
-              emp.jobDetails.position.toLowerCase().includes("vp") ||
-              emp.jobDetails.position.toLowerCase().includes("vice president"),
-          ) ||
-          deptEmployees.find((emp) =>
-            emp.jobDetails.position.toLowerCase().includes("manager"),
-          );
-
-        if (departmentHead) {
-          const deptNode: LeadershipNode = {
-            id: `leader-${departmentHead.id}`,
-            name: `${departmentHead.personalInfo.firstName} ${departmentHead.personalInfo.lastName}`,
-            title: departmentHead.jobDetails.position,
-            department: dept.name,
-            employee: departmentHead,
+        cLevelExecs.forEach((exec) => {
+          const execNode: OrgNode = {
+            id: `exec-${exec.id}`,
+            name: `${exec.personalInfo.firstName} ${exec.personalInfo.lastName}`,
+            title: exec.jobDetails.position,
+            department: exec.jobDetails.department,
+            employee: exec,
             children: [],
             level: 1,
-            employeeCount: deptEmployees.length,
+            type: "executive",
           };
+          ceoNode.children.push(execNode);
+        });
 
-          // Find managers under this department head
-          const managers = deptEmployees.filter(
+        // 3. Find Department Heads/VPs
+        const departmentHeads: OrgNode[] = [];
+        departmentsData.forEach((dept) => {
+          const deptEmployees = employeesByDept[dept.name] || [];
+
+          // Find department head (excluding already assigned C-level)
+          const head = deptEmployees.find(
             (emp) =>
-              emp.id !== departmentHead.id &&
-              (emp.jobDetails.position.toLowerCase().includes("manager") ||
-                emp.jobDetails.position.toLowerCase().includes("lead") ||
-                emp.jobDetails.position.toLowerCase().includes("supervisor")),
+              !cLevelExecs.some((exec) => exec.id === emp.id) &&
+              emp.id !== ceo.id &&
+              (emp.jobDetails.position.toLowerCase().includes("vp") ||
+                emp.jobDetails.position
+                  .toLowerCase()
+                  .includes("vice president") ||
+                emp.jobDetails.position.toLowerCase().includes("director") ||
+                emp.jobDetails.position.toLowerCase().includes("head of")),
           );
 
-          managers.forEach((manager) => {
-            const managerNode: LeadershipNode = {
-              id: `leader-${manager.id}`,
-              name: `${manager.personalInfo.firstName} ${manager.personalInfo.lastName}`,
-              title: manager.jobDetails.position,
+          if (head) {
+            const headNode: OrgNode = {
+              id: `head-${head.id}`,
+              name: `${head.personalInfo.firstName} ${head.personalInfo.lastName}`,
+              title: head.jobDetails.position,
               department: dept.name,
-              employee: manager,
+              employee: head,
               children: [],
               level: 2,
-              employeeCount: Math.max(
-                1,
-                Math.floor(
-                  (deptEmployees.length - managers.length - 1) /
-                    Math.max(1, managers.length),
-                ),
-              ),
+              type: "department-head",
             };
-            deptNode.children.push(managerNode);
-          });
 
-          // If no specific managers found but department has multiple employees,
-          // create generic manager nodes
-          if (managers.length === 0 && deptEmployees.length > 3) {
-            const sampleEmployees = deptEmployees
-              .filter((emp) => emp.id !== departmentHead.id)
-              .slice(0, 2);
+            // 4. Find Managers under this department head
+            const managers = deptEmployees.filter(
+              (emp) =>
+                emp.id !== head.id &&
+                !cLevelExecs.some((exec) => exec.id === emp.id) &&
+                emp.id !== ceo.id &&
+                (emp.jobDetails.position.toLowerCase().includes("manager") ||
+                  emp.jobDetails.position.toLowerCase().includes("lead") ||
+                  emp.jobDetails.position
+                    .toLowerCase()
+                    .includes("supervisor") ||
+                  emp.jobDetails.position.toLowerCase().includes("senior")),
+            );
 
-            sampleEmployees.forEach((emp) => {
-              const empNode: LeadershipNode = {
-                id: `leader-${emp.id}`,
-                name: `${emp.personalInfo.firstName} ${emp.personalInfo.lastName}`,
-                title: emp.jobDetails.position,
+            managers.slice(0, 4).forEach((manager) => {
+              // Limit to 4 direct reports like Apple
+              const managerNode: OrgNode = {
+                id: `mgr-${manager.id}`,
+                name: `${manager.personalInfo.firstName} ${manager.personalInfo.lastName}`,
+                title: manager.jobDetails.position,
                 department: dept.name,
-                employee: emp,
+                employee: manager,
                 children: [],
-                level: 2,
-                employeeCount: Math.floor(deptEmployees.length / 3),
+                level: 3,
+                type: "manager",
               };
-              deptNode.children.push(empNode);
+              headNode.children.push(managerNode);
             });
-          }
 
-          // Add to CEO's children if CEO exists, otherwise add to chart
-          if (chart.length > 0 && chart[0].level === 0) {
-            chart[0].children.push(deptNode);
-          } else {
-            chart.push(deptNode);
+            departmentHeads.push(headNode);
           }
+        });
+
+        // Attach department heads to appropriate C-level exec or directly to CEO
+        if (ceoNode.children.length > 0) {
+          // Distribute department heads under C-level executives
+          departmentHeads.forEach((head, index) => {
+            const targetExec =
+              ceoNode.children[index % ceoNode.children.length];
+            targetExec.children.push(head);
+          });
+        } else {
+          // No C-level execs, attach directly to CEO
+          departmentHeads.forEach((head) => {
+            ceoNode.children.push(head);
+          });
         }
-      });
+
+        chart.push(ceoNode);
+      } else {
+        // No CEO found, create department-based structure
+        const sortedDepartments = departmentsData.sort(
+          (a, b) =>
+            (employeesByDept[b.name]?.length || 0) -
+            (employeesByDept[a.name]?.length || 0),
+        );
+
+        sortedDepartments.slice(0, 5).forEach((dept) => {
+          const deptEmployees = employeesByDept[dept.name] || [];
+          const head = deptEmployees.find(
+            (emp) =>
+              emp.jobDetails.position.toLowerCase().includes("director") ||
+              emp.jobDetails.position.toLowerCase().includes("manager") ||
+              emp.jobDetails.position.toLowerCase().includes("head"),
+          );
+
+          if (head) {
+            const headNode: OrgNode = {
+              id: `head-${head.id}`,
+              name: `${head.personalInfo.firstName} ${head.personalInfo.lastName}`,
+              title: head.jobDetails.position,
+              department: dept.name,
+              employee: head,
+              children: [],
+              level: 0,
+              type: "department-head",
+            };
+
+            const managers = deptEmployees.filter(
+              (emp) =>
+                emp.id !== head.id &&
+                emp.jobDetails.position.toLowerCase().includes("manager"),
+            );
+
+            managers.slice(0, 3).forEach((manager) => {
+              const managerNode: OrgNode = {
+                id: `mgr-${manager.id}`,
+                name: `${manager.personalInfo.firstName} ${manager.personalInfo.lastName}`,
+                title: manager.jobDetails.position,
+                department: dept.name,
+                employee: manager,
+                children: [],
+                level: 1,
+                type: "manager",
+              };
+              headNode.children.push(managerNode);
+            });
+
+            chart.push(headNode);
+          }
+        });
+      }
 
       setOrgChart(chart);
     },
@@ -260,19 +317,20 @@ export default function OrganizationChart() {
 
   const handleDragEnd = (result: DropResult) => {
     if (!result.destination) return;
-
     toast({
       title: "Position Updated",
       description: "Leadership position moved successfully",
     });
   };
 
-  const renderLeadershipNode = (
-    node: LeadershipNode,
+  const renderExecutiveNode = (
+    node: OrgNode,
     index: number,
     level: number = 0,
   ) => {
     const hasChildren = node.children.length > 0;
+    const isTopLevel = level === 0;
+    const isDepartmentHead = node.type === "department-head" && level >= 2;
 
     return (
       <Draggable
@@ -284,9 +342,11 @@ export default function OrganizationChart() {
         {(provided, snapshot) => (
           <div className="flex flex-col items-center">
             {/* Connecting line from parent */}
-            {level > 0 && <div className="w-0.5 h-12 bg-blue-300 mb-4"></div>}
+            {level > 0 && !isTopLevel && (
+              <div className="w-0.5 h-8 bg-blue-400 mb-2"></div>
+            )}
 
-            {/* Leadership Box */}
+            {/* Executive Box */}
             <div
               ref={provided.innerRef}
               {...provided.draggableProps}
@@ -294,7 +354,20 @@ export default function OrganizationChart() {
                 snapshot.isDragging ? "rotate-1 shadow-2xl scale-105" : ""
               } transition-all duration-200`}
             >
-              <Card className="w-64 border-2 border-blue-200 bg-gradient-to-b from-blue-50 to-white shadow-lg hover:shadow-xl transition-all">
+              <Card
+                className={`
+                ${isTopLevel ? "w-72" : isDepartmentHead ? "w-64" : "w-56"} 
+                border-2 
+                ${
+                  isTopLevel
+                    ? "border-blue-300 bg-gradient-to-b from-blue-100 to-blue-50"
+                    : isDepartmentHead
+                      ? "border-gray-300 bg-gradient-to-b from-gray-50 to-white"
+                      : "border-blue-200 bg-gradient-to-b from-blue-50 to-white"
+                }
+                shadow-lg hover:shadow-xl transition-all
+              `}
+              >
                 <CardContent className="p-4 text-center">
                   {dragMode && (
                     <div
@@ -307,9 +380,11 @@ export default function OrganizationChart() {
 
                   {/* Avatar */}
                   <div className="flex justify-center mb-3">
-                    <Avatar className="h-16 w-16 border-2 border-blue-300">
+                    <Avatar
+                      className={`${isTopLevel ? "h-20 w-20" : "h-16 w-16"} border-2 border-blue-300`}
+                    >
                       <AvatarImage src="/placeholder.svg" alt={node.name} />
-                      <AvatarFallback className="bg-blue-100 text-blue-700 font-semibold text-lg">
+                      <AvatarFallback className="bg-blue-100 text-blue-700 font-semibold">
                         {node.name
                           .split(" ")
                           .map((n) => n[0])
@@ -319,27 +394,33 @@ export default function OrganizationChart() {
                   </div>
 
                   {/* Name */}
-                  <h3 className="font-bold text-lg text-gray-800 mb-1">
+                  <h3
+                    className={`font-bold ${isTopLevel ? "text-xl" : "text-lg"} text-gray-800 mb-1`}
+                  >
                     {node.name}
                   </h3>
 
                   {/* Title */}
-                  <p className="text-sm font-medium text-blue-700 mb-2">
+                  <p
+                    className={`${isTopLevel ? "text-sm" : "text-xs"} font-medium text-blue-700 mb-2`}
+                  >
                     {node.title}
                   </p>
 
                   {/* Department */}
-                  <p className="text-xs text-gray-600 mb-2">
-                    {node.department}
-                  </p>
+                  {node.department !== "Executive" && (
+                    <p className="text-xs text-gray-600 mb-2">
+                      {node.department}
+                    </p>
+                  )}
 
-                  {/* Employee Count */}
-                  <div className="flex justify-center">
+                  {/* Team indicator for department heads */}
+                  {isDepartmentHead && (
                     <Badge variant="secondary" className="text-xs">
-                      {node.employeeCount} Team Member
-                      {node.employeeCount !== 1 ? "s" : ""}
+                      {node.children.length} Direct Report
+                      {node.children.length !== 1 ? "s" : ""}
                     </Badge>
-                  </div>
+                  )}
                 </CardContent>
               </Card>
             </div>
@@ -347,39 +428,36 @@ export default function OrganizationChart() {
             {/* Render children */}
             {hasChildren && (
               <>
-                {/* Connecting line down to children */}
-                <div className="w-0.5 h-12 bg-blue-300 mt-4"></div>
+                {/* Connecting line down */}
+                <div className="w-0.5 h-8 bg-blue-400 mt-2"></div>
 
-                {/* Horizontal line for multiple children */}
+                {/* Horizontal connector for multiple children */}
                 {node.children.length > 1 && (
-                  <div className="relative mb-4">
+                  <div className="relative">
                     <div
-                      className="h-0.5 bg-blue-300"
+                      className="h-0.5 bg-blue-400"
                       style={{
-                        width: `${(node.children.length - 1) * 280}px`,
-                        marginLeft: `-${((node.children.length - 1) * 280) / 2}px`,
+                        width: `${(node.children.length - 1) * (isDepartmentHead ? 280 : 240)}px`,
+                        marginLeft: `-${((node.children.length - 1) * (isDepartmentHead ? 280 : 240)) / 2}px`,
                       }}
                     ></div>
                   </div>
                 )}
 
-                <Droppable
-                  droppableId={`children-${node.id}`}
-                  type="leadership"
-                >
+                <Droppable droppableId={`children-${node.id}`} type="executive">
                   {(provided) => (
                     <div
                       ref={provided.innerRef}
                       {...provided.droppableProps}
-                      className="flex gap-8"
+                      className={`flex ${isDepartmentHead ? "gap-8" : "gap-6"} mt-2`}
                     >
                       {node.children.map((child, childIndex) => (
                         <div key={child.id} className="relative">
                           {/* Vertical line to each child */}
                           {node.children.length > 1 && (
-                            <div className="w-0.5 h-12 bg-blue-300 mx-auto -mt-4 mb-0"></div>
+                            <div className="w-0.5 h-8 bg-blue-400 mx-auto -mt-2 mb-0"></div>
                           )}
-                          {renderLeadershipNode(child, childIndex, level + 1)}
+                          {renderExecutiveNode(child, childIndex, level + 1)}
                         </div>
                       ))}
                       {provided.placeholder}
@@ -409,16 +487,18 @@ export default function OrganizationChart() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-blue-50 to-white">
+    <div className="min-h-screen bg-gradient-to-b from-slate-50 to-white">
       <MainNavigation />
 
       <div className="p-6">
         {/* Header */}
         <div className="text-center mb-8">
           <h1 className="text-4xl font-bold text-gray-800 mb-2">
-            Organizational Chart
+            Company Organizational Chart
           </h1>
-          <p className="text-lg text-gray-600">Company Leadership Structure</p>
+          <p className="text-lg text-gray-600">
+            Executive Leadership & Management Structure
+          </p>
         </div>
 
         {/* Controls */}
@@ -452,12 +532,11 @@ export default function OrganizationChart() {
         </div>
 
         {employees.length === 0 ? (
-          /* Empty State */
           <div className="text-center py-16">
             <Database className="h-16 w-16 mx-auto mb-4 text-gray-300" />
             <h3 className="text-lg font-semibold mb-2">No Organization Data</h3>
             <p className="text-muted-foreground mb-6">
-              Add employees to your database to see the organization chart
+              Add employees to see the organization chart
             </p>
             <Button onClick={() => (window.location.href = "/staff/add")}>
               <User className="mr-2 h-4 w-4" />
@@ -466,7 +545,7 @@ export default function OrganizationChart() {
           </div>
         ) : (
           <div className="space-y-8">
-            {/* Statistics */}
+            {/* Stats */}
             <div className="grid grid-cols-1 md:grid-cols-4 gap-4 max-w-4xl mx-auto">
               <Card className="border-blue-200">
                 <CardContent className="p-6">
@@ -503,7 +582,7 @@ export default function OrganizationChart() {
                   <div className="flex items-center justify-between">
                     <div>
                       <p className="text-sm font-medium text-gray-600">
-                        Leadership Roles
+                        Leadership
                       </p>
                       <p className="text-2xl font-bold text-purple-700">
                         {
@@ -520,7 +599,10 @@ export default function OrganizationChart() {
                                 .includes("head") ||
                               emp.jobDetails.position
                                 .toLowerCase()
-                                .includes("lead"),
+                                .includes("lead") ||
+                              emp.jobDetails.position
+                                .toLowerCase()
+                                .includes("chief"),
                           ).length
                         }
                       </p>
@@ -534,18 +616,24 @@ export default function OrganizationChart() {
                   <div className="flex items-center justify-between">
                     <div>
                       <p className="text-sm font-medium text-gray-600">
-                        Org Levels
+                        Hierarchy Levels
                       </p>
                       <p className="text-2xl font-bold text-orange-700">
                         {Math.max(
                           ...orgChart.map((node) =>
-                            node.children.length > 0
-                              ? Math.max(
-                                  ...node.children.map((child) => child.level),
-                                ) + 1
-                              : node.level + 1,
+                            Math.max(
+                              node.level,
+                              ...node.children.map((child) =>
+                                Math.max(
+                                  child.level,
+                                  ...child.children.map(
+                                    (grandchild) => grandchild.level,
+                                  ),
+                                ),
+                              ),
+                            ),
                           ),
-                        ) || 1}
+                        ) + 1 || 1}
                       </p>
                     </div>
                     <Building2 className="h-8 w-8 text-orange-500" />
@@ -557,16 +645,16 @@ export default function OrganizationChart() {
             {/* Organization Chart */}
             <div className="bg-white rounded-lg shadow-lg p-8 mx-auto overflow-x-auto">
               <DragDropContext onDragEnd={handleDragEnd}>
-                <Droppable droppableId="root" type="leadership">
+                <Droppable droppableId="root" type="executive">
                   {(provided) => (
                     <div
                       ref={provided.innerRef}
                       {...provided.droppableProps}
                       className="flex justify-center min-w-max"
                     >
-                      <div className="flex gap-16 items-start">
+                      <div className="space-y-8">
                         {orgChart.map((node, index) =>
-                          renderLeadershipNode(node, index, 0),
+                          renderExecutiveNode(node, index, 0),
                         )}
                       </div>
                       {provided.placeholder}
@@ -578,7 +666,6 @@ export default function OrganizationChart() {
           </div>
         )}
 
-        {/* Department Manager Dialog */}
         <DepartmentManager
           open={showDepartmentManager}
           onOpenChange={setShowDepartmentManager}

@@ -138,6 +138,30 @@ export const testFirebaseConnection = async (): Promise<boolean> => {
   }
 };
 
+// Global error handler for Firebase network issues
+if (typeof window !== "undefined") {
+  window.addEventListener("unhandledrejection", (event) => {
+    if (
+      event.reason instanceof TypeError &&
+      event.reason.message?.includes("Failed to fetch")
+    ) {
+      console.warn("🌐 Caught unhandled Firebase network error:", event.reason);
+      // Prevent the error from propagating and crashing the app
+      event.preventDefault();
+
+      // Show user-friendly notification if possible
+      if (typeof window.toast !== "undefined") {
+        window.toast({
+          title: "Connection Issue",
+          description:
+            "Network connectivity problems detected. Using offline mode.",
+          variant: "destructive",
+        });
+      }
+    }
+  });
+}
+
 // Export services (will be null if initialization failed)
 export { db, auth, storage, analytics };
 export default app;

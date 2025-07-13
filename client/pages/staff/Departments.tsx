@@ -80,6 +80,15 @@ export default function Departments() {
     }
   };
 
+  const handleDepartmentChange = async () => {
+    // Reload data and notify about updates
+    await loadData();
+    toast({
+      title: "Departments Updated",
+      description: "Department changes have been saved successfully",
+    });
+  };
+
   const migrateMissingDepartments = async (
     employees: Employee[],
     existingDepartments: Department[],
@@ -444,7 +453,7 @@ export default function Departments() {
           open={showDepartmentManager}
           onOpenChange={setShowDepartmentManager}
           mode={managerMode}
-          onDepartmentChange={loadData}
+          onDepartmentChange={handleDepartmentChange}
         />
 
         {/* Department Employees Dialog */}

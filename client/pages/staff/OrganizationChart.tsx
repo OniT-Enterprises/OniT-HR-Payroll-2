@@ -78,16 +78,42 @@ export default function OrganizationChart() {
       let employeesData: Employee[] = [];
       let departmentsData: Department[] = [];
 
+      // Load employees with comprehensive error handling
       try {
-        employeesData = await employeeService.getAllEmployees();
-        console.log("✅ Employees loaded successfully");
+        employeesData = await Promise.race([
+          employeeService.getAllEmployees(),
+          new Promise<Employee[]>((_, reject) =>
+            setTimeout(() => reject(new Error("Employee load timeout")), 8000),
+          ),
+        ]);
+        console.log("✅ Employees loaded successfully:", employeesData.length);
       } catch (error) {
         console.warn("⚠️ Failed to load employees, using empty array:", error);
+
+        // Check for specific error types
+        if (
+          error instanceof TypeError ||
+          error.message?.includes("Failed to fetch")
+        ) {
+          console.warn(
+            "🌐 Network error loading employees - using offline mode",
+          );
+        }
+
         employeesData = [];
       }
 
+      // Load departments with comprehensive error handling
       try {
-        departmentsData = await departmentService.getAllDepartments();
+        departmentsData = await Promise.race([
+          departmentService.getAllDepartments(),
+          new Promise<Department[]>((_, reject) =>
+            setTimeout(
+              () => reject(new Error("Department load timeout")),
+              8000,
+            ),
+          ),
+        ]);
         console.log(
           "✅ Departments loaded successfully:",
           departmentsData.length,
@@ -102,6 +128,17 @@ export default function OrganizationChart() {
           "⚠️ Failed to load departments, using empty array:",
           error,
         );
+
+        // Check for specific error types
+        if (
+          error instanceof TypeError ||
+          error.message?.includes("Failed to fetch")
+        ) {
+          console.warn(
+            "🌐 Network error loading departments - using offline mode",
+          );
+        }
+
         departmentsData = [];
       }
 
@@ -210,7 +247,7 @@ export default function OrganizationChart() {
   const buildAppleOrgChart = useCallback(
     (employeesData: Employee[], departmentsData: Department[]) => {
       console.log(
-        "🏗️ Building org chart with:",
+        "🏗��� Building org chart with:",
         employeesData.length,
         "employees and",
         departmentsData.length,

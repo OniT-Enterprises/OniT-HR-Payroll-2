@@ -27,7 +27,7 @@ import Attendance from "./pages/time-leave/Attendance";
 import LeaveRequests from "./pages/time-leave/LeaveRequests";
 import ShiftScheduling from "./pages/time-leave/ShiftScheduling";
 import Reviews from "./pages/performance/Reviews";
-import GoalsOKRs from "./pages/performance/GoalsOKRs";
+import Goals from "./pages/performance/Goals";
 import TrainingCertifications from "./pages/performance/TrainingCertifications";
 import Disciplinary from "./pages/performance/Disciplinary";
 import RunPayroll from "./pages/payroll/RunPayroll";

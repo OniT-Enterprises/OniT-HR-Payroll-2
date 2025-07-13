@@ -170,7 +170,19 @@ class EmployeeService {
 
       const queryPromise = getDocs(
         query(this.collection, orderBy("createdAt", "desc")),
-      );
+      ).catch((error) => {
+        // Immediately catch TypeError and network errors
+        if (
+          error instanceof TypeError ||
+          error.message?.includes("Failed to fetch")
+        ) {
+          console.warn(
+            "🌐 Network error detected during employee query, falling back to mock data",
+          );
+          throw new Error("Network error - using fallback data");
+        }
+        throw error;
+      });
 
       const querySnapshot = (await Promise.race([
         queryPromise,

@@ -45,6 +45,7 @@ import {
   BarChart3,
   TrendingUp,
   AlertCircle,
+  AlertTriangle,
   ChevronRight,
   Edit,
   Trash2,

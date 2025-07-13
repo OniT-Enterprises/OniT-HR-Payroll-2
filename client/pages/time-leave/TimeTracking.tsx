@@ -1038,7 +1038,7 @@ export default function TimeTracking() {
               </p>
             </div>
             <Button
-              onClick={() => openDialog("goal")}
+              onClick={() => setActiveTab("dashboard")}
               className="bg-blue-600 hover:bg-blue-700"
             >
               <BarChart3 className="h-4 w-4 mr-2" />

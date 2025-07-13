@@ -10,6 +10,7 @@ import {
   Timestamp,
 } from "firebase/firestore";
 import { db, isFirebaseReady, getFirebaseError } from "@/lib/firebase";
+import { isOnline, checkNetwork } from "@/lib/networkState";
 
 export interface Department {
   id: string;

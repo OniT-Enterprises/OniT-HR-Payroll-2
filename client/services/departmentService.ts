@@ -67,6 +67,33 @@ class DepartmentService {
       return this.getMockDepartments();
     }
 
+    // Quick connectivity test to Firebase
+    try {
+      await new Promise((resolve, reject) => {
+        const timeout = setTimeout(() => {
+          reject(new Error("Firebase connectivity test timeout"));
+        }, 1000);
+
+        // Try to access Firebase - this will throw TypeError if network issues
+        if (typeof db.app === "undefined") {
+          clearTimeout(timeout);
+          reject(new Error("Firebase app not accessible"));
+          return;
+        }
+
+        clearTimeout(timeout);
+        resolve(true);
+      });
+    } catch (error) {
+      console.warn("⚠️ Firebase quick connectivity test failed:", error);
+      if (
+        error instanceof TypeError ||
+        error.message?.includes("Failed to fetch")
+      ) {
+        return this.getMockDepartments();
+      }
+    }
+
     // Check cache first
     const cachedDepartments = this.getCachedDepartments();
     if (cachedDepartments.length > 0) {

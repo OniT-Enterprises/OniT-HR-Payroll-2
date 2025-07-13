@@ -138,26 +138,64 @@ export const testFirebaseConnection = async (): Promise<boolean> => {
   }
 };
 
-// Global error handler for Firebase network issues
+// Enhanced global error handler for Firebase network issues
 if (typeof window !== "undefined") {
+  // Handle unhandled promise rejections
   window.addEventListener("unhandledrejection", (event) => {
-    if (
-      event.reason instanceof TypeError &&
-      event.reason.message?.includes("Failed to fetch")
-    ) {
-      console.warn("🌐 Caught unhandled Firebase network error:", event.reason);
+    const error = event.reason;
+
+    // Check for various network-related errors
+    const isNetworkError =
+      error instanceof TypeError ||
+      (error &&
+        error.message &&
+        (error.message.includes("Failed to fetch") ||
+          error.message.includes("fetch") ||
+          error.message.includes("network") ||
+          error.message.includes("NetworkError") ||
+          error.message.includes("Connection failed"))) ||
+      (error &&
+        error.code &&
+        (error.code.includes("unavailable") ||
+          error.code.includes("deadline-exceeded") ||
+          error.code.includes("internal")));
+
+    if (isNetworkError) {
+      console.warn("🌐 Caught unhandled network/Firebase error:", error);
+
       // Prevent the error from propagating and crashing the app
       event.preventDefault();
 
-      // Show user-friendly notification if possible
-      if (typeof window.toast !== "undefined") {
-        window.toast({
-          title: "Connection Issue",
-          description:
-            "Network connectivity problems detected. Using offline mode.",
-          variant: "destructive",
-        });
+      // Show user-friendly notification if possible (throttled)
+      if (
+        typeof window.lastToastTime === "undefined" ||
+        Date.now() - window.lastToastTime > 10000
+      ) {
+        // Only show every 10 seconds
+        window.lastToastTime = Date.now();
+
+        if (typeof window.toast !== "undefined") {
+          window.toast({
+            title: "Connection Issue",
+            description:
+              "Network connectivity problems detected. Using offline mode.",
+            variant: "destructive",
+          });
+        }
       }
+    }
+  });
+
+  // Handle uncaught errors
+  window.addEventListener("error", (event) => {
+    const error = event.error;
+
+    if (
+      error instanceof TypeError &&
+      error.message?.includes("Failed to fetch")
+    ) {
+      console.warn("🌐 Caught uncaught TypeError fetch error:", error);
+      event.preventDefault();
     }
   });
 }

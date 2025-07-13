@@ -342,6 +342,15 @@ export default function OrganizationChart() {
     });
   };
 
+  const handleDepartmentChange = async () => {
+    // Reload data when departments are changed
+    await loadData();
+    toast({
+      title: "Data Refreshed",
+      description: "Organization chart updated with latest department changes",
+    });
+  };
+
   if (loading) {
     return (
       <div className="min-h-screen bg-background">
@@ -709,7 +718,7 @@ export default function OrganizationChart() {
           open={showDepartmentManager}
           onOpenChange={setShowDepartmentManager}
           mode={managerMode}
-          onDepartmentChange={loadData}
+          onDepartmentChange={handleDepartmentChange}
         />
       </div>
     </div>

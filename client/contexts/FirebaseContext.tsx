@@ -45,24 +45,63 @@ export const FirebaseProvider: React.FC<FirebaseProviderProps> = ({
 
   const checkConnection = async () => {
     try {
-      if (!isFirebaseReady()) {
-        setError(getFirebaseError());
+      // Check network first
+      if (!navigator.onLine) {
+        console.warn("🌐 No network connection detected");
+        setError("No internet connection");
         setIsConnected(false);
         setIsUsingMockData(true);
         return;
       }
 
-      const connected = await testFirebaseConnection();
+      if (!isFirebaseReady()) {
+        console.warn("⚠️ Firebase not ready");
+        setError(getFirebaseError() || "Firebase not initialized");
+        setIsConnected(false);
+        setIsUsingMockData(true);
+        return;
+      }
+
+      // Wrap Firebase connection test with additional error handling
+      let connected = false;
+      try {
+        connected = await Promise.race([
+          testFirebaseConnection(),
+          new Promise<boolean>((_, reject) =>
+            setTimeout(() => reject(new Error("Connection timeout")), 5000),
+          ),
+        ]);
+      } catch (connectionError) {
+        console.warn("🔥 Firebase connection test failed:", connectionError);
+
+        // Check for specific TypeError cases
+        if (
+          connectionError instanceof TypeError ||
+          connectionError.message?.includes("Failed to fetch") ||
+          connectionError.message?.includes("fetch")
+        ) {
+          console.warn("🌐 Network fetch error detected, using offline mode");
+          connected = false;
+        } else {
+          console.warn("🚫 Other connection error:", connectionError);
+          connected = false;
+        }
+      }
+
       setIsConnected(connected);
       setIsUsingMockData(!connected);
 
       if (!connected) {
-        setError("Unable to connect to Firebase services - using demo data");
+        setError("Using demo data - Firebase connection unavailable");
       } else {
         setError(null);
+        console.log("✅ Firebase connection established");
       }
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Unknown Firebase error");
+      console.error("❌ Critical error in checkConnection:", err);
+
+      // Ensure we always set safe fallback state
+      setError("Connection check failed - using demo data");
       setIsConnected(false);
       setIsUsingMockData(true);
     }

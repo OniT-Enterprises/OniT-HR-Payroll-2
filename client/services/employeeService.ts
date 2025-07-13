@@ -119,6 +119,12 @@ class EmployeeService {
   }
 
   async getAllEmployees(): Promise<Employee[]> {
+    // Check if Firebase is blocked due to previous errors
+    if (isFirebaseBlocked()) {
+      console.warn("🚫 Firebase blocked, using mock data");
+      return await mockDataService.getAllEmployees();
+    }
+
     // First check network connectivity
     if (!navigator.onLine) {
       console.warn("🚫 No internet connection, using mock data");

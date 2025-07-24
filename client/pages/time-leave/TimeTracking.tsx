@@ -563,7 +563,8 @@ export default function TimeTracking() {
     startIndex + itemsPerPage,
   );
 
-  const renderDailyView = () => (
+  // Removed renderDailyView function - content moved inline
+  const renderDailyView_unused = () => (
     <div className="flex flex-col space-y-6">
       {/* Quick Stats */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">

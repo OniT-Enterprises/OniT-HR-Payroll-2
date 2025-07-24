@@ -124,7 +124,7 @@ class EmployeeService {
 
     try {
       // Skip all Firebase attempts and use reliable mock data
-      console.log("��� Using safe mock employee data");
+      console.log("📊 Using safe mock employee data");
       const mockEmployees = await mockDataService.getAllEmployees();
 
       // Cache the mock data for consistency
@@ -438,16 +438,10 @@ class EmployeeService {
 
   async getEmployeesByDepartment(department: string): Promise<Employee[]> {
     try {
-      const q = query(
-        this.collection,
-        where("jobDetails.department", "==", department),
-        orderBy("createdAt", "desc"),
-      );
-      const querySnapshot = await getDocs(q);
-      return querySnapshot.docs.map((doc) => ({
-        id: doc.id,
-        ...doc.data(),
-      })) as Employee[];
+      // Use offline-first approach
+      console.log(`🏢 Getting employees for department ${department} with offline-first approach`);
+      const allEmployees = await this.getAllEmployees();
+      return allEmployees.filter(emp => emp.jobDetails.department === department);
     } catch (error) {
       console.error("Error getting employees by department:", error);
       return [];

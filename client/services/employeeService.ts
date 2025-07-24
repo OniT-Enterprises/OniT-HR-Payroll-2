@@ -124,7 +124,7 @@ class EmployeeService {
 
     try {
       // Skip all Firebase attempts and use reliable mock data
-      console.log("📊 Using safe mock employee data");
+      console.log("��� Using safe mock employee data");
       const mockEmployees = await mockDataService.getAllEmployees();
 
       // Cache the mock data for consistency
@@ -352,11 +352,10 @@ class EmployeeService {
 
   async getEmployeeById(id: string): Promise<Employee | null> {
     try {
-      const docSnap = await getDoc(doc(this.collection, id));
-      if (docSnap.exists()) {
-        return { id: docSnap.id, ...docSnap.data() } as Employee;
-      }
-      return null;
+      // Use offline-first approach
+      console.log(`👤 Getting employee ${id} with offline-first approach`);
+      const allEmployees = await this.getAllEmployees();
+      return allEmployees.find(emp => emp.id === id) || null;
     } catch (error) {
       console.error("Error getting employee:", error);
       return null;

@@ -671,22 +671,9 @@ export default function TimeTracking() {
 
       <div className="p-6">
         <div className="max-w-7xl mx-auto">
-          <div className="mb-6">
-            <h1 className="text-3xl font-bold text-gray-900 mb-2">
-              Security Time Tracking
-            </h1>
-            <p className="text-gray-600">
-              Daily activity logs and hourly reporting for security operations
-            </p>
-          </div>
+          <div />
 
           <Tabs value={activeTab} onValueChange={setActiveTab}>
-            <TabsList className="grid w-full grid-cols-3">
-              <TabsTrigger value="daily">Daily Overview</TabsTrigger>
-              <TabsTrigger value="entries">Time Entries</TabsTrigger>
-              <TabsTrigger value="reports">Reports & Export</TabsTrigger>
-            </TabsList>
-
             <TabsContent value="daily" className="mt-6">
               {renderDailyView()}
             </TabsContent>

@@ -614,8 +614,6 @@ export default function TimeTracking() {
         </Card>
       </div>
 
-
-
       {/* Recent Entries */}
       <Card>
         <CardHeader>
@@ -690,17 +688,23 @@ export default function TimeTracking() {
                     </CardHeader>
                     <CardContent>
                       <div className="text-2xl font-bold">127</div>
-                      <p className="text-xs text-muted-foreground">Currently active</p>
+                      <p className="text-xs text-muted-foreground">
+                        Currently active
+                      </p>
                     </CardContent>
                   </Card>
                   <Card>
                     <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                      <CardTitle className="text-sm font-medium">Sites Covered</CardTitle>
+                      <CardTitle className="text-sm font-medium">
+                        Sites Covered
+                      </CardTitle>
                       <MapPin className="h-4 w-4 text-muted-foreground" />
                     </CardHeader>
                     <CardContent>
                       <div className="text-2xl font-bold">45</div>
-                      <p className="text-xs text-muted-foreground">Active locations</p>
+                      <p className="text-xs text-muted-foreground">
+                        Active locations
+                      </p>
                     </CardContent>
                   </Card>
                   <Card>
@@ -712,12 +716,16 @@ export default function TimeTracking() {
                     </CardHeader>
                     <CardContent>
                       <div className="text-2xl font-bold">23</div>
-                      <p className="text-xs text-muted-foreground">Awaiting review</p>
+                      <p className="text-xs text-muted-foreground">
+                        Awaiting review
+                      </p>
                     </CardContent>
                   </Card>
                   <Card>
                     <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                      <CardTitle className="text-sm font-medium">Total Hours</CardTitle>
+                      <CardTitle className="text-sm font-medium">
+                        Total Hours
+                      </CardTitle>
                       <Timer className="h-4 w-4 text-muted-foreground" />
                     </CardHeader>
                     <CardContent>
@@ -729,7 +737,10 @@ export default function TimeTracking() {
 
                 {/* Tabs positioned after stats */}
                 <TabsList className="flex flex-row flex-wrap gap-[361px] mt-4 mx-auto p-1 bg-muted rounded-lg w-full">
-                  <TabsTrigger value="daily" className="data-[state=active]:bg-background data-[state=active]:shadow-sm">
+                  <TabsTrigger
+                    value="daily"
+                    className="data-[state=active]:bg-background data-[state=active]:shadow-sm"
+                  >
                     Daily Overview
                   </TabsTrigger>
                   <TabsTrigger value="entries" className="ml-auto">
@@ -751,8 +762,12 @@ export default function TimeTracking() {
                   <CardContent>
                     <div className="space-y-4">
                       {timeEntries.slice(0, 3).map((entry) => {
-                        const site = securitySites.find((s) => s.id === entry.siteId);
-                        const client = clients.find((c) => c.id === entry.clientId);
+                        const site = securitySites.find(
+                          (s) => s.id === entry.siteId,
+                        );
+                        const client = clients.find(
+                          (c) => c.id === entry.clientId,
+                        );
                         return (
                           <div
                             key={entry.id}
@@ -760,8 +775,12 @@ export default function TimeTracking() {
                           >
                             <div className="space-y-1">
                               <div className="flex items-center gap-2">
-                                <p className="font-medium">{entry.employeeName}</p>
-                                <Badge variant="outline">{entry.badgeNumber}</Badge>
+                                <p className="font-medium">
+                                  {entry.employeeName}
+                                </p>
+                                <Badge variant="outline">
+                                  {entry.badgeNumber}
+                                </Badge>
                                 <Badge className="bg-blue-100 text-blue-800">
                                   {entry.shiftType}
                                 </Badge>
@@ -770,7 +789,8 @@ export default function TimeTracking() {
                                 {site?.name} • {client?.name}
                               </p>
                               <p className="text-sm text-gray-500">
-                                {entry.clockIn} - {entry.clockOut} ({entry.totalHours}h)
+                                {entry.clockIn} - {entry.clockOut} (
+                                {entry.totalHours}h)
                               </p>
                               {entry.incidents && (
                                 <div className="flex items-center gap-1 text-sm text-orange-600">
@@ -780,7 +800,9 @@ export default function TimeTracking() {
                               )}
                             </div>
                             <div className="text-right space-y-1">
-                              <p className="text-sm text-gray-500">{entry.date}</p>
+                              <p className="text-sm text-gray-500">
+                                {entry.date}
+                              </p>
                               {getStatusBadge(entry.status)}
                             </div>
                           </div>

@@ -677,7 +677,118 @@ export default function TimeTracking() {
 
           <Tabs value={activeTab} onValueChange={setActiveTab}>
             <TabsContent value="daily" className="mt-6">
-              {renderDailyView()}
+              <div className="flex flex-col space-y-6">
+                {/* Quick Stats */}
+                <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+                  <Card>
+                    <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                      <CardTitle className="text-sm font-medium">
+                        Guards on Duty
+                      </CardTitle>
+                      <Shield className="h-4 w-4 text-muted-foreground" />
+                    </CardHeader>
+                    <CardContent>
+                      <div className="text-2xl font-bold">127</div>
+                      <p className="text-xs text-muted-foreground">Currently active</p>
+                    </CardContent>
+                  </Card>
+                  <Card>
+                    <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                      <CardTitle className="text-sm font-medium">Sites Covered</CardTitle>
+                      <MapPin className="h-4 w-4 text-muted-foreground" />
+                    </CardHeader>
+                    <CardContent>
+                      <div className="text-2xl font-bold">45</div>
+                      <p className="text-xs text-muted-foreground">Active locations</p>
+                    </CardContent>
+                  </Card>
+                  <Card>
+                    <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                      <CardTitle className="text-sm font-medium">
+                        Pending Approvals
+                      </CardTitle>
+                      <Clock className="h-4 w-4 text-muted-foreground" />
+                    </CardHeader>
+                    <CardContent>
+                      <div className="text-2xl font-bold">23</div>
+                      <p className="text-xs text-muted-foreground">Awaiting review</p>
+                    </CardContent>
+                  </Card>
+                  <Card>
+                    <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                      <CardTitle className="text-sm font-medium">Total Hours</CardTitle>
+                      <Timer className="h-4 w-4 text-muted-foreground" />
+                    </CardHeader>
+                    <CardContent>
+                      <div className="text-2xl font-bold">956</div>
+                      <p className="text-xs text-muted-foreground">This week</p>
+                    </CardContent>
+                  </Card>
+                </div>
+
+                {/* Tabs positioned after stats */}
+                <TabsList className="flex flex-row flex-wrap gap-[361px] mt-4 mx-auto p-1 bg-muted rounded-lg w-full">
+                  <TabsTrigger value="daily" className="data-[state=active]:bg-background data-[state=active]:shadow-sm">
+                    Daily Overview
+                  </TabsTrigger>
+                  <TabsTrigger value="entries" className="ml-auto">
+                    Time Entries
+                  </TabsTrigger>
+                  <TabsTrigger value="reports" className="ml-auto">
+                    Reports & Export
+                  </TabsTrigger>
+                </TabsList>
+
+                {/* Recent Entries Card */}
+                <Card className="mt-6">
+                  <CardHeader>
+                    <CardTitle>Recent Activity Logs</CardTitle>
+                    <CardDescription>
+                      Latest security guard time entries and daily activities
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="space-y-4">
+                      {timeEntries.slice(0, 3).map((entry) => {
+                        const site = securitySites.find((s) => s.id === entry.siteId);
+                        const client = clients.find((c) => c.id === entry.clientId);
+                        return (
+                          <div
+                            key={entry.id}
+                            className="flex items-center justify-between p-4 border rounded-lg"
+                          >
+                            <div className="space-y-1">
+                              <div className="flex items-center gap-2">
+                                <p className="font-medium">{entry.employeeName}</p>
+                                <Badge variant="outline">{entry.badgeNumber}</Badge>
+                                <Badge className="bg-blue-100 text-blue-800">
+                                  {entry.shiftType}
+                                </Badge>
+                              </div>
+                              <p className="text-sm text-gray-600">
+                                {site?.name} • {client?.name}
+                              </p>
+                              <p className="text-sm text-gray-500">
+                                {entry.clockIn} - {entry.clockOut} ({entry.totalHours}h)
+                              </p>
+                              {entry.incidents && (
+                                <div className="flex items-center gap-1 text-sm text-orange-600">
+                                  <AlertTriangle className="h-4 w-4" />
+                                  <span>Incident reported</span>
+                                </div>
+                              )}
+                            </div>
+                            <div className="text-right space-y-1">
+                              <p className="text-sm text-gray-500">{entry.date}</p>
+                              {getStatusBadge(entry.status)}
+                            </div>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </CardContent>
+                </Card>
+              </div>
             </TabsContent>
 
             <TabsContent value="entries" className="mt-6">

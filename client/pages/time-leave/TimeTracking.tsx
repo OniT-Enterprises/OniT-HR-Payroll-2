@@ -613,6 +613,19 @@ export default function TimeTracking() {
         </Card>
       </div>
 
+      {/* Tabs Section */}
+      <TabsList className="flex flex-row flex-wrap gap-[361px] my-4 mx-auto p-1 bg-muted rounded-lg">
+        <TabsTrigger value="daily" className="data-[state=active]:bg-background data-[state=active]:shadow-sm">
+          Daily Overview
+        </TabsTrigger>
+        <TabsTrigger value="entries" className="ml-auto">
+          Time Entries
+        </TabsTrigger>
+        <TabsTrigger value="reports" className="ml-auto">
+          Reports & Export
+        </TabsTrigger>
+      </TabsList>
+
       {/* Recent Entries */}
       <Card>
         <CardHeader>

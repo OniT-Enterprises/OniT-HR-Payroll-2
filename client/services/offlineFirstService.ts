@@ -6,6 +6,9 @@ class OfflineFirstService {
   private isOfflineMode = false;
   private lastNetworkCheck = 0;
   private checkInterval = 30000; // 30 seconds (was 5 seconds)
+  private consecutiveErrors = 0;
+  private maxConsecutiveErrors = 3;
+  private networkCheckingDisabled = false;
 
   constructor() {
     this.initializeOfflineMode();

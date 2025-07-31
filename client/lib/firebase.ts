@@ -49,8 +49,11 @@ const shouldInitializeFirebase = () => {
 
   // Quick network test before Firebase initialization
   try {
-    // This will throw immediately if network is severely broken
-    fetch("data:text/plain,test", { method: "HEAD" });
+    // Simple navigator.onLine check instead of fetch to avoid complications
+    if (!navigator.onLine) {
+      throw new Error("Browser reports offline");
+    }
+    // Don't do fetch test here to avoid potential circular issues
   } catch (error) {
     console.warn("🚫 Network test failed, skipping Firebase initialization");
     firebaseError = "Network issues - Firebase disabled";
@@ -117,6 +120,11 @@ if (typeof window !== "undefined") {
           ? input.toString()
           : input.url;
 
+    // Always allow data URLs and blob URLs - they're safe and local
+    if (url && (url.startsWith("data:") || url.startsWith("blob:"))) {
+      return originalFetch.apply(this, arguments);
+    }
+
     const isFirebaseRequest =
       url &&
       (url.includes("firestore.googleapis.com") ||
@@ -145,11 +153,11 @@ if (typeof window !== "undefined") {
     // Proceed with original fetch but add timeout for external requests
     if (url && (url.startsWith("http://") || url.startsWith("https://"))) {
       const controller = new AbortController();
-      const timeoutId = setTimeout(() => controller.abort(), 3000);
+      const timeoutId = setTimeout(() => controller.abort(), 5000); // Increased timeout
 
       const modifiedInit = {
         ...init,
-        signal: controller.signal,
+        signal: init?.signal || controller.signal, // Respect existing signal
       };
 
       return originalFetch
@@ -158,18 +166,27 @@ if (typeof window !== "undefined") {
         .catch((error) => {
           if (error.name === "AbortError") {
             console.warn("🚫 Request timeout:", url);
-            // Block Firebase if this was a Firebase request that timed out
+            // Only block Firebase if this was a Firebase request that timed out
             if (isFirebaseRequest) {
               firebaseBlocked = true;
               console.warn("🚫 Firebase blocked due to timeout");
             }
             throw new Error("Request timeout");
           }
+          // For non-Firebase requests, don't modify the error
+          if (!isFirebaseRequest) {
+            throw error;
+          }
+          // For Firebase requests, check if we should block
+          if (error instanceof TypeError || error.message?.includes("Failed to fetch")) {
+            firebaseBlocked = true;
+            console.warn("🚫 Firebase blocked due to network error");
+          }
           throw error;
         });
     }
 
-    // For local/data URLs, proceed normally
+    // For local/data URLs and relative URLs, proceed normally
     return originalFetch.apply(this, arguments);
   };
 }
@@ -298,24 +315,27 @@ if (typeof window !== "undefined") {
   window.addEventListener("unhandledrejection", (event) => {
     const error = event.reason;
 
-    // Check for various network-related errors
-    const isNetworkError =
-      error instanceof TypeError ||
-      (error &&
-        error.message &&
-        (error.message.includes("Failed to fetch") ||
-          error.message.includes("fetch") ||
-          error.message.includes("network") ||
-          error.message.includes("NetworkError") ||
-          error.message.includes("Connection failed"))) ||
-      (error &&
-        error.code &&
-        (error.code.includes("unavailable") ||
-          error.code.includes("deadline-exceeded") ||
-          error.code.includes("internal")));
+    // Check for various network-related errors, but be more specific
+    const isFirebaseNetworkError =
+      error &&
+      error.message &&
+      (error.message.includes("firestore") ||
+        error.message.includes("firebase") ||
+        error.message.includes("googleapis.com")) &&
+      (error instanceof TypeError ||
+        error.message.includes("Failed to fetch") ||
+        error.message.includes("NetworkError") ||
+        error.message.includes("Connection failed"));
 
-    if (isNetworkError) {
-      console.warn("🌐 Caught unhandled network/Firebase error:", error);
+    const isFirebaseCodeError =
+      error &&
+      error.code &&
+      (error.code.includes("unavailable") ||
+        error.code.includes("deadline-exceeded") ||
+        error.code.includes("internal"));
+
+    if (isFirebaseNetworkError || isFirebaseCodeError) {
+      console.warn("🌐 Caught unhandled Firebase network error:", error);
 
       // Block Firebase operations to prevent further errors
       firebaseBlocked = true;
@@ -349,11 +369,15 @@ if (typeof window !== "undefined") {
   window.addEventListener("error", (event) => {
     const error = event.error;
 
+    // Only block Firebase for Firebase-related fetch errors
     if (
       error instanceof TypeError &&
-      error.message?.includes("Failed to fetch")
+      error.message?.includes("Failed to fetch") &&
+      (error.stack?.includes("firebase") ||
+        error.stack?.includes("firestore") ||
+        error.stack?.includes("googleapis.com"))
     ) {
-      console.warn("🌐 Caught uncaught TypeError fetch error:", error);
+      console.warn("🌐 Caught uncaught Firebase TypeError fetch error:", error);
 
       // Block Firebase operations
       firebaseBlocked = true;

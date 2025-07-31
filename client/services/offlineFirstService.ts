@@ -5,7 +5,7 @@ import { Employee } from "./employeeService";
 class OfflineFirstService {
   private isOfflineMode = false;
   private lastNetworkCheck = 0;
-  private checkInterval = 5000; // 5 seconds
+  private checkInterval = 30000; // 30 seconds (was 5 seconds)
 
   constructor() {
     this.initializeOfflineMode();

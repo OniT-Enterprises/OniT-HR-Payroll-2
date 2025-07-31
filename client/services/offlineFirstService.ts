@@ -31,6 +31,11 @@ class OfflineFirstService {
   }
 
   private async checkNetworkConnectivity() {
+    // Stop checking if we've had too many consecutive errors
+    if (this.networkCheckingDisabled) {
+      return;
+    }
+
     try {
       // Use data URL instead of external request to avoid CORS and network issues
       // This tests basic fetch functionality without external dependencies
@@ -44,6 +49,9 @@ class OfflineFirstService {
 
       clearTimeout(timeoutId);
 
+      // Reset error count on success
+      this.consecutiveErrors = 0;
+
       // Basic fetch works, check navigator.onLine for additional confidence
       if (navigator.onLine) {
         // Network seems OK
@@ -55,7 +63,17 @@ class OfflineFirstService {
         this.enableOfflineMode("Browser reports offline");
       }
     } catch (error) {
-      console.warn("⚠️ Connectivity check failed (non-critical):", error.message);
+      this.consecutiveErrors++;
+      console.warn(`⚠️ Connectivity check failed (${this.consecutiveErrors}/${this.maxConsecutiveErrors}):`, error.message);
+
+      // Disable network checking if too many consecutive errors
+      if (this.consecutiveErrors >= this.maxConsecutiveErrors) {
+        this.networkCheckingDisabled = true;
+        console.warn("🚫 Network checking disabled due to consecutive failures");
+        this.enableOfflineMode("Network checking disabled");
+        return;
+      }
+
       // Don't force offline mode for data URL failures - be more lenient
       if (!navigator.onLine) {
         this.enableOfflineMode("Browser offline");

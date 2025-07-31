@@ -24,26 +24,34 @@ class OfflineFirstService {
 
   private async checkNetworkConnectivity() {
     try {
-      // Quick network test
+      // Use data URL instead of external request to avoid CORS and network issues
+      // This tests basic fetch functionality without external dependencies
       const controller = new AbortController();
-      const timeoutId = setTimeout(() => controller.abort(), 2000);
+      const timeoutId = setTimeout(() => controller.abort(), 1000);
 
-      await fetch("https://www.google.com/favicon.ico", {
-        method: "HEAD",
-        mode: "no-cors",
-        cache: "no-cache",
+      await fetch("data:text/plain,connectivity-test", {
+        method: "GET",
         signal: controller.signal,
       });
 
       clearTimeout(timeoutId);
 
-      // Network seems OK
-      if (this.isOfflineMode) {
-        console.log("🌐 Network connectivity restored");
-        // Don't automatically go back online - be conservative
+      // Basic fetch works, check navigator.onLine for additional confidence
+      if (navigator.onLine) {
+        // Network seems OK
+        if (this.isOfflineMode) {
+          console.log("🌐 Network connectivity appears restored");
+          // Don't automatically go back online - be conservative
+        }
+      } else {
+        this.enableOfflineMode("Browser reports offline");
       }
     } catch (error) {
-      this.enableOfflineMode("Network connectivity test failed");
+      console.warn("��️ Connectivity check failed (non-critical):", error.message);
+      // Don't force offline mode for data URL failures - be more lenient
+      if (!navigator.onLine) {
+        this.enableOfflineMode("Browser offline");
+      }
     }
   }
 
@@ -138,18 +146,24 @@ class OfflineFirstService {
   }
 
   private async quickNetworkTest(): Promise<void> {
-    const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), 1000);
+    // Simple check without external fetch to avoid triggering Firebase blocking
+    if (!navigator.onLine) {
+      throw new Error("Browser reports offline");
+    }
 
+    // Additional basic test using data URL (very safe)
     try {
-      await fetch("data:text/plain,test", {
-        method: "HEAD",
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 500);
+
+      await fetch("data:text/plain,quick-test", {
+        method: "GET",
         signal: controller.signal,
       });
       clearTimeout(timeoutId);
     } catch (error) {
-      clearTimeout(timeoutId);
-      throw new Error("Network test failed");
+      console.warn("⚠️ Quick network test failed (non-critical):", error.message);
+      // Don't throw for data URL failures - they're not real network issues
     }
   }
 

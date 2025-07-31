@@ -128,6 +128,12 @@ class OfflineFirstService {
     this.enableOfflineMode(reason);
   }
 
+  public resetNetworkChecking() {
+    this.networkCheckingDisabled = false;
+    this.consecutiveErrors = 0;
+    console.log("✅ Network checking re-enabled");
+  }
+
   // Offline-first data methods
   public async getDepartments(): Promise<Department[]> {
     // Always use mock data in offline mode

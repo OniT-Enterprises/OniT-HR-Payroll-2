@@ -16,10 +16,15 @@ class OfflineFirstService {
     // Start in offline mode if browser is offline
     if (!navigator.onLine) {
       this.enableOfflineMode("Browser offline");
+      return;
     }
 
-    // Test network connectivity
-    this.checkNetworkConnectivity();
+    // Delay initial network check to avoid immediate fetch errors
+    setTimeout(() => {
+      if (!this.isOfflineMode) {
+        this.checkNetworkConnectivity();
+      }
+    }, 2000); // Wait 2 seconds before first connectivity check
   }
 
   private async checkNetworkConnectivity() {
@@ -47,7 +52,7 @@ class OfflineFirstService {
         this.enableOfflineMode("Browser reports offline");
       }
     } catch (error) {
-      console.warn("��️ Connectivity check failed (non-critical):", error.message);
+      console.warn("⚠️ Connectivity check failed (non-critical):", error.message);
       // Don't force offline mode for data URL failures - be more lenient
       if (!navigator.onLine) {
         this.enableOfflineMode("Browser offline");

@@ -113,7 +113,7 @@ class OfflineFirstService {
 
     // Periodic connectivity check
     setInterval(() => {
-      if (Date.now() - this.lastNetworkCheck > this.checkInterval) {
+      if (!this.networkCheckingDisabled && Date.now() - this.lastNetworkCheck > this.checkInterval) {
         this.lastNetworkCheck = Date.now();
         this.checkNetworkConnectivity();
       }

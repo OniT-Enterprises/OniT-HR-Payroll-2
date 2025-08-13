@@ -111,10 +111,10 @@ export default function CreateJob() {
                     <Label htmlFor="salaryMin">Minimum Monthly Salary</Label>
                     <Input id="salaryMin" placeholder="$4,200" />
                   </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="salaryMax">Maximum Monthly Salary</Label>
-                    <Input id="salaryMax" placeholder="$5,800" />
-                  </div>
+                </div>
+                <div className="mt-3 space-y-2">
+                  <Label htmlFor="salaryMax">Maximum Monthly Salary</Label>
+                  <Input id="salaryMax" placeholder="$5,800" />
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="benefits">Benefits</Label>

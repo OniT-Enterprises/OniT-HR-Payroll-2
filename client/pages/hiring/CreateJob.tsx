@@ -78,10 +78,10 @@ export default function CreateJob() {
                       id="jobTitle"
                       placeholder="e.g. Senior Software Engineer"
                     />
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="department">Department</Label>
-                    <Input id="department" placeholder="e.g. Engineering" />
+                    <div className="mt-2 space-y-2">
+                      <Label htmlFor="department">Department</Label>
+                      <Input id="department" placeholder="e.g. Engineering" />
+                    </div>
                   </div>
                 </div>
                 <div className="space-y-2">

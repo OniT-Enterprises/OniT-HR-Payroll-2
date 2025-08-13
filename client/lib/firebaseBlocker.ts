@@ -118,23 +118,29 @@ export const monitorForErrors = () => {
       errorCount = 0;
     }
 
-    const isNetworkError =
-      error instanceof TypeError ||
-      (error &&
-        error.message &&
-        (error.message.includes("Failed to fetch") ||
-          error.message.includes("network") ||
-          error.message.includes("fetch")));
+    // Only consider it a relevant network error if it's Firebase-related
+    const isFirebaseNetworkError =
+      (error instanceof TypeError ||
+        (error &&
+          error.message &&
+          (error.message.includes("Failed to fetch") ||
+            error.message.includes("network") ||
+            error.message.includes("fetch")))) &&
+      (error.stack?.includes("firebase") ||
+        error.stack?.includes("firestore") ||
+        error.message?.includes("firebase") ||
+        error.message?.includes("firestore") ||
+        error.message?.includes("googleapis.com"));
 
-    if (isNetworkError) {
+    if (isFirebaseNetworkError) {
       errorCount++;
       lastErrorTime = now;
 
-      console.warn(`🌐 Network error #${errorCount} from ${source}:`, error);
+      console.warn(`🌐 Firebase network error #${errorCount} from ${source}:`, error);
 
-      // Block Firebase after first network error
+      // Block Firebase after first Firebase-related network error
       if (!firebaseBlocked) {
-        blockFirebase(`Network error detected (${source})`);
+        blockFirebase(`Firebase network error detected (${source})`);
       }
     }
   };

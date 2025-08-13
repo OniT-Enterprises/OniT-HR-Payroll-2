@@ -5,7 +5,10 @@ import { Employee } from "./employeeService";
 class OfflineFirstService {
   private isOfflineMode = false;
   private lastNetworkCheck = 0;
-  private checkInterval = 5000; // 5 seconds
+  private checkInterval = 30000; // 30 seconds (was 5 seconds)
+  private consecutiveErrors = 0;
+  private maxConsecutiveErrors = 3;
+  private networkCheckingDisabled = false;
 
   constructor() {
     this.initializeOfflineMode();
@@ -16,34 +19,65 @@ class OfflineFirstService {
     // Start in offline mode if browser is offline
     if (!navigator.onLine) {
       this.enableOfflineMode("Browser offline");
+      return;
     }
 
-    // Test network connectivity
-    this.checkNetworkConnectivity();
+    // Delay initial network check to avoid immediate fetch errors
+    setTimeout(() => {
+      if (!this.isOfflineMode) {
+        this.checkNetworkConnectivity();
+      }
+    }, 2000); // Wait 2 seconds before first connectivity check
   }
 
   private async checkNetworkConnectivity() {
-    try {
-      // Quick network test
-      const controller = new AbortController();
-      const timeoutId = setTimeout(() => controller.abort(), 2000);
+    // Stop checking if we've had too many consecutive errors
+    if (this.networkCheckingDisabled) {
+      return;
+    }
 
-      await fetch("https://www.google.com/favicon.ico", {
-        method: "HEAD",
-        mode: "no-cors",
-        cache: "no-cache",
+    try {
+      // Use data URL instead of external request to avoid CORS and network issues
+      // This tests basic fetch functionality without external dependencies
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 1000);
+
+      await fetch("data:text/plain,connectivity-test", {
+        method: "GET",
         signal: controller.signal,
       });
 
       clearTimeout(timeoutId);
 
-      // Network seems OK
-      if (this.isOfflineMode) {
-        console.log("🌐 Network connectivity restored");
-        // Don't automatically go back online - be conservative
+      // Reset error count on success
+      this.consecutiveErrors = 0;
+
+      // Basic fetch works, check navigator.onLine for additional confidence
+      if (navigator.onLine) {
+        // Network seems OK
+        if (this.isOfflineMode) {
+          console.log("🌐 Network connectivity appears restored");
+          // Don't automatically go back online - be conservative
+        }
+      } else {
+        this.enableOfflineMode("Browser reports offline");
       }
     } catch (error) {
-      this.enableOfflineMode("Network connectivity test failed");
+      this.consecutiveErrors++;
+      console.warn(`⚠️ Connectivity check failed (${this.consecutiveErrors}/${this.maxConsecutiveErrors}):`, error.message);
+
+      // Disable network checking if too many consecutive errors
+      if (this.consecutiveErrors >= this.maxConsecutiveErrors) {
+        this.networkCheckingDisabled = true;
+        console.warn("🚫 Network checking disabled due to consecutive failures");
+        this.enableOfflineMode("Network checking disabled");
+        return;
+      }
+
+      // Don't force offline mode for data URL failures - be more lenient
+      if (!navigator.onLine) {
+        this.enableOfflineMode("Browser offline");
+      }
     }
   }
 
@@ -79,7 +113,7 @@ class OfflineFirstService {
 
     // Periodic connectivity check
     setInterval(() => {
-      if (Date.now() - this.lastNetworkCheck > this.checkInterval) {
+      if (!this.networkCheckingDisabled && Date.now() - this.lastNetworkCheck > this.checkInterval) {
         this.lastNetworkCheck = Date.now();
         this.checkNetworkConnectivity();
       }
@@ -92,6 +126,12 @@ class OfflineFirstService {
 
   public forceOfflineMode(reason: string = "Manually forced") {
     this.enableOfflineMode(reason);
+  }
+
+  public resetNetworkChecking() {
+    this.networkCheckingDisabled = false;
+    this.consecutiveErrors = 0;
+    console.log("✅ Network checking re-enabled");
   }
 
   // Offline-first data methods
@@ -138,18 +178,24 @@ class OfflineFirstService {
   }
 
   private async quickNetworkTest(): Promise<void> {
-    const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), 1000);
+    // Simple check without external fetch to avoid triggering Firebase blocking
+    if (!navigator.onLine) {
+      throw new Error("Browser reports offline");
+    }
 
+    // Additional basic test using data URL (very safe)
     try {
-      await fetch("data:text/plain,test", {
-        method: "HEAD",
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 500);
+
+      await fetch("data:text/plain,quick-test", {
+        method: "GET",
         signal: controller.signal,
       });
       clearTimeout(timeoutId);
     } catch (error) {
-      clearTimeout(timeoutId);
-      throw new Error("Network test failed");
+      console.warn("⚠️ Quick network test failed (non-critical):", error.message);
+      // Don't throw for data URL failures - they're not real network issues
     }
   }
 

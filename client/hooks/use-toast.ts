@@ -169,6 +169,10 @@ function useToast() {
   const [state, setState] = React.useState<State>(memoryState);
 
   React.useEffect(() => {
+    // Subscribe once to toast state updates. Using an empty dependency
+    // array prevents React from re-registering the listener on every
+    // state change, which could cause momentary subscription gaps and
+    // unnecessary work.
     listeners.push(setState);
     return () => {
       const index = listeners.indexOf(setState);
@@ -176,7 +180,7 @@ function useToast() {
         listeners.splice(index, 1);
       }
     };
-  }, [state]);
+  }, []);
 
   return {
     ...state,

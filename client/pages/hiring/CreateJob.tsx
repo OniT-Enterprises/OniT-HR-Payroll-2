@@ -56,9 +56,10 @@ export default function CreateJob() {
           </div>
         </div>
 
-        <div className="grid lg:grid-cols-3 gap-6">
-          {/* Main Form */}
-          <div className="lg:col-span-2 space-y-6">
+        <div className="flex flex-col justify-start gap-6">
+          <div className="flex gap-5 max-lg:flex-col max-lg:items-stretch max-lg:gap-0">
+            <div className="flex flex-col w-[58%] max-lg:w-full max-lg:ml-0">
+              <div className="lg:col-span-2 space-y-6">
             <Card>
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
@@ -157,10 +158,11 @@ export default function CreateJob() {
                 </div>
               </CardContent>
             </Card>
-          </div>
+              </div>
+            </div>
 
-          {/* Sidebar */}
-          <div className="space-y-6">
+            <div className="flex flex-col w-[42%] ml-5 max-lg:w-full max-lg:ml-0">
+              <div className="space-y-6">
             <Card>
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
@@ -339,6 +341,8 @@ export default function CreateJob() {
                 </div>
               </CardContent>
             </Card>
+              </div>
+            </div>
           </div>
         </div>
       </div>

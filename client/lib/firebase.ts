@@ -7,7 +7,7 @@ import {
   enableNetwork,
   disableNetwork,
 } from "firebase/firestore";
-import { getAuth } from "firebase/auth";
+import { getAuth, signInAnonymously } from "firebase/auth";
 import { getStorage } from "firebase/storage";
 
 // Import Firebase blocker for aggressive error prevention

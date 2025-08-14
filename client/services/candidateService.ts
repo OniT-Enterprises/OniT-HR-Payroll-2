@@ -110,29 +110,29 @@ class CandidateService {
   }
 
   async getAllCandidates(): Promise<Candidate[]> {
-    try {
-      if (!(await this.checkFirebaseReady())) {
-        console.warn("Firebase not ready, returning empty candidates list");
-        return [];
+    // First try Firebase if available
+    if (this.isFirebaseAvailable()) {
+      try {
+        console.log("🔥 Attempting to get candidates from Firebase...");
+        const querySnapshot = await getDocs(
+          query(this.collection!, orderBy("createdAt", "desc")),
+        );
+        const candidates = querySnapshot.docs.map((doc) => ({
+          id: doc.id,
+          ...doc.data(),
+        })) as Candidate[];
+        console.log(`✅ Successfully got ${candidates.length} candidates from Firebase`);
+        return candidates;
+      } catch (error) {
+        console.warn("🚫 Firebase failed, falling back to mock data:", error);
       }
-
-      const querySnapshot = await getDocs(
-        query(this.collection, orderBy("createdAt", "desc")),
-      );
-      return querySnapshot.docs.map((doc) => ({
-        id: doc.id,
-        ...doc.data(),
-      })) as Candidate[];
-    } catch (error) {
-      console.error("Error getting candidates:", error);
-
-      // Check if it's a permissions error
-      if (error instanceof Error && error.message.includes("permissions")) {
-        console.error("Permission denied - check Firestore rules and authentication");
-      }
-
-      return [];
+    } else {
+      console.log("🚫 Firebase not available, using mock data");
     }
+
+    // Fallback to mock data
+    console.log(`📋 Returning ${this.mockCandidates.length} mock candidates`);
+    return [...this.mockCandidates];
   }
 
   async getCandidateById(id: string): Promise<Candidate | null> {

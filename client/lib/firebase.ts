@@ -117,8 +117,8 @@ if (typeof window !== "undefined") {
   };
 }
 
-// Anonymous authentication for development
-export const ensureAuthenticated = async (): Promise<boolean> => {
+// Authentication helper (optional, not required for basic operations)
+export const tryAuthentication = async (): Promise<boolean> => {
   if (!auth) {
     console.warn("Auth not initialized");
     return false;
@@ -127,16 +127,15 @@ export const ensureAuthenticated = async (): Promise<boolean> => {
   try {
     // If user is already signed in, return true
     if (auth.currentUser) {
+      console.log("✅ User already authenticated");
       return true;
     }
 
-    // Sign in anonymously for development
-    console.log("🔐 Signing in anonymously for development...");
-    await signInAnonymously(auth);
-    console.log("✅ Anonymous authentication successful");
-    return true;
+    // Don't force authentication - just return false
+    console.log("ℹ️ No authentication required for basic operations");
+    return false;
   } catch (error) {
-    console.error("❌ Anonymous authentication failed:", error);
+    console.warn("ℹ️ Authentication check failed (not critical):", error);
     return false;
   }
 };

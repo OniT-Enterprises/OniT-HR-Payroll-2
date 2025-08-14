@@ -2,8 +2,9 @@ import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { db, auth, isFirebaseReady, isFirebaseBlocked } from '@/lib/firebase';
+import { db, auth, isFirebaseReady, isFirebaseBlocked, ensureAuthenticated } from '@/lib/firebase';
 import { collection, getDocs, addDoc, doc, setDoc } from 'firebase/firestore';
+import { candidateService } from '@/services/candidateService';
 
 const FirebaseTestComponent: React.FC = () => {
   const [testResults, setTestResults] = useState<string[]>([]);
@@ -29,7 +30,7 @@ const FirebaseTestComponent: React.FC = () => {
       addResult(`🔐 Auth instance: ${auth ? 'Available' : 'Not available'}`);
 
       if (!db) {
-        addResult('❌ Cannot proceed - database not initialized');
+        addResult('�� Cannot proceed - database not initialized');
         return;
       }
 

@@ -2,24 +2,23 @@ rules_version = '2';
 
 service cloud.firestore {
   match /databases/{database}/documents {
-    // Allow access for authenticated users (including anonymous)
-    // This will work with anonymous authentication
-    match /{document=**} {
-      allow read, write: if request.auth != null;
-    }
-
-    // Fallback for development - allow unrestricted access
-    // Remove this rule for production
+    // Development rules - allow unrestricted access
+    // Change these for production deployment
     match /{document=**} {
       allow read, write: if true;
     }
 
-    // Production rules example (comment out the above and use these):
+    // Production rules (commented out for development):
+    // match /{document=**} {
+    //   allow read, write: if request.auth != null;
+    // }
+    //
+    // // More granular production rules:
     // match /candidates/{candidateId} {
-    //   allow read, write: if request.auth != null && request.auth.uid != null;
+    //   allow read, write: if request.auth != null;
     // }
     // match /employees/{employeeId} {
-    //   allow read, write: if request.auth != null && request.auth.uid != null;
+    //   allow read, write: if request.auth != null;
     // }
     // match /test/{testId} {
     //   allow read, write: if request.auth != null;

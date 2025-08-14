@@ -38,8 +38,32 @@ export interface Candidate {
 class CandidateService {
   private collection = collection(db, "candidates");
 
+  private checkFirebaseReady(): boolean {
+    if (!db) {
+      console.warn("Firebase database not initialized");
+      return false;
+    }
+
+    if (isFirebaseBlocked()) {
+      console.warn("Firebase operations are blocked due to network issues");
+      return false;
+    }
+
+    if (!isFirebaseReady()) {
+      console.warn("Firebase is not ready");
+      return false;
+    }
+
+    return true;
+  }
+
   async getAllCandidates(): Promise<Candidate[]> {
     try {
+      if (!this.checkFirebaseReady()) {
+        console.warn("Firebase not ready, returning empty candidates list");
+        return [];
+      }
+
       const querySnapshot = await getDocs(
         query(this.collection, orderBy("createdAt", "desc")),
       );
@@ -49,6 +73,12 @@ class CandidateService {
       })) as Candidate[];
     } catch (error) {
       console.error("Error getting candidates:", error);
+
+      // Check if it's a permissions error
+      if (error instanceof Error && error.message.includes("permissions")) {
+        console.error("Permission denied - check Firestore rules and authentication");
+      }
+
       return [];
     }
   }

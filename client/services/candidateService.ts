@@ -85,6 +85,11 @@ class CandidateService {
 
   async getCandidateById(id: string): Promise<Candidate | null> {
     try {
+      if (!this.checkFirebaseReady()) {
+        console.warn("Firebase not ready, cannot get candidate by ID");
+        return null;
+      }
+
       const docSnap = await getDoc(doc(this.collection, id));
       if (docSnap.exists()) {
         return { id: docSnap.id, ...docSnap.data() } as Candidate;
@@ -92,12 +97,20 @@ class CandidateService {
       return null;
     } catch (error) {
       console.error("Error getting candidate:", error);
+      if (error instanceof Error && error.message.includes("permissions")) {
+        console.error("Permission denied - check Firestore rules and authentication");
+      }
       return null;
     }
   }
 
   async addCandidate(candidate: Omit<Candidate, "id">): Promise<string | null> {
     try {
+      if (!this.checkFirebaseReady()) {
+        console.warn("Firebase not ready, cannot add candidate");
+        return null;
+      }
+
       const docRef = await addDoc(this.collection, {
         ...candidate,
         createdAt: serverTimestamp(),
@@ -106,6 +119,9 @@ class CandidateService {
       return docRef.id;
     } catch (error) {
       console.error("Error adding candidate:", error);
+      if (error instanceof Error && error.message.includes("permissions")) {
+        console.error("Permission denied - check Firestore rules and authentication");
+      }
       return null;
     }
   }
@@ -115,6 +131,11 @@ class CandidateService {
     updates: Partial<Candidate>,
   ): Promise<boolean> {
     try {
+      if (!this.checkFirebaseReady()) {
+        console.warn("Firebase not ready, cannot update candidate");
+        return false;
+      }
+
       await updateDoc(doc(this.collection, id), {
         ...updates,
         updatedAt: serverTimestamp(),
@@ -122,22 +143,38 @@ class CandidateService {
       return true;
     } catch (error) {
       console.error("Error updating candidate:", error);
+      if (error instanceof Error && error.message.includes("permissions")) {
+        console.error("Permission denied - check Firestore rules and authentication");
+      }
       return false;
     }
   }
 
   async deleteCandidate(id: string): Promise<boolean> {
     try {
+      if (!this.checkFirebaseReady()) {
+        console.warn("Firebase not ready, cannot delete candidate");
+        return false;
+      }
+
       await deleteDoc(doc(this.collection, id));
       return true;
     } catch (error) {
       console.error("Error deleting candidate:", error);
+      if (error instanceof Error && error.message.includes("permissions")) {
+        console.error("Permission denied - check Firestore rules and authentication");
+      }
       return false;
     }
   }
 
   async getCandidatesByStatus(status: string): Promise<Candidate[]> {
     try {
+      if (!this.checkFirebaseReady()) {
+        console.warn("Firebase not ready, returning empty candidates list by status");
+        return [];
+      }
+
       const q = query(
         this.collection,
         where("status", "==", status),
@@ -150,12 +187,20 @@ class CandidateService {
       })) as Candidate[];
     } catch (error) {
       console.error("Error getting candidates by status:", error);
+      if (error instanceof Error && error.message.includes("permissions")) {
+        console.error("Permission denied - check Firestore rules and authentication");
+      }
       return [];
     }
   }
 
   async getCandidatesByPosition(position: string): Promise<Candidate[]> {
     try {
+      if (!this.checkFirebaseReady()) {
+        console.warn("Firebase not ready, returning empty candidates list by position");
+        return [];
+      }
+
       const q = query(
         this.collection,
         where("position", "==", position),
@@ -168,6 +213,9 @@ class CandidateService {
       })) as Candidate[];
     } catch (error) {
       console.error("Error getting candidates by position:", error);
+      if (error instanceof Error && error.message.includes("permissions")) {
+        console.error("Permission denied - check Firestore rules and authentication");
+      }
       return [];
     }
   }

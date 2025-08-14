@@ -152,6 +152,8 @@ export default function Dashboard() {
       <MainNavigation />
 
       <div className="p-6">
+        {/* Temporary Firebase Test Component for Debugging */}
+        <FirebaseTestComponent />
         <div className="flex items-center justify-between mb-8">
           <div>
             <h1 className="text-3xl font-bold">Main Dashboard!?</h1>

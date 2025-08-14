@@ -36,32 +36,77 @@ export interface Candidate {
 }
 
 class CandidateService {
-  private collection = collection(db, "candidates");
+  private collection = db ? collection(db, "candidates") : null;
 
-  private async checkFirebaseReady(): Promise<boolean> {
-    if (!db) {
-      console.warn("Firebase database not initialized");
-      return false;
+  // Mock data for when Firebase is not available
+  private mockCandidates: Candidate[] = [
+    {
+      id: "1",
+      name: "Sarah Johnson",
+      email: "sarah.johnson@email.com",
+      phone: "+1 (555) 123-4567",
+      position: "Senior Software Engineer",
+      experience: "5+ years",
+      score: 92,
+      status: "Under Review",
+      appliedDate: "2024-01-15",
+      resume: "sarah_johnson_resume.pdf",
+      avatar: "https://images.unsplash.com/photo-1494790108755-2616b612b1e0?w=150",
+      cvQuality: 95,
+      coverLetter: 88,
+      technicalSkills: 93,
+      interviewScore: null,
+      totalScore: 92,
+      notes: "Strong technical background, excellent communication skills",
+      createdAt: new Date("2024-01-15"),
+      updatedAt: new Date("2024-01-15"),
+    },
+    {
+      id: "2",
+      name: "Michael Chen",
+      email: "michael.chen@email.com",
+      phone: "+1 (555) 987-6543",
+      position: "Product Manager",
+      experience: "3+ years",
+      score: 87,
+      status: "Shortlisted",
+      appliedDate: "2024-01-14",
+      resume: "michael_chen_resume.pdf",
+      avatar: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150",
+      cvQuality: 85,
+      coverLetter: 90,
+      technicalSkills: 86,
+      interviewScore: 88,
+      totalScore: 87,
+      notes: "Great product vision, needs technical growth",
+      createdAt: new Date("2024-01-14"),
+      updatedAt: new Date("2024-01-14"),
+    },
+    {
+      id: "3",
+      name: "Emily Rodriguez",
+      email: "emily.rodriguez@email.com",
+      phone: "+1 (555) 456-7890",
+      position: "UX Designer",
+      experience: "4+ years",
+      score: 89,
+      status: "New",
+      appliedDate: "2024-01-16",
+      resume: "emily_rodriguez_resume.pdf",
+      avatar: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=150",
+      cvQuality: 92,
+      coverLetter: 87,
+      technicalSkills: 88,
+      interviewScore: null,
+      totalScore: 89,
+      notes: "Impressive portfolio, strong design thinking",
+      createdAt: new Date("2024-01-16"),
+      updatedAt: new Date("2024-01-16"),
     }
+  ];
 
-    if (isFirebaseBlocked()) {
-      console.warn("Firebase operations are blocked due to network issues");
-      return false;
-    }
-
-    if (!isFirebaseReady()) {
-      console.warn("Firebase is not ready");
-      return false;
-    }
-
-    // Try to ensure authentication, but don't fail if it doesn't work
-    try {
-      await ensureAuthenticated();
-    } catch (error) {
-      console.warn("Authentication failed, but continuing anyway:", error);
-    }
-
-    return true;
+  private isFirebaseAvailable(): boolean {
+    return !!(db && this.collection && isFirebaseReady() && !isFirebaseBlocked());
   }
 
   async getAllCandidates(): Promise<Candidate[]> {

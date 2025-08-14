@@ -11,6 +11,7 @@ import { Progress } from "@/components/ui/progress";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import MainNavigation from "@/components/layout/MainNavigation";
 import { employeeService } from "@/services/employeeService";
+import FirebaseTestComponent from "@/components/FirebaseTestComponent";
 import React, { useState, useEffect } from "react";
 import {
   Users,

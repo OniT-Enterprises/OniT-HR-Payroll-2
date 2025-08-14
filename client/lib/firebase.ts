@@ -191,6 +191,30 @@ if (typeof window !== "undefined") {
   };
 }
 
+// Anonymous authentication for development
+export const ensureAuthenticated = async (): Promise<boolean> => {
+  if (!auth) {
+    console.warn("Auth not initialized");
+    return false;
+  }
+
+  try {
+    // If user is already signed in, return true
+    if (auth.currentUser) {
+      return true;
+    }
+
+    // Sign in anonymously for development
+    console.log("🔐 Signing in anonymously for development...");
+    await signInAnonymously(auth);
+    console.log("✅ Anonymous authentication successful");
+    return true;
+  } catch (error) {
+    console.error("❌ Anonymous authentication failed:", error);
+    return false;
+  }
+};
+
 // Export Firebase status checking functions
 export const isFirebaseReady = () => firebaseInitialized && !firebaseBlocked;
 export const getFirebaseError = () => firebaseError;

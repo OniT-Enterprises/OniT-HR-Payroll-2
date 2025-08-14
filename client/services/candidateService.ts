@@ -38,7 +38,7 @@ export interface Candidate {
 class CandidateService {
   private collection = collection(db, "candidates");
 
-  private checkFirebaseReady(): boolean {
+  private async checkFirebaseReady(): Promise<boolean> {
     if (!db) {
       console.warn("Firebase database not initialized");
       return false;
@@ -51,6 +51,13 @@ class CandidateService {
 
     if (!isFirebaseReady()) {
       console.warn("Firebase is not ready");
+      return false;
+    }
+
+    // Ensure user is authenticated (sign in anonymously if needed)
+    const isAuthenticated = await ensureAuthenticated();
+    if (!isAuthenticated) {
+      console.warn("Failed to authenticate with Firebase");
       return false;
     }
 

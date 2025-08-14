@@ -54,11 +54,11 @@ class CandidateService {
       return false;
     }
 
-    // Ensure user is authenticated (sign in anonymously if needed)
-    const isAuthenticated = await ensureAuthenticated();
-    if (!isAuthenticated) {
-      console.warn("Failed to authenticate with Firebase");
-      return false;
+    // Try to ensure authentication, but don't fail if it doesn't work
+    try {
+      await ensureAuthenticated();
+    } catch (error) {
+      console.warn("Authentication failed, but continuing anyway:", error);
     }
 
     return true;

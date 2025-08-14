@@ -38,29 +38,9 @@ let auth: any = null;
 let storage: any = null;
 let analytics: any = null;
 
-// Check network before even attempting Firebase initialization
+// Simple check for Firebase initialization
 const shouldInitializeFirebase = () => {
-  // Don't initialize if offline
-  if (!navigator.onLine) {
-    console.warn("🌐 Browser offline, skipping Firebase initialization");
-    firebaseError = "Offline - Firebase disabled";
-    return false;
-  }
-
-  // Quick network test before Firebase initialization
-  try {
-    // Simple navigator.onLine check instead of fetch to avoid complications
-    if (!navigator.onLine) {
-      throw new Error("Browser reports offline");
-    }
-    // Don't do fetch test here to avoid potential circular issues
-  } catch (error) {
-    console.warn("🚫 Network test failed, skipping Firebase initialization");
-    firebaseError = "Network issues - Firebase disabled";
-    firebaseBlocked = true;
-    return false;
-  }
-
+  // Always try to initialize Firebase
   return true;
 };
 

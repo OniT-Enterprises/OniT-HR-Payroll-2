@@ -92,7 +92,7 @@ class CandidateService {
 
   async getCandidateById(id: string): Promise<Candidate | null> {
     try {
-      if (!this.checkFirebaseReady()) {
+      if (!(await this.checkFirebaseReady())) {
         console.warn("Firebase not ready, cannot get candidate by ID");
         return null;
       }
@@ -113,7 +113,7 @@ class CandidateService {
 
   async addCandidate(candidate: Omit<Candidate, "id">): Promise<string | null> {
     try {
-      if (!this.checkFirebaseReady()) {
+      if (!(await this.checkFirebaseReady())) {
         console.warn("Firebase not ready, cannot add candidate");
         return null;
       }
@@ -138,7 +138,7 @@ class CandidateService {
     updates: Partial<Candidate>,
   ): Promise<boolean> {
     try {
-      if (!this.checkFirebaseReady()) {
+      if (!(await this.checkFirebaseReady())) {
         console.warn("Firebase not ready, cannot update candidate");
         return false;
       }
@@ -159,7 +159,7 @@ class CandidateService {
 
   async deleteCandidate(id: string): Promise<boolean> {
     try {
-      if (!this.checkFirebaseReady()) {
+      if (!(await this.checkFirebaseReady())) {
         console.warn("Firebase not ready, cannot delete candidate");
         return false;
       }
@@ -177,7 +177,7 @@ class CandidateService {
 
   async getCandidatesByStatus(status: string): Promise<Candidate[]> {
     try {
-      if (!this.checkFirebaseReady()) {
+      if (!(await this.checkFirebaseReady())) {
         console.warn("Firebase not ready, returning empty candidates list by status");
         return [];
       }
@@ -203,7 +203,7 @@ class CandidateService {
 
   async getCandidatesByPosition(position: string): Promise<Candidate[]> {
     try {
-      if (!this.checkFirebaseReady()) {
+      if (!(await this.checkFirebaseReady())) {
         console.warn("Firebase not ready, returning empty candidates list by position");
         return [];
       }

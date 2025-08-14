@@ -30,7 +30,7 @@ const FirebaseTestComponent: React.FC = () => {
       addResult(`🔐 Auth instance: ${auth ? 'Available' : 'Not available'}`);
 
       if (!db) {
-        addResult('�� Cannot proceed - database not initialized');
+        addResult('❌ Cannot proceed - database not initialized');
         return;
       }
 
@@ -58,9 +58,25 @@ const FirebaseTestComponent: React.FC = () => {
         addResult(`❌ Write test failed: ${writeError.message}`);
       }
 
-      // Test 4: Auth state
-      if (auth) {
-        addResult(`👤 Current user: ${auth.currentUser ? auth.currentUser.email || 'Anonymous' : 'Not authenticated'}`);
+      // Test 4: Authentication
+      try {
+        addResult('🔐 Testing authentication...');
+        const isAuth = await ensureAuthenticated();
+        addResult(`✅ Authentication successful: ${isAuth}`);
+        if (auth && auth.currentUser) {
+          addResult(`👤 Current user: ${auth.currentUser.email || 'Anonymous user'} (${auth.currentUser.isAnonymous ? 'Anonymous' : 'Regular'})`);
+        }
+      } catch (authError: any) {
+        addResult(`❌ Authentication failed: ${authError.message}`);
+      }
+
+      // Test 5: Candidate Service
+      try {
+        addResult('👥 Testing candidate service...');
+        const candidates = await candidateService.getAllCandidates();
+        addResult(`✅ Candidate service test successful - found ${candidates.length} candidates`);
+      } catch (candidateError: any) {
+        addResult(`❌ Candidate service test failed: ${candidateError.message}`);
       }
 
     } catch (error: any) {

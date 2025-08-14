@@ -66,7 +66,7 @@ class CandidateService {
 
   async getAllCandidates(): Promise<Candidate[]> {
     try {
-      if (!this.checkFirebaseReady()) {
+      if (!(await this.checkFirebaseReady())) {
         console.warn("Firebase not ready, returning empty candidates list");
         return [];
       }

@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { db, auth, isFirebaseReady, isFirebaseBlocked, ensureAuthenticated } from '@/lib/firebase';
+import { db, auth, isFirebaseReady, isFirebaseBlocked, tryAuthentication } from '@/lib/firebase';
 import { collection, getDocs, addDoc, doc, setDoc } from 'firebase/firestore';
 import { candidateService } from '@/services/candidateService';
 

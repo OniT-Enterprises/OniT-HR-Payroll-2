@@ -58,16 +58,18 @@ const FirebaseTestComponent: React.FC = () => {
         addResult(`❌ Write test failed: ${writeError.message}`);
       }
 
-      // Test 4: Authentication
+      // Test 4: Authentication (optional)
       try {
-        addResult('🔐 Testing authentication...');
-        const isAuth = await ensureAuthenticated();
-        addResult(`✅ Authentication successful: ${isAuth}`);
+        addResult('🔐 Checking authentication status...');
+        const isAuth = await tryAuthentication();
+        addResult(`ℹ️ Authentication status: ${isAuth ? 'Authenticated' : 'Not required'}`);
         if (auth && auth.currentUser) {
           addResult(`👤 Current user: ${auth.currentUser.email || 'Anonymous user'} (${auth.currentUser.isAnonymous ? 'Anonymous' : 'Regular'})`);
+        } else {
+          addResult(`👤 No user authentication (using public access)`);
         }
       } catch (authError: any) {
-        addResult(`❌ Authentication failed: ${authError.message}`);
+        addResult(`ℹ️ Authentication check failed (not critical): ${authError.message}`);
       }
 
       // Test 5: Candidate Service

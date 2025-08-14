@@ -259,82 +259,13 @@ export const testFirebaseConnection = async (): Promise<boolean> => {
   }
 };
 
-// Enhanced global error handler for Firebase network issues
+// Simplified error handler - just log errors, don't block
 if (typeof window !== "undefined") {
-  // Handle unhandled promise rejections
   window.addEventListener("unhandledrejection", (event) => {
     const error = event.reason;
-
-    // Check for various network-related errors, but be more specific
-    const isFirebaseNetworkError =
-      error &&
-      error.message &&
-      (error.message.includes("firestore") ||
-        error.message.includes("firebase") ||
-        error.message.includes("googleapis.com")) &&
-      (error instanceof TypeError ||
-        error.message.includes("Failed to fetch") ||
-        error.message.includes("NetworkError") ||
-        error.message.includes("Connection failed"));
-
-    const isFirebaseCodeError =
-      error &&
-      error.code &&
-      (error.code.includes("unavailable") ||
-        error.code.includes("deadline-exceeded") ||
-        error.code.includes("internal"));
-
-    if (isFirebaseNetworkError || isFirebaseCodeError) {
-      console.warn("🌐 Caught unhandled Firebase network error:", error);
-
-      // Block Firebase operations to prevent further errors
-      firebaseBlocked = true;
-      networkEnabled = false;
-      console.warn("🚫 Firebase operations blocked due to network issues");
-
-      // Prevent the error from propagating and crashing the app
-      event.preventDefault();
-
-      // Show user-friendly notification if possible (throttled)
-      if (
-        typeof window.lastToastTime === "undefined" ||
-        Date.now() - window.lastToastTime > 10000
-      ) {
-        // Only show every 10 seconds
-        window.lastToastTime = Date.now();
-
-        if (typeof window.toast !== "undefined") {
-          window.toast({
-            title: "Connection Issue",
-            description:
-              "Network connectivity problems detected. Using offline mode.",
-            variant: "destructive",
-          });
-        }
-      }
-    }
-  });
-
-  // Handle uncaught errors
-  window.addEventListener("error", (event) => {
-    const error = event.error;
-
-    // Only block Firebase for Firebase-related fetch errors
-    if (
-      error instanceof TypeError &&
-      error.message?.includes("Failed to fetch") &&
-      (error.stack?.includes("firebase") ||
-        error.stack?.includes("firestore") ||
-        error.stack?.includes("googleapis.com"))
-    ) {
-      console.warn("🌐 Caught uncaught Firebase TypeError fetch error:", error);
-
-      // Block Firebase operations
-      firebaseBlocked = true;
-      networkEnabled = false;
-      console.warn("🚫 Firebase blocked due to TypeError");
-
-      event.preventDefault();
+    if (error && error.message && error.message.includes("firebase")) {
+      console.warn("🔥 Firebase error (not blocking):", error);
+      // Don't prevent default or block Firebase
     }
   });
 }

@@ -11,7 +11,7 @@ import {
   orderBy,
   serverTimestamp,
 } from "firebase/firestore";
-import { db, isFirebaseReady, isFirebaseBlocked } from "@/lib/firebase";
+import { db, isFirebaseReady, isFirebaseBlocked, ensureAuthenticated } from "@/lib/firebase";
 
 export interface Candidate {
   id?: string;

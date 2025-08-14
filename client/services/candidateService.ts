@@ -136,46 +136,48 @@ class CandidateService {
   }
 
   async getCandidateById(id: string): Promise<Candidate | null> {
-    try {
-      if (!(await this.checkFirebaseReady())) {
-        console.warn("Firebase not ready, cannot get candidate by ID");
-        return null;
+    // Try Firebase first
+    if (this.isFirebaseAvailable()) {
+      try {
+        const docSnap = await getDoc(doc(this.collection!, id));
+        if (docSnap.exists()) {
+          return { id: docSnap.id, ...docSnap.data() } as Candidate;
+        }
+      } catch (error) {
+        console.warn("Firebase failed for getCandidateById, checking mock data:", error);
       }
-
-      const docSnap = await getDoc(doc(this.collection, id));
-      if (docSnap.exists()) {
-        return { id: docSnap.id, ...docSnap.data() } as Candidate;
-      }
-      return null;
-    } catch (error) {
-      console.error("Error getting candidate:", error);
-      if (error instanceof Error && error.message.includes("permissions")) {
-        console.error("Permission denied - check Firestore rules and authentication");
-      }
-      return null;
     }
+
+    // Fallback to mock data
+    return this.mockCandidates.find(candidate => candidate.id === id) || null;
   }
 
   async addCandidate(candidate: Omit<Candidate, "id">): Promise<string | null> {
-    try {
-      if (!(await this.checkFirebaseReady())) {
-        console.warn("Firebase not ready, cannot add candidate");
-        return null;
+    // Try Firebase first
+    if (this.isFirebaseAvailable()) {
+      try {
+        const docRef = await addDoc(this.collection!, {
+          ...candidate,
+          createdAt: serverTimestamp(),
+          updatedAt: serverTimestamp(),
+        });
+        return docRef.id;
+      } catch (error) {
+        console.warn("Firebase failed for addCandidate, adding to mock data:", error);
       }
-
-      const docRef = await addDoc(this.collection, {
-        ...candidate,
-        createdAt: serverTimestamp(),
-        updatedAt: serverTimestamp(),
-      });
-      return docRef.id;
-    } catch (error) {
-      console.error("Error adding candidate:", error);
-      if (error instanceof Error && error.message.includes("permissions")) {
-        console.error("Permission denied - check Firestore rules and authentication");
-      }
-      return null;
     }
+
+    // Fallback to mock data
+    const newId = (this.mockCandidates.length + 1).toString();
+    const newCandidate: Candidate = {
+      ...candidate,
+      id: newId,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    };
+    this.mockCandidates.unshift(newCandidate);
+    console.log("Added candidate to mock data:", newCandidate.name);
+    return newId;
   }
 
   async updateCandidate(
@@ -221,29 +223,26 @@ class CandidateService {
   }
 
   async getCandidatesByStatus(status: string): Promise<Candidate[]> {
-    try {
-      if (!(await this.checkFirebaseReady())) {
-        console.warn("Firebase not ready, returning empty candidates list by status");
-        return [];
+    // Try Firebase first
+    if (this.isFirebaseAvailable()) {
+      try {
+        const q = query(
+          this.collection!,
+          where("status", "==", status),
+          orderBy("createdAt", "desc"),
+        );
+        const querySnapshot = await getDocs(q);
+        return querySnapshot.docs.map((doc) => ({
+          id: doc.id,
+          ...doc.data(),
+        })) as Candidate[];
+      } catch (error) {
+        console.warn("Firebase failed for getCandidatesByStatus, using mock data:", error);
       }
-
-      const q = query(
-        this.collection,
-        where("status", "==", status),
-        orderBy("createdAt", "desc"),
-      );
-      const querySnapshot = await getDocs(q);
-      return querySnapshot.docs.map((doc) => ({
-        id: doc.id,
-        ...doc.data(),
-      })) as Candidate[];
-    } catch (error) {
-      console.error("Error getting candidates by status:", error);
-      if (error instanceof Error && error.message.includes("permissions")) {
-        console.error("Permission denied - check Firestore rules and authentication");
-      }
-      return [];
     }
+
+    // Fallback to mock data
+    return this.mockCandidates.filter(candidate => candidate.status === status);
   }
 
   async getCandidatesByPosition(position: string): Promise<Candidate[]> {

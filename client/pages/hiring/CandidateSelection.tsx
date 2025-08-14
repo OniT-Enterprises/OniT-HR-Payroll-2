@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { candidateService, type Candidate } from "@/services/candidateService";
+import DataSourceIndicator from "@/components/DataSourceIndicator";
 import { useToast } from "@/hooks/use-toast";
 import {
   Card,

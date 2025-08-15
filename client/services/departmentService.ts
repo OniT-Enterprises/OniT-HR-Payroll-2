@@ -51,73 +51,25 @@ class DepartmentService {
   }
 
   async getAllDepartments(): Promise<Department[]> {
-    // Check if Firebase is blocked due to previous errors
-    if (isFirebaseBlocked()) {
-      console.warn("🚫 Firebase blocked, using mock departments");
-      return this.getMockDepartments();
-    }
-
-    // Check network connectivity first using our utility
-    if (!isOnline()) {
-      console.warn("🌐 No internet connection, using mock departments");
-      return this.getMockDepartments();
-    }
-
-    // Additional network check for more reliability
-    const networkAvailable = await checkNetwork();
-    if (!networkAvailable) {
-      console.warn("🌐 Network check failed, using mock departments");
-      return this.getMockDepartments();
-    }
-
-    // Check if Firebase is ready
-    if (!isFirebaseReady() || !db) {
-      const error = getFirebaseError();
-      console.warn("⚠️ Firebase not ready, using mock departments:", error);
-      return this.getMockDepartments();
-    }
-
-    // Quick connectivity test to Firebase
-    try {
-      await new Promise((resolve, reject) => {
-        const timeout = setTimeout(() => {
-          reject(new Error("Firebase connectivity test timeout"));
-        }, 1000);
-
-        // Try to access Firebase - this will throw TypeError if network issues
-        if (typeof db.app === "undefined") {
-          clearTimeout(timeout);
-          reject(new Error("Firebase app not accessible"));
-          return;
-        }
-
-        clearTimeout(timeout);
-        resolve(true);
-      });
-    } catch (error) {
-      console.warn("⚠️ Firebase quick connectivity test failed:", error);
-      if (
-        error instanceof TypeError ||
-        error.message?.includes("Failed to fetch")
-      ) {
-        return this.getMockDepartments();
-      }
-    }
-
-    // Check cache first
+    // Check cache first - always try cache regardless of Firebase status
     const cachedDepartments = this.getCachedDepartments();
     if (cachedDepartments.length > 0) {
       console.log("✅ Using cached department data");
       return cachedDepartments;
     }
 
-    // Use safe Firebase operation wrapper
-    return await safeFirestoreQuery(
-      async () => {
+    // Try Firebase if available
+    if (this.isFirebaseAvailable()) {
+      try {
         console.log("🔍 Attempting to load departments from Firebase...");
 
+        const collection = this.getCollection();
+        if (!collection) {
+          throw new Error("Collection not available");
+        }
+
         const querySnapshot = await getDocs(
-          query(this.getCollection(), orderBy("name", "asc")),
+          query(collection, orderBy("name", "asc")),
         );
 
         const departments = querySnapshot.docs.map((doc) => {
@@ -130,13 +82,20 @@ class DepartmentService {
           } as Department;
         });
 
+        console.log(`✅ Successfully got ${departments.length} departments from Firebase`);
         // Cache successful results
         this.cacheDepartments(departments);
         return departments;
-      },
-      this.getMockDepartments(),
-      "Load departments",
-    );
+      } catch (error) {
+        console.warn("🚫 Firebase failed for departments, using mock data:", error);
+      }
+    } else {
+      console.log("🚫 Firebase not available for departments, using mock data");
+    }
+
+    // Fallback to mock data
+    console.log(`📋 Returning ${this.getMockDepartments().length} mock departments`);
+    return this.getMockDepartments();
   }
 
   private getCachedDepartments(): Department[] {

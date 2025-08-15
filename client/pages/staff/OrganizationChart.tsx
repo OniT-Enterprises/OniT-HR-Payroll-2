@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useCallback } from "react";
 import { Button } from "@/components/ui/button";
+import { debounceResize } from "@/lib/resizeObserverFix";
 import {
   Card,
   CardContent,

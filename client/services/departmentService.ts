@@ -43,21 +43,11 @@ class DepartmentService {
   private cacheKey = "departments_cache";
 
   private getCollection() {
-    if (!db || !isFirebaseReady()) {
-      throw new Error("Firebase not ready");
-    }
-    try {
-      return collection(db, "departments");
-    } catch (error) {
-      // Catch any collection access errors
-      if (
-        error instanceof TypeError ||
-        error.message?.includes("Failed to fetch")
-      ) {
-        throw new Error("Network error - Firebase collection not accessible");
-      }
-      throw error;
-    }
+    return db ? collection(db, "departments") : null;
+  }
+
+  private isFirebaseAvailable(): boolean {
+    return !!(db && this.getCollection() && isFirebaseReady() && !isFirebaseBlocked());
   }
 
   async getAllDepartments(): Promise<Department[]> {

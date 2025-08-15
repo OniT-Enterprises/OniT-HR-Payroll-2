@@ -1,6 +1,9 @@
 import "./global.css";
 import React from "react";
 
+// Import ResizeObserver fix early to prevent console warnings
+import "./lib/resizeObserverFix";
+
 import { Toaster } from "@/components/ui/toaster";
 import { createRoot } from "react-dom/client";
 import { Toaster as Sonner } from "@/components/ui/sonner";

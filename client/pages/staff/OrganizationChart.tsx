@@ -205,6 +205,14 @@ export default function OrganizationChart() {
     }
   };
 
+  // Debounced version to prevent excessive re-renders
+  const debouncedBuildChart = useCallback(
+    debounceResize(() => {
+      // This will be set by the actual build function
+    }, 150),
+    []
+  );
+
   const buildAppleOrgChart = useCallback(
     (employeesData: Employee[], departmentsData: Department[]) => {
       console.log(

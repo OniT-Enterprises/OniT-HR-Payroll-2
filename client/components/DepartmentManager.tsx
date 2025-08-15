@@ -281,9 +281,12 @@ export default function DepartmentManager({
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-6xl max-h-[90vh] overflow-auto">
         <DialogHeader>
-          <DialogTitle className="flex items-center gap-2">
-            <Building className="h-5 w-5" />
-            {mode === "add" ? "Add Department" : "Manage Departments"}
+          <DialogTitle className="flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <Building className="h-5 w-5" />
+              {mode === "add" ? "Add Department" : "Manage Departments"}
+            </div>
+            <DataSourceIndicator />
           </DialogTitle>
           <DialogDescription>
             {mode === "add"

@@ -68,15 +68,12 @@ class FirebaseOfflineManager {
         }
       }
 
-      // Step 4: Terminate Firestore instance to completely stop all operations
-      if (db && !this.state.terminated) {
-        try {
-          console.log('🔚 Terminating Firestore instance...');
-          await terminate(db);
-          this.state.terminated = true;
-        } catch (terminateError) {
-          console.warn('⚠️ Terminate failed:', terminateError);
-        }
+      // Step 4: Mark as terminated but don't actually terminate to avoid conflicts
+      // Terminating the client causes "client already terminated" errors
+      // when other parts of the app try to use Firebase
+      if (!this.state.terminated) {
+        console.log('📴 Marking Firebase as offline (without terminating client)...');
+        this.state.terminated = true; // Logical termination only
       }
 
       this.state.isOfflineMode = true;

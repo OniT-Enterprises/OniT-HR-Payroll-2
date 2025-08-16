@@ -195,15 +195,19 @@ class FirebaseConnectionManager {
 
       // Handle specific Firebase internal errors
       if (error.message?.includes('INTERNAL ASSERTION FAILED')) {
-        console.warn('🚨 Firebase internal assertion error detected - enabling offline mode');
-        this.state.error = 'Firebase internal error - offline mode enabled';
+        console.warn('🚨 Firebase internal assertion error detected');
+        this.state.error = 'Firebase internal error - using fallback mode';
 
-        // Auto-enable offline mode to prevent further assertion errors
-        try {
-          await enableFirebaseOfflineMode();
-        } catch (offlineError) {
-          console.error('Failed to enable offline mode:', offlineError);
-        }
+        // Mark connection as failed but don't terminate client
+        // The multi-tenant system still needs Firebase for auth and basic operations
+        this.state.isConnected = false;
+        this.state.isNetworkEnabled = false;
+      } else if (error.message?.includes('client has already been terminated')) {
+        console.warn('🚨 Firebase client terminated - resetting connection state');
+        this.state.error = 'Firebase client terminated - using fallback mode';
+        this.state.isConnected = false;
+        this.state.isNetworkEnabled = false;
+        this.state.terminated = true;
       }
 
       return false;

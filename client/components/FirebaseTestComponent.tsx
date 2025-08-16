@@ -29,7 +29,7 @@ const FirebaseTestComponent: React.FC = () => {
       // Test 1: Check Firebase initialization
       addResult(`✅ Firebase ready: ${isFirebaseReady()}`);
       addResult(`❌ Firebase blocked: ${isFirebaseBlocked()}`);
-      addResult(`📊 Database instance: ${db ? 'Available' : 'Not available'}`);
+      addResult(`��� Database instance: ${db ? 'Available' : 'Not available'}`);
       addResult(`🔐 Auth instance: ${auth ? 'Available' : 'Not available'}`);
 
       // Test 2: Check offline mode status
@@ -179,6 +179,22 @@ const FirebaseTestComponent: React.FC = () => {
             disabled={isLoading}
           >
             Enable Offline
+          </Button>
+          <Button
+            onClick={() => {
+              addResult('🔄 Disabling Firebase isolation...');
+              try {
+                disableFirebaseIsolation();
+                addResult('✅ Firebase isolation disabled - operations re-enabled');
+                addResult('⚠️ Warning: This may cause assertion errors to return');
+              } catch (error: any) {
+                addResult(`❌ Failed to disable isolation: ${error.message}`);
+              }
+            }}
+            variant="outline"
+            disabled={isLoading || !isFirebaseIsolated()}
+          >
+            Disable Isolation
           </Button>
           <Button
             onClick={clearResults}

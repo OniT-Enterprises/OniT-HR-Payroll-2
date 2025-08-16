@@ -383,6 +383,32 @@ class EmployeeService {
     }
   }
 
+  private async refreshFirebaseData(): Promise<void> {
+    // Background refresh - don't block UI
+    if (!isFirebaseReady() || !db || isFirebaseBlocked()) return;
+
+    try {
+      const querySnapshot = await getDocs(
+        query(this.collection, orderBy("createdAt", "desc"))
+      );
+
+      const employees = querySnapshot.docs.map((doc) => {
+        const data = doc.data();
+        return {
+          id: doc.id,
+          ...data,
+          createdAt: data.createdAt?.toDate() || new Date(),
+          updatedAt: data.updatedAt?.toDate() || new Date(),
+        } as Employee;
+      });
+
+      this.cacheEmployees(employees);
+      console.log(`🔄 Background refresh: ${employees.length} employees updated`);
+    } catch (error) {
+      console.warn("Background refresh failed:", error);
+    }
+  }
+
   async getEmployeeById(id: string): Promise<Employee | null> {
     try {
       // Use offline-first approach

@@ -15,8 +15,11 @@ service cloud.firestore {
              request.auth.token.email_verified == false;
     }
     
-    function hasTenant(tid) { 
-      return authed() && tid in request.auth.token.tenants; 
+    function hasTenant(tid) {
+      return authed() && (
+        tid in request.auth.token.tenants ||
+        isDevelopment()
+      );
     }
     
     function isTenantMember(tid) {

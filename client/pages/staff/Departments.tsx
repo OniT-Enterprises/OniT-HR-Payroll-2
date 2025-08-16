@@ -241,10 +241,22 @@ export default function Departments() {
 
       // Show results to user
       if (diagnostics.connectionTest) {
+        const authStatus = diagnostics.isAuthenticated ? "with authentication" : "without authentication (temp fix)";
         toast({
           title: "Firebase Connected ✅",
-          description: `Found ${diagnostics.employeeCount} employees, ${diagnostics.departmentCount} departments`,
+          description: `Found ${diagnostics.employeeCount} employees, ${diagnostics.departmentCount} departments ${authStatus}`,
         });
+
+        // Show setup instructions if not authenticated
+        if (!diagnostics.isAuthenticated) {
+          setTimeout(() => {
+            toast({
+              title: "⚠️ Setup Required",
+              description: "To properly secure your data, enable Anonymous Authentication in Firebase Console → Authentication → Sign-in method",
+              duration: 8000,
+            });
+          }, 2000);
+        }
 
         // Reload data after successful connection
         await loadData();
@@ -255,6 +267,17 @@ export default function Departments() {
           description: mainIssue,
           variant: "destructive",
         });
+
+        // Show specific instructions for authentication issues
+        if (mainIssue.includes("authenticated")) {
+          setTimeout(() => {
+            toast({
+              title: "Fix: Enable Anonymous Auth",
+              description: "Go to Firebase Console → Authentication → Sign-in method → Enable Anonymous",
+              duration: 10000,
+            });
+          }, 1000);
+        }
       }
     } catch (error) {
       console.error("Firebase diagnostics error:", error);

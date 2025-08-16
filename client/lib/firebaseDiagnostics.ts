@@ -4,6 +4,9 @@ import { collection, getDocs, query, limit } from "firebase/firestore";
 export interface FirebaseDiagnostics {
   firebaseInitialized: boolean;
   databaseAvailable: boolean;
+  authAvailable: boolean;
+  isAuthenticated: boolean;
+  authMethod: string | null;
   isBlocked: boolean;
   error: string | null;
   connectionTest: boolean;

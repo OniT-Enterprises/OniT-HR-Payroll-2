@@ -107,9 +107,17 @@ export const tryAuthentication = async (): Promise<boolean> => {
       "✅ Anonymous authentication successful",
       userCredential.user.uid,
     );
+
+    // Enable Firebase network after successful authentication
+    await enableFirebaseNetwork();
+
     return true;
-  } catch (error) {
+  } catch (error: any) {
     console.warn("❌ Authentication failed:", error);
+    // Check if it's a permissions error and provide guidance
+    if (error.code === 'permission-denied' || error.message?.includes('Missing or insufficient permissions')) {
+      console.warn("🔒 Permissions issue detected. Check Firestore rules and authentication setup.");
+    }
     return false;
   }
 };

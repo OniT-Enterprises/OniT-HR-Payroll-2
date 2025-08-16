@@ -81,7 +81,7 @@ const FirebaseTestComponent: React.FC = () => {
         }
       }
 
-      // Test 4: Simple write operation
+      // Test 6: Simple write operation
       try {
         addResult('✍️ Testing write access...');
         const testRef = collection(db, 'test');
@@ -96,10 +96,12 @@ const FirebaseTestComponent: React.FC = () => {
         if (writeError.code === 'permission-denied') {
           addResult('💡 Permission denied - you may need to deploy updated Firestore rules');
           addResult('📝 Run: firebase deploy --only firestore:rules');
+        } else if (writeError.message?.includes('INTERNAL ASSERTION FAILED')) {
+          addResult('🚨 Firebase internal assertion error - this is a known SDK issue');
         }
       }
 
-      // Test 5: Candidate Service
+      // Test 7: Candidate Service
       try {
         addResult('👥 Testing candidate service...');
         const candidates = await candidateService.getAllCandidates();

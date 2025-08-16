@@ -119,17 +119,50 @@ class EmployeeService {
   }
 
   async getAllEmployees(): Promise<Employee[]> {
-    // Use offline-first approach to completely avoid Firebase timeouts
-    console.log("👥 Loading employees with offline-first approach");
+    console.log("👥 Loading employees from Firebase first, then fallback");
+
+    // Check cache first
+    const cachedEmployees = this.getOfflineEmployees();
+    if (cachedEmployees.length > 0) {
+      console.log("✅ Using cached employee data");
+      // Still try Firebase in background to refresh cache
+      this.refreshFirebaseData();
+      return cachedEmployees;
+    }
+
+    // Try Firebase first
+    if (isFirebaseReady() && db && !isFirebaseBlocked()) {
+      try {
+        console.log("🔥 Attempting to load employees from Firebase...");
+        await this.testConnection();
+
+        const querySnapshot = await getDocs(
+          query(this.collection, orderBy("createdAt", "desc"))
+        );
+
+        const employees = querySnapshot.docs.map((doc) => {
+          const data = doc.data();
+          return {
+            id: doc.id,
+            ...data,
+            createdAt: data.createdAt?.toDate() || new Date(),
+            updatedAt: data.updatedAt?.toDate() || new Date(),
+          } as Employee;
+        });
+
+        console.log(`✅ Successfully loaded ${employees.length} employees from Firebase`);
+        this.cacheEmployees(employees);
+        return employees;
+      } catch (error) {
+        console.warn("🚫 Firebase failed for employees:", error);
+      }
+    }
 
     try {
-      // Skip all Firebase attempts and use reliable mock data
-      console.log("📊 Using safe mock employee data");
+      // Fallback to mock data
+      console.log("📊 Using mock employee data as fallback");
       const mockEmployees = await mockDataService.getAllEmployees();
-
-      // Cache the mock data for consistency
       this.cacheEmployees(mockEmployees);
-
       return mockEmployees;
     } catch (error) {
       console.error("❌ Even mock data failed, using hardcoded fallback:", error);

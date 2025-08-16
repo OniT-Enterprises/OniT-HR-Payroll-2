@@ -31,9 +31,19 @@ const FirebaseTestComponent: React.FC = () => {
       addResult(`📊 Database instance: ${db ? 'Available' : 'Not available'}`);
       addResult(`🔐 Auth instance: ${auth ? 'Available' : 'Not available'}`);
 
+      // Test 2: Check offline mode status
+      const offlineState = getFirebaseOfflineState();
+      addResult(`📴 Offline mode: ${isFirebaseOffline() ? 'ENABLED' : 'Disabled'}`);
+      addResult(`🌐 Network disabled: ${offlineState.networkDisabled ? 'Yes' : 'No'}`);
+      addResult(`🔚 Firebase terminated: ${offlineState.terminated ? 'Yes' : 'No'}`);
+
       if (!db) {
         addResult('❌ Cannot proceed - database not initialized');
         return;
+      }
+
+      if (isFirebaseOffline()) {
+        addResult('ℹ️ Firebase is in offline mode - some tests will be skipped');
       }
 
       // Test 2: Check connection manager status

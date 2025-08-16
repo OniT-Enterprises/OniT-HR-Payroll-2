@@ -34,7 +34,19 @@ const FirebaseTestComponent: React.FC = () => {
         return;
       }
 
-      // Test 2: Simple read operation
+      // Test 2: Authentication first
+      try {
+        addResult('🔐 Testing authentication...');
+        const authResult = await tryAuthentication();
+        addResult(`${authResult ? '✅' : '❌'} Authentication ${authResult ? 'successful' : 'failed'}`);
+        if (auth && auth.currentUser) {
+          addResult(`👤 Current user: ${auth.currentUser.email || 'Anonymous user'} (${auth.currentUser.uid.substring(0, 8)}...)`);
+        }
+      } catch (authError: any) {
+        addResult(`❌ Authentication error: ${authError.message}`);
+      }
+
+      // Test 3: Simple read operation
       try {
         addResult('🔍 Testing read access to candidates collection...');
         const candidatesRef = collection(db, 'candidates');
@@ -42,6 +54,10 @@ const FirebaseTestComponent: React.FC = () => {
         addResult(`✅ Read test successful - found ${snapshot.docs.length} documents`);
       } catch (readError: any) {
         addResult(`❌ Read test failed: ${readError.message}`);
+        if (readError.code === 'permission-denied') {
+          addResult('💡 Permission denied - you may need to deploy updated Firestore rules');
+          addResult('📝 Run: firebase deploy --only firestore:rules');
+        }
       }
 
       // Test 3: Simple write operation

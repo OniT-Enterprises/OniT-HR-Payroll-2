@@ -744,6 +744,14 @@ export default function AllEmployees() {
           <div className="flex items-center gap-2">
             <Button
               variant="outline"
+              onClick={testFirebaseConnection}
+              className="bg-white hover:bg-purple-50 border-purple-200 text-xs"
+            >
+              <Building className="mr-2 h-4 w-4" />
+              Test DB
+            </Button>
+            <Button
+              variant="outline"
               onClick={handleDownloadTemplate}
               className="bg-white hover:bg-purple-50 border-purple-200"
             >

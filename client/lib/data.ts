@@ -69,6 +69,25 @@ const ensureDatabase = () => {
   return db;
 };
 
+// Helper to check if operation should proceed
+const canProceedWithFirebaseOperation = (): boolean => {
+  try {
+    const { getFirebaseStatus } = require('./firebaseManager');
+    const status = getFirebaseStatus();
+
+    // Don't proceed if Firebase is in offline mode or terminated
+    if (status.error?.includes('terminated') || status.error?.includes('offline')) {
+      console.warn('🚫 Skipping Firebase operation - client offline or terminated');
+      return false;
+    }
+
+    return true;
+  } catch (error) {
+    // If we can't check status, assume we can proceed
+    return true;
+  }
+};
+
 // Generic document operations
 const getDocument = async <T extends DocumentData>(path: string): Promise<T | null> => {
   const database = ensureDatabase();

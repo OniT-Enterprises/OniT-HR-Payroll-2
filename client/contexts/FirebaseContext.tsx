@@ -112,47 +112,34 @@ export const FirebaseProvider: React.FC<FirebaseProviderProps> = ({
   };
 
   useEffect(() => {
-    let debounceTimer: NodeJS.Timeout | null = null;
+    console.log('🔧 FirebaseProvider initializing (connection checks disabled to prevent assertion errors)');
 
-    // Debounced connection check to prevent rapid successive calls
-    const debouncedCheckConnection = () => {
-      if (debounceTimer) {
-        clearTimeout(debounceTimer);
-      }
-      debounceTimer = setTimeout(checkConnection, 1000); // 1 second debounce
-    };
+    // Set static offline state to prevent Firebase operations
+    setIsOnline(navigator.onLine);
+    setIsConnected(false);
+    setIsUsingMockData(true);
+    setError('Firebase connection disabled to prevent assertion errors. Using demo data.');
 
-    // Check initial connection
-    checkConnection();
+    console.log('✅ FirebaseProvider initialized in offline mode');
 
-    // Listen for online/offline events
+    // Still listen for online/offline events for UI purposes, but don't trigger Firebase operations
     const handleOnline = () => {
       setIsOnline(true);
-      debouncedCheckConnection(); // Use debounced version
+      // Don't trigger connection checks to avoid Firebase operations
     };
 
     const handleOffline = () => {
       setIsOnline(false);
       setIsConnected(false);
       setIsUsingMockData(true);
-      if (debounceTimer) {
-        clearTimeout(debounceTimer);
-      }
     };
 
     window.addEventListener("online", handleOnline);
     window.addEventListener("offline", handleOffline);
 
-    // Periodic connection check - increased interval to reduce load
-    const interval = setInterval(debouncedCheckConnection, 300000); // Check every 5 minutes
-
     return () => {
       window.removeEventListener("online", handleOnline);
       window.removeEventListener("offline", handleOffline);
-      clearInterval(interval);
-      if (debounceTimer) {
-        clearTimeout(debounceTimer);
-      }
     };
   }, []);
 

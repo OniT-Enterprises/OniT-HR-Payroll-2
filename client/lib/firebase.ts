@@ -137,38 +137,17 @@ export const unblockFirebase = () => {
   console.log("✅ Firebase operations unblocked");
 };
 
-// Network management functions
+// DEPRECATED: Use firebaseManager instead
+// These functions are kept for backward compatibility but delegate to the safe manager
 export const enableFirebaseNetwork = async (): Promise<boolean> => {
-  if (!db || networkEnabled || connectivityCheckInProgress) {
-    return networkEnabled;
-  }
-
-  connectivityCheckInProgress = true;
-  try {
-    await enableNetwork(db);
-    networkEnabled = true;
-    return true;
-  } catch (error) {
-    console.error("Failed to enable Firebase network:", error);
-    return false;
-  } finally {
-    connectivityCheckInProgress = false;
-  }
+  const { firebaseManager } = await import('./firebaseManager');
+  const result = await firebaseManager.testConnection();
+  return result;
 };
 
 export const disableFirebaseNetwork = async (): Promise<boolean> => {
-  if (!db || !networkEnabled) {
-    return true;
-  }
-
-  try {
-    await disableNetwork(db);
-    networkEnabled = false;
-    return true;
-  } catch (error) {
-    console.error("Failed to disable Firebase network:", error);
-    return false;
-  }
+  const { firebaseManager } = await import('./firebaseManager');
+  return firebaseManager.disableNetwork();
 };
 
 // DEPRECATED: Use firebaseManager.testConnection() instead

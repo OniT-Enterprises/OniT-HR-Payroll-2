@@ -42,7 +42,7 @@ import {
   isFirebaseReady,
   isFirebaseBlocked,
   unblockFirebase,
-  testFirebaseConnection as testFirebaseConn
+  testFirebaseConnection as testFirebaseConn,
 } from "@/lib/firebase";
 import { simpleFirebaseTest } from "@/lib/simpleFirebaseTest";
 
@@ -253,11 +253,16 @@ export default function Departments() {
         });
 
         // Show auth setup instructions if needed
-        if (results.errors.some(err => err.includes("permission") || err.includes("auth"))) {
+        if (
+          results.errors.some(
+            (err) => err.includes("permission") || err.includes("auth"),
+          )
+        ) {
           setTimeout(() => {
             toast({
               title: "Authentication Required",
-              description: "Enable Anonymous Auth in Firebase Console → Authentication → Sign-in method",
+              description:
+                "Enable Anonymous Auth in Firebase Console → Authentication → Sign-in method",
               duration: 8000,
             });
           }, 2000);
@@ -348,14 +353,14 @@ export default function Departments() {
             <div
               className={`w-3 h-3 rounded-full ${
                 isFirebaseReady() && !isFirebaseBlocked()
-                  ? 'bg-green-500'
-                  : 'bg-orange-500'
+                  ? "bg-green-500"
+                  : "bg-orange-500"
               }`}
             />
             <span className="text-muted-foreground">
               {isFirebaseReady() && !isFirebaseBlocked()
-                ? 'Firebase Connected'
-                : 'Using Mock Data'}
+                ? "Firebase Connected"
+                : "Using Mock Data"}
             </span>
           </div>
         </div>

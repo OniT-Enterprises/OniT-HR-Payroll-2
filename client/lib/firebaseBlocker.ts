@@ -136,11 +136,16 @@ export const monitorForErrors = () => {
       errorCount++;
       lastErrorTime = now;
 
-      console.warn(`🌐 Firebase network error #${errorCount} from ${source}:`, error);
+      console.warn(
+        `🌐 Firebase network error #${errorCount} from ${source}:`,
+        error,
+      );
 
       // Only block Firebase after multiple consecutive errors
       if (!firebaseBlocked && errorCount >= 3) {
-        blockFirebase(`Multiple Firebase network errors detected (${errorCount} errors from ${source})`);
+        blockFirebase(
+          `Multiple Firebase network errors detected (${errorCount} errors from ${source})`,
+        );
       } else if (errorCount < 3) {
         console.warn(`🔥 Firebase error ${errorCount}/3 - not blocking yet`);
       }

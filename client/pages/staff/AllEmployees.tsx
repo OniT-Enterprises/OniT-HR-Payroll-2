@@ -56,7 +56,7 @@ import {
 import {
   isFirebaseReady,
   isFirebaseBlocked,
-  unblockFirebase
+  unblockFirebase,
 } from "@/lib/firebase";
 import { simpleFirebaseTest } from "@/lib/simpleFirebaseTest";
 
@@ -402,7 +402,7 @@ export default function AllEmployees() {
       "Emergency Contact Name",
       "Emergency Contact Phone",
       "Date of Birth (YYYY-MM-DD)",
-      "Status (active/inactive/on_leave)"
+      "Status (active/inactive/on_leave)",
     ];
 
     // Add example row
@@ -426,7 +426,7 @@ export default function AllEmployees() {
       "Jane Doe",
       "555-0124",
       "1990-05-15",
-      "active"
+      "active",
     ];
 
     const csvContent = [headers.join(","), exampleRow.join(",")].join("\n");
@@ -455,15 +455,15 @@ export default function AllEmployees() {
       try {
         const csvText = e.target?.result as string;
         const lines = csvText.split("\n");
-        const headers = lines[0].split(",").map(h => h.trim());
-        const dataLines = lines.slice(1).filter(line => line.trim());
+        const headers = lines[0].split(",").map((h) => h.trim());
+        const dataLines = lines.slice(1).filter((line) => line.trim());
 
         let successCount = 0;
         let errorCount = 0;
 
         dataLines.forEach((line, index) => {
           try {
-            const values = line.split(",").map(v => v.trim());
+            const values = line.split(",").map((v) => v.trim());
             if (values.length < headers.length) {
               errorCount++;
               return;
@@ -493,7 +493,6 @@ export default function AllEmployees() {
           description: `Preview: ${successCount} employees would be imported, ${errorCount} errors found. (Import functionality not fully implemented yet)`,
           variant: errorCount > 0 ? "destructive" : "default",
         });
-
       } catch (error) {
         toast({
           title: "Import Error",
@@ -666,7 +665,10 @@ export default function AllEmployees() {
                     On Leave
                   </p>
                   <p className="text-2xl font-bold text-purple-600">
-                    {employees.filter((emp) => emp.status === "on_leave").length}
+                    {
+                      employees.filter((emp) => emp.status === "on_leave")
+                        .length
+                    }
                   </p>
                 </div>
                 <CalendarX className="h-8 w-8 text-purple-500" />
@@ -694,7 +696,11 @@ export default function AllEmployees() {
             <Button
               variant="outline"
               onClick={() => setShowFilters(!showFilters)}
-              className={showFilters ? "bg-purple-600 text-white hover:bg-purple-700" : "bg-white hover:bg-purple-50 border-purple-200"}
+              className={
+                showFilters
+                  ? "bg-purple-600 text-white hover:bg-purple-700"
+                  : "bg-white hover:bg-purple-50 border-purple-200"
+              }
             >
               <Filter className="mr-2 h-4 w-4" />
               Filters{" "}
@@ -757,7 +763,7 @@ export default function AllEmployees() {
             </Button>
             <Button
               variant="outline"
-              onClick={() => document.getElementById('csv-upload')?.click()}
+              onClick={() => document.getElementById("csv-upload")?.click()}
               className="bg-white hover:bg-purple-50 border-purple-200"
             >
               <Upload className="mr-2 h-4 w-4" />
@@ -778,7 +784,7 @@ export default function AllEmployees() {
             id="csv-upload"
             type="file"
             accept=".csv"
-            style={{ display: 'none' }}
+            style={{ display: "none" }}
             onChange={handleImportCSV}
           />
         </div>

@@ -103,7 +103,10 @@ export const tryAuthentication = async (): Promise<boolean> => {
     // Try anonymous authentication for development
     console.log("🔐 Attempting anonymous authentication...");
     const userCredential = await signInAnonymously(auth);
-    console.log("✅ Anonymous authentication successful", userCredential.user.uid);
+    console.log(
+      "✅ Anonymous authentication successful",
+      userCredential.user.uid,
+    );
     return true;
   } catch (error) {
     console.warn("❌ Authentication failed:", error);

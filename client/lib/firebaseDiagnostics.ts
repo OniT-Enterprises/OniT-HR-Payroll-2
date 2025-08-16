@@ -1,4 +1,11 @@
-import { db, auth, isFirebaseReady, isFirebaseBlocked, getFirebaseError, tryAuthentication } from "./firebase";
+import {
+  db,
+  auth,
+  isFirebaseReady,
+  isFirebaseBlocked,
+  getFirebaseError,
+  tryAuthentication,
+} from "./firebase";
 import { collection, getDocs, query, limit } from "firebase/firestore";
 import { testDirectFirestoreAccess } from "./firebaseBypass";
 
@@ -48,18 +55,24 @@ export async function runFirebaseDiagnostics(): Promise<FirebaseDiagnostics> {
       const currentUser = auth.currentUser;
       if (currentUser) {
         diagnostics.isAuthenticated = true;
-        diagnostics.authMethod = currentUser.isAnonymous ? "anonymous" : "authenticated";
+        diagnostics.authMethod = currentUser.isAnonymous
+          ? "anonymous"
+          : "authenticated";
       } else {
         // Try to authenticate
         const authResult = await tryAuthentication();
         diagnostics.isAuthenticated = authResult;
         if (authResult && auth.currentUser) {
-          diagnostics.authMethod = auth.currentUser.isAnonymous ? "anonymous" : "authenticated";
+          diagnostics.authMethod = auth.currentUser.isAnonymous
+            ? "anonymous"
+            : "authenticated";
         }
       }
     } catch (error) {
       console.warn("Authentication check failed:", error);
-      diagnostics.recommendations.push(`Authentication failed: ${error.message}`);
+      diagnostics.recommendations.push(
+        `Authentication failed: ${error.message}`,
+      );
     }
   }
 
@@ -69,7 +82,9 @@ export async function runFirebaseDiagnostics(): Promise<FirebaseDiagnostics> {
   }
 
   if (diagnostics.isBlocked) {
-    diagnostics.recommendations.push("Firebase is blocked - click 'Test Firebase' to unblock");
+    diagnostics.recommendations.push(
+      "Firebase is blocked - click 'Test Firebase' to unblock",
+    );
     return diagnostics;
   }
 
@@ -84,7 +99,9 @@ export async function runFirebaseDiagnostics(): Promise<FirebaseDiagnostics> {
   }
 
   if (!diagnostics.isAuthenticated) {
-    diagnostics.recommendations.push("User is not authenticated - Firestore requires authentication");
+    diagnostics.recommendations.push(
+      "User is not authenticated - Firestore requires authentication",
+    );
     return diagnostics;
   }
 
@@ -94,37 +111,49 @@ export async function runFirebaseDiagnostics(): Promise<FirebaseDiagnostics> {
     const employeeCollection = collection(db, "employees");
     const employeeSnapshot = await getDocs(query(employeeCollection, limit(1)));
     diagnostics.employeeCollectionExists = true;
-    
+
     // Get full count
     const allEmployees = await getDocs(employeeCollection);
     diagnostics.employeeCount = allEmployees.docs.length;
 
-    console.log(`✅ Employee collection: ${diagnostics.employeeCount} documents`);
+    console.log(
+      `✅ Employee collection: ${diagnostics.employeeCount} documents`,
+    );
   } catch (error) {
     console.warn("❌ Employee collection error:", error);
-    diagnostics.recommendations.push(`Employee collection error: ${error.message}`);
+    diagnostics.recommendations.push(
+      `Employee collection error: ${error.message}`,
+    );
   }
 
   try {
     // Test department collection
     const departmentCollection = collection(db, "departments");
-    const departmentSnapshot = await getDocs(query(departmentCollection, limit(1)));
+    const departmentSnapshot = await getDocs(
+      query(departmentCollection, limit(1)),
+    );
     diagnostics.departmentCollectionExists = true;
-    
+
     // Get full count
     const allDepartments = await getDocs(departmentCollection);
     diagnostics.departmentCount = allDepartments.docs.length;
 
-    console.log(`✅ Department collection: ${diagnostics.departmentCount} documents`);
+    console.log(
+      `✅ Department collection: ${diagnostics.departmentCount} documents`,
+    );
   } catch (error) {
     console.warn("❌ Department collection error:", error);
-    diagnostics.recommendations.push(`Department collection error: ${error.message}`);
+    diagnostics.recommendations.push(
+      `Department collection error: ${error.message}`,
+    );
   }
 
   // If authentication failed, try direct access
   if (!diagnostics.isAuthenticated && diagnostics.databaseAvailable) {
     try {
-      console.log("🔄 Authentication failed, testing direct Firestore access...");
+      console.log(
+        "🔄 Authentication failed, testing direct Firestore access...",
+      );
       const directResult = await testDirectFirestoreAccess();
 
       if (directResult.success) {
@@ -132,35 +161,52 @@ export async function runFirebaseDiagnostics(): Promise<FirebaseDiagnostics> {
         diagnostics.employeeCount = directResult.employeeCount || 0;
         diagnostics.departmentCount = directResult.departmentCount || 0;
         diagnostics.employeeCollectionExists = directResult.employeeCount > 0;
-        diagnostics.departmentCollectionExists = directResult.departmentCount > 0;
-        diagnostics.recommendations.push(`✅ Direct access works: ${directResult.message}`);
-        diagnostics.recommendations.push("⚠️ BUT: Enable Anonymous Auth in Firebase Console for proper security");
+        diagnostics.departmentCollectionExists =
+          directResult.departmentCount > 0;
+        diagnostics.recommendations.push(
+          `✅ Direct access works: ${directResult.message}`,
+        );
+        diagnostics.recommendations.push(
+          "⚠️ BUT: Enable Anonymous Auth in Firebase Console for proper security",
+        );
       } else {
-        diagnostics.recommendations.push(`❌ Direct access failed: ${directResult.message}`);
+        diagnostics.recommendations.push(
+          `❌ Direct access failed: ${directResult.message}`,
+        );
       }
     } catch (directError) {
-      diagnostics.recommendations.push(`❌ Direct access error: ${directError.message}`);
+      diagnostics.recommendations.push(
+        `❌ Direct access error: ${directError.message}`,
+      );
     }
   }
 
   // Overall connection test
-  diagnostics.connectionTest = diagnostics.employeeCollectionExists || diagnostics.departmentCollectionExists;
+  diagnostics.connectionTest =
+    diagnostics.employeeCollectionExists ||
+    diagnostics.departmentCollectionExists;
 
   // Generate recommendations
   if (diagnostics.connectionTest) {
     if (diagnostics.isAuthenticated) {
       diagnostics.recommendations.push("✅ Firebase is connected and working");
     }
-    
+
     if (diagnostics.employeeCount === 0) {
-      diagnostics.recommendations.push("⚠️ No employees found in Firebase - add some employees or check your data");
+      diagnostics.recommendations.push(
+        "⚠️ No employees found in Firebase - add some employees or check your data",
+      );
     }
-    
+
     if (diagnostics.departmentCount === 0) {
-      diagnostics.recommendations.push("⚠️ No departments found in Firebase - they will be auto-created from employee data");
+      diagnostics.recommendations.push(
+        "⚠️ No departments found in Firebase - they will be auto-created from employee data",
+      );
     }
   } else {
-    diagnostics.recommendations.push("❌ Cannot connect to Firebase collections");
+    diagnostics.recommendations.push(
+      "❌ Cannot connect to Firebase collections",
+    );
   }
 
   return diagnostics;
@@ -173,12 +219,16 @@ export function logFirebaseDiagnostics(diagnostics: FirebaseDiagnostics): void {
   console.log(`Database Available: ${diagnostics.databaseAvailable}`);
   console.log(`Auth Available: ${diagnostics.authAvailable}`);
   console.log(`Is Authenticated: ${diagnostics.isAuthenticated}`);
-  console.log(`Auth Method: ${diagnostics.authMethod || 'None'}`);
+  console.log(`Auth Method: ${diagnostics.authMethod || "None"}`);
   console.log(`Is Blocked: ${diagnostics.isBlocked}`);
   console.log(`Connection Test: ${diagnostics.connectionTest}`);
-  console.log(`Employee Collection: ${diagnostics.employeeCollectionExists} (${diagnostics.employeeCount} docs)`);
-  console.log(`Department Collection: ${diagnostics.departmentCollectionExists} (${diagnostics.departmentCount} docs)`);
-  console.log(`Error: ${diagnostics.error || 'None'}`);
+  console.log(
+    `Employee Collection: ${diagnostics.employeeCollectionExists} (${diagnostics.employeeCount} docs)`,
+  );
+  console.log(
+    `Department Collection: ${diagnostics.departmentCollectionExists} (${diagnostics.departmentCount} docs)`,
+  );
+  console.log(`Error: ${diagnostics.error || "None"}`);
   console.log("Recommendations:");
   diagnostics.recommendations.forEach((rec, index) => {
     console.log(`  ${index + 1}. ${rec}`);

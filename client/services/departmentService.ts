@@ -49,7 +49,12 @@ class DepartmentService {
   }
 
   private isFirebaseAvailable(): boolean {
-    return !!(db && this.getCollection() && isFirebaseReady() && !isFirebaseBlocked());
+    return !!(
+      db &&
+      this.getCollection() &&
+      isFirebaseReady() &&
+      !isFirebaseBlocked()
+    );
   }
 
   async getAllDepartments(): Promise<Department[]> {
@@ -95,7 +100,9 @@ class DepartmentService {
           } as Department;
         });
 
-        console.log(`✅ Successfully got ${departments.length} departments from Firebase`);
+        console.log(
+          `✅ Successfully got ${departments.length} departments from Firebase`,
+        );
         // Cache successful results
         this.cacheDepartments(departments);
         return departments;
@@ -103,11 +110,16 @@ class DepartmentService {
         console.warn("🚫 Firebase failed for departments:", error);
 
         // Try direct access without authentication
-        if (error.message?.includes("Authentication failed") || error.code === 'unauthenticated') {
+        if (
+          error.message?.includes("Authentication failed") ||
+          error.code === "unauthenticated"
+        ) {
           try {
             console.log("🔄 Trying direct Firestore access without auth...");
             const departments = await getDepartmentsDirectly();
-            console.log(`✅ Direct access successful: ${departments.length} departments`);
+            console.log(
+              `✅ Direct access successful: ${departments.length} departments`,
+            );
             this.cacheDepartments(departments);
             return departments;
           } catch (directError) {
@@ -120,7 +132,9 @@ class DepartmentService {
     }
 
     // Fallback to mock data
-    console.log(`📋 Using ${this.getMockDepartments().length} mock departments as fallback`);
+    console.log(
+      `📋 Using ${this.getMockDepartments().length} mock departments as fallback`,
+    );
     return this.getMockDepartments();
   }
 
@@ -147,7 +161,9 @@ class DepartmentService {
       });
 
       this.cacheDepartments(departments);
-      console.log(`🔄 Background refresh: ${departments.length} departments updated`);
+      console.log(
+        `🔄 Background refresh: ${departments.length} departments updated`,
+      );
     } catch (error) {
       console.warn("Background refresh failed:", error);
     }
@@ -265,7 +281,10 @@ class DepartmentService {
 
     // Fallback: simulate adding to mock data (for development)
     const mockId = `mock-dept-${Date.now()}`;
-    console.log("📋 Simulated department add (mock data mode):", departmentData.name);
+    console.log(
+      "📋 Simulated department add (mock data mode):",
+      departmentData.name,
+    );
     return mockId;
   }
 
@@ -289,7 +308,11 @@ class DepartmentService {
     }
 
     // Fallback: simulate update (for development)
-    console.log("📋 Simulated department update (mock data mode):", id, updates);
+    console.log(
+      "📋 Simulated department update (mock data mode):",
+      id,
+      updates,
+    );
   }
 
   async deleteDepartment(id: string): Promise<void> {

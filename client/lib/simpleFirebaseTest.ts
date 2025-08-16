@@ -3,7 +3,7 @@ import { collection, getDocs, query, limit } from "firebase/firestore";
 
 export async function simpleFirebaseTest() {
   console.log("🔥 Running simple Firebase connectivity test...");
-  
+
   const results = {
     initialized: !!db,
     authAvailable: !!auth,
@@ -12,7 +12,7 @@ export async function simpleFirebaseTest() {
     employeeCount: 0,
     departmentCount: 0,
     errors: [] as string[],
-    success: false
+    success: false,
   };
 
   // Check basic initialization
@@ -30,9 +30,11 @@ export async function simpleFirebaseTest() {
   try {
     const authResult = await tryAuthentication();
     results.authenticated = authResult;
-    
+
     if (auth.currentUser) {
-      results.authMethod = auth.currentUser.isAnonymous ? "anonymous" : "authenticated";
+      results.authMethod = auth.currentUser.isAnonymous
+        ? "anonymous"
+        : "authenticated";
     }
   } catch (authError) {
     results.errors.push(`Auth error: ${authError.message}`);
@@ -44,8 +46,10 @@ export async function simpleFirebaseTest() {
     const employeeCollection = collection(db, "employees");
     const employeeSnapshot = await getDocs(query(employeeCollection, limit(5)));
     results.employeeCount = employeeSnapshot.size;
-    
-    console.log(`✅ Employee collection accessible: ${results.employeeCount} docs (sample)`);
+
+    console.log(
+      `✅ Employee collection accessible: ${results.employeeCount} docs (sample)`,
+    );
   } catch (error) {
     results.errors.push(`Employee collection: ${error.code || error.message}`);
   }
@@ -53,16 +57,24 @@ export async function simpleFirebaseTest() {
   try {
     // Test departments collection
     const departmentCollection = collection(db, "departments");
-    const departmentSnapshot = await getDocs(query(departmentCollection, limit(5)));
+    const departmentSnapshot = await getDocs(
+      query(departmentCollection, limit(5)),
+    );
     results.departmentCount = departmentSnapshot.size;
-    
-    console.log(`✅ Department collection accessible: ${results.departmentCount} docs (sample)`);
+
+    console.log(
+      `✅ Department collection accessible: ${results.departmentCount} docs (sample)`,
+    );
   } catch (error) {
-    results.errors.push(`Department collection: ${error.code || error.message}`);
+    results.errors.push(
+      `Department collection: ${error.code || error.message}`,
+    );
   }
 
   // Determine overall success
-  results.success = results.errors.length === 0 && (results.employeeCount > 0 || results.departmentCount > 0);
+  results.success =
+    results.errors.length === 0 &&
+    (results.employeeCount > 0 || results.departmentCount > 0);
 
   return results;
 }

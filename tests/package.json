@@ -1,0 +1,44 @@
+{
+  "name": "hr-payroll-tests",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "test": "jest",
+    "test:watch": "jest --watch",
+    "test:coverage": "jest --coverage",
+    "test:rules": "jest tests/rules",
+    "test:functions": "jest tests/functions",
+    "emulator:start": "firebase emulators:start --only firestore,auth",
+    "emulator:test": "firebase emulators:exec --only firestore,auth 'npm run test:rules'"
+  },
+  "devDependencies": {
+    "@firebase/rules-unit-testing": "^3.0.3",
+    "@jest/globals": "^29.7.0",
+    "@types/jest": "^29.5.5",
+    "firebase": "^10.7.1",
+    "firebase-admin": "^12.0.0",
+    "firebase-functions": "^5.0.0",
+    "jest": "^29.7.0",
+    "ts-jest": "^29.1.1",
+    "typescript": "^5.2.2"
+  },
+  "jest": {
+    "preset": "ts-jest",
+    "testEnvironment": "node",
+    "roots": ["<rootDir>/tests"],
+    "testMatch": [
+      "**/__tests__/**/*.ts",
+      "**/?(*.)+(spec|test).ts"
+    ],
+    "transform": {
+      "^.+\\.ts$": "ts-jest"
+    },
+    "coverageDirectory": "coverage",
+    "collectCoverageFrom": [
+      "functions/src/**/*.ts",
+      "!functions/src/index.ts",
+      "!**/node_modules/**"
+    ],
+    "setupFilesAfterEnv": ["<rootDir>/tests/setup.ts"]
+  }
+}

@@ -29,6 +29,7 @@ class FirebaseConnectionManager {
     lastConnectionAttempt: 0,
     connectionPromise: null,
     error: null,
+    terminated: false,
   };
 
   private connectionQueue: Array<{ resolve: (value: boolean) => void; reject: (error: any) => void }> = [];

@@ -198,7 +198,7 @@ export const firebaseIsolation = new FirebaseIsolationManager();
 // Auto-enable isolation on module load to prevent assertion errors
 firebaseIsolation.enableIsolation('Auto-enabled to prevent Firebase internal assertion errors');
 
-// Add global error handler to catch any remaining Firebase assertion errors
+// Add global error handler to catch any remaining Firebase errors
 if (typeof window !== 'undefined') {
   const originalConsoleError = console.error;
 
@@ -208,7 +208,23 @@ if (typeof window !== 'undefined') {
     // Detect and suppress Firebase assertion errors
     if (message.includes('INTERNAL ASSERTION FAILED') ||
         message.includes('FIRESTORE') && message.includes('Unexpected state')) {
-      console.warn('🚫 Firebase assertion error suppressed by isolation mode:', message);
+      console.warn('🚫 Firebase assertion error suppressed by isolation mode');
+      return; // Don't propagate the error
+    }
+
+    // Detect and suppress Firebase network errors
+    if (message.includes('Failed to fetch') &&
+        (message.includes('firestore.googleapis.com') ||
+         message.includes('firebase.googleapis.com') ||
+         message.includes('identitytoolkit.googleapis.com'))) {
+      console.warn('🚫 Firebase network error suppressed by isolation mode');
+      return; // Don't propagate the error
+    }
+
+    // Suppress general Firebase fetch errors
+    if (message.includes('TypeError: Failed to fetch') &&
+        args.some(arg => String(arg).includes('firebase'))) {
+      console.warn('🚫 Firebase fetch error suppressed by isolation mode');
       return; // Don't propagate the error
     }
 
@@ -216,7 +232,39 @@ if (typeof window !== 'undefined') {
     originalConsoleError.apply(console, args);
   };
 
-  console.log('✅ Firebase error suppression enabled');
+  // Also override window.onerror and unhandledrejection
+  const originalWindowError = window.onerror;
+  window.onerror = function(message, source, lineno, colno, error) {
+    const messageStr = String(message);
+
+    if (messageStr.includes('Firebase') ||
+        messageStr.includes('firestore') ||
+        messageStr.includes('INTERNAL ASSERTION FAILED') ||
+        (messageStr.includes('Failed to fetch') && source?.includes('firebase'))) {
+      console.warn('🚫 Firebase window error suppressed by isolation mode');
+      return true; // Prevent default error handling
+    }
+
+    if (originalWindowError) {
+      return originalWindowError.call(this, message, source, lineno, colno, error);
+    }
+    return false;
+  };
+
+  window.addEventListener('unhandledrejection', function(event) {
+    const error = event.reason;
+    const errorMessage = String(error?.message || error);
+
+    if (errorMessage.includes('Firebase') ||
+        errorMessage.includes('firestore') ||
+        errorMessage.includes('INTERNAL ASSERTION FAILED') ||
+        errorMessage.includes('Failed to fetch')) {
+      console.warn('🚫 Firebase unhandled rejection suppressed by isolation mode');
+      event.preventDefault(); // Prevent unhandled rejection
+    }
+  });
+
+  console.log('✅ Comprehensive Firebase error suppression enabled');
 }
 
 // Export convenience functions

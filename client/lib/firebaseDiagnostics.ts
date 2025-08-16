@@ -121,12 +121,36 @@ export async function runFirebaseDiagnostics(): Promise<FirebaseDiagnostics> {
     diagnostics.recommendations.push(`Department collection error: ${error.message}`);
   }
 
+  // If authentication failed, try direct access
+  if (!diagnostics.isAuthenticated && diagnostics.databaseAvailable) {
+    try {
+      console.log("🔄 Authentication failed, testing direct Firestore access...");
+      const directResult = await testDirectFirestoreAccess();
+
+      if (directResult.success) {
+        diagnostics.connectionTest = true;
+        diagnostics.employeeCount = directResult.employeeCount || 0;
+        diagnostics.departmentCount = directResult.departmentCount || 0;
+        diagnostics.employeeCollectionExists = directResult.employeeCount > 0;
+        diagnostics.departmentCollectionExists = directResult.departmentCount > 0;
+        diagnostics.recommendations.push(`✅ Direct access works: ${directResult.message}`);
+        diagnostics.recommendations.push("⚠️ BUT: Enable Anonymous Auth in Firebase Console for proper security");
+      } else {
+        diagnostics.recommendations.push(`❌ Direct access failed: ${directResult.message}`);
+      }
+    } catch (directError) {
+      diagnostics.recommendations.push(`❌ Direct access error: ${directError.message}`);
+    }
+  }
+
   // Overall connection test
   diagnostics.connectionTest = diagnostics.employeeCollectionExists || diagnostics.departmentCollectionExists;
 
   // Generate recommendations
   if (diagnostics.connectionTest) {
-    diagnostics.recommendations.push("✅ Firebase is connected and working");
+    if (diagnostics.isAuthenticated) {
+      diagnostics.recommendations.push("✅ Firebase is connected and working");
+    }
     
     if (diagnostics.employeeCount === 0) {
       diagnostics.recommendations.push("⚠️ No employees found in Firebase - add some employees or check your data");

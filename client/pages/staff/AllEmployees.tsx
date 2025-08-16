@@ -53,6 +53,15 @@ import {
   FileText,
   CalendarX,
 } from "lucide-react";
+import {
+  isFirebaseReady,
+  isFirebaseBlocked,
+  unblockFirebase
+} from "@/lib/firebase";
+import {
+  runFirebaseDiagnostics,
+  logFirebaseDiagnostics
+} from "@/lib/firebaseDiagnostics";
 
 export default function AllEmployees() {
   const [employees, setEmployees] = useState<Employee[]>([]);

@@ -195,8 +195,15 @@ class FirebaseConnectionManager {
 
       // Handle specific Firebase internal errors
       if (error.message?.includes('INTERNAL ASSERTION FAILED')) {
-        console.warn('🚨 Firebase internal assertion error detected - will disable problematic operations');
-        this.state.error = 'Firebase internal error - using fallback mode';
+        console.warn('🚨 Firebase internal assertion error detected - enabling offline mode');
+        this.state.error = 'Firebase internal error - offline mode enabled';
+
+        // Auto-enable offline mode to prevent further assertion errors
+        try {
+          await enableFirebaseOfflineMode();
+        } catch (offlineError) {
+          console.error('Failed to enable offline mode:', offlineError);
+        }
       }
 
       return false;

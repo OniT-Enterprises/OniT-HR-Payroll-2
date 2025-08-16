@@ -4,6 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { db, auth, isFirebaseReady, isFirebaseBlocked, tryAuthentication } from '@/lib/firebase';
 import { testFirebaseConnection, getFirebaseStatus } from '@/lib/firebaseManager';
+import { isFirebaseIsolated, getFirebaseIsolationState, disableFirebaseIsolation } from '@/lib/firebaseIsolation';
 import { enableFirebaseOfflineMode, isFirebaseOffline, getFirebaseOfflineState } from '@/lib/firebaseOfflineMode';
 import { collection, getDocs, addDoc, doc, setDoc } from 'firebase/firestore';
 import { candidateService } from '@/services/candidateService';

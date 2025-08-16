@@ -18,7 +18,9 @@
     "start": "node dist/server/node-build.mjs",
     "test": "vitest --run",
     "format.fix": "prettier --write .",
-    "typecheck": "tsc"
+    "typecheck": "tsc",
+    "migrate:tenant": "ts-node scripts/migrate-root-to-tenants.ts",
+    "emul:rules": "firebase emulators:exec --only firestore 'vitest run -c tests/vitest.config.ts'"
   },
   "dependencies": {
     "@hello-pangea/dnd": "^18.0.1",

@@ -1,4 +1,4 @@
-import { db, isFirebaseReady, isFirebaseBlocked, getFirebaseError } from "./firebase";
+import { db, auth, isFirebaseReady, isFirebaseBlocked, getFirebaseError, tryAuthentication } from "./firebase";
 import { collection, getDocs, query, limit } from "firebase/firestore";
 
 export interface FirebaseDiagnostics {

@@ -254,7 +254,7 @@ export default function Departments() {
           </Button>
           <Button
             variant="secondary"
-            onClick={() => (window.location.href = "/staff/org-chart")}
+            onClick={() => navigate("/staff/org-chart")}
           >
             <Users className="mr-2 h-4 w-4" />
             Organization Chart

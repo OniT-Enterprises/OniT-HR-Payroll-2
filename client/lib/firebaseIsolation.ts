@@ -49,45 +49,88 @@ class FirebaseIsolationManager {
   }
 
   /**
-   * Override Firebase functions to prevent operations
+   * Override Firebase functions and network operations to prevent all Firebase activity
    */
   private overrideFirebaseFunctions(): void {
     try {
-      // Override common Firestore functions
-      if (typeof window !== 'undefined') {
-        const originalMethods = [
-          'getDocs',
-          'getDoc', 
-          'addDoc',
-          'setDoc',
-          'updateDoc',
-          'deleteDoc',
-          'onSnapshot',
-          'query',
-          'collection',
-          'doc',
-          'enableNetwork',
-          'disableNetwork',
-        ];
+      if (typeof window === 'undefined') return;
 
-        // Store original methods if not already stored
-        if (!(window as any).__originalFirebaseMethods) {
-          (window as any).__originalFirebaseMethods = {};
+      // Store original methods if not already stored
+      if (!(window as any).__originalFirebaseMethods) {
+        (window as any).__originalFirebaseMethods = {};
+      }
+
+      // 1. Override window.fetch to block Firebase requests
+      if (!window.__originalFetch) {
+        window.__originalFetch = window.fetch;
+        window.fetch = async (input: RequestInfo | URL, init?: RequestInit): Promise<Response> => {
+          const url = typeof input === 'string' ? input : input.toString();
+
+          // Block Firebase-related requests
+          if (url.includes('firestore.googleapis.com') ||
+              url.includes('firebase.googleapis.com') ||
+              url.includes('identitytoolkit.googleapis.com') ||
+              url.includes('securetoken.googleapis.com') ||
+              url.includes('firebaseapp.com')) {
+            console.warn('🚫 Firebase network request blocked:', url);
+            throw new Error(`Firebase network request blocked: ${url}`);
+          }
+
+          // Allow other requests
+          return window.__originalFetch!(input, init);
+        };
+      }
+
+      // 2. Override XMLHttpRequest for Firebase SDK fallbacks
+      if (!window.__originalXMLHttpRequest) {
+        window.__originalXMLHttpRequest = window.XMLHttpRequest;
+        window.XMLHttpRequest = class extends window.__originalXMLHttpRequest {
+          open(method: string, url: string | URL, ...args: any[]) {
+            const urlStr = url.toString();
+            if (urlStr.includes('firestore.googleapis.com') ||
+                urlStr.includes('firebase.googleapis.com') ||
+                urlStr.includes('identitytoolkit.googleapis.com') ||
+                urlStr.includes('securetoken.googleapis.com')) {
+              console.warn('🚫 Firebase XMLHttpRequest blocked:', urlStr);
+              throw new Error(`Firebase XMLHttpRequest blocked: ${urlStr}`);
+            }
+            return super.open(method, url, ...args);
+          }
+        };
+      }
+
+      // 3. Override common Firestore functions
+      const originalMethods = [
+        'getDocs', 'getDoc', 'addDoc', 'setDoc', 'updateDoc', 'deleteDoc',
+        'onSnapshot', 'query', 'collection', 'doc', 'enableNetwork',
+        'disableNetwork', 'terminate', 'connectFirestoreEmulator'
+      ];
+
+      originalMethods.forEach(methodName => {
+        if ((window as any)[methodName]) {
+          (window as any).__originalFirebaseMethods[methodName] = (window as any)[methodName];
+          (window as any)[methodName] = (...args: any[]) => {
+            console.warn(`🚫 Firebase operation blocked: ${methodName}`);
+            throw new Error(`Firebase operation '${methodName}' blocked due to isolation mode`);
+          };
         }
+      });
 
-        // Override Firebase operations to throw controlled errors
-        originalMethods.forEach(methodName => {
-          if ((window as any)[methodName]) {
-            (window as any).__originalFirebaseMethods[methodName] = (window as any)[methodName];
-            (window as any)[methodName] = (...args: any[]) => {
-              console.warn(`🚫 Firebase operation blocked: ${methodName}`);
-              throw new Error(`Firebase operation '${methodName}' blocked due to isolation mode`);
+      // 4. Override Firebase initialization functions
+      if (window.firebase) {
+        const firebaseOverrides = ['initializeApp', 'getApp', 'getApps'];
+        firebaseOverrides.forEach(methodName => {
+          if (window.firebase[methodName]) {
+            (window as any).__originalFirebaseMethods[`firebase.${methodName}`] = window.firebase[methodName];
+            window.firebase[methodName] = (...args: any[]) => {
+              console.warn(`🚫 Firebase initialization blocked: ${methodName}`);
+              throw new Error(`Firebase initialization '${methodName}' blocked due to isolation mode`);
             };
           }
         });
-
-        console.log('✅ Firebase functions overridden to prevent operations');
       }
+
+      console.log('✅ Firebase network and function isolation enabled');
     } catch (error) {
       console.warn('⚠️ Failed to override Firebase functions:', error);
     }

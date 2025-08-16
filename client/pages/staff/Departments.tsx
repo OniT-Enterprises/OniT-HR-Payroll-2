@@ -232,33 +232,45 @@ export default function Departments() {
 
       <div className="p-6">
         {/* Department Management Buttons */}
-        <div className="flex justify-end gap-2 mb-4">
-          <Button
-            variant="outline"
-            onClick={() => {
-              setManagerMode("add");
-              setShowDepartmentManager(true);
-            }}
-          >
-            <Plus className="mr-2 h-4 w-4" />
-            Add Department
-          </Button>
-          <Button
-            onClick={() => {
-              setManagerMode("edit");
-              setShowDepartmentManager(true);
-            }}
-          >
-            <Edit className="mr-2 h-4 w-4" />
-            Edit Departments
-          </Button>
-          <Button
-            variant="secondary"
-            onClick={() => navigate("/staff/org-chart")}
-          >
-            <Users className="mr-2 h-4 w-4" />
-            Organization Chart
-          </Button>
+        <div className="flex justify-between items-center mb-4">
+          <div className="flex gap-2">
+            <Button
+              variant="outline"
+              onClick={testFirebaseConnection}
+              className="text-xs"
+            >
+              <Database className="mr-2 h-4 w-4" />
+              Test Firebase
+            </Button>
+          </div>
+          <div className="flex gap-2">
+            <Button
+              variant="outline"
+              onClick={() => {
+                setManagerMode("add");
+                setShowDepartmentManager(true);
+              }}
+            >
+              <Plus className="mr-2 h-4 w-4" />
+              Add Department
+            </Button>
+            <Button
+              onClick={() => {
+                setManagerMode("edit");
+                setShowDepartmentManager(true);
+              }}
+            >
+              <Edit className="mr-2 h-4 w-4" />
+              Edit Departments
+            </Button>
+            <Button
+              variant="secondary"
+              onClick={() => navigate("/staff/org-chart")}
+            >
+              <Users className="mr-2 h-4 w-4" />
+              Organization Chart
+            </Button>
+          </div>
         </div>
 
         <div className="flex items-center gap-3 mb-6">

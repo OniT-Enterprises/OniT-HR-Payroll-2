@@ -58,10 +58,7 @@ import {
   isFirebaseBlocked,
   unblockFirebase
 } from "@/lib/firebase";
-import {
-  runFirebaseDiagnostics,
-  logFirebaseDiagnostics
-} from "@/lib/firebaseDiagnostics";
+import { simpleFirebaseTest } from "@/lib/simpleFirebaseTest";
 
 export default function AllEmployees() {
   const [employees, setEmployees] = useState<Employee[]>([]);

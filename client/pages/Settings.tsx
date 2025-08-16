@@ -136,6 +136,19 @@ export default function Settings() {
           ))}
         </div>
 
+        {/* Firebase Database Control */}
+        <Card className="mt-8">
+          <CardHeader>
+            <CardTitle>Firebase Database Control</CardTitle>
+            <CardDescription>
+              Manage database connectivity and isolation mode
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <FirebaseIsolationControl />
+          </CardContent>
+        </Card>
+
         {/* Quick Actions */}
         <Card className="mt-8">
           <CardHeader>

@@ -89,8 +89,10 @@ const FirebaseTestComponent: React.FC = () => {
       } catch (readError: any) {
         addResult(`❌ Read test failed: ${readError.message}`);
         if (readError.code === 'permission-denied') {
-          addResult('�� Permission denied - you may need to deploy updated Firestore rules');
+          addResult('💡 Permission denied - you may need to deploy updated Firestore rules');
           addResult('📝 Run: firebase deploy --only firestore:rules');
+        } else if (readError.message?.includes('client has already been terminated')) {
+          addResult('🔚 Read test skipped - Firebase client terminated (offline mode)');
         }
       }
 

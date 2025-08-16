@@ -218,6 +218,47 @@ export default function Departments() {
     setShowEmployeeProfile(true);
   };
 
+  const testFirebaseConnection = async () => {
+    try {
+      const isReady = isFirebaseReady();
+      const isBlocked = isFirebaseBlocked();
+
+      console.log("🔥 Firebase Status:", { isReady, isBlocked });
+
+      if (isBlocked) {
+        unblockFirebase();
+        toast({
+          title: "Firebase Unblocked",
+          description: "Attempting to reconnect to Firebase...",
+        });
+      }
+
+      const connectionResult = await testFirebaseConn();
+
+      if (connectionResult) {
+        toast({
+          title: "Firebase Connected ✅",
+          description: "Successfully connected to Firebase database",
+        });
+        // Reload data after successful connection
+        await loadData();
+      } else {
+        toast({
+          title: "Firebase Connection Failed ❌",
+          description: "Check console for details. Using mock data.",
+          variant: "destructive",
+        });
+      }
+    } catch (error) {
+      console.error("Firebase test error:", error);
+      toast({
+        title: "Firebase Test Error",
+        description: `Error: ${error.message}`,
+        variant: "destructive",
+      });
+    }
+  };
+
   if (loading) {
     return (
       <div className="min-h-screen bg-background">

@@ -60,7 +60,7 @@ const FirebaseTestComponent: React.FC = () => {
         }
       }
 
-      // Test 3: Simple write operation
+      // Test 4: Simple write operation
       try {
         addResult('✍️ Testing write access...');
         const testRef = collection(db, 'test');
@@ -72,20 +72,10 @@ const FirebaseTestComponent: React.FC = () => {
         addResult('✅ Write test successful');
       } catch (writeError: any) {
         addResult(`❌ Write test failed: ${writeError.message}`);
-      }
-
-      // Test 4: Authentication (optional)
-      try {
-        addResult('🔐 Checking authentication status...');
-        const isAuth = await tryAuthentication();
-        addResult(`ℹ️ Authentication status: ${isAuth ? 'Authenticated' : 'Not required'}`);
-        if (auth && auth.currentUser) {
-          addResult(`👤 Current user: ${auth.currentUser.email || 'Anonymous user'} (${auth.currentUser.isAnonymous ? 'Anonymous' : 'Regular'})`);
-        } else {
-          addResult(`👤 No user authentication (using public access)`);
+        if (writeError.code === 'permission-denied') {
+          addResult('💡 Permission denied - you may need to deploy updated Firestore rules');
+          addResult('📝 Run: firebase deploy --only firestore:rules');
         }
-      } catch (authError: any) {
-        addResult(`ℹ️ Authentication check failed (not critical): ${authError.message}`);
       }
 
       // Test 5: Candidate Service

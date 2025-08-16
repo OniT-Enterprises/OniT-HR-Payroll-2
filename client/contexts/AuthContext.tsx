@@ -36,13 +36,24 @@ export function AuthProvider({ children }: AuthProviderProps) {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const unsubscribe = authService.onAuthStateChanged((user) => {
-      setUser(user);
-      setUserProfile(user ? authService.getUserProfile() : null);
-      setLoading(false);
-    });
+    // DISABLED: Auth state listener can cause Firebase watch stream assertion errors
+    // Instead, set a default state and check auth manually when needed
+    console.log('ℹ️ Auth state listener disabled to prevent Firebase assertion errors');
 
-    return unsubscribe;
+    // Set default unauthenticated state
+    setUser(null);
+    setUserProfile(null);
+    setLoading(false);
+
+    // Optional: You can manually check auth state once without a listener
+    // authService.getCurrentUser().then(user => {
+    //   setUser(user);
+    //   setUserProfile(user ? authService.getUserProfile() : null);
+    // });
+
+    return () => {
+      // No cleanup needed since no listener is created
+    };
   }, []);
 
   const signIn = async (email: string, password: string) => {

@@ -195,7 +195,7 @@ class FirebaseConnectionManager {
       this.state.isConnected = this.state.isNetworkEnabled;
       this.state.error = this.state.isConnected ? null : 'Connection test failed';
 
-      console.log(this.state.isConnected ? '✅ Firebase connection successful' : '❌ Firebase connection failed');
+      console.log(this.state.isConnected ? '✅ Firebase connection successful' : '��� Firebase connection failed');
       return this.state.isConnected;
 
     } catch (error: any) {
@@ -286,6 +286,7 @@ class FirebaseConnectionManager {
     this.state.isNetworkEnabled = false;
     this.state.error = null;
     this.state.lastConnectionAttempt = 0;
+    this.state.terminated = false;
     this.connectionQueue.length = 0;
   }
 

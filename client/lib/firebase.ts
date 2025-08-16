@@ -131,11 +131,13 @@ export const tryAuthentication = async (): Promise<boolean> => {
       return true;
     }
 
-    // Don't force authentication - just return false
-    console.log("ℹ️ No authentication required for basic operations");
-    return false;
+    // Try anonymous authentication for development
+    console.log("🔐 Attempting anonymous authentication...");
+    const userCredential = await signInAnonymously(auth);
+    console.log("✅ Anonymous authentication successful", userCredential.user.uid);
+    return true;
   } catch (error) {
-    console.warn("ℹ️ Authentication check failed (not critical):", error);
+    console.warn("❌ Authentication failed:", error);
     return false;
   }
 };

@@ -17,6 +17,7 @@ import {
   isFirebaseReady,
   getFirebaseError,
   isFirebaseBlocked,
+  tryAuthentication,
 } from "@/lib/firebase";
 import { mockDataService } from "./mockDataService";
 

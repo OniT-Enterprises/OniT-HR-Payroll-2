@@ -9,6 +9,7 @@ import {
 } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import MainNavigation from "@/components/layout/MainNavigation";
+import { FirebaseIsolationControl } from "@/components/FirebaseIsolationControl";
 import {
   Settings as SettingsIcon,
   User,

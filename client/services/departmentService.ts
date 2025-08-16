@@ -68,6 +68,12 @@ class DepartmentService {
       try {
         console.log("🔥 Attempting to load departments from Firebase...");
 
+        // Authenticate first
+        const isAuthenticated = await tryAuthentication();
+        if (!isAuthenticated) {
+          throw new Error("Authentication failed");
+        }
+
         const collection = this.getCollection();
         if (!collection) {
           throw new Error("Collection not available");
@@ -285,7 +291,7 @@ class DepartmentService {
     }
 
     // Fallback: simulate delete (for development)
-    console.log("��� Simulated department delete (mock data mode):", id);
+    console.log("📋 Simulated department delete (mock data mode):", id);
   }
 }
 

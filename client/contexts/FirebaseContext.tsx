@@ -112,30 +112,47 @@ export const FirebaseProvider: React.FC<FirebaseProviderProps> = ({
   };
 
   useEffect(() => {
+    let debounceTimer: NodeJS.Timeout | null = null;
+
+    // Debounced connection check to prevent rapid successive calls
+    const debouncedCheckConnection = () => {
+      if (debounceTimer) {
+        clearTimeout(debounceTimer);
+      }
+      debounceTimer = setTimeout(checkConnection, 1000); // 1 second debounce
+    };
+
     // Check initial connection
     checkConnection();
 
     // Listen for online/offline events
     const handleOnline = () => {
       setIsOnline(true);
-      checkConnection();
+      debouncedCheckConnection(); // Use debounced version
     };
 
     const handleOffline = () => {
       setIsOnline(false);
       setIsConnected(false);
+      setIsUsingMockData(true);
+      if (debounceTimer) {
+        clearTimeout(debounceTimer);
+      }
     };
 
     window.addEventListener("online", handleOnline);
     window.addEventListener("offline", handleOffline);
 
-    // Periodic connection check
-    const interval = setInterval(checkConnection, 120000); // Check every 2 minutes (reduced to prevent assertion errors)
+    // Periodic connection check - increased interval to reduce load
+    const interval = setInterval(debouncedCheckConnection, 300000); // Check every 5 minutes
 
     return () => {
       window.removeEventListener("online", handleOnline);
       window.removeEventListener("offline", handleOffline);
       clearInterval(interval);
+      if (debounceTimer) {
+        clearTimeout(debounceTimer);
+      }
     };
   }, []);
 

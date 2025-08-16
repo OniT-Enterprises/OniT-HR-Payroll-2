@@ -171,82 +171,12 @@ export const disableFirebaseNetwork = async (): Promise<boolean> => {
   }
 };
 
-// Test Firebase connectivity with enhanced error handling
+// DEPRECATED: Use firebaseManager.testConnection() instead
+// This function is kept for backward compatibility but delegates to the safe manager
 export const testFirebaseConnection = async (): Promise<boolean> => {
-  if (!db) {
-    console.warn("Firestore DB instance not available");
-    return false;
-  }
-
-  // Prevent concurrent connectivity checks
-  if (connectivityCheckInProgress) {
-    console.log(
-      "🔄 Connection test already in progress, returning current state",
-    );
-    return networkEnabled;
-  }
-
-  connectivityCheckInProgress = true;
-
-  try {
-    // Quick network check first
-    if (!navigator.onLine) {
-      console.warn("🌐 Browser reports offline, skipping Firebase test");
-      networkEnabled = false;
-      return false;
-    }
-
-    // Try authentication first to avoid permission issues
-    await tryAuthentication();
-
-    // Only enable network if not already enabled
-    if (!networkEnabled) {
-      // Wrap enableNetwork with timeout and error handling
-      await Promise.race([
-        enableNetwork(db).catch((error) => {
-          if (
-            error instanceof TypeError ||
-            error.message?.includes("Failed to fetch")
-          ) {
-            throw new Error("Network error during Firebase enable");
-          }
-          if (error.code === 'permission-denied' || error.message?.includes('Missing or insufficient permissions')) {
-            console.warn("🔒 Permission error - trying to continue with current authentication state");
-            return; // Don't throw, continue execution
-          }
-          throw error;
-        }),
-        new Promise((_, reject) =>
-          setTimeout(() => reject(new Error("Firebase enable timeout")), 5000),
-        ),
-      ]);
-
-      networkEnabled = true;
-      console.log("✅ Firebase network enabled successfully");
-    }
-    return true;
-  } catch (error: any) {
-    console.warn("🚫 Firebase connectivity test failed:", error);
-
-    // Handle specific error types
-    if (
-      error instanceof TypeError ||
-      error.message?.includes("Failed to fetch")
-    ) {
-      console.warn("🌐 Network error detected in Firebase test");
-    } else if (error.message?.includes("timeout")) {
-      console.warn("⏱️ Firebase connection timeout");
-    } else if (error.code === 'permission-denied' || error.message?.includes('Missing or insufficient permissions')) {
-      console.warn("🔒 Permission denied - check Firestore rules and authentication");
-    } else {
-      console.warn("❓ Unknown Firebase error:", error);
-    }
-
-    networkEnabled = false;
-    return false;
-  } finally {
-    connectivityCheckInProgress = false;
-  }
+  // Import here to avoid circular dependencies
+  const { firebaseManager } = await import('./firebaseManager');
+  return firebaseManager.testConnection();
 };
 
 // Removed error handler that was interfering with Firebase

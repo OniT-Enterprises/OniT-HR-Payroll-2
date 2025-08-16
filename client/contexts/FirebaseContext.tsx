@@ -8,8 +8,8 @@ import React, {
 import {
   isFirebaseReady,
   getFirebaseError,
-  testFirebaseConnection,
 } from "@/lib/firebase";
+import { testFirebaseConnection, getFirebaseStatus } from "@/lib/firebaseManager";
 
 interface FirebaseContextType {
   isOnline: boolean;

@@ -233,7 +233,9 @@ class FirebaseIsolationManager {
 export const firebaseIsolation = new FirebaseIsolationManager();
 
 // Auto-enable isolation on module load to prevent assertion errors
-firebaseIsolation.enableIsolation('Auto-enabled to prevent Firebase internal assertion errors');
+// TEMPORARILY DISABLED FOR TESTING - User wants to test database operations
+// firebaseIsolation.enableIsolation('Auto-enabled to prevent Firebase internal assertion errors');
+console.log('🔓 Firebase isolation DISABLED - Database operations are ENABLED');
 
 // Add global error handler to catch any remaining Firebase errors
 if (typeof window !== 'undefined') {

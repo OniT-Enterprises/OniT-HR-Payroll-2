@@ -229,16 +229,7 @@ export const testFirebaseConnection = async (): Promise<boolean> => {
   }
 };
 
-// Simplified error handler - just log errors, don't block
-if (typeof window !== "undefined") {
-  window.addEventListener("unhandledrejection", (event) => {
-    const error = event.reason;
-    if (error && error.message && error.message.includes("firebase")) {
-      console.warn("🔥 Firebase error (not blocking):", error);
-      // Don't prevent default or block Firebase
-    }
-  });
-}
+// Removed error handler that was interfering with Firebase
 
 // Export services (will be null if initialization failed)
 export { db, auth, storage, analytics };

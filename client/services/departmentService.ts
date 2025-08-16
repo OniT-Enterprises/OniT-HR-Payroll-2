@@ -18,6 +18,7 @@ import {
 } from "@/lib/firebase";
 import { isOnline, checkNetwork } from "@/lib/networkState";
 import { safeFirestoreQuery } from "@/lib/firebaseProxy";
+import { getDepartmentsDirectly } from "@/lib/firebaseBypass";
 
 export interface Department {
   id: string;

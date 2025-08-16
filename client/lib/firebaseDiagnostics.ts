@@ -39,6 +39,28 @@ export async function runFirebaseDiagnostics(): Promise<FirebaseDiagnostics> {
   diagnostics.isBlocked = isFirebaseBlocked();
   diagnostics.error = getFirebaseError();
   diagnostics.databaseAvailable = !!db;
+  diagnostics.authAvailable = !!auth;
+
+  // Check authentication
+  if (diagnostics.authAvailable) {
+    try {
+      const currentUser = auth.currentUser;
+      if (currentUser) {
+        diagnostics.isAuthenticated = true;
+        diagnostics.authMethod = currentUser.isAnonymous ? "anonymous" : "authenticated";
+      } else {
+        // Try to authenticate
+        const authResult = await tryAuthentication();
+        diagnostics.isAuthenticated = authResult;
+        if (authResult && auth.currentUser) {
+          diagnostics.authMethod = auth.currentUser.isAnonymous ? "anonymous" : "authenticated";
+        }
+      }
+    } catch (error) {
+      console.warn("Authentication check failed:", error);
+      diagnostics.recommendations.push(`Authentication failed: ${error.message}`);
+    }
+  }
 
   if (!diagnostics.firebaseInitialized) {
     diagnostics.recommendations.push("Firebase is not properly initialized");
@@ -52,6 +74,16 @@ export async function runFirebaseDiagnostics(): Promise<FirebaseDiagnostics> {
 
   if (!diagnostics.databaseAvailable) {
     diagnostics.recommendations.push("Firestore database is not available");
+    return diagnostics;
+  }
+
+  if (!diagnostics.authAvailable) {
+    diagnostics.recommendations.push("Firebase Auth is not available");
+    return diagnostics;
+  }
+
+  if (!diagnostics.isAuthenticated) {
+    diagnostics.recommendations.push("User is not authenticated - Firestore requires authentication");
     return diagnostics;
   }
 

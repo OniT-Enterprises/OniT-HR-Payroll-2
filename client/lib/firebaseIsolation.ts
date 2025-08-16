@@ -5,6 +5,16 @@
 
 import { db, auth } from './firebase';
 
+// Extend Window interface for our overrides
+declare global {
+  interface Window {
+    __originalFetch?: typeof fetch;
+    __originalXMLHttpRequest?: typeof XMLHttpRequest;
+    __originalFirebaseMethods?: Record<string, any>;
+    firebase?: any;
+  }
+}
+
 interface IsolationState {
   isIsolated: boolean;
   reason: string;

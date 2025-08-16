@@ -38,6 +38,12 @@ import {
   Crown,
   Eye,
 } from "lucide-react";
+import {
+  isFirebaseReady,
+  isFirebaseBlocked,
+  unblockFirebase,
+  testFirebaseConnection as testFirebaseConn
+} from "@/lib/firebase";
 
 export default function Departments() {
   const navigate = useNavigate();

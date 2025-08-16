@@ -94,7 +94,7 @@ const FirebaseTestComponent: React.FC = () => {
 
       // Test 6: Simple write operation
       try {
-        addResult('✍️ Testing write access...');
+        addResult('���️ Testing write access...');
         const testRef = collection(db, 'test');
         await addDoc(testRef, {
           message: 'Firebase connectivity test',
@@ -147,8 +147,23 @@ const FirebaseTestComponent: React.FC = () => {
           >
             {isLoading ? 'Testing...' : 'Run Safe Tests'}
           </Button>
-          <Button 
-            onClick={clearResults} 
+          <Button
+            onClick={async () => {
+              addResult('📴 Enabling Firebase offline mode...');
+              try {
+                await enableFirebaseOfflineMode();
+                addResult('✅ Offline mode enabled successfully');
+              } catch (error: any) {
+                addResult(`❌ Failed to enable offline mode: ${error.message}`);
+              }
+            }}
+            variant="secondary"
+            disabled={isLoading}
+          >
+            Enable Offline
+          </Button>
+          <Button
+            onClick={clearResults}
             variant="outline"
             disabled={isLoading}
           >

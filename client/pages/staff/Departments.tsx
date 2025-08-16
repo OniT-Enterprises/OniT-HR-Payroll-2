@@ -221,66 +221,53 @@ export default function Departments() {
 
   const testFirebaseConnection = async () => {
     try {
-      console.log("🔥 Running comprehensive Firebase diagnostics...");
+      console.log("🔥 Running simple Firebase connectivity test...");
 
       // Unblock Firebase if it's blocked
       if (isFirebaseBlocked()) {
         unblockFirebase();
         toast({
           title: "Firebase Unblocked",
-          description: "Removed Firebase blocks, testing connection...",
+          description: "Testing connection...",
         });
       }
 
-      // Run full diagnostics
-      const diagnostics = await runFirebaseDiagnostics();
-      logFirebaseDiagnostics(diagnostics);
+      // Run simple test
+      const results = await simpleFirebaseTest();
+      console.log("🔥 Firebase Test Results:", results);
 
-      // Show results to user
-      if (diagnostics.connectionTest) {
-        const authStatus = diagnostics.isAuthenticated ? "with authentication" : "without authentication (temp fix)";
+      if (results.success) {
         toast({
           title: "Firebase Connected ✅",
-          description: `Found ${diagnostics.employeeCount} employees, ${diagnostics.departmentCount} departments ${authStatus}`,
+          description: `Found ${results.employeeCount} employees, ${results.departmentCount} departments`,
         });
-
-        // Show setup instructions if not authenticated
-        if (!diagnostics.isAuthenticated) {
-          setTimeout(() => {
-            toast({
-              title: "⚠️ Setup Required",
-              description: "To properly secure your data, enable Anonymous Authentication in Firebase Console → Authentication → Sign-in method",
-              duration: 8000,
-            });
-          }, 2000);
-        }
 
         // Reload data after successful connection
         await loadData();
       } else {
-        const mainIssue = diagnostics.recommendations[0] || "Unknown connection issue";
+        const errorSummary = results.errors.join(", ");
         toast({
-          title: "Firebase Connection Issue ❌",
-          description: mainIssue,
+          title: "Firebase Issues ⚠️",
+          description: errorSummary || "Connection problems detected",
           variant: "destructive",
         });
 
-        // Show specific instructions for authentication issues
-        if (mainIssue.includes("authenticated")) {
+        // Show auth setup instructions if needed
+        if (results.errors.some(err => err.includes("permission") || err.includes("auth"))) {
           setTimeout(() => {
             toast({
-              title: "Fix: Enable Anonymous Auth",
-              description: "Go to Firebase Console → Authentication → Sign-in method → Enable Anonymous",
-              duration: 10000,
+              title: "Authentication Required",
+              description: "Enable Anonymous Auth in Firebase Console → Authentication → Sign-in method",
+              duration: 8000,
             });
-          }, 1000);
+          }, 2000);
         }
       }
     } catch (error) {
-      console.error("Firebase diagnostics error:", error);
+      console.error("Firebase test error:", error);
       toast({
         title: "Firebase Test Error",
-        description: `Error: ${error.message}`,
+        description: `Network error: ${error.message}`,
         variant: "destructive",
       });
     }

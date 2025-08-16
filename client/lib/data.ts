@@ -109,21 +109,30 @@ const getDocument = async <T extends DocumentData>(path: string): Promise<T | nu
 };
 
 const getCollection = async <T extends DocumentData>(
-  path: string, 
+  path: string,
   constraints: QueryConstraint[] = []
 ): Promise<T[]> => {
   const database = ensureDatabase();
+
+  // Check if we should proceed with Firebase operation
+  if (!canProceedWithFirebaseOperation()) {
+    throw new TenantDataError('Firebase client offline or terminated', 'CLIENT_TERMINATED');
+  }
+
   try {
-    const q = constraints.length > 0 
+    const q = constraints.length > 0
       ? query(collection(database, path), ...constraints)
       : collection(database, path);
-    
+
     const querySnapshot = await getDocs(q);
     return querySnapshot.docs.map(doc => ({
       id: doc.id,
       ...doc.data()
     } as T));
-  } catch (error) {
+  } catch (error: any) {
+    if (error.message?.includes('client has already been terminated')) {
+      throw new TenantDataError('Firebase client terminated', 'CLIENT_TERMINATED', error);
+    }
     throw new TenantDataError(`Failed to get collection: ${path}`, 'QUERY_FAILED', error);
   }
 };

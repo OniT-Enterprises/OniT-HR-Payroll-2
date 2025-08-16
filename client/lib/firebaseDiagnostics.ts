@@ -146,6 +146,9 @@ export function logFirebaseDiagnostics(diagnostics: FirebaseDiagnostics): void {
   console.log("================================");
   console.log(`Firebase Initialized: ${diagnostics.firebaseInitialized}`);
   console.log(`Database Available: ${diagnostics.databaseAvailable}`);
+  console.log(`Auth Available: ${diagnostics.authAvailable}`);
+  console.log(`Is Authenticated: ${diagnostics.isAuthenticated}`);
+  console.log(`Auth Method: ${diagnostics.authMethod || 'None'}`);
   console.log(`Is Blocked: ${diagnostics.isBlocked}`);
   console.log(`Connection Test: ${diagnostics.connectionTest}`);
   console.log(`Employee Collection: ${diagnostics.employeeCollectionExists} (${diagnostics.employeeCount} docs)`);

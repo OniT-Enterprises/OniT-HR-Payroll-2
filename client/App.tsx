@@ -59,7 +59,8 @@ const App = () => (
       <BrowserRouter>
         <FirebaseProvider>
           <AuthProvider>
-            <Routes>
+            <TenantProvider>
+              <Routes>
               <Route path="/auth/login" element={<Login />} />
               <Route path="/" element={<Dashboard />} />
               <Route path="/dashboard" element={<Dashboard />} />
@@ -120,7 +121,8 @@ const App = () => (
               <Route path="/reports/custom" element={<CustomReports />} />
               {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
               <Route path="*" element={<NotFound />} />
-            </Routes>
+              </Routes>
+            </TenantProvider>
           </AuthProvider>
         </FirebaseProvider>
       </BrowserRouter>

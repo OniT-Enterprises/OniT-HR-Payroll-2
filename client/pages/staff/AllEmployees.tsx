@@ -511,7 +511,7 @@ export default function AllEmployees() {
 
   const testFirebaseConnection = async () => {
     try {
-      console.log("🔥 Running Firebase diagnostics...");
+      console.log("🔥 Testing Firebase connection...");
 
       if (isFirebaseBlocked()) {
         unblockFirebase();
@@ -521,20 +521,20 @@ export default function AllEmployees() {
         });
       }
 
-      const diagnostics = await runFirebaseDiagnostics();
-      logFirebaseDiagnostics(diagnostics);
+      const results = await simpleFirebaseTest();
+      console.log("🔥 Firebase Test Results:", results);
 
-      if (diagnostics.connectionTest) {
+      if (results.success) {
         toast({
           title: "Firebase Connected ✅",
-          description: `Found ${diagnostics.employeeCount} employees in database`,
+          description: `Found ${results.employeeCount} employees in database`,
         });
         await loadEmployees();
       } else {
-        const issue = diagnostics.recommendations[0] || "Connection failed";
+        const errorSummary = results.errors.join(", ");
         toast({
-          title: "Firebase Issue ❌",
-          description: issue,
+          title: "Firebase Issues ⚠️",
+          description: errorSummary || "Connection problems",
           variant: "destructive",
         });
       }
@@ -542,7 +542,7 @@ export default function AllEmployees() {
       console.error("Firebase test error:", error);
       toast({
         title: "Firebase Test Error",
-        description: `Error: ${error.message}`,
+        description: `Network error: ${error.message}`,
         variant: "destructive",
       });
     }

@@ -30,7 +30,8 @@ service cloud.firestore {
     }
     
     function getTenantRole(tid) {
-      return get(/databases/$(database)/documents/tenants/$(tid)/members/$(request.auth.uid)).data.role;
+      return isDevelopment() ? 'owner' :
+             get(/databases/$(database)/documents/tenants/$(tid)/members/$(request.auth.uid)).data.role;
     }
     
     function hasRole(tid, role) {

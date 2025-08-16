@@ -32,7 +32,7 @@ class FirebaseOfflineManager {
    */
   public async enableOfflineMode(): Promise<void> {
     if (this.state.isOfflineMode) {
-      console.log('📴 Already in offline mode');
+      console.log('�� Already in offline mode');
       return;
     }
 
@@ -192,31 +192,33 @@ export const isFirebaseOffline = () => firebaseOfflineManager.isOffline();
 export const getFirebaseOfflineState = () => firebaseOfflineManager.getState();
 export const forceFirebaseOffline = () => firebaseOfflineManager.forceOfflineMode();
 
-// Auto-enable offline mode if assertion errors are detected
+// Auto-enable offline mode if assertion errors are detected (disabled by default)
 let assertionErrorCount = 0;
-const originalConsoleError = console.error;
+const AUTO_OFFLINE_ENABLED = false; // Disabled to prevent conflicts with multi-tenant system
 
-console.error = function(...args: any[]) {
-  const message = args.join(' ');
-  
-  // Detect Firebase internal assertion errors
-  if (message.includes('INTERNAL ASSERTION FAILED')) {
-    assertionErrorCount++;
-    console.warn(`🚨 Detected Firebase assertion error #${assertionErrorCount}`);
-    
-    // Auto-enable offline mode after 2 assertion errors
-    if (assertionErrorCount >= 2 && !firebaseOfflineManager.isOffline()) {
-      console.warn('🚨 Multiple assertion errors detected - enabling offline mode automatically');
-      firebaseOfflineManager.enableOfflineMode().catch(error => {
-        console.error('Failed to auto-enable offline mode:', error);
-        // Force offline mode if normal enable fails
-        firebaseOfflineManager.forceOfflineMode();
-      });
+if (AUTO_OFFLINE_ENABLED) {
+  const originalConsoleError = console.error;
+
+  console.error = function(...args: any[]) {
+    const message = args.join(' ');
+
+    // Detect Firebase internal assertion errors
+    if (message.includes('INTERNAL ASSERTION FAILED')) {
+      assertionErrorCount++;
+      console.warn(`🚨 Detected Firebase assertion error #${assertionErrorCount}`);
+
+      // Auto-enable offline mode after 5 assertion errors (increased threshold)
+      if (assertionErrorCount >= 5 && !firebaseOfflineManager.isOffline()) {
+        console.warn('🚨 Multiple assertion errors detected - enabling offline mode automatically');
+        firebaseOfflineManager.enableOfflineMode().catch(error => {
+          console.error('Failed to auto-enable offline mode:', error);
+        });
+      }
     }
-  }
-  
-  // Call original console.error
-  originalConsoleError.apply(console, args);
-};
+
+    // Call original console.error
+    originalConsoleError.apply(console, args);
+  };
+}
 
 export default firebaseOfflineManager;

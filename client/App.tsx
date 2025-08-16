@@ -4,8 +4,8 @@ import React from "react";
 // Import ResizeObserver fix early to prevent console warnings
 import "./lib/resizeObserverFix";
 
-// Auto-enable Firebase offline mode to prevent assertion errors
-import "./lib/firebaseAutoOffline";
+// Note: Firebase offline mode removed to prevent client termination conflicts
+// The multi-tenant system requires Firebase for authentication and data operations
 
 import { Toaster } from "@/components/ui/toaster";
 import { createRoot } from "react-dom/client";

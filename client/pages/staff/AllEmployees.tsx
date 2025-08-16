@@ -512,6 +512,45 @@ export default function AllEmployees() {
     event.target.value = "";
   };
 
+  const testFirebaseConnection = async () => {
+    try {
+      console.log("🔥 Running Firebase diagnostics...");
+
+      if (isFirebaseBlocked()) {
+        unblockFirebase();
+        toast({
+          title: "Firebase Unblocked",
+          description: "Testing connection...",
+        });
+      }
+
+      const diagnostics = await runFirebaseDiagnostics();
+      logFirebaseDiagnostics(diagnostics);
+
+      if (diagnostics.connectionTest) {
+        toast({
+          title: "Firebase Connected ✅",
+          description: `Found ${diagnostics.employeeCount} employees in database`,
+        });
+        await loadEmployees();
+      } else {
+        const issue = diagnostics.recommendations[0] || "Connection failed";
+        toast({
+          title: "Firebase Issue ❌",
+          description: issue,
+          variant: "destructive",
+        });
+      }
+    } catch (error) {
+      console.error("Firebase test error:", error);
+      toast({
+        title: "Firebase Test Error",
+        description: `Error: ${error.message}`,
+        variant: "destructive",
+      });
+    }
+  };
+
   const incompleteEmployees = getIncompleteEmployees(employees);
 
   if (loading) {

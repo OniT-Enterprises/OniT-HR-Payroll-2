@@ -135,6 +135,13 @@ class EmployeeService {
     if (isFirebaseReady() && db && !isFirebaseBlocked()) {
       try {
         console.log("🔥 Attempting to load employees from Firebase...");
+
+        // Authenticate first
+        const isAuthenticated = await tryAuthentication();
+        if (!isAuthenticated) {
+          throw new Error("Authentication failed");
+        }
+
         await this.testConnection();
 
         const querySnapshot = await getDocs(

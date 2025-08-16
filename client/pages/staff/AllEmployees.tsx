@@ -49,6 +49,9 @@ import {
   Trash2,
   Plus,
   AlertTriangle,
+  Upload,
+  FileText,
+  CalendarX,
 } from "lucide-react";
 
 export default function AllEmployees() {
@@ -416,7 +419,7 @@ export default function AllEmployees() {
         )}
 
         {/* Statistics */}
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+        <div className="grid grid-cols-1 md:grid-cols-5 gap-4 mb-6">
           <Card>
             <CardContent className="p-6">
               <div className="flex items-center justify-between">
@@ -481,26 +484,43 @@ export default function AllEmployees() {
               </div>
             </CardContent>
           </Card>
+          <Card>
+            <CardContent className="p-6">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm font-medium text-muted-foreground">
+                    On Leave
+                  </p>
+                  <p className="text-2xl font-bold text-purple-600">
+                    {employees.filter((emp) => emp.status === "on_leave").length}
+                  </p>
+                </div>
+                <CalendarX className="h-8 w-8 text-purple-500" />
+              </div>
+            </CardContent>
+          </Card>
         </div>
 
         {/* Controls */}
-        <div className="flex flex-col lg:flex-row items-center justify-between gap-4 mb-6">
-          <div className="flex items-center gap-4 w-full lg:w-auto">
-            <div className="relative flex-1 lg:w-64">
-              <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
-              <Input
-                placeholder="Search employees..."
-                className="pl-9"
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                onKeyDown={(e) => e.key === "Enter" && handleSearch()}
-              />
-            </div>
-            <Button onClick={handleSearch}>Search</Button>
+        <div className="flex flex-col lg:flex-row items-center gap-4 mb-6">
+          {/* Left side - Add Employee with gap */}
+          <div className="flex items-center">
             <Button
-              variant={showFilters ? "default" : "outline"}
+              variant="outline"
+              onClick={() => navigate("/staff/add")}
+              className={"bg-white hover:bg-purple-50 border-purple-200"}
+            >
+              <Plus className="mr-2 h-4 w-4" />
+              Add Employee
+            </Button>
+          </div>
+
+          {/* Middle section - Filters and Search */}
+          <div className="flex items-center gap-3 flex-1">
+            <Button
+              variant="outline"
               onClick={() => setShowFilters(!showFilters)}
-              className={hasActiveFilters ? "bg-blue-100 border-blue-300" : ""}
+              className={showFilters ? "bg-purple-600 text-white hover:bg-purple-700" : "bg-white hover:bg-purple-50 border-purple-200"}
             >
               <Filter className="mr-2 h-4 w-4" />
               Filters{" "}
@@ -523,25 +543,72 @@ export default function AllEmployees() {
                   }).filter(Boolean).length
                 })`}
             </Button>
-          </div>
 
-          <div className="flex items-center gap-3 w-full lg:w-auto">
-            {hasActiveFilters && (
-              <Button variant="ghost" size="sm" onClick={clearFilters}>
-                Clear Filters
+            <div className="relative flex-1 max-w-md">
+              <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+              <Input
+                placeholder="Search employees..."
+                className="pl-9 pr-20 bg-white border-purple-200"
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                onKeyDown={(e) => e.key === "Enter" && handleSearch()}
+              />
+              <Button
+                size="sm"
+                onClick={handleSearch}
+                className="absolute right-1 top-1 h-8 bg-purple-600 hover:bg-purple-700"
+              >
+                Search
               </Button>
-            )}
-            <Button variant="outline" onClick={handleExport}>
-              <Download className="mr-2 h-4 w-4" />
-              Export
-            </Button>
+            </div>
+          </div>
 
-            <Button onClick={() => navigate("/staff/add")}>
-              <Plus className="mr-2 h-4 w-4" />
-              Add Employee
+          {/* Right side - CSV actions */}
+          <div className="flex items-center gap-2">
+            <Button
+              variant="outline"
+              onClick={handleDownloadTemplate}
+              className="bg-white hover:bg-purple-50 border-purple-200"
+            >
+              <FileText className="mr-2 h-4 w-4" />
+              Template CSV
+            </Button>
+            <Button
+              variant="outline"
+              onClick={() => document.getElementById('csv-upload')?.click()}
+              className="bg-white hover:bg-purple-50 border-purple-200"
+            >
+              <Upload className="mr-2 h-4 w-4" />
+              Import CSV
+            </Button>
+            <Button
+              variant="outline"
+              onClick={handleExport}
+              className="bg-white hover:bg-purple-50 border-purple-200"
+            >
+              <Download className="mr-2 h-4 w-4" />
+              Export CSV
             </Button>
           </div>
+
+          {/* Hidden file input for CSV import */}
+          <input
+            id="csv-upload"
+            type="file"
+            accept=".csv"
+            style={{ display: 'none' }}
+            onChange={handleImportCSV}
+          />
         </div>
+
+        {/* Clear Filters */}
+        {hasActiveFilters && (
+          <div className="flex justify-start mb-4">
+            <Button variant="ghost" size="sm" onClick={clearFilters}>
+              Clear Filters
+            </Button>
+          </div>
+        )}
 
         {/* Filter Panel */}
         {showFilters && (

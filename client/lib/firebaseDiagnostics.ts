@@ -21,6 +21,9 @@ export async function runFirebaseDiagnostics(): Promise<FirebaseDiagnostics> {
   const diagnostics: FirebaseDiagnostics = {
     firebaseInitialized: false,
     databaseAvailable: false,
+    authAvailable: false,
+    isAuthenticated: false,
+    authMethod: null,
     isBlocked: false,
     error: null,
     connectionTest: false,

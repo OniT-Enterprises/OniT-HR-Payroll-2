@@ -84,38 +84,7 @@ try {
   firebaseBlocked = true;
 }
 
-// Minimal fetch monitoring for debugging (no blocking)
-if (typeof window !== "undefined") {
-  const originalFetch = window.fetch;
-
-  window.fetch = function (
-    input: RequestInfo | URL,
-    init?: RequestInit,
-  ): Promise<Response> {
-    const url =
-      typeof input === "string"
-        ? input
-        : input instanceof URL
-          ? input.toString()
-          : input.url;
-
-    // Just log Firebase requests for debugging, don't block them
-    const isFirebaseRequest =
-      url &&
-      (url.includes("firestore.googleapis.com") ||
-        url.includes("firebase.googleapis.com") ||
-        url.includes("firebaseapp.com") ||
-        url.includes("identitytoolkit.googleapis.com") ||
-        url.includes("securetoken.googleapis.com"));
-
-    if (isFirebaseRequest) {
-      console.log("🔥 Firebase request:", url);
-    }
-
-    // Allow all requests to proceed normally
-    return originalFetch.apply(this, arguments);
-  };
-}
+// Removed fetch wrapper that was interfering with Firebase operations
 
 // Authentication helper (optional, not required for basic operations)
 export const tryAuthentication = async (): Promise<boolean> => {

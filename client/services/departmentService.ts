@@ -14,6 +14,7 @@ import {
   isFirebaseReady,
   getFirebaseError,
   isFirebaseBlocked,
+  tryAuthentication,
 } from "@/lib/firebase";
 import { isOnline, checkNetwork } from "@/lib/networkState";
 import { safeFirestoreQuery } from "@/lib/firebaseProxy";
@@ -98,7 +99,7 @@ class DepartmentService {
     }
 
     // Fallback to mock data
-    console.log(`�� Using ${this.getMockDepartments().length} mock departments as fallback`);
+    console.log(`📋 Using ${this.getMockDepartments().length} mock departments as fallback`);
     return this.getMockDepartments();
   }
 
@@ -284,7 +285,7 @@ class DepartmentService {
     }
 
     // Fallback: simulate delete (for development)
-    console.log("📋 Simulated department delete (mock data mode):", id);
+    console.log("��� Simulated department delete (mock data mode):", id);
   }
 }
 

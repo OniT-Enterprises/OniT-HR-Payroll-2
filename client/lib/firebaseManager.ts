@@ -79,6 +79,14 @@ class FirebaseConnectionManager {
       return false;
     }
 
+    // Check if client has been terminated
+    if (this.state.terminated) {
+      console.log('⚠️ Firebase client has been terminated, cannot test connection');
+      this.state.isConnected = false;
+      this.state.error = 'Firebase client terminated';
+      return false;
+    }
+
     // Check if we're already connecting or have a recent successful connection
     const now = Date.now();
     if (this.state.isConnecting) {

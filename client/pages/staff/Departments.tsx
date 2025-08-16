@@ -320,13 +320,29 @@ export default function Departments() {
           </div>
         </div>
 
-        <div className="flex items-center gap-3 mb-6">
-          <Building className="h-8 w-8 text-purple-600" />
-          <div>
-            <h1 className="text-3xl font-bold">Departments</h1>
-            <p className="text-muted-foreground">
-              Overview of all departments and their employees
-            </p>
+        <div className="flex items-center justify-between mb-6">
+          <div className="flex items-center gap-3">
+            <Building className="h-8 w-8 text-purple-600" />
+            <div>
+              <h1 className="text-3xl font-bold">Departments</h1>
+              <p className="text-muted-foreground">
+                Overview of all departments and their employees
+              </p>
+            </div>
+          </div>
+          <div className="flex items-center gap-2 text-sm">
+            <div
+              className={`w-3 h-3 rounded-full ${
+                isFirebaseReady() && !isFirebaseBlocked()
+                  ? 'bg-green-500'
+                  : 'bg-orange-500'
+              }`}
+            />
+            <span className="text-muted-foreground">
+              {isFirebaseReady() && !isFirebaseBlocked()
+                ? 'Firebase Connected'
+                : 'Using Mock Data'}
+            </span>
           </div>
         </div>
 

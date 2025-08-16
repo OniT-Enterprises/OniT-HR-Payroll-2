@@ -10,8 +10,8 @@ import {
 import { getAuth, signInAnonymously } from "firebase/auth";
 import { getStorage } from "firebase/storage";
 
-// Import Firebase blocker for aggressive error prevention
-import "./firebaseBlocker";
+// Removed Firebase blocker that was causing network issues
+// import "./firebaseBlocker";
 
 // Global Firebase status
 let firebaseInitialized = false;
@@ -84,38 +84,7 @@ try {
   firebaseBlocked = true;
 }
 
-// Minimal fetch monitoring for debugging (no blocking)
-if (typeof window !== "undefined") {
-  const originalFetch = window.fetch;
-
-  window.fetch = function (
-    input: RequestInfo | URL,
-    init?: RequestInit,
-  ): Promise<Response> {
-    const url =
-      typeof input === "string"
-        ? input
-        : input instanceof URL
-          ? input.toString()
-          : input.url;
-
-    // Just log Firebase requests for debugging, don't block them
-    const isFirebaseRequest =
-      url &&
-      (url.includes("firestore.googleapis.com") ||
-        url.includes("firebase.googleapis.com") ||
-        url.includes("firebaseapp.com") ||
-        url.includes("identitytoolkit.googleapis.com") ||
-        url.includes("securetoken.googleapis.com"));
-
-    if (isFirebaseRequest) {
-      console.log("🔥 Firebase request:", url);
-    }
-
-    // Allow all requests to proceed normally
-    return originalFetch.apply(this, arguments);
-  };
-}
+// Removed fetch wrapper that was interfering with Firebase operations
 
 // Authentication helper (optional, not required for basic operations)
 export const tryAuthentication = async (): Promise<boolean> => {
@@ -131,11 +100,16 @@ export const tryAuthentication = async (): Promise<boolean> => {
       return true;
     }
 
-    // Don't force authentication - just return false
-    console.log("ℹ️ No authentication required for basic operations");
-    return false;
+    // Try anonymous authentication for development
+    console.log("🔐 Attempting anonymous authentication...");
+    const userCredential = await signInAnonymously(auth);
+    console.log(
+      "✅ Anonymous authentication successful",
+      userCredential.user.uid,
+    );
+    return true;
   } catch (error) {
-    console.warn("ℹ️ Authentication check failed (not critical):", error);
+    console.warn("❌ Authentication failed:", error);
     return false;
   }
 };
@@ -258,16 +232,7 @@ export const testFirebaseConnection = async (): Promise<boolean> => {
   }
 };
 
-// Simplified error handler - just log errors, don't block
-if (typeof window !== "undefined") {
-  window.addEventListener("unhandledrejection", (event) => {
-    const error = event.reason;
-    if (error && error.message && error.message.includes("firebase")) {
-      console.warn("🔥 Firebase error (not blocking):", error);
-      // Don't prevent default or block Firebase
-    }
-  });
-}
+// Removed error handler that was interfering with Firebase
 
 // Export services (will be null if initialization failed)
 export { db, auth, storage, analytics };

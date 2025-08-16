@@ -6,9 +6,9 @@ let blockReason = "";
 export const initializeFirebaseBlocker = () => {
   if (typeof window === "undefined") return;
 
-  // Check initial network state
+  // Check initial network state (but don't block immediately)
   if (!navigator.onLine) {
-    blockFirebase("Browser offline");
+    console.warn("🌐 Browser appears offline, but not blocking Firebase yet");
   }
 
   // Monitor network changes
@@ -136,11 +136,18 @@ export const monitorForErrors = () => {
       errorCount++;
       lastErrorTime = now;
 
-      console.warn(`🌐 Firebase network error #${errorCount} from ${source}:`, error);
+      console.warn(
+        `🌐 Firebase network error #${errorCount} from ${source}:`,
+        error,
+      );
 
-      // Block Firebase after first Firebase-related network error
-      if (!firebaseBlocked) {
-        blockFirebase(`Firebase network error detected (${source})`);
+      // Only block Firebase after multiple consecutive errors
+      if (!firebaseBlocked && errorCount >= 3) {
+        blockFirebase(
+          `Multiple Firebase network errors detected (${errorCount} errors from ${source})`,
+        );
+      } else if (errorCount < 3) {
+        console.warn(`🔥 Firebase error ${errorCount}/3 - not blocking yet`);
       }
     }
   };
@@ -158,6 +165,7 @@ export const monitorForErrors = () => {
   });
 };
 
-// Initialize everything
-initializeFirebaseBlocker();
-monitorForErrors();
+// Temporarily disable Firebase blocker to fix network issues
+// initializeFirebaseBlocker();
+// monitorForErrors();
+console.log("⚠️ Firebase blocker disabled for debugging");

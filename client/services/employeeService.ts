@@ -17,8 +17,10 @@ import {
   isFirebaseReady,
   getFirebaseError,
   isFirebaseBlocked,
+  tryAuthentication,
 } from "@/lib/firebase";
 import { mockDataService } from "./mockDataService";
+import { getEmployeesDirectly } from "@/lib/firebaseBypass";
 
 export interface Employee {
   id?: string;
@@ -119,20 +121,84 @@ class EmployeeService {
   }
 
   async getAllEmployees(): Promise<Employee[]> {
-    // Use offline-first approach to completely avoid Firebase timeouts
-    console.log("👥 Loading employees with offline-first approach");
+    console.log("👥 Loading employees from Firebase first, then fallback");
+
+    // Check cache first
+    const cachedEmployees = this.getOfflineEmployees();
+    if (cachedEmployees.length > 0) {
+      console.log("✅ Using cached employee data");
+      // Still try Firebase in background to refresh cache
+      this.refreshFirebaseData();
+      return cachedEmployees;
+    }
+
+    // Try Firebase first
+    if (isFirebaseReady() && db && !isFirebaseBlocked()) {
+      try {
+        console.log("🔥 Attempting to load employees from Firebase...");
+
+        // Authenticate first
+        const isAuthenticated = await tryAuthentication();
+        if (!isAuthenticated) {
+          console.warn("⚠️ Authentication failed, but continuing anyway");
+          // Don't throw error - try to continue with direct access
+        }
+
+        await this.testConnection();
+
+        const querySnapshot = await getDocs(
+          query(this.collection, orderBy("createdAt", "desc")),
+        );
+
+        const employees = querySnapshot.docs.map((doc) => {
+          const data = doc.data();
+          return {
+            id: doc.id,
+            ...data,
+            createdAt: data.createdAt?.toDate() || new Date(),
+            updatedAt: data.updatedAt?.toDate() || new Date(),
+          } as Employee;
+        });
+
+        console.log(
+          `✅ Successfully loaded ${employees.length} employees from Firebase`,
+        );
+        this.cacheEmployees(employees);
+        return employees;
+      } catch (error) {
+        console.warn("🚫 Firebase failed for employees:", error);
+
+        // Try direct access without authentication as last resort
+        if (
+          error.message?.includes("Authentication failed") ||
+          error.code === "unauthenticated"
+        ) {
+          try {
+            console.log("🔄 Trying direct Firestore access without auth...");
+            const employees = await getEmployeesDirectly();
+            console.log(
+              `✅ Direct access successful: ${employees.length} employees`,
+            );
+            this.cacheEmployees(employees);
+            return employees;
+          } catch (directError) {
+            console.warn("🚫 Direct access also failed:", directError);
+          }
+        }
+      }
+    }
 
     try {
-      // Skip all Firebase attempts and use reliable mock data
-      console.log("📊 Using safe mock employee data");
+      // Fallback to mock data
+      console.log("📊 Using mock employee data as fallback");
       const mockEmployees = await mockDataService.getAllEmployees();
-
-      // Cache the mock data for consistency
       this.cacheEmployees(mockEmployees);
-
       return mockEmployees;
     } catch (error) {
-      console.error("❌ Even mock data failed, using hardcoded fallback:", error);
+      console.error(
+        "❌ Even mock data failed, using hardcoded fallback:",
+        error,
+      );
 
       // Ultimate fallback with hardcoded data
       return [
@@ -350,12 +416,40 @@ class EmployeeService {
     }
   }
 
+  private async refreshFirebaseData(): Promise<void> {
+    // Background refresh - don't block UI
+    if (!isFirebaseReady() || !db || isFirebaseBlocked()) return;
+
+    try {
+      const querySnapshot = await getDocs(
+        query(this.collection, orderBy("createdAt", "desc")),
+      );
+
+      const employees = querySnapshot.docs.map((doc) => {
+        const data = doc.data();
+        return {
+          id: doc.id,
+          ...data,
+          createdAt: data.createdAt?.toDate() || new Date(),
+          updatedAt: data.updatedAt?.toDate() || new Date(),
+        } as Employee;
+      });
+
+      this.cacheEmployees(employees);
+      console.log(
+        `🔄 Background refresh: ${employees.length} employees updated`,
+      );
+    } catch (error) {
+      console.warn("Background refresh failed:", error);
+    }
+  }
+
   async getEmployeeById(id: string): Promise<Employee | null> {
     try {
       // Use offline-first approach
       console.log(`👤 Getting employee ${id} with offline-first approach`);
       const allEmployees = await this.getAllEmployees();
-      return allEmployees.find(emp => emp.id === id) || null;
+      return allEmployees.find((emp) => emp.id === id) || null;
     } catch (error) {
       console.error("Error getting employee:", error);
       return null;
@@ -439,9 +533,13 @@ class EmployeeService {
   async getEmployeesByDepartment(department: string): Promise<Employee[]> {
     try {
       // Use offline-first approach
-      console.log(`🏢 Getting employees for department ${department} with offline-first approach`);
+      console.log(
+        `🏢 Getting employees for department ${department} with offline-first approach`,
+      );
       const allEmployees = await this.getAllEmployees();
-      return allEmployees.filter(emp => emp.jobDetails.department === department);
+      return allEmployees.filter(
+        (emp) => emp.jobDetails.department === department,
+      );
     } catch (error) {
       console.error("Error getting employees by department:", error);
       return [];

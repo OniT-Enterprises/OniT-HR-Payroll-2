@@ -49,7 +49,16 @@ import {
   Trash2,
   Plus,
   AlertTriangle,
+  Upload,
+  FileText,
+  CalendarX,
 } from "lucide-react";
+import {
+  isFirebaseReady,
+  isFirebaseBlocked,
+  unblockFirebase,
+} from "@/lib/firebase";
+import { simpleFirebaseTest } from "@/lib/simpleFirebaseTest";
 
 export default function AllEmployees() {
   const [employees, setEmployees] = useState<Employee[]>([]);
@@ -371,6 +380,173 @@ export default function AllEmployees() {
     navigate(`/hiring/offboarding?employee=${employee.id}`);
   };
 
+  const handleDownloadTemplate = () => {
+    // Create CSV template with headers
+    const headers = [
+      "Employee ID",
+      "First Name",
+      "Last Name",
+      "Email",
+      "Phone",
+      "Department",
+      "Position",
+      "Hire Date (YYYY-MM-DD)",
+      "Employment Type",
+      "Work Location",
+      "Monthly Salary",
+      "Benefits Package",
+      "Street Address",
+      "City",
+      "State",
+      "ZIP Code",
+      "Emergency Contact Name",
+      "Emergency Contact Phone",
+      "Date of Birth (YYYY-MM-DD)",
+      "Status (active/inactive/on_leave)",
+    ];
+
+    // Add example row
+    const exampleRow = [
+      "EMP001",
+      "John",
+      "Doe",
+      "john.doe@company.com",
+      "555-0123",
+      "Engineering",
+      "Software Engineer",
+      "2024-01-15",
+      "Full-time",
+      "Office",
+      "5000",
+      "Basic",
+      "123 Main St",
+      "New York",
+      "NY",
+      "10001",
+      "Jane Doe",
+      "555-0124",
+      "1990-05-15",
+      "active",
+    ];
+
+    const csvContent = [headers.join(","), exampleRow.join(",")].join("\n");
+
+    // Download template
+    const blob = new Blob([csvContent], { type: "text/csv" });
+    const url = window.URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "employee_template.csv";
+    a.click();
+    window.URL.revokeObjectURL(url);
+
+    toast({
+      title: "Template Downloaded",
+      description: "Employee CSV template has been downloaded successfully",
+    });
+  };
+
+  const handleImportCSV = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      try {
+        const csvText = e.target?.result as string;
+        const lines = csvText.split("\n");
+        const headers = lines[0].split(",").map((h) => h.trim());
+        const dataLines = lines.slice(1).filter((line) => line.trim());
+
+        let successCount = 0;
+        let errorCount = 0;
+
+        dataLines.forEach((line, index) => {
+          try {
+            const values = line.split(",").map((v) => v.trim());
+            if (values.length < headers.length) {
+              errorCount++;
+              return;
+            }
+
+            // Basic validation - you would typically process this data
+            // and add it to your employee service
+            const employeeData = {
+              employeeId: values[0],
+              firstName: values[1],
+              lastName: values[2],
+              email: values[3],
+              // ... other fields
+            };
+
+            // Here you would call employeeService.addEmployee(employeeData)
+            // For now, just count as success
+            successCount++;
+          } catch (error) {
+            errorCount++;
+            console.error(`Error processing row ${index + 2}:`, error);
+          }
+        });
+
+        toast({
+          title: "CSV Import Complete",
+          description: `Preview: ${successCount} employees would be imported, ${errorCount} errors found. (Import functionality not fully implemented yet)`,
+          variant: errorCount > 0 ? "destructive" : "default",
+        });
+      } catch (error) {
+        toast({
+          title: "Import Error",
+          description: "Failed to parse CSV file. Please check the format.",
+          variant: "destructive",
+        });
+      }
+    };
+
+    reader.readAsText(file);
+
+    // Reset the input value so the same file can be selected again
+    event.target.value = "";
+  };
+
+  const testFirebaseConnection = async () => {
+    try {
+      console.log("🔥 Testing Firebase connection...");
+
+      if (isFirebaseBlocked()) {
+        unblockFirebase();
+        toast({
+          title: "Firebase Unblocked",
+          description: "Testing connection...",
+        });
+      }
+
+      const results = await simpleFirebaseTest();
+      console.log("🔥 Firebase Test Results:", results);
+
+      if (results.success) {
+        toast({
+          title: "Firebase Connected ✅",
+          description: `Found ${results.employeeCount} employees in database`,
+        });
+        await loadEmployees();
+      } else {
+        const errorSummary = results.errors.join(", ");
+        toast({
+          title: "Firebase Issues ⚠️",
+          description: errorSummary || "Connection problems",
+          variant: "destructive",
+        });
+      }
+    } catch (error) {
+      console.error("Firebase test error:", error);
+      toast({
+        title: "Firebase Test Error",
+        description: `Network error: ${error.message}`,
+        variant: "destructive",
+      });
+    }
+  };
+
   const incompleteEmployees = getIncompleteEmployees(employees);
 
   if (loading) {
@@ -392,16 +568,6 @@ export default function AllEmployees() {
       <MainNavigation />
 
       <div className="p-6">
-        <div className="flex items-center gap-3 mb-6">
-          <Users className="h-8 w-8 text-purple-600" />
-          <div>
-            <h1 className="text-3xl font-bold">All Employees</h1>
-            <p className="text-muted-foreground">
-              Manage and view all employee information
-            </p>
-          </div>
-        </div>
-
         {/* Connection Status */}
         {(connectionError || !isOnline) && (
           <Alert className="mb-6" variant="destructive">
@@ -426,7 +592,7 @@ export default function AllEmployees() {
         )}
 
         {/* Statistics */}
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+        <div className="grid grid-cols-1 md:grid-cols-5 gap-4 mb-6">
           <Card>
             <CardContent className="p-6">
               <div className="flex items-center justify-between">
@@ -491,26 +657,50 @@ export default function AllEmployees() {
               </div>
             </CardContent>
           </Card>
+          <Card>
+            <CardContent className="p-6">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm font-medium text-muted-foreground">
+                    On Leave
+                  </p>
+                  <p className="text-2xl font-bold text-purple-600">
+                    {
+                      employees.filter((emp) => emp.status === "on_leave")
+                        .length
+                    }
+                  </p>
+                </div>
+                <CalendarX className="h-8 w-8 text-purple-500" />
+              </div>
+            </CardContent>
+          </Card>
         </div>
 
         {/* Controls */}
-        <div className="flex flex-col lg:flex-row items-center justify-between gap-4 mb-6">
-          <div className="flex items-center gap-4 w-full lg:w-auto">
-            <div className="relative flex-1 lg:w-64">
-              <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
-              <Input
-                placeholder="Search employees..."
-                className="pl-9"
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                onKeyDown={(e) => e.key === "Enter" && handleSearch()}
-              />
-            </div>
-            <Button onClick={handleSearch}>Search</Button>
+        <div className="flex flex-col lg:flex-row items-center gap-4 mb-6">
+          {/* Left side - Add Employee with gap */}
+          <div className="flex items-center">
             <Button
-              variant={showFilters ? "default" : "outline"}
+              variant="outline"
+              onClick={() => navigate("/staff/add")}
+              className={"bg-white hover:bg-purple-50 border-purple-200"}
+            >
+              <Plus className="mr-2 h-4 w-4" />
+              Add Employee
+            </Button>
+          </div>
+
+          {/* Middle section - Filters and Search */}
+          <div className="flex items-center gap-3 flex-1">
+            <Button
+              variant="outline"
               onClick={() => setShowFilters(!showFilters)}
-              className={hasActiveFilters ? "bg-blue-100 border-blue-300" : ""}
+              className={
+                showFilters
+                  ? "bg-purple-600 text-white hover:bg-purple-700"
+                  : "bg-white hover:bg-purple-50 border-purple-200"
+              }
             >
               <Filter className="mr-2 h-4 w-4" />
               Filters{" "}
@@ -533,25 +723,80 @@ export default function AllEmployees() {
                   }).filter(Boolean).length
                 })`}
             </Button>
-          </div>
 
-          <div className="flex items-center gap-3 w-full lg:w-auto">
-            {hasActiveFilters && (
-              <Button variant="ghost" size="sm" onClick={clearFilters}>
-                Clear Filters
+            <div className="relative flex-1 max-w-md">
+              <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+              <Input
+                placeholder="Search employees..."
+                className="pl-9 pr-20 bg-white border-purple-200"
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                onKeyDown={(e) => e.key === "Enter" && handleSearch()}
+              />
+              <Button
+                size="sm"
+                onClick={handleSearch}
+                className="absolute right-1 top-1 h-8 bg-purple-600 hover:bg-purple-700"
+              >
+                Search
               </Button>
-            )}
-            <Button variant="outline" onClick={handleExport}>
-              <Download className="mr-2 h-4 w-4" />
-              Export
-            </Button>
+            </div>
+          </div>
 
-            <Button onClick={() => navigate("/staff/add")}>
-              <Plus className="mr-2 h-4 w-4" />
-              Add Employee
+          {/* Right side - CSV actions */}
+          <div className="flex items-center gap-2">
+            <Button
+              variant="outline"
+              onClick={testFirebaseConnection}
+              className="bg-white hover:bg-purple-50 border-purple-200 text-xs"
+            >
+              <Building className="mr-2 h-4 w-4" />
+              Test DB
+            </Button>
+            <Button
+              variant="outline"
+              onClick={handleDownloadTemplate}
+              className="bg-white hover:bg-purple-50 border-purple-200"
+            >
+              <FileText className="mr-2 h-4 w-4" />
+              Template CSV
+            </Button>
+            <Button
+              variant="outline"
+              onClick={() => document.getElementById("csv-upload")?.click()}
+              className="bg-white hover:bg-purple-50 border-purple-200"
+            >
+              <Upload className="mr-2 h-4 w-4" />
+              Import CSV
+            </Button>
+            <Button
+              variant="outline"
+              onClick={handleExport}
+              className="bg-white hover:bg-purple-50 border-purple-200"
+            >
+              <Download className="mr-2 h-4 w-4" />
+              Export CSV
             </Button>
           </div>
+
+          {/* Hidden file input for CSV import */}
+          <input
+            id="csv-upload"
+            type="file"
+            accept=".csv"
+            style={{ display: "none" }}
+            onChange={handleImportCSV}
+          />
         </div>
+
+        {/* Clear Filters */}
+        {hasActiveFilters && (
+          <div className="flex justify-start mb-4">
+            <Button variant="ghost" size="sm" onClick={clearFilters}>
+              Clear Filters
+            </Button>
+          </div>
+        )}
 
         {/* Filter Panel */}
         {showFilters && (

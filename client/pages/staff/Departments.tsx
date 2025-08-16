@@ -38,6 +38,13 @@ import {
   Crown,
   Eye,
 } from "lucide-react";
+import {
+  isFirebaseReady,
+  isFirebaseBlocked,
+  unblockFirebase,
+  testFirebaseConnection as testFirebaseConn,
+} from "@/lib/firebase";
+import { simpleFirebaseTest } from "@/lib/simpleFirebaseTest";
 
 export default function Departments() {
   const navigate = useNavigate();
@@ -212,6 +219,65 @@ export default function Departments() {
     setShowEmployeeProfile(true);
   };
 
+  const testFirebaseConnection = async () => {
+    try {
+      console.log("🔥 Running simple Firebase connectivity test...");
+
+      // Unblock Firebase if it's blocked
+      if (isFirebaseBlocked()) {
+        unblockFirebase();
+        toast({
+          title: "Firebase Unblocked",
+          description: "Testing connection...",
+        });
+      }
+
+      // Run simple test
+      const results = await simpleFirebaseTest();
+      console.log("🔥 Firebase Test Results:", results);
+
+      if (results.success) {
+        toast({
+          title: "Firebase Connected ✅",
+          description: `Found ${results.employeeCount} employees, ${results.departmentCount} departments`,
+        });
+
+        // Reload data after successful connection
+        await loadData();
+      } else {
+        const errorSummary = results.errors.join(", ");
+        toast({
+          title: "Firebase Issues ⚠️",
+          description: errorSummary || "Connection problems detected",
+          variant: "destructive",
+        });
+
+        // Show auth setup instructions if needed
+        if (
+          results.errors.some(
+            (err) => err.includes("permission") || err.includes("auth"),
+          )
+        ) {
+          setTimeout(() => {
+            toast({
+              title: "Authentication Required",
+              description:
+                "Enable Anonymous Auth in Firebase Console → Authentication → Sign-in method",
+              duration: 8000,
+            });
+          }, 2000);
+        }
+      }
+    } catch (error) {
+      console.error("Firebase test error:", error);
+      toast({
+        title: "Firebase Test Error",
+        description: `Network error: ${error.message}`,
+        variant: "destructive",
+      });
+    }
+  };
+
   if (loading) {
     return (
       <div className="min-h-screen bg-background">
@@ -232,42 +298,70 @@ export default function Departments() {
 
       <div className="p-6">
         {/* Department Management Buttons */}
-        <div className="flex justify-end gap-2 mb-4">
-          <Button
-            variant="outline"
-            onClick={() => {
-              setManagerMode("add");
-              setShowDepartmentManager(true);
-            }}
-          >
-            <Plus className="mr-2 h-4 w-4" />
-            Add Department
-          </Button>
-          <Button
-            onClick={() => {
-              setManagerMode("edit");
-              setShowDepartmentManager(true);
-            }}
-          >
-            <Edit className="mr-2 h-4 w-4" />
-            Edit Departments
-          </Button>
-          <Button
-            variant="secondary"
-            onClick={() => navigate("/staff/org-chart")}
-          >
-            <Users className="mr-2 h-4 w-4" />
-            Organization Chart
-          </Button>
+        <div className="flex justify-between items-center mb-4">
+          <div className="flex gap-2">
+            <Button
+              variant="outline"
+              onClick={testFirebaseConnection}
+              className="text-xs"
+            >
+              <Database className="mr-2 h-4 w-4" />
+              Test Firebase
+            </Button>
+          </div>
+          <div className="flex gap-2">
+            <Button
+              variant="outline"
+              onClick={() => {
+                setManagerMode("add");
+                setShowDepartmentManager(true);
+              }}
+            >
+              <Plus className="mr-2 h-4 w-4" />
+              Add Department
+            </Button>
+            <Button
+              onClick={() => {
+                setManagerMode("edit");
+                setShowDepartmentManager(true);
+              }}
+            >
+              <Edit className="mr-2 h-4 w-4" />
+              Edit Departments
+            </Button>
+            <Button
+              variant="secondary"
+              onClick={() => navigate("/staff/org-chart")}
+            >
+              <Users className="mr-2 h-4 w-4" />
+              Organization Chart
+            </Button>
+          </div>
         </div>
 
-        <div className="flex items-center gap-3 mb-6">
-          <Building className="h-8 w-8 text-purple-600" />
-          <div>
-            <h1 className="text-3xl font-bold">Departments</h1>
-            <p className="text-muted-foreground">
-              Overview of all departments and their employees
-            </p>
+        <div className="flex items-center justify-between mb-6">
+          <div className="flex items-center gap-3">
+            <Building className="h-8 w-8 text-purple-600" />
+            <div>
+              <h1 className="text-3xl font-bold">Departments</h1>
+              <p className="text-muted-foreground">
+                Overview of all departments and their employees
+              </p>
+            </div>
+          </div>
+          <div className="flex items-center gap-2 text-sm">
+            <div
+              className={`w-3 h-3 rounded-full ${
+                isFirebaseReady() && !isFirebaseBlocked()
+                  ? "bg-green-500"
+                  : "bg-orange-500"
+              }`}
+            />
+            <span className="text-muted-foreground">
+              {isFirebaseReady() && !isFirebaseBlocked()
+                ? "Firebase Connected"
+                : "Using Mock Data"}
+            </span>
           </div>
         </div>
 

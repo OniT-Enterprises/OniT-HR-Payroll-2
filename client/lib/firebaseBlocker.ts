@@ -6,9 +6,9 @@ let blockReason = "";
 export const initializeFirebaseBlocker = () => {
   if (typeof window === "undefined") return;
 
-  // Check initial network state
+  // Check initial network state (but don't block immediately)
   if (!navigator.onLine) {
-    blockFirebase("Browser offline");
+    console.warn("🌐 Browser appears offline, but not blocking Firebase yet");
   }
 
   // Monitor network changes

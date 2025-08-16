@@ -392,16 +392,6 @@ export default function AllEmployees() {
       <MainNavigation />
 
       <div className="p-6">
-        <div className="flex items-center gap-3 mb-6">
-          <Users className="h-8 w-8 text-purple-600" />
-          <div>
-            <h1 className="text-3xl font-bold">All Employees</h1>
-            <p className="text-muted-foreground">
-              Manage and view all employee information
-            </p>
-          </div>
-        </div>
-
         {/* Connection Status */}
         {(connectionError || !isOnline) && (
           <Alert className="mb-6" variant="destructive">

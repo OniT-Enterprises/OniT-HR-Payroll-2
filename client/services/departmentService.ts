@@ -69,12 +69,12 @@ class DepartmentService {
       try {
         console.log("🔥 Attempting to load departments from Firebase...");
 
-        // Temporarily skip authentication for development
-        console.log("⚠️ Skipping authentication for development mode");
-        // const isAuthenticated = await tryAuthentication();
-        // if (!isAuthenticated) {
-        //   throw new Error("Authentication failed");
-        // }
+        // Authenticate first
+        const isAuthenticated = await tryAuthentication();
+        if (!isAuthenticated) {
+          console.warn("⚠️ Authentication failed, but continuing anyway");
+          // Don't throw error - try to continue
+        }
 
         const collection = this.getCollection();
         if (!collection) {

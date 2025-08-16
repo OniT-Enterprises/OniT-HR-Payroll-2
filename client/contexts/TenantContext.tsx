@@ -221,47 +221,58 @@ export function TenantProvider({ children }: TenantProviderProps) {
     }
   };
 
-  // Initialize tenant session (auth state listener disabled to prevent watch stream errors)
+  // Initialize tenant session with real Firebase auth
   useEffect(() => {
-    console.log('🔧 TenantProvider initializing (auth listener disabled to prevent Firebase assertion errors)');
+    console.log('🔧 TenantProvider initializing with Firebase authentication');
 
-    // Set initial state - user will need to manually authenticate or we'll use mock mode
-    setCurrentUser(null);
-    setSession(null);
-    setAvailableTenants([]);
-    setLoading(false);
-    setError('Authentication disabled to prevent Firebase errors. Using demo mode.');
+    const unsubscribe = auth.onAuthStateChanged(async (user) => {
+      try {
+        setLoading(true);
+        setError(null);
 
-    // For now, we'll use a mock tenant session to allow the app to function
-    const mockSession: TenantSession = {
-      tid: 'demo-tenant',
-      role: 'owner',
-      modules: ['hiring', 'staff', 'timeleave', 'performance', 'payroll', 'reports'],
-      config: {
-        id: 'demo-tenant',
-        name: 'Demo Company',
-        createdAt: new Date(),
-        updatedAt: new Date(),
-      },
-      member: {
-        uid: 'demo-user',
-        role: 'owner',
-        modules: ['hiring', 'staff', 'timeleave', 'performance', 'payroll', 'reports'],
-        email: 'demo@example.com',
-        displayName: 'Demo User',
-        joinedAt: new Date(),
-        lastActiveAt: new Date(),
-      },
-    };
+        if (user) {
+          console.log('✅ User authenticated:', user.email);
+          setCurrentUser(user);
 
-    setSession(mockSession);
-    setLoading(false);
+          // Load available tenants
+          const tenants = await loadAvailableTenants(user);
+          setAvailableTenants(tenants);
 
-    console.log('✅ TenantProvider initialized with demo session');
+          // Try to restore previous tenant or use first available
+          const savedTenantId = localStorage.getItem('currentTenantId');
+          const targetTenant = savedTenantId && tenants.find(t => t.id === savedTenantId)
+            ? savedTenantId
+            : tenants[0]?.id;
 
-    return () => {
-      // No cleanup needed since no listeners are created
-    };
+          if (targetTenant) {
+            try {
+              const session = await loadTenantSession(targetTenant, user);
+              setSession(session);
+              localStorage.setItem('currentTenantId', targetTenant);
+            } catch (error) {
+              console.error('Failed to load tenant session:', error);
+              setError(`Failed to load tenant: ${error}`);
+            }
+          } else {
+            console.warn('No tenants available for user');
+            setError('No tenants available. Contact your administrator.');
+          }
+        } else {
+          console.log('❌ User not authenticated');
+          setCurrentUser(null);
+          setSession(null);
+          setAvailableTenants([]);
+          localStorage.removeItem('currentTenantId');
+        }
+      } catch (error) {
+        console.error('Auth state change error:', error);
+        setError(`Authentication error: ${error}`);
+      } finally {
+        setLoading(false);
+      }
+    });
+
+    return () => unsubscribe();
   }, []);
 
   // Permission helpers

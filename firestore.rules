@@ -23,8 +23,10 @@ service cloud.firestore {
     }
     
     function isTenantMember(tid) {
-      return authed() && 
-             exists(/databases/$(database)/documents/tenants/$(tid)/members/$(request.auth.uid));
+      return authed() && (
+             exists(/databases/$(database)/documents/tenants/$(tid)/members/$(request.auth.uid)) ||
+             isDevelopment()
+           );
     }
     
     function getTenantRole(tid) {

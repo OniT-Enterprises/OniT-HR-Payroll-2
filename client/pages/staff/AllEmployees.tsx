@@ -374,6 +374,135 @@ export default function AllEmployees() {
     navigate(`/hiring/offboarding?employee=${employee.id}`);
   };
 
+  const handleDownloadTemplate = () => {
+    // Create CSV template with headers
+    const headers = [
+      "Employee ID",
+      "First Name",
+      "Last Name",
+      "Email",
+      "Phone",
+      "Department",
+      "Position",
+      "Hire Date (YYYY-MM-DD)",
+      "Employment Type",
+      "Work Location",
+      "Monthly Salary",
+      "Benefits Package",
+      "Street Address",
+      "City",
+      "State",
+      "ZIP Code",
+      "Emergency Contact Name",
+      "Emergency Contact Phone",
+      "Date of Birth (YYYY-MM-DD)",
+      "Status (active/inactive/on_leave)"
+    ];
+
+    // Add example row
+    const exampleRow = [
+      "EMP001",
+      "John",
+      "Doe",
+      "john.doe@company.com",
+      "555-0123",
+      "Engineering",
+      "Software Engineer",
+      "2024-01-15",
+      "Full-time",
+      "Office",
+      "5000",
+      "Basic",
+      "123 Main St",
+      "New York",
+      "NY",
+      "10001",
+      "Jane Doe",
+      "555-0124",
+      "1990-05-15",
+      "active"
+    ];
+
+    const csvContent = [headers.join(","), exampleRow.join(",")].join("\n");
+
+    // Download template
+    const blob = new Blob([csvContent], { type: "text/csv" });
+    const url = window.URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "employee_template.csv";
+    a.click();
+    window.URL.revokeObjectURL(url);
+
+    toast({
+      title: "Template Downloaded",
+      description: "Employee CSV template has been downloaded successfully",
+    });
+  };
+
+  const handleImportCSV = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      try {
+        const csvText = e.target?.result as string;
+        const lines = csvText.split("\n");
+        const headers = lines[0].split(",").map(h => h.trim());
+        const dataLines = lines.slice(1).filter(line => line.trim());
+
+        let successCount = 0;
+        let errorCount = 0;
+
+        dataLines.forEach((line, index) => {
+          try {
+            const values = line.split(",").map(v => v.trim());
+            if (values.length < headers.length) {
+              errorCount++;
+              return;
+            }
+
+            // Basic validation - you would typically process this data
+            // and add it to your employee service
+            const employeeData = {
+              employeeId: values[0],
+              firstName: values[1],
+              lastName: values[2],
+              email: values[3],
+              // ... other fields
+            };
+
+            // Here you would call employeeService.addEmployee(employeeData)
+            // For now, just count as success
+            successCount++;
+          } catch (error) {
+            errorCount++;
+            console.error(`Error processing row ${index + 2}:`, error);
+          }
+        });
+
+        toast({
+          title: "CSV Import Complete",
+          description: `Preview: ${successCount} employees would be imported, ${errorCount} errors found. (Import functionality not fully implemented yet)`,
+          variant: errorCount > 0 ? "destructive" : "default",
+        });
+
+      } catch (error) {
+        toast({
+          title: "Import Error",
+          description: "Failed to parse CSV file. Please check the format.",
+          variant: "destructive",
+        });
+      }
+    };
+
+    reader.readAsText(file);
+
+    // Reset the input value so the same file can be selected again
+    event.target.value = "";
+  };
+
   const incompleteEmployees = getIncompleteEmployees(employees);
 
   if (loading) {

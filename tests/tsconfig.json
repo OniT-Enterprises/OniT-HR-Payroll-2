@@ -15,13 +15,6 @@
     "moduleResolution": "node",
     "allowSyntheticDefaultImports": true
   },
-  "include": [
-    "**/*.ts",
-    "../functions/src/**/*.ts"
-  ],
-  "exclude": [
-    "node_modules",
-    "dist",
-    "../**/node_modules"
-  ]
+  "include": ["**/*.ts", "../functions/src/**/*.ts"],
+  "exclude": ["node_modules", "dist", "../**/node_modules"]
 }

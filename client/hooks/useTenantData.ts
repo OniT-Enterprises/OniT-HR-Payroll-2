@@ -3,9 +3,9 @@
  * All hooks include tenant ID in query keys for proper isolation
  */
 
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { useTenantId } from '@/contexts/TenantContext';
-import * as dataLayer from '@/lib/data';
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { useTenantId } from "@/contexts/TenantContext";
+import * as dataLayer from "@/lib/data";
 import {
   Department,
   Employee,
@@ -19,36 +19,41 @@ import {
   CreateJobRequest,
   ListEmployeesOptions,
   ListShiftsOptions,
-} from '@/types/tenant';
+} from "@/types/tenant";
 
 // ============================================================================
 // QUERY KEY FACTORIES
 // ============================================================================
 
 export const tenantKeys = {
-  all: ['tenant'] as const,
-  tenant: (tid: string) => ['tenant', tid] as const,
-  config: (tid: string) => ['tenant', tid, 'config'] as const,
-  members: (tid: string) => ['tenant', tid, 'members'] as const,
-  member: (tid: string, uid: string) => ['tenant', tid, 'members', uid] as const,
-  
+  all: ["tenant"] as const,
+  tenant: (tid: string) => ["tenant", tid] as const,
+  config: (tid: string) => ["tenant", tid, "config"] as const,
+  members: (tid: string) => ["tenant", tid, "members"] as const,
+  member: (tid: string, uid: string) =>
+    ["tenant", tid, "members", uid] as const,
+
   // Core entities
-  departments: (tid: string) => ['tenant', tid, 'departments'] as const,
-  department: (tid: string, deptId: string) => ['tenant', tid, 'departments', deptId] as const,
-  employees: (tid: string, options?: ListEmployeesOptions) => 
-    ['tenant', tid, 'employees', options] as const,
-  employee: (tid: string, empId: string) => ['tenant', tid, 'employees', empId] as const,
-  positions: (tid: string) => ['tenant', tid, 'positions'] as const,
-  
+  departments: (tid: string) => ["tenant", tid, "departments"] as const,
+  department: (tid: string, deptId: string) =>
+    ["tenant", tid, "departments", deptId] as const,
+  employees: (tid: string, options?: ListEmployeesOptions) =>
+    ["tenant", tid, "employees", options] as const,
+  employee: (tid: string, empId: string) =>
+    ["tenant", tid, "employees", empId] as const,
+  positions: (tid: string) => ["tenant", tid, "positions"] as const,
+
   // Hiring
-  jobs: (tid: string, deptId?: string) => ['tenant', tid, 'jobs', deptId] as const,
-  candidates: (tid: string, jobId?: string) => ['tenant', tid, 'candidates', jobId] as const,
-  
+  jobs: (tid: string, deptId?: string) =>
+    ["tenant", tid, "jobs", deptId] as const,
+  candidates: (tid: string, jobId?: string) =>
+    ["tenant", tid, "candidates", jobId] as const,
+
   // Time & Leave
-  shifts: (tid: string, ym: string, options?: ListShiftsOptions) => 
-    ['tenant', tid, 'shifts', ym, options] as const,
-  timesheet: (tid: string, empId: string, weekIso: string) => 
-    ['tenant', tid, 'timesheets', empId, weekIso] as const,
+  shifts: (tid: string, ym: string, options?: ListShiftsOptions) =>
+    ["tenant", tid, "shifts", ym, options] as const,
+  timesheet: (tid: string, empId: string, weekIso: string) =>
+    ["tenant", tid, "timesheets", empId, weekIso] as const,
 };
 
 // ============================================================================
@@ -57,7 +62,7 @@ export const tenantKeys = {
 
 export function useTenantConfig() {
   const tenantId = useTenantId();
-  
+
   return useQuery({
     queryKey: tenantKeys.config(tenantId),
     queryFn: () => dataLayer.getTenantConfig(tenantId),
@@ -68,9 +73,9 @@ export function useTenantConfig() {
 export function useUpdateTenantConfig() {
   const queryClient = useQueryClient();
   const tenantId = useTenantId();
-  
+
   return useMutation({
-    mutationFn: (config: Partial<TenantConfig>) => 
+    mutationFn: (config: Partial<TenantConfig>) =>
       dataLayer.updateTenantConfig(tenantId, config),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: tenantKeys.config(tenantId) });
@@ -84,7 +89,7 @@ export function useUpdateTenantConfig() {
 
 export function useTenantMembers() {
   const tenantId = useTenantId();
-  
+
   return useQuery({
     queryKey: tenantKeys.members(tenantId),
     queryFn: () => dataLayer.listTenantMembers(tenantId),
@@ -94,7 +99,7 @@ export function useTenantMembers() {
 
 export function useTenantMember(uid: string) {
   const tenantId = useTenantId();
-  
+
   return useQuery({
     queryKey: tenantKeys.member(tenantId, uid),
     queryFn: () => dataLayer.getTenantMember(tenantId, uid),
@@ -109,7 +114,7 @@ export function useTenantMember(uid: string) {
 
 export function useDepartments() {
   const tenantId = useTenantId();
-  
+
   return useQuery({
     queryKey: tenantKeys.departments(tenantId),
     queryFn: () => dataLayer.listDepartments(tenantId),
@@ -119,7 +124,7 @@ export function useDepartments() {
 
 export function useDepartment(deptId: string) {
   const tenantId = useTenantId();
-  
+
   return useQuery({
     queryKey: tenantKeys.department(tenantId, deptId),
     queryFn: () => dataLayer.getDepartment(tenantId, deptId),
@@ -131,12 +136,15 @@ export function useDepartment(deptId: string) {
 export function useCreateDepartment() {
   const queryClient = useQueryClient();
   const tenantId = useTenantId();
-  
+
   return useMutation({
-    mutationFn: (department: Omit<Department, 'id' | 'createdAt' | 'updatedAt'>) =>
-      dataLayer.createDepartment(tenantId, department),
+    mutationFn: (
+      department: Omit<Department, "id" | "createdAt" | "updatedAt">,
+    ) => dataLayer.createDepartment(tenantId, department),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: tenantKeys.departments(tenantId) });
+      queryClient.invalidateQueries({
+        queryKey: tenantKeys.departments(tenantId),
+      });
     },
   });
 }
@@ -147,7 +155,7 @@ export function useCreateDepartment() {
 
 export function useEmployees(options: ListEmployeesOptions = {}) {
   const tenantId = useTenantId();
-  
+
   return useQuery({
     queryKey: tenantKeys.employees(tenantId, options),
     queryFn: () => dataLayer.listEmployees(tenantId, options),
@@ -161,7 +169,7 @@ export function useEmployeesByDepartment(departmentId: string) {
 
 export function useEmployee(empId: string) {
   const tenantId = useTenantId();
-  
+
   return useQuery({
     queryKey: tenantKeys.employee(tenantId, empId),
     queryFn: () => dataLayer.getEmployee(tenantId, empId),
@@ -173,13 +181,15 @@ export function useEmployee(empId: string) {
 export function useCreateEmployee() {
   const queryClient = useQueryClient();
   const tenantId = useTenantId();
-  
+
   return useMutation({
-    mutationFn: (employee: Omit<Employee, 'id' | 'createdAt' | 'updatedAt'>) =>
+    mutationFn: (employee: Omit<Employee, "id" | "createdAt" | "updatedAt">) =>
       dataLayer.createEmployee(tenantId, employee),
     onSuccess: () => {
       // Invalidate all employee queries
-      queryClient.invalidateQueries({ queryKey: tenantKeys.employees(tenantId) });
+      queryClient.invalidateQueries({
+        queryKey: tenantKeys.employees(tenantId),
+      });
     },
   });
 }
@@ -190,7 +200,7 @@ export function useCreateEmployee() {
 
 export function usePositions() {
   const tenantId = useTenantId();
-  
+
   return useQuery({
     queryKey: tenantKeys.positions(tenantId),
     queryFn: () => dataLayer.listPositions(tenantId),
@@ -204,7 +214,7 @@ export function usePositions() {
 
 export function useJobs(departmentId?: string) {
   const tenantId = useTenantId();
-  
+
   return useQuery({
     queryKey: tenantKeys.jobs(tenantId, departmentId),
     queryFn: () => dataLayer.listJobs(tenantId, departmentId),
@@ -215,9 +225,10 @@ export function useJobs(departmentId?: string) {
 export function useCreateJob() {
   const queryClient = useQueryClient();
   const tenantId = useTenantId();
-  
+
   return useMutation({
-    mutationFn: (jobData: CreateJobRequest) => dataLayer.createJob(tenantId, jobData),
+    mutationFn: (jobData: CreateJobRequest) =>
+      dataLayer.createJob(tenantId, jobData),
     onSuccess: () => {
       // Invalidate all job queries
       queryClient.invalidateQueries({ queryKey: tenantKeys.jobs(tenantId) });
@@ -231,7 +242,7 @@ export function useCreateJob() {
 
 export function useCandidates(jobId?: string) {
   const tenantId = useTenantId();
-  
+
   return useQuery({
     queryKey: tenantKeys.candidates(tenantId, jobId),
     queryFn: () => dataLayer.listCandidates(tenantId, jobId),
@@ -245,7 +256,7 @@ export function useCandidates(jobId?: string) {
 
 export function useShifts(yearMonth: string, options: ListShiftsOptions = {}) {
   const tenantId = useTenantId();
-  
+
   return useQuery({
     queryKey: tenantKeys.shifts(tenantId, yearMonth, options),
     queryFn: () => dataLayer.listShifts(tenantId, yearMonth, options),
@@ -260,7 +271,7 @@ export function useShifts(yearMonth: string, options: ListShiftsOptions = {}) {
 
 export function useTimesheet(empId: string, weekIso: string) {
   const tenantId = useTenantId();
-  
+
   return useQuery({
     queryKey: tenantKeys.timesheet(tenantId, empId, weekIso),
     queryFn: () => dataLayer.getTimesheet(tenantId, empId, weekIso),
@@ -278,7 +289,7 @@ export function useTimesheet(empId: string, weekIso: string) {
  */
 export function useInvalidateAllTenantData() {
   const queryClient = useQueryClient();
-  
+
   return (tenantId: string) => {
     queryClient.invalidateQueries({ queryKey: tenantKeys.tenant(tenantId) });
   };
@@ -290,7 +301,7 @@ export function useInvalidateAllTenantData() {
 export function usePrefetchTenantData() {
   const queryClient = useQueryClient();
   const tenantId = useTenantId();
-  
+
   return () => {
     // Prefetch departments (used in many dropdowns)
     queryClient.prefetchQuery({
@@ -298,7 +309,7 @@ export function usePrefetchTenantData() {
       queryFn: () => dataLayer.listDepartments(tenantId),
       staleTime: 10 * 60 * 1000,
     });
-    
+
     // Prefetch positions (used in hiring and employee management)
     queryClient.prefetchQuery({
       queryKey: tenantKeys.positions(tenantId),
@@ -314,20 +325,21 @@ export function usePrefetchTenantData() {
 export function useOptimisticUpdates() {
   const queryClient = useQueryClient();
   const tenantId = useTenantId();
-  
+
   return {
     updateEmployee: (empId: string, updates: Partial<Employee>) => {
       queryClient.setQueryData(
         tenantKeys.employee(tenantId, empId),
-        (old: Employee | undefined) => old ? { ...old, ...updates } : undefined
+        (old: Employee | undefined) =>
+          old ? { ...old, ...updates } : undefined,
       );
     },
-    
+
     updateJob: (jobId: string, updates: Partial<Job>) => {
       queryClient.setQueryData(
         tenantKeys.jobs(tenantId),
-        (old: Job[] | undefined) => 
-          old?.map(job => job.id === jobId ? { ...job, ...updates } : job)
+        (old: Job[] | undefined) =>
+          old?.map((job) => (job.id === jobId ? { ...job, ...updates } : job)),
       );
     },
   };

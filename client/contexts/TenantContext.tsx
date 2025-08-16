@@ -1,9 +1,22 @@
-import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
-import { User } from 'firebase/auth';
-import { doc, getDoc } from 'firebase/firestore';
-import { db, auth } from '@/lib/firebase';
-import { paths } from '@/lib/paths';
-import { TenantContext, TenantConfig, TenantMember, ModuleName, UserRole, CustomClaims } from '@/types/tenant';
+import React, {
+  createContext,
+  useContext,
+  useState,
+  useEffect,
+  ReactNode,
+} from "react";
+import { User } from "firebase/auth";
+import { doc, getDoc } from "firebase/firestore";
+import { db, auth } from "@/lib/firebase";
+import { paths } from "@/lib/paths";
+import {
+  TenantContext,
+  TenantConfig,
+  TenantMember,
+  ModuleName,
+  UserRole,
+  CustomClaims,
+} from "@/types/tenant";
 
 interface TenantProviderState {
   currentTenant: TenantContext | null;
@@ -19,7 +32,7 @@ const TenantContext = createContext<TenantProviderState | undefined>(undefined);
 export function useTenant() {
   const context = useContext(TenantContext);
   if (context === undefined) {
-    throw new Error('useTenant must be used within a TenantProvider');
+    throw new Error("useTenant must be used within a TenantProvider");
   }
   return context;
 }
@@ -30,67 +43,79 @@ interface TenantProviderProps {
 
 // Default permissions based on role
 const getDefaultPermissions = (role: UserRole, modules?: ModuleName[]) => {
-  const hasModule = (module: ModuleName) => !modules || modules.includes(module);
-  
+  const hasModule = (module: ModuleName) =>
+    !modules || modules.includes(module);
+
   return {
     canRead: (module: ModuleName): boolean => {
       if (!hasModule(module)) return false;
-      
+
       switch (role) {
-        case 'owner':
-        case 'hr-admin':
+        case "owner":
+        case "hr-admin":
           return true;
-        case 'manager':
-          return ['staff', 'hiring', 'timeleave', 'performance', 'reports'].includes(module);
-        case 'viewer':
-          return ['staff', 'reports'].includes(module);
+        case "manager":
+          return [
+            "staff",
+            "hiring",
+            "timeleave",
+            "performance",
+            "reports",
+          ].includes(module);
+        case "viewer":
+          return ["staff", "reports"].includes(module);
         default:
           return false;
       }
     },
-    
+
     canWrite: (module: ModuleName): boolean => {
       if (!hasModule(module)) return false;
-      
+
       switch (role) {
-        case 'owner':
-        case 'hr-admin':
+        case "owner":
+        case "hr-admin":
           return true;
-        case 'manager':
-          return ['hiring', 'timeleave', 'performance'].includes(module);
-        case 'viewer':
+        case "manager":
+          return ["hiring", "timeleave", "performance"].includes(module);
+        case "viewer":
           return false;
         default:
           return false;
       }
     },
-    
+
     canManageDepartment: (departmentId: string): boolean => {
       // TODO: Implement department-specific permissions based on employee's managerId
-      return role === 'owner' || role === 'hr-admin';
+      return role === "owner" || role === "hr-admin";
     },
-    
+
     canManageEmployee: (employeeId: string): boolean => {
       // TODO: Implement employee-specific permissions based on reporting hierarchy
-      return role === 'owner' || role === 'hr-admin';
+      return role === "owner" || role === "hr-admin";
     },
   };
 };
 
 export function TenantProvider({ children }: TenantProviderProps) {
-  const [currentTenant, setCurrentTenant] = useState<TenantContext | null>(null);
+  const [currentTenant, setCurrentTenant] = useState<TenantContext | null>(
+    null,
+  );
   const [availableTenants, setAvailableTenants] = useState<string[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  const loadTenantData = async (tenantId: string, user: User): Promise<TenantContext> => {
+  const loadTenantData = async (
+    tenantId: string,
+    user: User,
+  ): Promise<TenantContext> => {
     try {
       // Load tenant config
       const configDoc = await getDoc(doc(db, paths.settings(tenantId)));
       if (!configDoc.exists()) {
         throw new Error(`Tenant configuration not found for ${tenantId}`);
       }
-      
+
       const config = {
         id: configDoc.id,
         ...configDoc.data(),
@@ -103,7 +128,7 @@ export function TenantProvider({ children }: TenantProviderProps) {
       if (!memberDoc.exists()) {
         throw new Error(`User is not a member of tenant ${tenantId}`);
       }
-      
+
       const member = {
         id: memberDoc.id,
         ...memberDoc.data(),
@@ -120,8 +145,10 @@ export function TenantProvider({ children }: TenantProviderProps) {
         permissions,
       };
     } catch (err) {
-      console.error('Error loading tenant data:', err);
-      throw new Error(`Failed to load tenant data: ${err instanceof Error ? err.message : 'Unknown error'}`);
+      console.error("Error loading tenant data:", err);
+      throw new Error(
+        `Failed to load tenant data: ${err instanceof Error ? err.message : "Unknown error"}`,
+      );
     }
   };
 
@@ -130,17 +157,17 @@ export function TenantProvider({ children }: TenantProviderProps) {
       // Get tenants from custom claims
       const tokenResult = await user.getIdTokenResult();
       const customClaims = tokenResult.claims as CustomClaims;
-      
+
       return customClaims.tenants || [];
     } catch (err) {
-      console.error('Error getting available tenants:', err);
+      console.error("Error getting available tenants:", err);
       return [];
     }
   };
 
   const switchTenant = async (tenantId: string): Promise<void> => {
     if (!auth.currentUser) {
-      throw new Error('No authenticated user');
+      throw new Error("No authenticated user");
     }
 
     setLoading(true);
@@ -149,11 +176,12 @@ export function TenantProvider({ children }: TenantProviderProps) {
     try {
       const tenantData = await loadTenantData(tenantId, auth.currentUser);
       setCurrentTenant(tenantData);
-      
+
       // Store current tenant in localStorage for persistence
-      localStorage.setItem('currentTenantId', tenantId);
+      localStorage.setItem("currentTenantId", tenantId);
     } catch (err) {
-      const errorMessage = err instanceof Error ? err.message : 'Failed to switch tenant';
+      const errorMessage =
+        err instanceof Error ? err.message : "Failed to switch tenant";
       setError(errorMessage);
       throw new Error(errorMessage);
     } finally {
@@ -163,13 +191,18 @@ export function TenantProvider({ children }: TenantProviderProps) {
 
   const refreshTenant = async (): Promise<void> => {
     if (!currentTenant || !auth.currentUser) return;
-    
+
     try {
-      const tenantData = await loadTenantData(currentTenant.tenantId, auth.currentUser);
+      const tenantData = await loadTenantData(
+        currentTenant.tenantId,
+        auth.currentUser,
+      );
       setCurrentTenant(tenantData);
     } catch (err) {
-      console.error('Error refreshing tenant data:', err);
-      setError(err instanceof Error ? err.message : 'Failed to refresh tenant data');
+      console.error("Error refreshing tenant data:", err);
+      setError(
+        err instanceof Error ? err.message : "Failed to refresh tenant data",
+      );
     }
   };
 
@@ -192,23 +225,28 @@ export function TenantProvider({ children }: TenantProviderProps) {
         setAvailableTenants(tenants);
 
         if (tenants.length === 0) {
-          setError('No accessible tenants found');
+          setError("No accessible tenants found");
           setLoading(false);
           return;
         }
 
         // Try to restore previous tenant or use first available
-        const savedTenantId = localStorage.getItem('currentTenantId');
-        const targetTenantId = savedTenantId && tenants.includes(savedTenantId) 
-          ? savedTenantId 
-          : tenants[0];
+        const savedTenantId = localStorage.getItem("currentTenantId");
+        const targetTenantId =
+          savedTenantId && tenants.includes(savedTenantId)
+            ? savedTenantId
+            : tenants[0];
 
         const tenantData = await loadTenantData(targetTenantId, user);
         setCurrentTenant(tenantData);
-        localStorage.setItem('currentTenantId', targetTenantId);
+        localStorage.setItem("currentTenantId", targetTenantId);
       } catch (err) {
-        console.error('Error initializing tenant context:', err);
-        setError(err instanceof Error ? err.message : 'Failed to initialize tenant context');
+        console.error("Error initializing tenant context:", err);
+        setError(
+          err instanceof Error
+            ? err.message
+            : "Failed to initialize tenant context",
+        );
       } finally {
         setLoading(false);
       }
@@ -227,28 +265,26 @@ export function TenantProvider({ children }: TenantProviderProps) {
   };
 
   return (
-    <TenantContext.Provider value={value}>
-      {children}
-    </TenantContext.Provider>
+    <TenantContext.Provider value={value}>{children}</TenantContext.Provider>
   );
 }
 
 // Helper hook to ensure tenant is available
 export function useRequiredTenant(): TenantContext {
   const { currentTenant, loading, error } = useTenant();
-  
+
   if (loading) {
-    throw new Error('Tenant context is still loading');
+    throw new Error("Tenant context is still loading");
   }
-  
+
   if (error) {
     throw new Error(`Tenant context error: ${error}`);
   }
-  
+
   if (!currentTenant) {
-    throw new Error('No tenant selected');
+    throw new Error("No tenant selected");
   }
-  
+
   return currentTenant;
 }
 

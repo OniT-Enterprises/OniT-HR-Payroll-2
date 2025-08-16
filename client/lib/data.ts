@@ -17,9 +17,9 @@ import {
   limit,
   serverTimestamp,
   QueryConstraint,
-} from 'firebase/firestore';
-import { db } from '@/lib/firebase';
-import { paths } from '@/lib/paths';
+} from "firebase/firestore";
+import { db } from "@/lib/firebase";
+import { paths } from "@/lib/paths";
 import {
   Department,
   Employee,
@@ -41,7 +41,7 @@ import {
   CreateJobRequest,
   CreateOfferRequest,
   CreateShiftRequest,
-} from '@/types/tenant';
+} from "@/types/tenant";
 
 // ============================================================================
 // ERROR HANDLING
@@ -52,20 +52,27 @@ export class TenantDataError extends Error {
     message: string,
     public tenantId: string,
     public operation: string,
-    public originalError?: Error
+    public originalError?: Error,
   ) {
     super(message);
-    this.name = 'TenantDataError';
+    this.name = "TenantDataError";
   }
 }
 
-const handleFirestoreError = (error: Error, tenantId: string, operation: string): never => {
-  console.error(`Firestore error in ${operation} for tenant ${tenantId}:`, error);
+const handleFirestoreError = (
+  error: Error,
+  tenantId: string,
+  operation: string,
+): never => {
+  console.error(
+    `Firestore error in ${operation} for tenant ${tenantId}:`,
+    error,
+  );
   throw new TenantDataError(
     `Failed to ${operation}: ${error.message}`,
     tenantId,
     operation,
-    error
+    error,
   );
 };
 
@@ -73,15 +80,17 @@ const handleFirestoreError = (error: Error, tenantId: string, operation: string)
 // TENANT CONFIGURATION
 // ============================================================================
 
-export async function getTenantConfig(tenantId: string): Promise<TenantConfig | null> {
+export async function getTenantConfig(
+  tenantId: string,
+): Promise<TenantConfig | null> {
   try {
     const docRef = doc(db, paths.settings(tenantId));
     const docSnap = await getDoc(docRef);
-    
+
     if (!docSnap.exists()) {
       return null;
     }
-    
+
     const data = docSnap.data();
     return {
       ...data,
@@ -89,13 +98,13 @@ export async function getTenantConfig(tenantId: string): Promise<TenantConfig | 
       updatedAt: data.updatedAt?.toDate() || new Date(),
     } as TenantConfig;
   } catch (error) {
-    handleFirestoreError(error as Error, tenantId, 'get tenant config');
+    handleFirestoreError(error as Error, tenantId, "get tenant config");
   }
 }
 
 export async function updateTenantConfig(
   tenantId: string,
-  config: Partial<TenantConfig>
+  config: Partial<TenantConfig>,
 ): Promise<void> {
   try {
     const docRef = doc(db, paths.settings(tenantId));
@@ -104,7 +113,7 @@ export async function updateTenantConfig(
       updatedAt: serverTimestamp(),
     });
   } catch (error) {
-    handleFirestoreError(error as Error, tenantId, 'update tenant config');
+    handleFirestoreError(error as Error, tenantId, "update tenant config");
   }
 }
 
@@ -112,15 +121,18 @@ export async function updateTenantConfig(
 // MEMBERS
 // ============================================================================
 
-export async function getTenantMember(tenantId: string, uid: string): Promise<TenantMember | null> {
+export async function getTenantMember(
+  tenantId: string,
+  uid: string,
+): Promise<TenantMember | null> {
   try {
     const docRef = doc(db, paths.member(tenantId, uid));
     const docSnap = await getDoc(docRef);
-    
+
     if (!docSnap.exists()) {
       return null;
     }
-    
+
     const data = docSnap.data();
     return {
       id: docSnap.id,
@@ -129,15 +141,19 @@ export async function getTenantMember(tenantId: string, uid: string): Promise<Te
       updatedAt: data.updatedAt?.toDate() || new Date(),
     } as TenantMember;
   } catch (error) {
-    handleFirestoreError(error as Error, tenantId, 'get tenant member');
+    handleFirestoreError(error as Error, tenantId, "get tenant member");
   }
 }
 
-export async function listTenantMembers(tenantId: string): Promise<TenantMember[]> {
+export async function listTenantMembers(
+  tenantId: string,
+): Promise<TenantMember[]> {
   try {
     const colRef = collection(db, paths.members(tenantId));
-    const snapshot = await getDocs(query(colRef, orderBy('role'), orderBy('createdAt')));
-    
+    const snapshot = await getDocs(
+      query(colRef, orderBy("role"), orderBy("createdAt")),
+    );
+
     return snapshot.docs.map((doc) => {
       const data = doc.data();
       return {
@@ -148,7 +164,7 @@ export async function listTenantMembers(tenantId: string): Promise<TenantMember[
       } as TenantMember;
     });
   } catch (error) {
-    handleFirestoreError(error as Error, tenantId, 'list tenant members');
+    handleFirestoreError(error as Error, tenantId, "list tenant members");
   }
 }
 
@@ -159,8 +175,8 @@ export async function listTenantMembers(tenantId: string): Promise<TenantMember[
 export async function listDepartments(tenantId: string): Promise<Department[]> {
   try {
     const colRef = collection(db, paths.departments(tenantId));
-    const snapshot = await getDocs(query(colRef, orderBy('name')));
-    
+    const snapshot = await getDocs(query(colRef, orderBy("name")));
+
     return snapshot.docs.map((doc) => {
       const data = doc.data();
       return {
@@ -171,19 +187,22 @@ export async function listDepartments(tenantId: string): Promise<Department[]> {
       } as Department;
     });
   } catch (error) {
-    handleFirestoreError(error as Error, tenantId, 'list departments');
+    handleFirestoreError(error as Error, tenantId, "list departments");
   }
 }
 
-export async function getDepartment(tenantId: string, deptId: string): Promise<Department | null> {
+export async function getDepartment(
+  tenantId: string,
+  deptId: string,
+): Promise<Department | null> {
   try {
     const docRef = doc(db, paths.department(tenantId, deptId));
     const docSnap = await getDoc(docRef);
-    
+
     if (!docSnap.exists()) {
       return null;
     }
-    
+
     const data = docSnap.data();
     return {
       id: docSnap.id,
@@ -192,13 +211,13 @@ export async function getDepartment(tenantId: string, deptId: string): Promise<D
       updatedAt: data.updatedAt?.toDate() || new Date(),
     } as Department;
   } catch (error) {
-    handleFirestoreError(error as Error, tenantId, 'get department');
+    handleFirestoreError(error as Error, tenantId, "get department");
   }
 }
 
 export async function createDepartment(
   tenantId: string,
-  department: Omit<Department, 'id' | 'createdAt' | 'updatedAt'>
+  department: Omit<Department, "id" | "createdAt" | "updatedAt">,
 ): Promise<string> {
   try {
     const colRef = collection(db, paths.departments(tenantId));
@@ -209,7 +228,7 @@ export async function createDepartment(
     });
     return docRef.id;
   } catch (error) {
-    handleFirestoreError(error as Error, tenantId, 'create department');
+    handleFirestoreError(error as Error, tenantId, "create department");
   }
 }
 
@@ -219,39 +238,39 @@ export async function createDepartment(
 
 export interface ListEmployeesOptions {
   departmentId?: string;
-  status?: 'active' | 'inactive' | 'terminated';
+  status?: "active" | "inactive" | "terminated";
   managerId?: string;
   limit?: number;
 }
 
 export async function listEmployees(
   tenantId: string,
-  options: ListEmployeesOptions = {}
+  options: ListEmployeesOptions = {},
 ): Promise<Employee[]> {
   try {
     const colRef = collection(db, paths.employees(tenantId));
     const constraints: QueryConstraint[] = [];
-    
+
     if (options.departmentId) {
-      constraints.push(where('departmentId', '==', options.departmentId));
+      constraints.push(where("departmentId", "==", options.departmentId));
     }
-    
+
     if (options.status) {
-      constraints.push(where('status', '==', options.status));
+      constraints.push(where("status", "==", options.status));
     }
-    
+
     if (options.managerId) {
-      constraints.push(where('managerId', '==', options.managerId));
+      constraints.push(where("managerId", "==", options.managerId));
     }
-    
-    constraints.push(orderBy('displayName'));
-    
+
+    constraints.push(orderBy("displayName"));
+
     if (options.limit) {
       constraints.push(limit(options.limit));
     }
-    
+
     const snapshot = await getDocs(query(colRef, ...constraints));
-    
+
     return snapshot.docs.map((doc) => {
       const data = doc.data();
       return {
@@ -262,19 +281,22 @@ export async function listEmployees(
       } as Employee;
     });
   } catch (error) {
-    handleFirestoreError(error as Error, tenantId, 'list employees');
+    handleFirestoreError(error as Error, tenantId, "list employees");
   }
 }
 
-export async function getEmployee(tenantId: string, empId: string): Promise<Employee | null> {
+export async function getEmployee(
+  tenantId: string,
+  empId: string,
+): Promise<Employee | null> {
   try {
     const docRef = doc(db, paths.employee(tenantId, empId));
     const docSnap = await getDoc(docRef);
-    
+
     if (!docSnap.exists()) {
       return null;
     }
-    
+
     const data = docSnap.data();
     return {
       id: docSnap.id,
@@ -283,13 +305,13 @@ export async function getEmployee(tenantId: string, empId: string): Promise<Empl
       updatedAt: data.updatedAt?.toDate() || new Date(),
     } as Employee;
   } catch (error) {
-    handleFirestoreError(error as Error, tenantId, 'get employee');
+    handleFirestoreError(error as Error, tenantId, "get employee");
   }
 }
 
 export async function createEmployee(
   tenantId: string,
-  employee: Omit<Employee, 'id' | 'createdAt' | 'updatedAt'>
+  employee: Omit<Employee, "id" | "createdAt" | "updatedAt">,
 ): Promise<string> {
   try {
     const colRef = collection(db, paths.employees(tenantId));
@@ -300,7 +322,7 @@ export async function createEmployee(
     });
     return docRef.id;
   } catch (error) {
-    handleFirestoreError(error as Error, tenantId, 'create employee');
+    handleFirestoreError(error as Error, tenantId, "create employee");
   }
 }
 
@@ -311,8 +333,8 @@ export async function createEmployee(
 export async function listPositions(tenantId: string): Promise<Position[]> {
   try {
     const colRef = collection(db, paths.positions(tenantId));
-    const snapshot = await getDocs(query(colRef, orderBy('title')));
-    
+    const snapshot = await getDocs(query(colRef, orderBy("title")));
+
     return snapshot.docs.map((doc) => {
       const data = doc.data();
       return {
@@ -323,7 +345,7 @@ export async function listPositions(tenantId: string): Promise<Position[]> {
       } as Position;
     });
   } catch (error) {
-    handleFirestoreError(error as Error, tenantId, 'list positions');
+    handleFirestoreError(error as Error, tenantId, "list positions");
   }
 }
 
@@ -331,19 +353,22 @@ export async function listPositions(tenantId: string): Promise<Position[]> {
 // JOBS (HIRING MODULE)
 // ============================================================================
 
-export async function listJobs(tenantId: string, departmentId?: string): Promise<Job[]> {
+export async function listJobs(
+  tenantId: string,
+  departmentId?: string,
+): Promise<Job[]> {
   try {
     const colRef = collection(db, paths.jobs(tenantId));
     const constraints: QueryConstraint[] = [];
-    
+
     if (departmentId) {
-      constraints.push(where('departmentId', '==', departmentId));
+      constraints.push(where("departmentId", "==", departmentId));
     }
-    
-    constraints.push(orderBy('createdAt', 'desc'));
-    
+
+    constraints.push(orderBy("createdAt", "desc"));
+
     const snapshot = await getDocs(query(colRef, ...constraints));
-    
+
     return snapshot.docs.map((doc) => {
       const data = doc.data();
       return {
@@ -354,42 +379,50 @@ export async function listJobs(tenantId: string, departmentId?: string): Promise
       } as Job;
     });
   } catch (error) {
-    handleFirestoreError(error as Error, tenantId, 'list jobs');
+    handleFirestoreError(error as Error, tenantId, "list jobs");
   }
 }
 
-export async function createJob(tenantId: string, jobData: CreateJobRequest): Promise<string> {
+export async function createJob(
+  tenantId: string,
+  jobData: CreateJobRequest,
+): Promise<string> {
   try {
     // Validate that hiring manager belongs to the selected department
     const hiringManager = await getEmployee(tenantId, jobData.hiringManagerId);
     if (!hiringManager) {
-      throw new Error('Hiring manager not found');
+      throw new Error("Hiring manager not found");
     }
-    
+
     if (hiringManager.departmentId !== jobData.departmentId) {
-      throw new Error('Hiring manager must belong to the selected department');
+      throw new Error("Hiring manager must belong to the selected department");
     }
-    
+
     // Validate approver if specific mode
-    if (jobData.approverMode === 'specific' && !jobData.approverId) {
-      throw new Error('Approver ID is required for specific approver mode');
+    if (jobData.approverMode === "specific" && !jobData.approverId) {
+      throw new Error("Approver ID is required for specific approver mode");
     }
-    
-    if (jobData.approverMode === 'department' && !jobData.approverDepartmentId) {
-      throw new Error('Approver department ID is required for department approver mode');
+
+    if (
+      jobData.approverMode === "department" &&
+      !jobData.approverDepartmentId
+    ) {
+      throw new Error(
+        "Approver department ID is required for department approver mode",
+      );
     }
-    
+
     const colRef = collection(db, paths.jobs(tenantId));
     const docRef = await addDoc(colRef, {
       ...jobData,
-      status: 'draft',
+      status: "draft",
       createdAt: serverTimestamp(),
       updatedAt: serverTimestamp(),
     });
-    
+
     return docRef.id;
   } catch (error) {
-    handleFirestoreError(error as Error, tenantId, 'create job');
+    handleFirestoreError(error as Error, tenantId, "create job");
   }
 }
 
@@ -397,19 +430,22 @@ export async function createJob(tenantId: string, jobData: CreateJobRequest): Pr
 // CANDIDATES
 // ============================================================================
 
-export async function listCandidates(tenantId: string, jobId?: string): Promise<Candidate[]> {
+export async function listCandidates(
+  tenantId: string,
+  jobId?: string,
+): Promise<Candidate[]> {
   try {
     const colRef = collection(db, paths.candidates(tenantId));
     const constraints: QueryConstraint[] = [];
-    
+
     if (jobId) {
-      constraints.push(where('jobId', '==', jobId));
+      constraints.push(where("jobId", "==", jobId));
     }
-    
-    constraints.push(orderBy('createdAt', 'desc'));
-    
+
+    constraints.push(orderBy("createdAt", "desc"));
+
     const snapshot = await getDocs(query(colRef, ...constraints));
-    
+
     return snapshot.docs.map((doc) => {
       const data = doc.data();
       return {
@@ -420,7 +456,7 @@ export async function listCandidates(tenantId: string, jobId?: string): Promise<
       } as Candidate;
     });
   } catch (error) {
-    handleFirestoreError(error as Error, tenantId, 'list candidates');
+    handleFirestoreError(error as Error, tenantId, "list candidates");
   }
 }
 
@@ -440,29 +476,29 @@ export interface ListShiftsOptions {
 export async function listShifts(
   tenantId: string,
   yearMonth: string, // YYYY-MM
-  options: ListShiftsOptions = {}
+  options: ListShiftsOptions = {},
 ): Promise<Shift[]> {
   try {
     const colRef = collection(db, paths.rosters(tenantId, yearMonth));
     const constraints: QueryConstraint[] = [];
-    
+
     if (options.employeeId) {
-      constraints.push(where('employeeId', '==', options.employeeId));
+      constraints.push(where("employeeId", "==", options.employeeId));
     }
-    
+
     if (options.dateRange) {
-      constraints.push(where('date', '>=', options.dateRange.start));
-      constraints.push(where('date', '<=', options.dateRange.end));
+      constraints.push(where("date", ">=", options.dateRange.start));
+      constraints.push(where("date", "<=", options.dateRange.end));
     }
-    
-    constraints.push(orderBy('date'), orderBy('start'));
-    
+
+    constraints.push(orderBy("date"), orderBy("start"));
+
     if (options.limit) {
       constraints.push(limit(options.limit));
     }
-    
+
     const snapshot = await getDocs(query(colRef, ...constraints));
-    
+
     return snapshot.docs.map((doc) => {
       const data = doc.data();
       return {
@@ -473,7 +509,7 @@ export async function listShifts(
       } as Shift;
     });
   } catch (error) {
-    handleFirestoreError(error as Error, tenantId, 'list shifts');
+    handleFirestoreError(error as Error, tenantId, "list shifts");
   }
 }
 
@@ -484,17 +520,17 @@ export async function listShifts(
 export async function getTimesheet(
   tenantId: string,
   empId: string,
-  weekIso: string
+  weekIso: string,
 ): Promise<Timesheet | null> {
   try {
     const docId = `${empId}_${weekIso}`;
     const docRef = doc(db, paths.timesheet(tenantId, docId));
     const docSnap = await getDoc(docRef);
-    
+
     if (!docSnap.exists()) {
       return null;
     }
-    
+
     const data = docSnap.data();
     return {
       id: docSnap.id,
@@ -502,7 +538,7 @@ export async function getTimesheet(
       computedAt: data.computedAt?.toDate() || new Date(),
     } as Timesheet;
   } catch (error) {
-    handleFirestoreError(error as Error, tenantId, 'get timesheet');
+    handleFirestoreError(error as Error, tenantId, "get timesheet");
   }
 }
 
@@ -527,9 +563,11 @@ export function generateULID(): string {
 export function getISOWeek(date: Date): string {
   const year = date.getFullYear();
   const start = new Date(year, 0, 1);
-  const days = Math.floor((date.getTime() - start.getTime()) / (24 * 60 * 60 * 1000));
+  const days = Math.floor(
+    (date.getTime() - start.getTime()) / (24 * 60 * 60 * 1000),
+  );
   const week = Math.ceil((days + start.getDay() + 1) / 7);
-  return `${year}-W${week.toString().padStart(2, '0')}`;
+  return `${year}-W${week.toString().padStart(2, "0")}`;
 }
 
 /**
@@ -538,6 +576,6 @@ export function getISOWeek(date: Date): string {
  */
 export function getYearMonth(date: Date): string {
   const year = date.getFullYear();
-  const month = (date.getMonth() + 1).toString().padStart(2, '0');
+  const month = (date.getMonth() + 1).toString().padStart(2, "0");
   return `${year}-${month}`;
 }

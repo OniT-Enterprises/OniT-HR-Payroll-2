@@ -1,11 +1,11 @@
 /**
  * Unit Tests: Leave Approval Function
- * 
+ *
  * Tests the leave approval logic including paid vs unpaid leave handling,
  * balance updates, and shift cancellations.
  */
 
-import { describe, test, expect, beforeEach, jest } from '@jest/globals';
+import { describe, test, expect, beforeEach, jest } from "@jest/globals";
 
 // Mock Firebase modules (similar to timesheet test setup)
 const mockFirestore = {
@@ -39,45 +39,54 @@ const mockQuerySnapshot = {
   empty: true,
 };
 
-jest.mock('firebase-admin/firestore', () => ({
+jest.mock("firebase-admin/firestore", () => ({
   getFirestore: () => mockFirestore,
   FieldValue: {
-    serverTimestamp: () => ({ _methodName: 'FieldValue.serverTimestamp' }),
-    arrayUnion: (value: any) => ({ _methodName: 'FieldValue.arrayUnion', _elements: [value] }),
-    increment: (value: number) => ({ _methodName: 'FieldValue.increment', _operand: value }),
+    serverTimestamp: () => ({ _methodName: "FieldValue.serverTimestamp" }),
+    arrayUnion: (value: any) => ({
+      _methodName: "FieldValue.arrayUnion",
+      _elements: [value],
+    }),
+    increment: (value: number) => ({
+      _methodName: "FieldValue.increment",
+      _operand: value,
+    }),
   },
 }));
 
-jest.mock('firebase-admin/auth', () => ({
+jest.mock("firebase-admin/auth", () => ({
   getAuth: () => ({
     getUser: jest.fn().mockResolvedValue({
-      customClaims: { tenants: ['test-tenant'] },
+      customClaims: { tenants: ["test-tenant"] },
     }),
   }),
 }));
 
-jest.mock('firebase-functions/v2/https', () => ({
+jest.mock("firebase-functions/v2/https", () => ({
   HttpsError: class HttpsError extends Error {
-    constructor(public code: string, message: string) {
+    constructor(
+      public code: string,
+      message: string,
+    ) {
       super(message);
-      this.name = 'HttpsError';
+      this.name = "HttpsError";
     }
   },
 }));
 
 // Import the function under test
-import { approveLeaveRequest } from '../../functions/src/timeleave';
+import { approveLeaveRequest } from "../../functions/src/timeleave";
 
 // Test constants
-const TENANT_ID = 'test-tenant';
-const USER_ID = 'approver-123';
-const EMPLOYEE_ID = 'emp-456';
-const REQUEST_ID = 'leave-req-789';
+const TENANT_ID = "test-tenant";
+const USER_ID = "approver-123";
+const EMPLOYEE_ID = "emp-456";
+const REQUEST_ID = "leave-req-789";
 
-describe('Leave Approval Function', () => {
+describe("Leave Approval Function", () => {
   beforeEach(() => {
     jest.clearAllMocks();
-    
+
     // Setup default mock behaviors
     mockFirestore.collection.mockReturnValue(mockCollection);
     mockFirestore.doc.mockReturnValue(mockDoc);
@@ -90,8 +99,8 @@ describe('Leave Approval Function', () => {
     mockBatch.update.mockReturnValue(mockBatch);
   });
 
-  describe('Authentication and Authorization', () => {
-    test('requires authenticated user', async () => {
+  describe("Authentication and Authorization", () => {
+    test("requires authenticated user", async () => {
       const request = {
         auth: null,
         data: {
@@ -102,10 +111,10 @@ describe('Leave Approval Function', () => {
       };
 
       const result = approveLeaveRequest.handler(request);
-      await expect(result).rejects.toThrow('User must be authenticated');
+      await expect(result).rejects.toThrow("User must be authenticated");
     });
 
-    test('validates tenant access', async () => {
+    test("validates tenant access", async () => {
       const request = {
         auth: { uid: USER_ID },
         data: {
@@ -119,7 +128,7 @@ describe('Leave Approval Function', () => {
       await expect(result).resolves.toBeDefined();
     });
 
-    test('requires valid parameters', async () => {
+    test("requires valid parameters", async () => {
       const request = {
         auth: { uid: USER_ID },
         data: {
@@ -129,12 +138,12 @@ describe('Leave Approval Function', () => {
       };
 
       const result = approveLeaveRequest.handler(request);
-      await expect(result).rejects.toThrow('Missing required parameters');
+      await expect(result).rejects.toThrow("Missing required parameters");
     });
   });
 
-  describe('Leave Request Validation', () => {
-    test('fails when leave request not found', async () => {
+  describe("Leave Request Validation", () => {
+    test("fails when leave request not found", async () => {
       mockDoc.get.mockResolvedValueOnce({
         exists: false,
       });
@@ -149,18 +158,18 @@ describe('Leave Approval Function', () => {
       };
 
       const result = approveLeaveRequest.handler(request);
-      await expect(result).rejects.toThrow('Leave request not found');
+      await expect(result).rejects.toThrow("Leave request not found");
     });
 
-    test('fails when leave request not in pending status', async () => {
+    test("fails when leave request not in pending status", async () => {
       mockDoc.get.mockResolvedValueOnce({
         exists: true,
         data: () => ({
           empId: EMPLOYEE_ID,
-          status: 'approved', // Already approved
-          from: { toDate: () => new Date('2024-02-01') },
-          to: { toDate: () => new Date('2024-02-03') },
-          type: 'vacation',
+          status: "approved", // Already approved
+          from: { toDate: () => new Date("2024-02-01") },
+          to: { toDate: () => new Date("2024-02-03") },
+          type: "vacation",
         }),
       });
 
@@ -174,18 +183,20 @@ describe('Leave Approval Function', () => {
       };
 
       const result = approveLeaveRequest.handler(request);
-      await expect(result).rejects.toThrow('Leave request is not in pending status');
+      await expect(result).rejects.toThrow(
+        "Leave request is not in pending status",
+      );
     });
   });
 
-  describe('Leave Approval Logic', () => {
-    test('successfully approves leave request', async () => {
+  describe("Leave Approval Logic", () => {
+    test("successfully approves leave request", async () => {
       const leaveRequest = {
         empId: EMPLOYEE_ID,
-        status: 'pending',
-        type: 'vacation',
-        from: { toDate: () => new Date('2024-02-01') },
-        to: { toDate: () => new Date('2024-02-03') }, // 3 days
+        status: "pending",
+        type: "vacation",
+        from: { toDate: () => new Date("2024-02-01") },
+        to: { toDate: () => new Date("2024-02-03") }, // 3 days
       };
 
       // Mock leave request
@@ -217,7 +228,7 @@ describe('Leave Approval Function', () => {
           tenantId: TENANT_ID,
           requestId: REQUEST_ID,
           approved: true,
-          note: 'Approved for vacation',
+          note: "Approved for vacation",
         },
       };
 
@@ -225,17 +236,17 @@ describe('Leave Approval Function', () => {
 
       expect(result).toEqual({
         success: true,
-        message: 'Leave request approved successfully',
+        message: "Leave request approved successfully",
       });
 
       // Verify leave request was updated
       expect(mockBatch.update).toHaveBeenCalledWith(
         mockDoc.ref,
         expect.objectContaining({
-          status: 'approved',
+          status: "approved",
           approvedBy: USER_ID,
-          approverNote: 'Approved for vacation',
-        })
+          approverNote: "Approved for vacation",
+        }),
       );
 
       // Verify leave balance was updated
@@ -243,28 +254,30 @@ describe('Leave Approval Function', () => {
         expect.any(Object),
         expect.objectContaining({
           movements: expect.objectContaining({
-            _methodName: 'FieldValue.arrayUnion',
-            _elements: [expect.objectContaining({
-              type: 'usage',
-              days: -3,
-              reason: `Leave request ${REQUEST_ID} approved`,
-            })],
+            _methodName: "FieldValue.arrayUnion",
+            _elements: [
+              expect.objectContaining({
+                type: "usage",
+                days: -3,
+                reason: `Leave request ${REQUEST_ID} approved`,
+              }),
+            ],
           }),
           computedBalance: expect.objectContaining({
-            _methodName: 'FieldValue.increment',
+            _methodName: "FieldValue.increment",
             _operand: -3,
           }),
-        })
+        }),
       );
     });
 
-    test('successfully rejects leave request', async () => {
+    test("successfully rejects leave request", async () => {
       const leaveRequest = {
         empId: EMPLOYEE_ID,
-        status: 'pending',
-        type: 'vacation',
-        from: { toDate: () => new Date('2024-02-01') },
-        to: { toDate: () => new Date('2024-02-03') },
+        status: "pending",
+        type: "vacation",
+        from: { toDate: () => new Date("2024-02-01") },
+        to: { toDate: () => new Date("2024-02-03") },
       };
 
       mockDoc.get.mockResolvedValueOnce({
@@ -278,7 +291,7 @@ describe('Leave Approval Function', () => {
           tenantId: TENANT_ID,
           requestId: REQUEST_ID,
           approved: false,
-          note: 'Insufficient balance',
+          note: "Insufficient balance",
         },
       };
 
@@ -286,17 +299,17 @@ describe('Leave Approval Function', () => {
 
       expect(result).toEqual({
         success: true,
-        message: 'Leave request rejected successfully',
+        message: "Leave request rejected successfully",
       });
 
       // Verify leave request was updated with rejection
       expect(mockBatch.update).toHaveBeenCalledWith(
         mockDoc.ref,
         expect.objectContaining({
-          status: 'rejected',
+          status: "rejected",
           approvedBy: USER_ID,
-          approverNote: 'Insufficient balance',
-        })
+          approverNote: "Insufficient balance",
+        }),
       );
 
       // Should not update leave balance for rejected requests
@@ -304,40 +317,40 @@ describe('Leave Approval Function', () => {
     });
   });
 
-  describe('Leave Balance Updates', () => {
-    test('updates leave balance correctly for different leave types', async () => {
+  describe("Leave Balance Updates", () => {
+    test("updates leave balance correctly for different leave types", async () => {
       const testCases = [
         {
-          type: 'vacation',
+          type: "vacation",
           shouldUpdateBalance: true,
-          description: 'vacation leave',
+          description: "vacation leave",
         },
         {
-          type: 'sick',
+          type: "sick",
           shouldUpdateBalance: true,
-          description: 'sick leave',
+          description: "sick leave",
         },
         {
-          type: 'personal',
+          type: "personal",
           shouldUpdateBalance: true,
-          description: 'personal leave',
+          description: "personal leave",
         },
         {
-          type: 'unpaid',
+          type: "unpaid",
           shouldUpdateBalance: false,
-          description: 'unpaid leave',
+          description: "unpaid leave",
         },
       ];
 
       for (const testCase of testCases) {
         jest.clearAllMocks();
-        
+
         const leaveRequest = {
           empId: EMPLOYEE_ID,
-          status: 'pending',
+          status: "pending",
           type: testCase.type,
-          from: { toDate: () => new Date('2024-02-01') },
-          to: { toDate: () => new Date('2024-02-05') }, // 5 days
+          from: { toDate: () => new Date("2024-02-01") },
+          to: { toDate: () => new Date("2024-02-05") }, // 5 days
         };
 
         mockDoc.get.mockResolvedValueOnce({
@@ -376,22 +389,22 @@ describe('Leave Approval Function', () => {
             expect.any(Object),
             expect.objectContaining({
               computedBalance: expect.objectContaining({
-                _methodName: 'FieldValue.increment',
+                _methodName: "FieldValue.increment",
                 _operand: -5,
               }),
-            })
+            }),
           );
         }
       }
     });
 
-    test('handles missing leave balance document', async () => {
+    test("handles missing leave balance document", async () => {
       const leaveRequest = {
         empId: EMPLOYEE_ID,
-        status: 'pending',
-        type: 'vacation',
-        from: { toDate: () => new Date('2024-02-01') },
-        to: { toDate: () => new Date('2024-02-02') },
+        status: "pending",
+        type: "vacation",
+        from: { toDate: () => new Date("2024-02-01") },
+        to: { toDate: () => new Date("2024-02-02") },
       };
 
       mockDoc.get.mockResolvedValueOnce({
@@ -426,20 +439,20 @@ describe('Leave Approval Function', () => {
       expect(mockBatch.update).toHaveBeenCalledWith(
         mockDoc.ref,
         expect.objectContaining({
-          status: 'approved',
-        })
+          status: "approved",
+        }),
       );
     });
   });
 
-  describe('Shift Cancellation', () => {
-    test('cancels overlapping shifts when leave is approved', async () => {
+  describe("Shift Cancellation", () => {
+    test("cancels overlapping shifts when leave is approved", async () => {
       const leaveRequest = {
         empId: EMPLOYEE_ID,
-        status: 'pending',
-        type: 'vacation',
-        from: { toDate: () => new Date('2024-02-01') },
-        to: { toDate: () => new Date('2024-02-03') },
+        status: "pending",
+        type: "vacation",
+        from: { toDate: () => new Date("2024-02-01") },
+        to: { toDate: () => new Date("2024-02-03") },
       };
 
       mockDoc.get.mockResolvedValueOnce({
@@ -455,23 +468,23 @@ describe('Leave Approval Function', () => {
       // Mock overlapping shifts
       const overlappingShifts = [
         {
-          id: 'shift1',
+          id: "shift1",
           employeeId: EMPLOYEE_ID,
-          date: '2024-02-01',
-          start: '09:00',
-          end: '17:00',
+          date: "2024-02-01",
+          start: "09:00",
+          end: "17:00",
         },
         {
-          id: 'shift2',
+          id: "shift2",
           employeeId: EMPLOYEE_ID,
-          date: '2024-02-02',
-          start: '09:00',
-          end: '17:00',
+          date: "2024-02-02",
+          start: "09:00",
+          end: "17:00",
         },
       ];
 
       mockCollection.get.mockResolvedValueOnce({
-        docs: overlappingShifts.map(shift => ({
+        docs: overlappingShifts.map((shift) => ({
           data: () => shift,
           ref: { id: shift.id },
         })),
@@ -490,29 +503,29 @@ describe('Leave Approval Function', () => {
 
       // Verify shifts were cancelled
       expect(mockBatch.update).toHaveBeenCalledWith(
-        { id: 'shift1' },
+        { id: "shift1" },
         expect.objectContaining({
-          status: 'cancelled',
+          status: "cancelled",
           cancelReason: `Leave request ${REQUEST_ID} approved`,
-        })
+        }),
       );
 
       expect(mockBatch.update).toHaveBeenCalledWith(
-        { id: 'shift2' },
+        { id: "shift2" },
         expect.objectContaining({
-          status: 'cancelled',
+          status: "cancelled",
           cancelReason: `Leave request ${REQUEST_ID} approved`,
-        })
+        }),
       );
     });
 
-    test('handles shifts spanning multiple months', async () => {
+    test("handles shifts spanning multiple months", async () => {
       const leaveRequest = {
         empId: EMPLOYEE_ID,
-        status: 'pending',
-        type: 'vacation',
-        from: { toDate: () => new Date('2024-01-30') }, // End of January
-        to: { toDate: () => new Date('2024-02-02') },   // Start of February
+        status: "pending",
+        type: "vacation",
+        from: { toDate: () => new Date("2024-01-30") }, // End of January
+        to: { toDate: () => new Date("2024-02-02") }, // Start of February
       };
 
       mockDoc.get.mockResolvedValueOnce({
@@ -526,27 +539,31 @@ describe('Leave Approval Function', () => {
       });
 
       // Mock shifts from both months
-      const januaryShifts = [{
-        id: 'jan-shift',
-        employeeId: EMPLOYEE_ID,
-        date: '2024-01-30',
-      }];
+      const januaryShifts = [
+        {
+          id: "jan-shift",
+          employeeId: EMPLOYEE_ID,
+          date: "2024-01-30",
+        },
+      ];
 
-      const februaryShifts = [{
-        id: 'feb-shift',
-        employeeId: EMPLOYEE_ID,
-        date: '2024-02-01',
-      }];
+      const februaryShifts = [
+        {
+          id: "feb-shift",
+          employeeId: EMPLOYEE_ID,
+          date: "2024-02-01",
+        },
+      ];
 
       mockCollection.get
         .mockResolvedValueOnce({
-          docs: januaryShifts.map(shift => ({
+          docs: januaryShifts.map((shift) => ({
             data: () => shift,
             ref: { id: shift.id },
           })),
         })
         .mockResolvedValueOnce({
-          docs: februaryShifts.map(shift => ({
+          docs: februaryShifts.map((shift) => ({
             data: () => shift,
             ref: { id: shift.id },
           })),
@@ -565,23 +582,23 @@ describe('Leave Approval Function', () => {
 
       // Should cancel shifts from both months
       expect(mockBatch.update).toHaveBeenCalledWith(
-        { id: 'jan-shift' },
-        expect.objectContaining({ status: 'cancelled' })
+        { id: "jan-shift" },
+        expect.objectContaining({ status: "cancelled" }),
       );
 
       expect(mockBatch.update).toHaveBeenCalledWith(
-        { id: 'feb-shift' },
-        expect.objectContaining({ status: 'cancelled' })
+        { id: "feb-shift" },
+        expect.objectContaining({ status: "cancelled" }),
       );
     });
 
-    test('does not cancel shifts when leave is rejected', async () => {
+    test("does not cancel shifts when leave is rejected", async () => {
       const leaveRequest = {
         empId: EMPLOYEE_ID,
-        status: 'pending',
-        type: 'vacation',
-        from: { toDate: () => new Date('2024-02-01') },
-        to: { toDate: () => new Date('2024-02-03') },
+        status: "pending",
+        type: "vacation",
+        from: { toDate: () => new Date("2024-02-01") },
+        to: { toDate: () => new Date("2024-02-03") },
       };
 
       mockDoc.get.mockResolvedValueOnce({
@@ -605,25 +622,31 @@ describe('Leave Approval Function', () => {
       expect(mockBatch.update).toHaveBeenCalledWith(
         mockDoc.ref,
         expect.objectContaining({
-          status: 'rejected',
-        })
+          status: "rejected",
+        }),
       );
     });
   });
 
-  describe('Leave Type Classification', () => {
-    test('correctly identifies paid leave types', async () => {
-      const paidLeaveTypes = ['vacation', 'sick', 'personal', 'maternity', 'paternity'];
-      
+  describe("Leave Type Classification", () => {
+    test("correctly identifies paid leave types", async () => {
+      const paidLeaveTypes = [
+        "vacation",
+        "sick",
+        "personal",
+        "maternity",
+        "paternity",
+      ];
+
       for (const leaveType of paidLeaveTypes) {
         jest.clearAllMocks();
-        
+
         const leaveRequest = {
           empId: EMPLOYEE_ID,
-          status: 'pending',
+          status: "pending",
           type: leaveType,
-          from: { toDate: () => new Date('2024-02-01') },
-          to: { toDate: () => new Date('2024-02-01') }, // 1 day
+          from: { toDate: () => new Date("2024-02-01") },
+          to: { toDate: () => new Date("2024-02-01") }, // 1 day
         };
 
         mockDoc.get.mockResolvedValueOnce({
@@ -654,26 +677,26 @@ describe('Leave Approval Function', () => {
           expect.any(Object),
           expect.objectContaining({
             computedBalance: expect.objectContaining({
-              _methodName: 'FieldValue.increment',
+              _methodName: "FieldValue.increment",
               _operand: -1,
             }),
-          })
+          }),
         );
       }
     });
 
-    test('does not update balance for unpaid leave types', async () => {
-      const unpaidLeaveTypes = ['unpaid'];
-      
+    test("does not update balance for unpaid leave types", async () => {
+      const unpaidLeaveTypes = ["unpaid"];
+
       for (const leaveType of unpaidLeaveTypes) {
         jest.clearAllMocks();
-        
+
         const leaveRequest = {
           empId: EMPLOYEE_ID,
-          status: 'pending',
+          status: "pending",
           type: leaveType,
-          from: { toDate: () => new Date('2024-02-01') },
-          to: { toDate: () => new Date('2024-02-01') },
+          from: { toDate: () => new Date("2024-02-01") },
+          to: { toDate: () => new Date("2024-02-01") },
         };
 
         mockDoc.get.mockResolvedValueOnce({
@@ -699,16 +722,18 @@ describe('Leave Approval Function', () => {
         expect(mockBatch.update).toHaveBeenCalledWith(
           mockDoc.ref,
           expect.objectContaining({
-            status: 'approved',
-          })
+            status: "approved",
+          }),
         );
       }
     });
   });
 
-  describe('Error Handling', () => {
-    test('handles Firestore errors gracefully', async () => {
-      mockDoc.get.mockRejectedValueOnce(new Error('Firestore connection failed'));
+  describe("Error Handling", () => {
+    test("handles Firestore errors gracefully", async () => {
+      mockDoc.get.mockRejectedValueOnce(
+        new Error("Firestore connection failed"),
+      );
 
       const request = {
         auth: { uid: USER_ID },
@@ -720,16 +745,16 @@ describe('Leave Approval Function', () => {
       };
 
       const result = approveLeaveRequest.handler(request);
-      await expect(result).rejects.toThrow('Failed to approve leave request');
+      await expect(result).rejects.toThrow("Failed to approve leave request");
     });
 
-    test('handles batch commit failures', async () => {
+    test("handles batch commit failures", async () => {
       const leaveRequest = {
         empId: EMPLOYEE_ID,
-        status: 'pending',
-        type: 'vacation',
-        from: { toDate: () => new Date('2024-02-01') },
-        to: { toDate: () => new Date('2024-02-01') },
+        status: "pending",
+        type: "vacation",
+        from: { toDate: () => new Date("2024-02-01") },
+        to: { toDate: () => new Date("2024-02-01") },
       };
 
       mockDoc.get.mockResolvedValueOnce({
@@ -745,7 +770,7 @@ describe('Leave Approval Function', () => {
       mockCollection.get.mockResolvedValueOnce({ docs: [] });
 
       // Mock batch commit failure
-      mockBatch.commit.mockRejectedValueOnce(new Error('Batch commit failed'));
+      mockBatch.commit.mockRejectedValueOnce(new Error("Batch commit failed"));
 
       const request = {
         auth: { uid: USER_ID },
@@ -757,7 +782,7 @@ describe('Leave Approval Function', () => {
       };
 
       const result = approveLeaveRequest.handler(request);
-      await expect(result).rejects.toThrow('Failed to approve leave request');
+      await expect(result).rejects.toThrow("Failed to approve leave request");
     });
   });
 });

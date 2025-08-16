@@ -6,9 +6,15 @@
 // TENANT & RBAC TYPES
 // ============================================================================
 
-export type UserRole = 'owner' | 'hr-admin' | 'manager' | 'viewer';
+export type UserRole = "owner" | "hr-admin" | "manager" | "viewer";
 
-export type ModuleName = 'hiring' | 'staff' | 'timeleave' | 'performance' | 'payroll' | 'reports';
+export type ModuleName =
+  | "hiring"
+  | "staff"
+  | "timeleave"
+  | "performance"
+  | "payroll"
+  | "reports";
 
 export interface TenantMember {
   id: string;
@@ -32,7 +38,7 @@ export interface TenantConfig {
     performanceReviews?: boolean;
   };
   payrollPolicy?: {
-    payPeriod: 'weekly' | 'biweekly' | 'monthly';
+    payPeriod: "weekly" | "biweekly" | "monthly";
     overtimeThreshold: number; // hours per week
     overtimeMultiplier: number; // e.g., 1.5
     timezone: string;
@@ -71,7 +77,7 @@ export interface Employee {
   email?: string;
   departmentId: string;
   managerId?: string;
-  status: 'active' | 'inactive' | 'terminated';
+  status: "active" | "inactive" | "terminated";
   createdAt: Date;
   updatedAt: Date;
 }
@@ -91,8 +97,8 @@ export interface Position {
 // HIRING MODULE TYPES
 // ============================================================================
 
-export type JobStatus = 'draft' | 'open' | 'closed';
-export type JobApproverMode = 'department' | 'specific';
+export type JobStatus = "draft" | "open" | "closed";
+export type JobApproverMode = "department" | "specific";
 
 export interface Job {
   id: string;
@@ -108,7 +114,13 @@ export interface Job {
   updatedAt: Date;
 }
 
-export type CandidateStage = 'applied' | 'screening' | 'interview' | 'offer' | 'hired' | 'rejected';
+export type CandidateStage =
+  | "applied"
+  | "screening"
+  | "interview"
+  | "offer"
+  | "hired"
+  | "rejected";
 
 export interface Candidate {
   id: string;
@@ -128,12 +140,12 @@ export interface Interview {
   when: Date;
   panel: string[]; // Array of employee IDs
   notes?: string;
-  outcome?: 'pass' | 'fail' | 'pending';
+  outcome?: "pass" | "fail" | "pending";
   createdAt: Date;
   updatedAt: Date;
 }
 
-export type OfferStatus = 'draft' | 'sent' | 'accepted' | 'declined';
+export type OfferStatus = "draft" | "sent" | "accepted" | "declined";
 
 export interface Offer {
   id: string;
@@ -198,8 +210,14 @@ export interface Timesheet {
   computedAt: Date;
 }
 
-export type LeaveType = 'vacation' | 'sick' | 'personal' | 'maternity' | 'paternity' | 'unpaid';
-export type LeaveStatus = 'pending' | 'approved' | 'rejected';
+export type LeaveType =
+  | "vacation"
+  | "sick"
+  | "personal"
+  | "maternity"
+  | "paternity"
+  | "unpaid";
+export type LeaveStatus = "pending" | "approved" | "rejected";
 
 export interface LeaveRequest {
   id: string;
@@ -227,7 +245,7 @@ export interface LeaveBalance {
 }
 
 export interface LeaveMovement {
-  type: 'accrual' | 'usage' | 'adjustment';
+  type: "accrual" | "usage" | "adjustment";
   days: number; // Positive for accrual/adjustment up, negative for usage/adjustment down
   reason: string;
   at: Date;
@@ -243,7 +261,7 @@ export interface Goal {
   title: string;
   description?: string;
   targetDate: Date;
-  status: 'draft' | 'active' | 'completed' | 'cancelled';
+  status: "draft" | "active" | "completed" | "cancelled";
   progress: number; // 0-100
   createdAt: Date;
   updatedAt: Date;
@@ -257,7 +275,7 @@ export interface Review {
   overallRating: number; // 1-5
   goals: string[]; // Goal IDs
   feedback?: string;
-  status: 'draft' | 'submitted' | 'approved';
+  status: "draft" | "submitted" | "approved";
   createdAt: Date;
   updatedAt: Date;
 }
@@ -266,7 +284,7 @@ export interface PromotionSignal {
   id: string; // Format: {year}_{quarter}_{empId}
   empId: string;
   score: number; // 0-100
-  recommended: 'promote' | 'bonus' | 'none';
+  recommended: "promote" | "bonus" | "none";
   explain: string;
   createdAt: Date;
 }

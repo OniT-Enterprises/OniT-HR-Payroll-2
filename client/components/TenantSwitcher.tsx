@@ -1,50 +1,54 @@
-import React, { useState } from 'react';
+import React, { useState } from "react";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/components/ui/select';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { useTenant } from '@/contexts/TenantContext';
-import { Building2, Users, Settings, RefreshCw } from 'lucide-react';
-import { useToast } from '@/hooks/use-toast';
+} from "@/components/ui/select";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { useTenant } from "@/contexts/TenantContext";
+import { Building2, Users, Settings, RefreshCw } from "lucide-react";
+import { useToast } from "@/hooks/use-toast";
 
 interface TenantSwitcherProps {
   className?: string;
   showDetails?: boolean;
 }
 
-export function TenantSwitcher({ className, showDetails = false }: TenantSwitcherProps) {
-  const { 
-    currentTenant, 
-    availableTenants, 
-    loading, 
-    error, 
-    switchTenant, 
-    refreshTenant 
+export function TenantSwitcher({
+  className,
+  showDetails = false,
+}: TenantSwitcherProps) {
+  const {
+    currentTenant,
+    availableTenants,
+    loading,
+    error,
+    switchTenant,
+    refreshTenant,
   } = useTenant();
   const { toast } = useToast();
   const [switching, setSwitching] = useState(false);
 
   const handleTenantSwitch = async (tenantId: string) => {
     if (tenantId === currentTenant?.tenantId) return;
-    
+
     setSwitching(true);
     try {
       await switchTenant(tenantId);
       toast({
-        title: 'Tenant switched',
+        title: "Tenant switched",
         description: `Now viewing tenant: ${tenantId}`,
       });
     } catch (err) {
       toast({
-        title: 'Switch failed',
-        description: err instanceof Error ? err.message : 'Failed to switch tenant',
-        variant: 'destructive',
+        title: "Switch failed",
+        description:
+          err instanceof Error ? err.message : "Failed to switch tenant",
+        variant: "destructive",
       });
     } finally {
       setSwitching(false);
@@ -55,30 +59,31 @@ export function TenantSwitcher({ className, showDetails = false }: TenantSwitche
     try {
       await refreshTenant();
       toast({
-        title: 'Tenant refreshed',
-        description: 'Tenant data has been updated',
+        title: "Tenant refreshed",
+        description: "Tenant data has been updated",
       });
     } catch (err) {
       toast({
-        title: 'Refresh failed',
-        description: err instanceof Error ? err.message : 'Failed to refresh tenant',
-        variant: 'destructive',
+        title: "Refresh failed",
+        description:
+          err instanceof Error ? err.message : "Failed to refresh tenant",
+        variant: "destructive",
       });
     }
   };
 
   const getRoleBadgeVariant = (role: string) => {
     switch (role) {
-      case 'owner':
-        return 'default';
-      case 'hr-admin':
-        return 'secondary';
-      case 'manager':
-        return 'outline';
-      case 'viewer':
-        return 'secondary';
+      case "owner":
+        return "default";
+      case "hr-admin":
+        return "secondary";
+      case "manager":
+        return "outline";
+      case "viewer":
+        return "secondary";
       default:
-        return 'outline';
+        return "outline";
     }
   };
 
@@ -88,7 +93,9 @@ export function TenantSwitcher({ className, showDetails = false }: TenantSwitche
         <CardContent className="p-4">
           <div className="flex items-center gap-2">
             <RefreshCw className="h-4 w-4 animate-spin" />
-            <span className="text-sm text-muted-foreground">Loading tenant...</span>
+            <span className="text-sm text-muted-foreground">
+              Loading tenant...
+            </span>
           </div>
         </CardContent>
       </Card>
@@ -122,7 +129,9 @@ export function TenantSwitcher({ className, showDetails = false }: TenantSwitche
         <CardContent className="p-4">
           <div className="flex items-center gap-2">
             <Building2 className="h-4 w-4 text-muted-foreground" />
-            <span className="text-sm text-muted-foreground">No tenant selected</span>
+            <span className="text-sm text-muted-foreground">
+              No tenant selected
+            </span>
           </div>
         </CardContent>
       </Card>
@@ -162,14 +171,16 @@ export function TenantSwitcher({ className, showDetails = false }: TenantSwitche
                 ))}
               </SelectContent>
             </Select>
-            
+
             <Button
               size="sm"
               variant="outline"
               onClick={handleRefresh}
               disabled={switching}
             >
-              <RefreshCw className={`h-3 w-3 ${switching ? 'animate-spin' : ''}`} />
+              <RefreshCw
+                className={`h-3 w-3 ${switching ? "animate-spin" : ""}`}
+              />
             </Button>
           </div>
 
@@ -178,16 +189,21 @@ export function TenantSwitcher({ className, showDetails = false }: TenantSwitche
             <div className="space-y-2 text-xs">
               <div className="flex items-center justify-between">
                 <span className="text-muted-foreground">Tenant:</span>
-                <span className="font-medium">{currentTenant.config.name || currentTenant.tenantId}</span>
+                <span className="font-medium">
+                  {currentTenant.config.name || currentTenant.tenantId}
+                </span>
               </div>
-              
+
               <div className="flex items-center justify-between">
                 <span className="text-muted-foreground">Role:</span>
-                <Badge variant={getRoleBadgeVariant(currentTenant.member.role)} className="text-xs">
+                <Badge
+                  variant={getRoleBadgeVariant(currentTenant.member.role)}
+                  className="text-xs"
+                >
                   {currentTenant.member.role}
                 </Badge>
               </div>
-              
+
               {currentTenant.member.modules && (
                 <div className="flex items-start justify-between">
                   <span className="text-muted-foreground">Modules:</span>
@@ -212,7 +228,10 @@ export function TenantSwitcher({ className, showDetails = false }: TenantSwitche
                   {currentTenant.config.name || currentTenant.tenantId}
                 </span>
               </div>
-              <Badge variant={getRoleBadgeVariant(currentTenant.member.role)} className="text-xs">
+              <Badge
+                variant={getRoleBadgeVariant(currentTenant.member.role)}
+                className="text-xs"
+              >
                 {currentTenant.member.role}
               </Badge>
             </div>

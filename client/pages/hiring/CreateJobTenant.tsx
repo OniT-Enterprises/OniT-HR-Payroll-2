@@ -1,37 +1,34 @@
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { Button } from '@/components/ui/button';
+import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { Button } from "@/components/ui/button";
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
-} from '@/components/ui/card';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Textarea } from '@/components/ui/textarea';
+} from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/components/ui/select';
-import { Badge } from '@/components/ui/badge';
-import { useToast } from '@/hooks/use-toast';
-import MainNavigation from '@/components/layout/MainNavigation';
-import { TenantSwitcher } from '@/components/TenantSwitcher';
+} from "@/components/ui/select";
+import { Badge } from "@/components/ui/badge";
+import { useToast } from "@/hooks/use-toast";
+import MainNavigation from "@/components/layout/MainNavigation";
+import { TenantSwitcher } from "@/components/TenantSwitcher";
 import {
   useDepartments,
   useEmployees,
   useCreateJob,
-} from '@/hooks/useTenantData';
-import { useRequiredTenant } from '@/contexts/TenantContext';
-import {
-  CreateJobRequest,
-  JobApproverMode,
-} from '@/types/tenant';
+} from "@/hooks/useTenantData";
+import { useRequiredTenant } from "@/contexts/TenantContext";
+import { CreateJobRequest, JobApproverMode } from "@/types/tenant";
 import {
   Building2,
   Users,
@@ -40,58 +37,63 @@ import {
   CheckCircle,
   Save,
   ArrowLeft,
-} from 'lucide-react';
+} from "lucide-react";
 
 export default function CreateJobTenant() {
   const navigate = useNavigate();
   const { toast } = useToast();
   const tenant = useRequiredTenant();
-  
-  const { data: departments = [], isLoading: loadingDepartments } = useDepartments();
+
+  const { data: departments = [], isLoading: loadingDepartments } =
+    useDepartments();
   const { data: employees = [], isLoading: loadingEmployees } = useEmployees();
   const createJobMutation = useCreateJob();
 
   const [formData, setFormData] = useState<CreateJobRequest>({
-    title: '',
-    description: '',
-    departmentId: '',
-    hiringManagerId: '',
-    approverMode: 'department',
-    approverDepartmentId: '',
-    approverId: '',
+    title: "",
+    description: "",
+    departmentId: "",
+    hiringManagerId: "",
+    approverMode: "department",
+    approverDepartmentId: "",
+    approverId: "",
   });
 
   const [errors, setErrors] = useState<Record<string, string>>({});
 
   // Filter employees by selected department for hiring manager selection
   const eligibleManagers = employees.filter(
-    emp => emp.departmentId === formData.departmentId && emp.status === 'active'
+    (emp) =>
+      emp.departmentId === formData.departmentId && emp.status === "active",
   );
 
   // Filter employees for specific approver selection
-  const eligibleApprovers = employees.filter(emp => emp.status === 'active');
+  const eligibleApprovers = employees.filter((emp) => emp.status === "active");
 
   const validateForm = (): boolean => {
     const newErrors: Record<string, string> = {};
 
     if (!formData.title.trim()) {
-      newErrors.title = 'Job title is required';
+      newErrors.title = "Job title is required";
     }
 
     if (!formData.departmentId) {
-      newErrors.departmentId = 'Department is required';
+      newErrors.departmentId = "Department is required";
     }
 
     if (!formData.hiringManagerId) {
-      newErrors.hiringManagerId = 'Hiring manager is required';
+      newErrors.hiringManagerId = "Hiring manager is required";
     }
 
-    if (formData.approverMode === 'department' && !formData.approverDepartmentId) {
-      newErrors.approverDepartmentId = 'Approver department is required';
+    if (
+      formData.approverMode === "department" &&
+      !formData.approverDepartmentId
+    ) {
+      newErrors.approverDepartmentId = "Approver department is required";
     }
 
-    if (formData.approverMode === 'specific' && !formData.approverId) {
-      newErrors.approverId = 'Specific approver is required';
+    if (formData.approverMode === "specific" && !formData.approverId) {
+      newErrors.approverId = "Specific approver is required";
     }
 
     setErrors(newErrors);
@@ -103,54 +105,59 @@ export default function CreateJobTenant() {
 
     if (!validateForm()) {
       toast({
-        title: 'Validation Error',
-        description: 'Please fix the form errors before submitting',
-        variant: 'destructive',
+        title: "Validation Error",
+        description: "Please fix the form errors before submitting",
+        variant: "destructive",
       });
       return;
     }
 
     try {
       const jobId = await createJobMutation.mutateAsync(formData);
-      
+
       toast({
-        title: 'Job Created',
+        title: "Job Created",
         description: `Job "${formData.title}" has been created successfully`,
       });
 
       navigate(`/hiring/jobs/${jobId}`);
     } catch (error) {
       toast({
-        title: 'Creation Failed',
-        description: error instanceof Error ? error.message : 'Failed to create job',
-        variant: 'destructive',
+        title: "Creation Failed",
+        description:
+          error instanceof Error ? error.message : "Failed to create job",
+        variant: "destructive",
       });
     }
   };
 
   const handleInputChange = (field: keyof CreateJobRequest, value: string) => {
-    setFormData(prev => {
+    setFormData((prev) => {
       const updated = { ...prev, [field]: value };
-      
+
       // Clear related fields when department changes
-      if (field === 'departmentId') {
-        updated.hiringManagerId = '';
-        if (updated.approverMode === 'department') {
-          updated.approverDepartmentId = '';
+      if (field === "departmentId") {
+        updated.hiringManagerId = "";
+        if (updated.approverMode === "department") {
+          updated.approverDepartmentId = "";
         }
       }
-      
+
       return updated;
     });
 
     // Clear error for this field
     if (errors[field]) {
-      setErrors(prev => ({ ...prev, [field]: '' }));
+      setErrors((prev) => ({ ...prev, [field]: "" }));
     }
   };
 
-  const selectedDepartment = departments.find(d => d.id === formData.departmentId);
-  const selectedManager = employees.find(e => e.id === formData.hiringManagerId);
+  const selectedDepartment = departments.find(
+    (d) => d.id === formData.departmentId,
+  );
+  const selectedManager = employees.find(
+    (e) => e.id === formData.hiringManagerId,
+  );
 
   return (
     <div className="min-h-screen bg-background">
@@ -164,7 +171,7 @@ export default function CreateJobTenant() {
               <Button
                 variant="outline"
                 size="sm"
-                onClick={() => navigate('/hiring')}
+                onClick={() => navigate("/hiring")}
               >
                 <ArrowLeft className="h-4 w-4 mr-2" />
                 Back to Hiring
@@ -179,7 +186,7 @@ export default function CreateJobTenant() {
                 </p>
               </div>
             </div>
-            
+
             <TenantSwitcher showDetails />
           </div>
 
@@ -195,7 +202,7 @@ export default function CreateJobTenant() {
                     Creating job as {tenant.member.role}
                   </span>
                 </div>
-                {!tenant.permissions.canWrite('hiring') && (
+                {!tenant.permissions.canWrite("hiring") && (
                   <div className="flex items-center gap-2 text-amber-600">
                     <AlertCircle className="h-4 w-4" />
                     <span className="text-sm">Limited hiring permissions</span>
@@ -224,12 +231,16 @@ export default function CreateJobTenant() {
                     <Input
                       id="title"
                       value={formData.title}
-                      onChange={(e) => handleInputChange('title', e.target.value)}
+                      onChange={(e) =>
+                        handleInputChange("title", e.target.value)
+                      }
                       placeholder="e.g., Senior Software Engineer"
-                      className={errors.title ? 'border-destructive' : ''}
+                      className={errors.title ? "border-destructive" : ""}
                     />
                     {errors.title && (
-                      <p className="text-sm text-destructive mt-1">{errors.title}</p>
+                      <p className="text-sm text-destructive mt-1">
+                        {errors.title}
+                      </p>
                     )}
                   </div>
 
@@ -238,7 +249,9 @@ export default function CreateJobTenant() {
                     <Textarea
                       id="description"
                       value={formData.description}
-                      onChange={(e) => handleInputChange('description', e.target.value)}
+                      onChange={(e) =>
+                        handleInputChange("description", e.target.value)
+                      }
                       placeholder="Describe the role, responsibilities, and requirements..."
                       rows={4}
                     />
@@ -264,14 +277,22 @@ export default function CreateJobTenant() {
                     <Label htmlFor="department">Department *</Label>
                     <Select
                       value={formData.departmentId}
-                      onValueChange={(value) => handleInputChange('departmentId', value)}
+                      onValueChange={(value) =>
+                        handleInputChange("departmentId", value)
+                      }
                     >
-                      <SelectTrigger className={errors.departmentId ? 'border-destructive' : ''}>
+                      <SelectTrigger
+                        className={
+                          errors.departmentId ? "border-destructive" : ""
+                        }
+                      >
                         <SelectValue placeholder="Select department" />
                       </SelectTrigger>
                       <SelectContent>
                         {loadingDepartments ? (
-                          <SelectItem value="loading" disabled>Loading departments...</SelectItem>
+                          <SelectItem value="loading" disabled>
+                            Loading departments...
+                          </SelectItem>
                         ) : (
                           departments.map((dept) => (
                             <SelectItem key={dept.id} value={dept.id}>
@@ -282,7 +303,9 @@ export default function CreateJobTenant() {
                       </SelectContent>
                     </Select>
                     {errors.departmentId && (
-                      <p className="text-sm text-destructive mt-1">{errors.departmentId}</p>
+                      <p className="text-sm text-destructive mt-1">
+                        {errors.departmentId}
+                      </p>
                     )}
                   </div>
 
@@ -290,21 +313,29 @@ export default function CreateJobTenant() {
                     <Label htmlFor="hiringManager">Hiring Manager *</Label>
                     <Select
                       value={formData.hiringManagerId}
-                      onValueChange={(value) => handleInputChange('hiringManagerId', value)}
+                      onValueChange={(value) =>
+                        handleInputChange("hiringManagerId", value)
+                      }
                       disabled={!formData.departmentId}
                     >
-                      <SelectTrigger className={errors.hiringManagerId ? 'border-destructive' : ''}>
-                        <SelectValue 
+                      <SelectTrigger
+                        className={
+                          errors.hiringManagerId ? "border-destructive" : ""
+                        }
+                      >
+                        <SelectValue
                           placeholder={
-                            !formData.departmentId 
-                              ? "Select department first" 
+                            !formData.departmentId
+                              ? "Select department first"
                               : "Select hiring manager"
-                          } 
+                          }
                         />
                       </SelectTrigger>
                       <SelectContent>
                         {loadingEmployees ? (
-                          <SelectItem value="loading" disabled>Loading employees...</SelectItem>
+                          <SelectItem value="loading" disabled>
+                            Loading employees...
+                          </SelectItem>
                         ) : eligibleManagers.length === 0 ? (
                           <SelectItem value="none" disabled>
                             No managers available in this department
@@ -319,13 +350,17 @@ export default function CreateJobTenant() {
                       </SelectContent>
                     </Select>
                     {errors.hiringManagerId && (
-                      <p className="text-sm text-destructive mt-1">{errors.hiringManagerId}</p>
+                      <p className="text-sm text-destructive mt-1">
+                        {errors.hiringManagerId}
+                      </p>
                     )}
-                    
+
                     {selectedDepartment && selectedManager && (
                       <div className="flex items-center gap-2 mt-2 text-sm text-green-600">
                         <CheckCircle className="h-4 w-4" />
-                        <span>Manager belongs to {selectedDepartment.name}</span>
+                        <span>
+                          Manager belongs to {selectedDepartment.name}
+                        </span>
                       </div>
                     )}
                   </div>
@@ -350,8 +385,14 @@ export default function CreateJobTenant() {
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-2">
                     <Button
                       type="button"
-                      variant={formData.approverMode === 'department' ? 'default' : 'outline'}
-                      onClick={() => handleInputChange('approverMode', 'department')}
+                      variant={
+                        formData.approverMode === "department"
+                          ? "default"
+                          : "outline"
+                      }
+                      onClick={() =>
+                        handleInputChange("approverMode", "department")
+                      }
                       className="h-auto p-4 flex flex-col items-start gap-2"
                     >
                       <div className="flex items-center gap-2">
@@ -365,8 +406,14 @@ export default function CreateJobTenant() {
 
                     <Button
                       type="button"
-                      variant={formData.approverMode === 'specific' ? 'default' : 'outline'}
-                      onClick={() => handleInputChange('approverMode', 'specific')}
+                      variant={
+                        formData.approverMode === "specific"
+                          ? "default"
+                          : "outline"
+                      }
+                      onClick={() =>
+                        handleInputChange("approverMode", "specific")
+                      }
                       className="h-auto p-4 flex flex-col items-start gap-2"
                     >
                       <div className="flex items-center gap-2">
@@ -380,14 +427,24 @@ export default function CreateJobTenant() {
                   </div>
                 </div>
 
-                {formData.approverMode === 'department' && (
+                {formData.approverMode === "department" && (
                   <div>
-                    <Label htmlFor="approverDepartment">Approver Department *</Label>
+                    <Label htmlFor="approverDepartment">
+                      Approver Department *
+                    </Label>
                     <Select
                       value={formData.approverDepartmentId}
-                      onValueChange={(value) => handleInputChange('approverDepartmentId', value)}
+                      onValueChange={(value) =>
+                        handleInputChange("approverDepartmentId", value)
+                      }
                     >
-                      <SelectTrigger className={errors.approverDepartmentId ? 'border-destructive' : ''}>
+                      <SelectTrigger
+                        className={
+                          errors.approverDepartmentId
+                            ? "border-destructive"
+                            : ""
+                        }
+                      >
                         <SelectValue placeholder="Select approver department" />
                       </SelectTrigger>
                       <SelectContent>
@@ -399,19 +456,27 @@ export default function CreateJobTenant() {
                       </SelectContent>
                     </Select>
                     {errors.approverDepartmentId && (
-                      <p className="text-sm text-destructive mt-1">{errors.approverDepartmentId}</p>
+                      <p className="text-sm text-destructive mt-1">
+                        {errors.approverDepartmentId}
+                      </p>
                     )}
                   </div>
                 )}
 
-                {formData.approverMode === 'specific' && (
+                {formData.approverMode === "specific" && (
                   <div>
                     <Label htmlFor="approver">Specific Approver *</Label>
                     <Select
                       value={formData.approverId}
-                      onValueChange={(value) => handleInputChange('approverId', value)}
+                      onValueChange={(value) =>
+                        handleInputChange("approverId", value)
+                      }
                     >
-                      <SelectTrigger className={errors.approverId ? 'border-destructive' : ''}>
+                      <SelectTrigger
+                        className={
+                          errors.approverId ? "border-destructive" : ""
+                        }
+                      >
                         <SelectValue placeholder="Select specific approver" />
                       </SelectTrigger>
                       <SelectContent>
@@ -420,7 +485,11 @@ export default function CreateJobTenant() {
                             <div className="flex items-center gap-2">
                               <span>{emp.displayName}</span>
                               <Badge variant="outline" className="text-xs">
-                                {departments.find(d => d.id === emp.departmentId)?.name}
+                                {
+                                  departments.find(
+                                    (d) => d.id === emp.departmentId,
+                                  )?.name
+                                }
                               </Badge>
                             </div>
                           </SelectItem>
@@ -428,7 +497,9 @@ export default function CreateJobTenant() {
                       </SelectContent>
                     </Select>
                     {errors.approverId && (
-                      <p className="text-sm text-destructive mt-1">{errors.approverId}</p>
+                      <p className="text-sm text-destructive mt-1">
+                        {errors.approverId}
+                      </p>
                     )}
                   </div>
                 )}
@@ -440,13 +511,16 @@ export default function CreateJobTenant() {
               <Button
                 type="button"
                 variant="outline"
-                onClick={() => navigate('/hiring')}
+                onClick={() => navigate("/hiring")}
               >
                 Cancel
               </Button>
               <Button
                 type="submit"
-                disabled={createJobMutation.isPending || !tenant.permissions.canWrite('hiring')}
+                disabled={
+                  createJobMutation.isPending ||
+                  !tenant.permissions.canWrite("hiring")
+                }
               >
                 {createJobMutation.isPending ? (
                   <>

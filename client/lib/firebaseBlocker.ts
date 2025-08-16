@@ -138,9 +138,11 @@ export const monitorForErrors = () => {
 
       console.warn(`🌐 Firebase network error #${errorCount} from ${source}:`, error);
 
-      // Block Firebase after first Firebase-related network error
-      if (!firebaseBlocked) {
-        blockFirebase(`Firebase network error detected (${source})`);
+      // Only block Firebase after multiple consecutive errors
+      if (!firebaseBlocked && errorCount >= 3) {
+        blockFirebase(`Multiple Firebase network errors detected (${errorCount} errors from ${source})`);
+      } else if (errorCount < 3) {
+        console.warn(`🔥 Firebase error ${errorCount}/3 - not blocking yet`);
       }
     }
   };

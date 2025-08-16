@@ -160,6 +160,7 @@ export const monitorForErrors = () => {
   });
 };
 
-// Initialize everything
-initializeFirebaseBlocker();
-monitorForErrors();
+// Temporarily disable Firebase blocker to fix network issues
+// initializeFirebaseBlocker();
+// monitorForErrors();
+console.log("⚠️ Firebase blocker disabled for debugging");

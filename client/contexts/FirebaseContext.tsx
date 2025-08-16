@@ -62,42 +62,41 @@ export const FirebaseProvider: React.FC<FirebaseProviderProps> = ({
         return;
       }
 
-      // Wrap Firebase connection test with additional error handling
+      // Use the safe connection manager
       let connected = false;
       try {
-        connected = await Promise.race([
-          testFirebaseConnection(),
-          new Promise<boolean>((_, reject) =>
-            setTimeout(() => reject(new Error("Connection timeout")), 5000),
-          ),
-        ]);
-      } catch (connectionError) {
+        connected = await testFirebaseConnection();
+      } catch (connectionError: any) {
         console.warn("🔥 Firebase connection test failed:", connectionError);
 
-        // Check for specific TypeError cases
-        if (
+        // Handle specific Firebase internal errors gracefully
+        if (connectionError.message?.includes('INTERNAL ASSERTION FAILED')) {
+          console.warn("🚨 Firebase internal error detected - using fallback mode");
+          setError("Firebase experiencing internal issues - using demo data");
+        } else if (
           connectionError instanceof TypeError ||
           connectionError.message?.includes("Failed to fetch") ||
           connectionError.message?.includes("fetch")
         ) {
           console.warn("🌐 Network fetch error detected, using offline mode");
-          connected = false;
+          setError("Network error - using demo data");
         } else {
           console.warn("🚫 Other connection error:", connectionError);
-          connected = false;
+          setError("Connection failed - using demo data");
         }
+        connected = false;
       }
 
       setIsConnected(connected);
       setIsUsingMockData(!connected);
 
       if (!connected) {
-        setError("Using demo data - Firebase connection unavailable");
+        // Error message is already set above based on the specific error type
       } else {
         setError(null);
         console.log("✅ Firebase connection established");
       }
-    } catch (err) {
+    } catch (err: any) {
       console.error("❌ Critical error in checkConnection:", err);
 
       // Ensure we always set safe fallback state

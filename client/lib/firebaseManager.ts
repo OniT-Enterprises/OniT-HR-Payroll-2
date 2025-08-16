@@ -16,6 +16,7 @@ interface ConnectionState {
   lastConnectionAttempt: number;
   connectionPromise: Promise<boolean> | null;
   error: string | null;
+  terminated: boolean;
 }
 
 class FirebaseConnectionManager {

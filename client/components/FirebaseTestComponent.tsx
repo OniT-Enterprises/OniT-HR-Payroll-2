@@ -129,12 +129,12 @@ const FirebaseTestComponent: React.FC = () => {
       </CardHeader>
       <CardContent className="space-y-4">
         <div className="flex gap-2">
-          <Button 
-            onClick={testFirebaseConnection} 
+          <Button
+            onClick={testFirebaseConnectionSafe}
             disabled={isLoading}
             className="flex-1"
           >
-            {isLoading ? 'Testing...' : 'Run Tests'}
+            {isLoading ? 'Testing...' : 'Run Safe Tests'}
           </Button>
           <Button 
             onClick={clearResults} 

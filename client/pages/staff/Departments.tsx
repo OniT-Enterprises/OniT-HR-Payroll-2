@@ -40,6 +40,7 @@ import {
 } from "lucide-react";
 
 export default function Departments() {
+  const navigate = useNavigate();
   const [employees, setEmployees] = useState<Employee[]>([]);
   const [departments, setDepartments] = useState<Department[]>([]);
   const [loading, setLoading] = useState(true);

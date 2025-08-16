@@ -63,6 +63,8 @@ const FirebaseTestComponent: React.FC = () => {
         addResult(`❌ Connection manager error: ${connectionError.message}`);
         if (connectionError.message?.includes('INTERNAL ASSERTION FAILED')) {
           addResult('🚨 Internal assertion error detected - this is a known Firebase SDK issue');
+        } else if (connectionError.message?.includes('client has already been terminated')) {
+          addResult('🔚 Firebase client has been terminated - this is expected in offline mode');
         }
       }
 
@@ -87,14 +89,14 @@ const FirebaseTestComponent: React.FC = () => {
       } catch (readError: any) {
         addResult(`❌ Read test failed: ${readError.message}`);
         if (readError.code === 'permission-denied') {
-          addResult('💡 Permission denied - you may need to deploy updated Firestore rules');
+          addResult('�� Permission denied - you may need to deploy updated Firestore rules');
           addResult('📝 Run: firebase deploy --only firestore:rules');
         }
       }
 
       // Test 6: Simple write operation
       try {
-        addResult('���️ Testing write access...');
+        addResult('✍️ Testing write access...');
         const testRef = collection(db, 'test');
         await addDoc(testRef, {
           message: 'Firebase connectivity test',

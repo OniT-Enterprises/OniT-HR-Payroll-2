@@ -2,10 +2,17 @@ rules_version = '2';
 
 service cloud.firestore {
   match /databases/{database}/documents {
-    
+
     // Helper functions
-    function authed() { 
-      return request.auth != null; 
+    function authed() {
+      return request.auth != null;
+    }
+
+    // Development mode helper
+    function isDevelopment() {
+      return request.auth.uid == 'development-user' ||
+             request.auth.token.email == 'demo@example.com' ||
+             request.auth.token.email_verified == false;
     }
     
     function hasTenant(tid) { 

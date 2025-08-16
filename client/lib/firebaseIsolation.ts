@@ -111,6 +111,8 @@ class FirebaseIsolationManager {
       if (!window.__originalXMLHttpRequest) {
         window.__originalXMLHttpRequest = window.XMLHttpRequest;
         window.XMLHttpRequest = class extends window.__originalXMLHttpRequest {
+          private _blocked = false;
+
           open(method: string, url: string | URL, ...args: any[]) {
             const urlStr = url.toString();
             if (urlStr.includes('firestore.googleapis.com') ||
@@ -118,9 +120,28 @@ class FirebaseIsolationManager {
                 urlStr.includes('identitytoolkit.googleapis.com') ||
                 urlStr.includes('securetoken.googleapis.com')) {
               console.warn('🚫 Firebase XMLHttpRequest blocked:', urlStr);
-              throw new Error(`Firebase XMLHttpRequest blocked: ${urlStr}`);
+              this._blocked = true;
+              // Don't throw, but mark as blocked and continue with a dummy URL
+              return super.open(method, 'data:text/plain,blocked', ...args);
             }
             return super.open(method, url, ...args);
+          }
+
+          send(body?: Document | XMLHttpRequestBodyInit | null) {
+            if (this._blocked) {
+              // Simulate a failed request
+              setTimeout(() => {
+                Object.defineProperty(this, 'status', { value: 503, writable: false });
+                Object.defineProperty(this, 'statusText', { value: 'Service Unavailable (Firebase Isolated)', writable: false });
+                Object.defineProperty(this, 'responseText', { value: 'Firebase request blocked', writable: false });
+                Object.defineProperty(this, 'readyState', { value: 4, writable: false });
+                if (this.onreadystatechange) {
+                  this.onreadystatechange(new Event('readystatechange'));
+                }
+              }, 1);
+              return;
+            }
+            return super.send(body);
           }
         };
       }

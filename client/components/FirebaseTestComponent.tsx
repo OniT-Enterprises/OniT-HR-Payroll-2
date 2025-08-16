@@ -19,7 +19,7 @@ const FirebaseTestComponent: React.FC = () => {
     setTestResults([]);
   };
 
-  const testFirebaseConnection = async () => {
+  const testFirebaseConnectionSafe = async () => {
     setIsLoading(true);
     clearResults();
 
@@ -33,6 +33,14 @@ const FirebaseTestComponent: React.FC = () => {
       if (!db) {
         addResult('❌ Cannot proceed - database not initialized');
         return;
+      }
+
+      // Test 2: Check connection manager status
+      const status = getFirebaseStatus();
+      addResult(`📡 Connection status: ${status.isConnected ? 'Connected' : 'Disconnected'}`);
+      addResult(`🔄 Is connecting: ${status.isConnecting ? 'Yes' : 'No'}`);
+      if (status.error) {
+        addResult(`⚠️ Manager error: ${status.error}`);
       }
 
       // Test 2: Authentication first

@@ -82,7 +82,7 @@ const FirebaseTestComponent: React.FC = () => {
 
       // Test 5: Simple read operation
       try {
-        addResult('�� Testing read access to candidates collection...');
+        addResult('🔍 Testing read access to candidates collection...');
         const candidatesRef = collection(db, 'candidates');
         const snapshot = await getDocs(candidatesRef);
         addResult(`✅ Read test successful - found ${snapshot.docs.length} documents`);
@@ -109,7 +109,7 @@ const FirebaseTestComponent: React.FC = () => {
       } catch (writeError: any) {
         addResult(`❌ Write test failed: ${writeError.message}`);
         if (writeError.code === 'permission-denied') {
-          addResult('�� Permission denied - you may need to deploy updated Firestore rules');
+          addResult('💡 Permission denied - you may need to deploy updated Firestore rules');
           addResult('📝 Run: firebase deploy --only firestore:rules');
         } else if (writeError.message?.includes('INTERNAL ASSERTION FAILED')) {
           addResult('🚨 Firebase internal assertion error - this is a known SDK issue');
@@ -125,6 +125,9 @@ const FirebaseTestComponent: React.FC = () => {
         addResult(`✅ Candidate service test successful - found ${candidates.length} candidates`);
       } catch (candidateError: any) {
         addResult(`❌ Candidate service test failed: ${candidateError.message}`);
+        if (candidateError.message?.includes('client has already been terminated')) {
+          addResult('🔚 Candidate service using fallback data (Firebase client terminated)');
+        }
       }
 
     } catch (error: any) {

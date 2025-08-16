@@ -224,37 +224,40 @@ export default function Departments() {
 
   const testFirebaseConnection = async () => {
     try {
-      const isReady = isFirebaseReady();
-      const isBlocked = isFirebaseBlocked();
+      console.log("🔥 Running comprehensive Firebase diagnostics...");
 
-      console.log("🔥 Firebase Status:", { isReady, isBlocked });
-
-      if (isBlocked) {
+      // Unblock Firebase if it's blocked
+      if (isFirebaseBlocked()) {
         unblockFirebase();
         toast({
           title: "Firebase Unblocked",
-          description: "Attempting to reconnect to Firebase...",
+          description: "Removed Firebase blocks, testing connection...",
         });
       }
 
-      const connectionResult = await testFirebaseConn();
+      // Run full diagnostics
+      const diagnostics = await runFirebaseDiagnostics();
+      logFirebaseDiagnostics(diagnostics);
 
-      if (connectionResult) {
+      // Show results to user
+      if (diagnostics.connectionTest) {
         toast({
           title: "Firebase Connected ✅",
-          description: "Successfully connected to Firebase database",
+          description: `Found ${diagnostics.employeeCount} employees, ${diagnostics.departmentCount} departments`,
         });
+
         // Reload data after successful connection
         await loadData();
       } else {
+        const mainIssue = diagnostics.recommendations[0] || "Unknown connection issue";
         toast({
-          title: "Firebase Connection Failed ❌",
-          description: "Check console for details. Using mock data.",
+          title: "Firebase Connection Issue ❌",
+          description: mainIssue,
           variant: "destructive",
         });
       }
     } catch (error) {
-      console.error("Firebase test error:", error);
+      console.error("Firebase diagnostics error:", error);
       toast({
         title: "Firebase Test Error",
         description: `Error: ${error.message}`,

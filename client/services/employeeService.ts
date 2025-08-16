@@ -20,6 +20,7 @@ import {
   tryAuthentication,
 } from "@/lib/firebase";
 import { mockDataService } from "./mockDataService";
+import { getEmployeesDirectly } from "@/lib/firebaseBypass";
 
 export interface Employee {
   id?: string;

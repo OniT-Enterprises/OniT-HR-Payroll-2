@@ -51,17 +51,21 @@ class DepartmentService {
   }
 
   async getAllDepartments(): Promise<Department[]> {
-    // Check cache first - always try cache regardless of Firebase status
+    console.log("🏢 Loading departments from Firebase first, then fallback");
+
+    // Check cache first but with shorter expiry for departments
     const cachedDepartments = this.getCachedDepartments();
     if (cachedDepartments.length > 0) {
       console.log("✅ Using cached department data");
+      // Try Firebase refresh in background
+      this.refreshFirebaseData();
       return cachedDepartments;
     }
 
     // Try Firebase if available
     if (this.isFirebaseAvailable()) {
       try {
-        console.log("🔍 Attempting to load departments from Firebase...");
+        console.log("🔥 Attempting to load departments from Firebase...");
 
         const collection = this.getCollection();
         if (!collection) {
@@ -87,15 +91,44 @@ class DepartmentService {
         this.cacheDepartments(departments);
         return departments;
       } catch (error) {
-        console.warn("🚫 Firebase failed for departments, using mock data:", error);
+        console.warn("🚫 Firebase failed for departments:", error);
       }
     } else {
-      console.log("🚫 Firebase not available for departments, using mock data");
+      console.log("🚫 Firebase not available for departments");
     }
 
     // Fallback to mock data
-    console.log(`📋 Returning ${this.getMockDepartments().length} mock departments`);
+    console.log(`�� Using ${this.getMockDepartments().length} mock departments as fallback`);
     return this.getMockDepartments();
+  }
+
+  private async refreshFirebaseData(): Promise<void> {
+    // Background refresh - don't block UI
+    if (!this.isFirebaseAvailable()) return;
+
+    try {
+      const collection = this.getCollection();
+      if (!collection) return;
+
+      const querySnapshot = await getDocs(
+        query(collection, orderBy("name", "asc")),
+      );
+
+      const departments = querySnapshot.docs.map((doc) => {
+        const data = doc.data();
+        return {
+          id: doc.id,
+          ...data,
+          createdAt: data.createdAt?.toDate() || new Date(),
+          updatedAt: data.updatedAt?.toDate() || new Date(),
+        } as Department;
+      });
+
+      this.cacheDepartments(departments);
+      console.log(`🔄 Background refresh: ${departments.length} departments updated`);
+    } catch (error) {
+      console.warn("Background refresh failed:", error);
+    }
   }
 
   private getCachedDepartments(): Department[] {

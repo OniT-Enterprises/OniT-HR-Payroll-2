@@ -71,6 +71,14 @@ class FirebaseConnectionManager {
    * Test Firebase connection with proper state management
    */
   public async testConnection(): Promise<boolean> {
+    // Check if offline mode is enabled
+    if (isFirebaseOffline()) {
+      console.log('📴 Firebase is in offline mode, skipping connection test');
+      this.state.isConnected = false;
+      this.state.error = 'Offline mode enabled to prevent assertion errors';
+      return false;
+    }
+
     // Check if we're already connecting or have a recent successful connection
     const now = Date.now();
     if (this.state.isConnecting) {

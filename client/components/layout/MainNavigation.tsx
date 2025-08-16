@@ -342,8 +342,10 @@ export default function MainNavigation() {
           </div>
         </div>
 
-        {/* Right Side - User Menu */}
+        {/* Right Side - Tenant Switcher & User Menu */}
         <div className="flex items-center gap-3">
+          {/* Tenant Switcher */}
+          <TenantSwitcher className="w-64" />
           {/* User Avatar */}
           <DropdownMenu>
             <DropdownMenuTrigger asChild>

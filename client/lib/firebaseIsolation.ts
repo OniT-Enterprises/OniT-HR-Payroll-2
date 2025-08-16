@@ -265,6 +265,14 @@ if (typeof window !== 'undefined') {
       return; // Don't propagate the error
     }
 
+    // Suppress errors related to our blocked responses
+    if (message.includes('Service Unavailable') ||
+        message.includes('Firebase Isolated') ||
+        message.includes('Firebase request blocked')) {
+      console.warn('🚫 Firebase blocked response error suppressed');
+      return; // Don't propagate the error
+    }
+
     // Call original console.error for other errors
     originalConsoleError.apply(console, args);
   };

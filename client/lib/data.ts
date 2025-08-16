@@ -91,10 +91,19 @@ const canProceedWithFirebaseOperation = (): boolean => {
 // Generic document operations
 const getDocument = async <T extends DocumentData>(path: string): Promise<T | null> => {
   const database = ensureDatabase();
+
+  // Check if we should proceed with Firebase operation
+  if (!canProceedWithFirebaseOperation()) {
+    throw new TenantDataError('Firebase client offline or terminated', 'CLIENT_TERMINATED');
+  }
+
   try {
     const docSnap = await getDoc(doc(database, path));
     return docSnap.exists() ? { id: docSnap.id, ...docSnap.data() } as T : null;
-  } catch (error) {
+  } catch (error: any) {
+    if (error.message?.includes('client has already been terminated')) {
+      throw new TenantDataError('Firebase client terminated', 'CLIENT_TERMINATED', error);
+    }
     throw new TenantDataError(`Failed to get document: ${path}`, 'GET_FAILED', error);
   }
 };

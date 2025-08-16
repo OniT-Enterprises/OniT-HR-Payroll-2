@@ -11,6 +11,7 @@ import { Progress } from "@/components/ui/progress";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import MainNavigation from "@/components/layout/MainNavigation";
 import { employeeService } from "@/services/employeeService";
+import FirebaseTestComponent from "@/components/FirebaseTestComponent";
 import React, { useState, useEffect } from "react";
 import {
   Users,
@@ -151,6 +152,8 @@ export default function Dashboard() {
       <MainNavigation />
 
       <div className="p-6">
+        {/* Temporary Firebase Test Component for Debugging */}
+        <FirebaseTestComponent />
         <div className="flex items-center justify-between mb-8">
           <div>
             <h1 className="text-3xl font-bold">Main Dashboard!?</h1>

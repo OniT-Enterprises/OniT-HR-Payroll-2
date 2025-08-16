@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -39,6 +40,7 @@ import {
 } from "lucide-react";
 
 export default function Departments() {
+  const navigate = useNavigate();
   const [employees, setEmployees] = useState<Employee[]>([]);
   const [departments, setDepartments] = useState<Department[]>([]);
   const [loading, setLoading] = useState(true);
@@ -252,7 +254,7 @@ export default function Departments() {
           </Button>
           <Button
             variant="secondary"
-            onClick={() => (window.location.href = "/staff/organization-chart")}
+            onClick={() => navigate("/staff/org-chart")}
           >
             <Users className="mr-2 h-4 w-4" />
             Organization Chart

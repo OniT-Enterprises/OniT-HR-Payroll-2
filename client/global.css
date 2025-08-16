@@ -96,4 +96,26 @@
   body {
     @apply bg-background text-foreground;
   }
+
+  /* Optimize elements that commonly trigger ResizeObserver loops */
+  [data-radix-scroll-area-viewport] {
+    contain: layout style;
+  }
+
+  /* Prevent layout thrashing in dialogs and popovers */
+  [data-radix-dialog-content],
+  [data-radix-popover-content] {
+    contain: layout;
+  }
+
+  /* Optimize chart containers */
+  .recharts-responsive-container {
+    contain: layout;
+  }
+
+  /* Reduce layout recalculations for complex layouts */
+  .org-chart-container,
+  .complex-layout {
+    contain: layout style;
+  }
 }

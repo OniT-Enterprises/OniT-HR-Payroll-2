@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { candidateService, type Candidate } from "@/services/candidateService";
+import DataSourceIndicator from "@/components/DataSourceIndicator";
 import { useToast } from "@/hooks/use-toast";
 import {
   Card,
@@ -261,14 +262,17 @@ export default function CandidateSelection() {
       <MainNavigation />
 
       <div className="p-6">
-        <div className="flex items-center gap-3 mb-6">
-          <Users className="h-8 w-8 text-green-400" />
-          <div>
-            <h1 className="text-3xl font-bold">Candidate Selection</h1>
-            <p className="text-muted-foreground">
-              Review and manage job applications
-            </p>
+        <div className="flex items-center justify-between mb-6">
+          <div className="flex items-center gap-3">
+            <Users className="h-8 w-8 text-green-400" />
+            <div>
+              <h1 className="text-3xl font-bold">Candidate Selection</h1>
+              <p className="text-muted-foreground">
+                Review and manage job applications
+              </p>
+            </div>
           </div>
+          <DataSourceIndicator />
         </div>
 
         {/* Statistics moved under title */}

@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useCallback } from "react";
 import { Button } from "@/components/ui/button";
+import { debounceResize } from "@/lib/resizeObserverFix";
 import {
   Card,
   CardContent,
@@ -203,6 +204,14 @@ export default function OrganizationChart() {
       // Don't throw the error - just log it and continue
     }
   };
+
+  // Debounced version to prevent excessive re-renders
+  const debouncedBuildChart = useCallback(
+    debounceResize(() => {
+      // This will be set by the actual build function
+    }, 150),
+    []
+  );
 
   const buildAppleOrgChart = useCallback(
     (employeesData: Employee[], departmentsData: Department[]) => {

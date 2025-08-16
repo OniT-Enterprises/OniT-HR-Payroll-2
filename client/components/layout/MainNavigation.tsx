@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { Button } from "@/components/ui/button";
+import { TenantSwitcher } from "@/components/TenantSwitcher";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -341,8 +342,10 @@ export default function MainNavigation() {
           </div>
         </div>
 
-        {/* Right Side - User Menu */}
+        {/* Right Side - Tenant Switcher & User Menu */}
         <div className="flex items-center gap-3">
+          {/* Tenant Switcher */}
+          <TenantSwitcher className="w-64" />
           {/* User Avatar */}
           <DropdownMenu>
             <DropdownMenuTrigger asChild>

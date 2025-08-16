@@ -43,7 +43,19 @@ const FirebaseTestComponent: React.FC = () => {
         addResult(`⚠️ Manager error: ${status.error}`);
       }
 
-      // Test 2: Authentication first
+      // Test 3: Safe connection test using manager
+      try {
+        addResult('🔗 Testing connection with safe manager...');
+        const connectionResult = await testFirebaseConnection();
+        addResult(`${connectionResult ? '✅' : '❌'} Connection manager test ${connectionResult ? 'successful' : 'failed'}`);
+      } catch (connectionError: any) {
+        addResult(`❌ Connection manager error: ${connectionError.message}`);
+        if (connectionError.message?.includes('INTERNAL ASSERTION FAILED')) {
+          addResult('🚨 Internal assertion error detected - this is a known Firebase SDK issue');
+        }
+      }
+
+      // Test 4: Authentication
       try {
         addResult('🔐 Testing authentication...');
         const authResult = await tryAuthentication();
@@ -55,7 +67,7 @@ const FirebaseTestComponent: React.FC = () => {
         addResult(`❌ Authentication error: ${authError.message}`);
       }
 
-      // Test 3: Simple read operation
+      // Test 5: Simple read operation
       try {
         addResult('🔍 Testing read access to candidates collection...');
         const candidatesRef = collection(db, 'candidates');

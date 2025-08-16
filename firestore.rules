@@ -2,32 +2,52 @@ rules_version = '2';
 
 service cloud.firestore {
   match /databases/{database}/documents {
-    // TEMPORARY DEVELOPMENT RULES - REMOVE IN PRODUCTION!
-    // These rules allow read/write access for development purposes
-    
-    // Allow read/write to employees and departments for development
+    // DEVELOPMENT RULES - Allow broader access for development purposes
+
+    // Allow read/write to all main collections for development
     match /employees/{empId} {
       allow read, write: if true; // DEVELOPMENT ONLY!
     }
-    
+
     match /departments/{deptId} {
       allow read, write: if true; // DEVELOPMENT ONLY!
     }
-    
-    // Keep the secure tenant-based rules for production data
-    match /tenants/{tid}/{document=**} {
-      allow read, write: if request.auth != null && tid in request.auth.token.tenants;
+
+    match /candidates/{candidateId} {
+      allow read, write: if true; // DEVELOPMENT ONLY!
     }
-    
-    // Reference data 
+
+    match /test/{testId} {
+      allow read, write: if true; // DEVELOPMENT ONLY - for connectivity tests
+    }
+
+    // Allow anonymous users to access most collections during development
+    match /tenants/{tid}/{document=**} {
+      allow read, write: if true; // DEVELOPMENT ONLY - simplified for testing
+    }
+
+    // Reference data accessible to all authenticated users (including anonymous)
     match /reference/{document=**} {
-      allow read: if request.auth != null;
+      allow read: if true; // DEVELOPMENT ONLY
       allow write: if false;
     }
-    
-    // Deny everything else
+
+    // Allow access to other common collections
+    match /jobs/{jobId} {
+      allow read, write: if true; // DEVELOPMENT ONLY!
+    }
+
+    match /applications/{appId} {
+      allow read, write: if true; // DEVELOPMENT ONLY!
+    }
+
+    match /interviews/{interviewId} {
+      allow read, write: if true; // DEVELOPMENT ONLY!
+    }
+
+    // Default allow for development (can be restricted later)
     match /{document=**} {
-      allow read, write: if false;
+      allow read, write: if true; // DEVELOPMENT ONLY - REMOVE IN PRODUCTION!
     }
   }
 }

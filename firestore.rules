@@ -2,52 +2,188 @@ rules_version = '2';
 
 service cloud.firestore {
   match /databases/{database}/documents {
-    // DEVELOPMENT RULES - Allow broader access for development purposes
-
-    // Allow read/write to all main collections for development
-    match /employees/{empId} {
-      allow read, write: if true; // DEVELOPMENT ONLY!
+    
+    // Helper functions
+    function authed() { 
+      return request.auth != null; 
+    }
+    
+    function hasTenant(tid) { 
+      return authed() && tid in request.auth.token.tenants; 
+    }
+    
+    function isTenantMember(tid) {
+      return authed() && 
+             exists(/databases/$(database)/documents/tenants/$(tid)/members/$(request.auth.uid));
+    }
+    
+    function getTenantRole(tid) {
+      return get(/databases/$(database)/documents/tenants/$(tid)/members/$(request.auth.uid)).data.role;
+    }
+    
+    function hasRole(tid, role) {
+      return isTenantMember(tid) && getTenantRole(tid) == role;
+    }
+    
+    function isOwnerOrAdmin(tid) {
+      return isTenantMember(tid) && 
+             getTenantRole(tid) in ['owner', 'hr-admin'];
+    }
+    
+    function canAccessModule(tid, module) {
+      let memberData = get(/databases/$(database)/documents/tenants/$(tid)/members/$(request.auth.uid)).data;
+      return memberData.role in ['owner', 'hr-admin'] || 
+             (memberData.modules != null && module in memberData.modules);
     }
 
-    match /departments/{deptId} {
-      allow read, write: if true; // DEVELOPMENT ONLY!
+    // Tenant isolation - primary security boundary
+    match /tenants/{tid} {
+      // Tenant document itself
+      allow read, write: if hasTenant(tid);
+      
+      // Tenant settings
+      match /settings/config {
+        allow read: if isTenantMember(tid);
+        allow write: if isOwnerOrAdmin(tid);
+      }
+      
+      // Member management
+      match /members/{uid} {
+        allow read: if isTenantMember(tid);
+        allow write: if isOwnerOrAdmin(tid);
+      }
+      
+      // Department management
+      match /departments/{deptId} {
+        allow read: if isTenantMember(tid) && canAccessModule(tid, 'staff');
+        allow write: if isOwnerOrAdmin(tid) && canAccessModule(tid, 'staff');
+      }
+      
+      // Employee management  
+      match /employees/{empId} {
+        allow read: if isTenantMember(tid) && canAccessModule(tid, 'staff');
+        allow write: if isOwnerOrAdmin(tid) && canAccessModule(tid, 'staff');
+      }
+      
+      // Position management
+      match /positions/{posId} {
+        allow read: if isTenantMember(tid) && canAccessModule(tid, 'staff');
+        allow write: if isOwnerOrAdmin(tid) && canAccessModule(tid, 'staff');
+      }
+      
+      // Hiring module
+      match /jobs/{jobId} {
+        allow read: if isTenantMember(tid) && canAccessModule(tid, 'hiring');
+        allow write: if isOwnerOrAdmin(tid) && canAccessModule(tid, 'hiring');
+      }
+      
+      match /candidates/{candId} {
+        allow read: if isTenantMember(tid) && canAccessModule(tid, 'hiring');
+        allow write: if isOwnerOrAdmin(tid) && canAccessModule(tid, 'hiring');
+      }
+      
+      match /interviews/{intId} {
+        allow read: if isTenantMember(tid) && canAccessModule(tid, 'hiring');
+        allow write: if isOwnerOrAdmin(tid) && canAccessModule(tid, 'hiring');
+      }
+      
+      match /offers/{offerId} {
+        allow read: if isTenantMember(tid) && canAccessModule(tid, 'hiring');
+        allow write: if isOwnerOrAdmin(tid) && canAccessModule(tid, 'hiring');
+      }
+      
+      // Employment contracts and snapshots
+      match /contracts/{contractId} {
+        allow read: if isTenantMember(tid) && canAccessModule(tid, 'staff');
+        allow write: if isOwnerOrAdmin(tid) && canAccessModule(tid, 'staff');
+      }
+      
+      match /employmentSnapshots/{snapId} {
+        allow read: if isTenantMember(tid) && canAccessModule(tid, 'staff');
+        allow create: if isOwnerOrAdmin(tid) && canAccessModule(tid, 'staff');
+        // Snapshots are immutable once created
+        allow update, delete: if false;
+      }
+      
+      // Time and leave module
+      match /rosters/{ym}/shifts/{shiftId} {
+        allow read: if isTenantMember(tid) && canAccessModule(tid, 'timeleave');
+        allow write: if isOwnerOrAdmin(tid) && canAccessModule(tid, 'timeleave');
+      }
+      
+      match /timesheets/{empId_weekIso} {
+        allow read: if isTenantMember(tid) && canAccessModule(tid, 'timeleave');
+        allow write: if isOwnerOrAdmin(tid) && canAccessModule(tid, 'timeleave');
+      }
+      
+      match /leavePolicies/{policyId} {
+        allow read: if isTenantMember(tid) && canAccessModule(tid, 'timeleave');
+        allow write: if isOwnerOrAdmin(tid) && canAccessModule(tid, 'timeleave');
+      }
+      
+      match /leaveRequests/{reqId} {
+        allow read: if isTenantMember(tid) && canAccessModule(tid, 'timeleave');
+        allow write: if isOwnerOrAdmin(tid) && canAccessModule(tid, 'timeleave');
+      }
+      
+      match /leaveBalances/{empId_year} {
+        allow read: if isTenantMember(tid) && canAccessModule(tid, 'timeleave');
+        allow write: if isOwnerOrAdmin(tid) && canAccessModule(tid, 'timeleave');
+      }
+      
+      // Performance module
+      match /goals/{goalId} {
+        allow read: if isTenantMember(tid) && canAccessModule(tid, 'performance');
+        allow write: if isOwnerOrAdmin(tid) && canAccessModule(tid, 'performance');
+      }
+      
+      match /reviews/{reviewId} {
+        allow read: if isTenantMember(tid) && canAccessModule(tid, 'performance');
+        allow write: if isOwnerOrAdmin(tid) && canAccessModule(tid, 'performance');
+      }
+      
+      match /trainings/{trainingId} {
+        allow read: if isTenantMember(tid) && canAccessModule(tid, 'performance');
+        allow write: if isOwnerOrAdmin(tid) && canAccessModule(tid, 'performance');
+      }
+      
+      match /discipline/{disciplineId} {
+        allow read: if isTenantMember(tid) && canAccessModule(tid, 'performance');
+        allow write: if isOwnerOrAdmin(tid) && canAccessModule(tid, 'performance');
+      }
+      
+      match /promotionSignals/{year_q}/{empId} {
+        allow read: if isTenantMember(tid) && canAccessModule(tid, 'performance');
+        allow write: if isOwnerOrAdmin(tid) && canAccessModule(tid, 'performance');
+      }
+      
+      // Payroll module
+      match /payruns/{yyyymm}/payslips/{empId} {
+        allow read: if isTenantMember(tid) && canAccessModule(tid, 'payroll');
+        allow write: if isOwnerOrAdmin(tid) && canAccessModule(tid, 'payroll');
+      }
+      
+      // Analytics and reports
+      match /analytics/{docId} {
+        allow read: if isTenantMember(tid) && canAccessModule(tid, 'reports');
+        allow write: if isOwnerOrAdmin(tid) && canAccessModule(tid, 'reports');
+      }
+      
+      // Catch-all for any other tenant documents
+      match /{document=**} {
+        allow read, write: if hasTenant(tid);
+      }
     }
 
-    match /candidates/{candidateId} {
-      allow read, write: if true; // DEVELOPMENT ONLY!
-    }
-
-    match /test/{testId} {
-      allow read, write: if true; // DEVELOPMENT ONLY - for connectivity tests
-    }
-
-    // Allow anonymous users to access most collections during development
-    match /tenants/{tid}/{document=**} {
-      allow read, write: if true; // DEVELOPMENT ONLY - simplified for testing
-    }
-
-    // Reference data accessible to all authenticated users (including anonymous)
+    // Reference data - public read-only
     match /reference/{document=**} {
-      allow read: if true; // DEVELOPMENT ONLY
+      allow read: if true;
       allow write: if false;
     }
-
-    // Allow access to other common collections
-    match /jobs/{jobId} {
-      allow read, write: if true; // DEVELOPMENT ONLY!
-    }
-
-    match /applications/{appId} {
-      allow read, write: if true; // DEVELOPMENT ONLY!
-    }
-
-    match /interviews/{interviewId} {
-      allow read, write: if true; // DEVELOPMENT ONLY!
-    }
-
-    // Default allow for development (can be restricted later)
+    
+    // Deny everything else
     match /{document=**} {
-      allow read, write: if true; // DEVELOPMENT ONLY - REMOVE IN PRODUCTION!
+      allow read, write: if false;
     }
   }
 }

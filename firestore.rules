@@ -2,26 +2,85 @@ rules_version = '2';
 
 service cloud.firestore {
   match /databases/{database}/documents {
-    // Development rules - allow unrestricted access
-    // Change these for production deployment
-    match /{document=**} {
-      allow read, write: if true;
+    // Helper functions for authentication and tenant access
+    function authed() {
+      return request.auth != null;
     }
 
-    // Production rules (commented out for development):
-    // match /{document=**} {
-    //   allow read, write: if request.auth != null;
-    // }
-    //
-    // // More granular production rules:
-    // match /candidates/{candidateId} {
-    //   allow read, write: if request.auth != null;
-    // }
-    // match /employees/{employeeId} {
-    //   allow read, write: if request.auth != null;
-    // }
-    // match /test/{testId} {
-    //   allow read, write: if request.auth != null;
-    // }
+    function hasTenant(tid) {
+      return authed() && tid in request.auth.token.tenants;
+    }
+
+    function getTenantMember(tid) {
+      return get(/databases/$(database)/documents/tenants/$(tid)/members/$(request.auth.uid));
+    }
+
+    function hasRole(tid, role) {
+      return authed() && getTenantMember(tid).data.role == role;
+    }
+
+    function hasAnyRole(tid, roles) {
+      return authed() && getTenantMember(tid).data.role in roles;
+    }
+
+    // ========================================================================
+    // TENANT DATA ISOLATION
+    // ========================================================================
+
+    // All tenant data requires user to have the tenant in their custom claims
+    match /tenants/{tid}/{document=**} {
+      allow read, write: if hasTenant(tid);
+
+      // Additional role-based restrictions for sensitive operations
+      // Tenant settings can only be modified by owners
+      match /settings/config {
+        allow write: if hasTenant(tid) && hasRole(tid, 'owner');
+      }
+
+      // Member management restricted to owners and hr-admin
+      match /members/{uid} {
+        allow write: if hasTenant(tid) && hasAnyRole(tid, ['owner', 'hr-admin']);
+      }
+    }
+
+    // ========================================================================
+    // PUBLIC REFERENCE DATA
+    // ========================================================================
+
+    // Reference data is read-only for authenticated users
+    match /reference/{document=**} {
+      allow read: if authed();
+      allow write: if false; // Reference data is managed server-side only
+    }
+
+    // ========================================================================
+    // LEGACY ROOT COLLECTIONS (for migration period)
+    // ========================================================================
+
+    // Allow read access to legacy root collections for migration
+    // TODO: Remove these after migration is complete
+    match /departments/{deptId} {
+      allow read: if authed();
+      allow write: if false; // Prevent writes to legacy collections
+    }
+
+    match /employees/{empId} {
+      allow read: if authed();
+      allow write: if false; // Prevent writes to legacy collections
+    }
+
+    match /candidates/{candId} {
+      allow read: if authed();
+      allow write: if false; // Prevent writes to legacy collections
+    }
+
+    // ========================================================================
+    // DENY ALL OTHER ACCESS
+    // ========================================================================
+
+    // Explicitly deny access to any other paths
+    match /{document=**} {
+      allow read, write: if false;
+    }
   }
 }

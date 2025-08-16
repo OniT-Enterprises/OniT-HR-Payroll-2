@@ -165,6 +165,19 @@ class EmployeeService {
         return employees;
       } catch (error) {
         console.warn("🚫 Firebase failed for employees:", error);
+
+        // Try direct access without authentication as last resort
+        if (error.message?.includes("Authentication failed") || error.code === 'unauthenticated') {
+          try {
+            console.log("🔄 Trying direct Firestore access without auth...");
+            const employees = await getEmployeesDirectly();
+            console.log(`✅ Direct access successful: ${employees.length} employees`);
+            this.cacheEmployees(employees);
+            return employees;
+          } catch (directError) {
+            console.warn("🚫 Direct access also failed:", directError);
+          }
+        }
       }
     }
 

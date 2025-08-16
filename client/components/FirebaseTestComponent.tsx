@@ -47,7 +47,15 @@ const FirebaseTestComponent: React.FC = () => {
         addResult('ℹ️ Firebase is in offline mode - some tests will be skipped');
       }
 
-      // Test 2: Check connection manager status
+      // Test 2: Check isolation status
+      const isolationState = getFirebaseIsolationState();
+      addResult(`🚫 Firebase isolated: ${isFirebaseIsolated() ? 'Yes' : 'No'}`);
+      if (isFirebaseIsolated()) {
+        addResult(`📝 Isolation reason: ${isolationState.reason}`);
+        addResult(`🕐 Isolated at: ${isolationState.isolatedAt.toLocaleTimeString()}`);
+      }
+
+      // Test 3: Check connection manager status
       const status = getFirebaseStatus();
       addResult(`📡 Connection status: ${status.isConnected ? 'Connected' : 'Disconnected'}`);
       addResult(`🔄 Is connecting: ${status.isConnecting ? 'Yes' : 'No'}`);

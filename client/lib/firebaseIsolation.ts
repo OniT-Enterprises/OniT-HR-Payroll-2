@@ -141,18 +141,40 @@ class FirebaseIsolationManager {
    */
   public disableIsolation(): void {
     console.log('🔄 Disabling Firebase isolation...');
-    
+
     this.state.isIsolated = false;
 
     try {
-      if (typeof window !== 'undefined' && (window as any).__originalFirebaseMethods) {
-        // Restore original methods
-        Object.keys((window as any).__originalFirebaseMethods).forEach(methodName => {
-          (window as any)[methodName] = (window as any).__originalFirebaseMethods[methodName];
-        });
-        
-        delete (window as any).__originalFirebaseMethods;
-        console.log('✅ Firebase functions restored');
+      if (typeof window !== 'undefined') {
+        // Restore fetch
+        if (window.__originalFetch) {
+          window.fetch = window.__originalFetch;
+          delete window.__originalFetch;
+        }
+
+        // Restore XMLHttpRequest
+        if (window.__originalXMLHttpRequest) {
+          window.XMLHttpRequest = window.__originalXMLHttpRequest;
+          delete window.__originalXMLHttpRequest;
+        }
+
+        // Restore Firebase methods
+        if ((window as any).__originalFirebaseMethods) {
+          Object.keys((window as any).__originalFirebaseMethods).forEach(methodName => {
+            if (methodName.startsWith('firebase.')) {
+              const firebaseMethod = methodName.replace('firebase.', '');
+              if (window.firebase) {
+                window.firebase[firebaseMethod] = (window as any).__originalFirebaseMethods[methodName];
+              }
+            } else {
+              (window as any)[methodName] = (window as any).__originalFirebaseMethods[methodName];
+            }
+          });
+
+          delete (window as any).__originalFirebaseMethods;
+        }
+
+        console.log('✅ Firebase functions and network access restored');
       }
     } catch (error) {
       console.warn('⚠️ Failed to restore Firebase functions:', error);

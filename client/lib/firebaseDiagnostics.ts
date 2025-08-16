@@ -1,5 +1,6 @@
 import { db, auth, isFirebaseReady, isFirebaseBlocked, getFirebaseError, tryAuthentication } from "./firebase";
 import { collection, getDocs, query, limit } from "firebase/firestore";
+import { testDirectFirestoreAccess } from "./firebaseBypass";
 
 export interface FirebaseDiagnostics {
   firebaseInitialized: boolean;

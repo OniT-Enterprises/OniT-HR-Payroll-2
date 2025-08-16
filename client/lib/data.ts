@@ -72,6 +72,13 @@ const ensureDatabase = () => {
 // Helper to check if operation should proceed
 const canProceedWithFirebaseOperation = (): boolean => {
   try {
+    // Check isolation first
+    const { isFirebaseIsolated } = require('./firebaseIsolation');
+    if (isFirebaseIsolated()) {
+      console.warn('🚫 Skipping Firebase operation - Firebase is isolated');
+      return false;
+    }
+
     const { getFirebaseStatus } = require('./firebaseManager');
     const status = getFirebaseStatus();
 
@@ -83,8 +90,9 @@ const canProceedWithFirebaseOperation = (): boolean => {
 
     return true;
   } catch (error) {
-    // If we can't check status, assume we can proceed
-    return true;
+    // If we can't check status, assume we can't proceed (safer default)
+    console.warn('🚫 Cannot check Firebase status, assuming isolated');
+    return false;
   }
 };
 

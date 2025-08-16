@@ -76,14 +76,30 @@ class FirebaseIsolationManager {
         window.fetch = async (input: RequestInfo | URL, init?: RequestInit): Promise<Response> => {
           const url = typeof input === 'string' ? input : input.toString();
 
-          // Block Firebase-related requests
+          // Block Firebase-related requests by returning a failed Response
           if (url.includes('firestore.googleapis.com') ||
               url.includes('firebase.googleapis.com') ||
               url.includes('identitytoolkit.googleapis.com') ||
               url.includes('securetoken.googleapis.com') ||
               url.includes('firebaseapp.com')) {
             console.warn('🚫 Firebase network request blocked:', url);
-            throw new Error(`Firebase network request blocked: ${url}`);
+
+            // Return a proper failed Response instead of throwing
+            return new Response(
+              JSON.stringify({
+                error: 'Firebase network request blocked by isolation mode',
+                url: url,
+                timestamp: new Date().toISOString()
+              }),
+              {
+                status: 503, // Service Unavailable
+                statusText: 'Service Unavailable (Firebase Isolated)',
+                headers: {
+                  'Content-Type': 'application/json',
+                  'X-Firebase-Blocked': 'true'
+                }
+              }
+            );
           }
 
           // Allow other requests

@@ -5,6 +5,7 @@
 
 import { db, auth, tryAuthentication } from './firebase';
 import { enableNetwork, disableNetwork } from 'firebase/firestore';
+import { enableFirebaseOfflineMode, isFirebaseOffline } from './firebaseOfflineMode';
 
 interface ConnectionState {
   isInitialized: boolean;

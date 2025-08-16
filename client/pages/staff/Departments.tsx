@@ -44,6 +44,10 @@ import {
   unblockFirebase,
   testFirebaseConnection as testFirebaseConn
 } from "@/lib/firebase";
+import {
+  runFirebaseDiagnostics,
+  logFirebaseDiagnostics
+} from "@/lib/firebaseDiagnostics";
 
 export default function Departments() {
   const navigate = useNavigate();

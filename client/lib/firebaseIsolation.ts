@@ -123,6 +123,27 @@ export const firebaseIsolation = new FirebaseIsolationManager();
 // Auto-enable isolation on module load to prevent assertion errors
 firebaseIsolation.enableIsolation('Auto-enabled to prevent Firebase internal assertion errors');
 
+// Add global error handler to catch any remaining Firebase assertion errors
+if (typeof window !== 'undefined') {
+  const originalConsoleError = console.error;
+
+  console.error = function(...args: any[]) {
+    const message = args.join(' ');
+
+    // Detect and suppress Firebase assertion errors
+    if (message.includes('INTERNAL ASSERTION FAILED') ||
+        message.includes('FIRESTORE') && message.includes('Unexpected state')) {
+      console.warn('🚫 Firebase assertion error suppressed by isolation mode:', message);
+      return; // Don't propagate the error
+    }
+
+    // Call original console.error for other errors
+    originalConsoleError.apply(console, args);
+  };
+
+  console.log('✅ Firebase error suppression enabled');
+}
+
 // Export convenience functions
 export const isFirebaseIsolated = () => firebaseIsolation.isIsolated();
 export const enableFirebaseIsolation = (reason?: string) => firebaseIsolation.enableIsolation(reason);

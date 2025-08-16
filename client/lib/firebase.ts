@@ -196,6 +196,9 @@ export const testFirebaseConnection = async (): Promise<boolean> => {
       return false;
     }
 
+    // Try authentication first to avoid permission issues
+    await tryAuthentication();
+
     // Only enable network if not already enabled
     if (!networkEnabled) {
       // Wrap enableNetwork with timeout and error handling
@@ -207,10 +210,14 @@ export const testFirebaseConnection = async (): Promise<boolean> => {
           ) {
             throw new Error("Network error during Firebase enable");
           }
+          if (error.code === 'permission-denied' || error.message?.includes('Missing or insufficient permissions')) {
+            console.warn("🔒 Permission error - trying to continue with current authentication state");
+            return; // Don't throw, continue execution
+          }
           throw error;
         }),
         new Promise((_, reject) =>
-          setTimeout(() => reject(new Error("Firebase enable timeout")), 3000),
+          setTimeout(() => reject(new Error("Firebase enable timeout")), 5000),
         ),
       ]);
 
@@ -218,7 +225,7 @@ export const testFirebaseConnection = async (): Promise<boolean> => {
       console.log("✅ Firebase network enabled successfully");
     }
     return true;
-  } catch (error) {
+  } catch (error: any) {
     console.warn("🚫 Firebase connectivity test failed:", error);
 
     // Handle specific error types
@@ -229,6 +236,8 @@ export const testFirebaseConnection = async (): Promise<boolean> => {
       console.warn("🌐 Network error detected in Firebase test");
     } else if (error.message?.includes("timeout")) {
       console.warn("⏱️ Firebase connection timeout");
+    } else if (error.code === 'permission-denied' || error.message?.includes('Missing or insufficient permissions')) {
+      console.warn("🔒 Permission denied - check Firestore rules and authentication");
     } else {
       console.warn("❓ Unknown Firebase error:", error);
     }

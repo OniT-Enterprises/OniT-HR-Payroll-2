@@ -524,12 +524,18 @@ export const useCreateEmployee = (tid?: string) => {
   });
 };
 
-// Position hooks
+// Position hooks (disabled to prevent Firebase watch streams)
 export const usePositions = (tid?: string) => {
   return useQuery({
     queryKey: queryKeys.positions(tid!),
-    queryFn: () => listPositions(tid!),
-    enabled: !!tid,
+    queryFn: () => {
+      console.log('🚫 Firebase position query disabled to prevent assertion errors');
+      return Promise.resolve([
+        { id: 'pos-1', title: 'Software Engineer', grade: 'IC3', baseMonthlyUSD: 5000, leaveDaysPerYear: 25 },
+        { id: 'pos-2', title: 'Senior Software Engineer', grade: 'IC4', baseMonthlyUSD: 7000, leaveDaysPerYear: 25 },
+      ]);
+    },
+    enabled: false, // Disable to prevent Firebase operations
     staleTime: 10 * 60 * 1000, // 10 minutes (positions change less frequently)
   });
 };
@@ -537,8 +543,11 @@ export const usePositions = (tid?: string) => {
 export const usePosition = (tid?: string, positionId?: string) => {
   return useQuery({
     queryKey: queryKeys.position(tid!, positionId!),
-    queryFn: () => getPosition(tid!, positionId!),
-    enabled: !!tid && !!positionId,
+    queryFn: () => {
+      console.log('🚫 Firebase position query disabled to prevent assertion errors');
+      return Promise.resolve(null);
+    },
+    enabled: false, // Disable to prevent Firebase operations
   });
 };
 

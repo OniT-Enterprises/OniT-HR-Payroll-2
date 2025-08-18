@@ -138,6 +138,19 @@ export default function Settings() {
           ))}
         </div>
 
+        {/* Network Fetch Diagnostic */}
+        <Card className="mt-8">
+          <CardHeader>
+            <CardTitle>Network Fetch Diagnostic</CardTitle>
+            <CardDescription>
+              Fix "Failed to fetch" errors by restoring network functions
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <FetchDiagnostic />
+          </CardContent>
+        </Card>
+
         {/* Development Authentication */}
         <Card className="mt-8">
           <CardHeader>

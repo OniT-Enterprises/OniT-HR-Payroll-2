@@ -21,9 +21,16 @@ export const SimpleLogin: React.FC = () => {
       setShowForm(!isAuthenticated());
     };
 
+    // Auto-sign in with Celestino for demo (if not already signed in)
+    if (!isAuthenticated()) {
+      console.log('🚀 Auto-signing in Celestino for demo...');
+      signInLocal('celestinod@gmail.com');
+      checkAuth();
+    }
+
     // Check every second
     const interval = setInterval(checkAuth, 1000);
-    
+
     // Initial check
     checkAuth();
 

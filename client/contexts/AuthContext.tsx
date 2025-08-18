@@ -37,54 +37,55 @@ export function AuthProvider({ children }: AuthProviderProps) {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Re-enable auth state listener with our fixed Firebase setup
     console.log("🔧 AuthProvider initializing with Firebase authentication");
 
-    const unsubscribe = auth.onAuthStateChanged(async (firebaseUser) => {
-      try {
-        setLoading(true);
-        setUser(firebaseUser);
+    // Try to set up Firebase auth state listener safely
+    try {
+      const unsubscribe = auth.onAuthStateChanged(async (firebaseUser) => {
+        try {
+          setLoading(true);
+          setUser(firebaseUser);
 
-        if (firebaseUser) {
-          console.log(
-            "✅ User authenticated:",
-            firebaseUser.email || firebaseUser.uid,
-          );
-          // Load user profile if available
-          try {
-            const profile = await authService.getUserProfile(firebaseUser.uid);
-            setUserProfile(profile);
-          } catch (error) {
-            console.warn("Could not load user profile:", error);
+          if (firebaseUser) {
+            console.log(
+              "✅ User authenticated:",
+              firebaseUser.email || firebaseUser.uid,
+            );
+            // Load user profile if available
+            try {
+              const profile = await authService.getUserProfile(firebaseUser.uid);
+              setUserProfile(profile);
+            } catch (error) {
+              console.warn("Could not load user profile:", error);
+              setUserProfile(null);
+            }
+          } else {
+            console.log("❌ User not authenticated");
             setUserProfile(null);
           }
-        } else {
-          console.log("❌ User not authenticated");
-          setUserProfile(null);
+        } catch (error) {
+          console.error("Auth state change error:", error);
+        } finally {
+          setLoading(false);
         }
-      } catch (error) {
-        console.error("Auth state change error:", error);
-      } finally {
-        setLoading(false);
-      }
-    });
+      });
 
-    return () => unsubscribe();
-
-    // Set default unauthenticated state
-    setUser(null);
-    setUserProfile(null);
-    setLoading(false);
-
-    // Optional: You can manually check auth state once without a listener
-    // authService.getCurrentUser().then(user => {
-    //   setUser(user);
-    //   setUserProfile(user ? authService.getUserProfile() : null);
-    // });
-
-    return () => {
-      // No cleanup needed since no listener is created
-    };
+      return () => {
+        console.log("🧹 Cleaning up auth listener");
+        unsubscribe();
+      };
+    } catch (error) {
+      console.warn("🚨 Firebase auth listener setup failed, using fallback:", error);
+      
+      // Fallback: Set default state without Firebase listener
+      setUser(null);
+      setUserProfile(null);
+      setLoading(false);
+      
+      return () => {
+        // No cleanup needed for fallback
+      };
+    }
   }, []);
 
   const signIn = async (email: string, password: string) => {

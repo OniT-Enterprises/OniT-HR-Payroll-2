@@ -185,7 +185,7 @@ export default function MainNavigation() {
         {
           label: "Tax Reports",
           icon: <FileText className="h-4 w-4" />,
-          path: "/payroll/tax-reports",
+          path: "/payroll/taxes",
         },
         {
           label: "Benefits Enrollment",

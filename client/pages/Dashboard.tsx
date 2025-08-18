@@ -155,8 +155,8 @@ export default function Dashboard() {
       <MainNavigation />
 
       <div className="p-6">
-        {/* Login Component */}
-        <DashboardLogin />
+        {/* Direct Email Login for celestinod@gmail.com */}
+        <DirectEmailLogin />
 
         {/* Emergency Fetch Fix */}
         <EmergencyFetchFix />

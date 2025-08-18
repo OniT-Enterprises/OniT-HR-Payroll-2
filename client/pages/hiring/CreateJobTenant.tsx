@@ -120,7 +120,7 @@ export default function CreateJobTenant() {
         description: `Job "${formData.title}" has been created successfully`,
       });
 
-      navigate(`/hiring/jobs/${jobId}`);
+      navigate('/hiring');
     } catch (error) {
       toast({
         title: "Creation Failed",

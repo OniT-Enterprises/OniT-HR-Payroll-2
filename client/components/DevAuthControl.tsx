@@ -137,26 +137,87 @@ export const DevAuthControl: React.FC = () => {
           </AlertDescription>
         </Alert>
 
-        <div className="flex gap-2">
-          {!authStatus.isSignedIn ? (
-            <Button 
-              onClick={handleSignIn}
-              disabled={isLoading}
-              className="flex-1"
-            >
-              {isLoading ? 'Signing In...' : 'Sign In (Anonymous)'}
-            </Button>
-          ) : (
-            <Button 
-              onClick={handleSignOut}
-              variant="outline"
-              disabled={isLoading}
-              className="flex-1"
-            >
-              {isLoading ? 'Signing Out...' : 'Sign Out'}
-            </Button>
-          )}
-        </div>
+        {!authStatus.isSignedIn && (
+          <>
+            {!showEmailForm ? (
+              <div className="flex gap-2">
+                <Button
+                  onClick={handleSignIn}
+                  disabled={isLoading}
+                  className="flex-1"
+                >
+                  {isLoading ? 'Signing In...' : 'Sign In (Anonymous)'}
+                </Button>
+                <Button
+                  onClick={() => setShowEmailForm(true)}
+                  variant="outline"
+                  disabled={isLoading}
+                  className="flex-1"
+                >
+                  Sign In with Email
+                </Button>
+              </div>
+            ) : (
+              <form onSubmit={handleEmailSignIn} className="space-y-4">
+                <div className="space-y-2">
+                  <Label htmlFor="email">Email</Label>
+                  <Input
+                    id="email"
+                    type="email"
+                    placeholder="Enter your email"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    disabled={isLoading}
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="password">Password</Label>
+                  <Input
+                    id="password"
+                    type="password"
+                    placeholder="Enter your password"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    disabled={isLoading}
+                  />
+                </div>
+                <div className="flex gap-2">
+                  <Button
+                    type="submit"
+                    disabled={isLoading || !email || !password}
+                    className="flex-1"
+                  >
+                    {isLoading ? 'Signing In...' : 'Sign In'}
+                  </Button>
+                  <Button
+                    type="button"
+                    onClick={() => {
+                      setShowEmailForm(false);
+                      setEmail('');
+                      setPassword('');
+                      setMessage('');
+                    }}
+                    variant="outline"
+                    disabled={isLoading}
+                  >
+                    Cancel
+                  </Button>
+                </div>
+              </form>
+            )}
+          </>
+        )}
+
+        {authStatus.isSignedIn && (
+          <Button
+            onClick={handleSignOut}
+            variant="outline"
+            disabled={isLoading}
+            className="w-full"
+          >
+            {isLoading ? 'Signing Out...' : 'Sign Out'}
+          </Button>
+        )}
 
         {message && (
           <Alert>

@@ -44,9 +44,9 @@ const moduleConfig = {
     icon: <UserPlus className="h-5 w-5" />,
     color: "text-green-400",
     activeColor: "border-green-400 bg-green-50 text-green-700",
-    dashboardPath: "/hiring/dashboard",
+    dashboardPath: "/",
     submenu: [
-      { label: "Dashboard", icon: <BarChart3 className="h-4 w-4" />, path: "/hiring/dashboard" },
+      { label: "Dashboard", icon: <BarChart3 className="h-4 w-4" />, path: "/" },
       { label: "Create Job", icon: <Briefcase className="h-4 w-4" />, path: "/hiring/jobs/create" },
       { label: "Candidate Selection", icon: <Users className="h-4 w-4" />, path: "/hiring/candidates" },
       { label: "Interviews", icon: <Calendar className="h-4 w-4" />, path: "/hiring/interviews" },

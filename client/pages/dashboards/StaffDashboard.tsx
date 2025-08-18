@@ -7,7 +7,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import MainNavigation from "@/components/layout/MainNavigation";
+import Header from "@/components/layout/Header";
 import { employeeService, type Employee } from "@/services/employeeService";
 import { useToast } from "@/hooks/use-toast";
 import {

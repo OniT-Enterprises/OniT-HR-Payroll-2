@@ -12,6 +12,9 @@ export const DevAuthControl: React.FC = () => {
   const [authStatus, setAuthStatus] = useState(getAuthStatus());
   const [isLoading, setIsLoading] = useState(false);
   const [message, setMessage] = useState<string>('');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [showEmailForm, setShowEmailForm] = useState(false);
 
   // Listen for auth state changes
   useEffect(() => {

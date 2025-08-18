@@ -41,6 +41,14 @@ export function AuthProvider({ children }: AuthProviderProps) {
 
     // Try to set up Firebase auth state listener safely
     try {
+      if (!auth) {
+        console.log("🔧 Firebase auth disabled, using fallback mode");
+        setUser(null);
+        setUserProfile(null);
+        setLoading(false);
+        return () => {};
+      }
+
       const unsubscribe = auth.onAuthStateChanged(async (firebaseUser) => {
         try {
           setLoading(true);

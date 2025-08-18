@@ -403,6 +403,66 @@ export default function MainNavigation() {
 
         {/* Right Side - Tenant Switcher & User Menu */}
         <div className="flex items-center gap-3">
+          {/* Login Section */}
+          {!authStatus.isSignedIn && (
+            <div className="flex items-center gap-2">
+              {!showLogin ? (
+                <>
+                  <Button
+                    onClick={() => setShowLogin(true)}
+                    variant="ghost"
+                    size="sm"
+                    className="text-white hover:bg-gray-700"
+                  >
+                    Sign In
+                  </Button>
+                  <Button
+                    onClick={handleAnonymousLogin}
+                    variant="outline"
+                    size="sm"
+                    disabled={isLoading}
+                    className="border-gray-600 text-gray-300 hover:bg-gray-700"
+                  >
+                    {isLoading ? '...' : 'Guest'}
+                  </Button>
+                </>
+              ) : (
+                <div className="flex items-center gap-2 bg-gray-800 p-2 rounded">
+                  <Input
+                    type="email"
+                    placeholder="Email"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    className="w-32 h-8 bg-gray-700 border-gray-600 text-white"
+                  />
+                  <Input
+                    type="password"
+                    placeholder="Password"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    onKeyPress={(e) => e.key === 'Enter' && handleLogin()}
+                    className="w-32 h-8 bg-gray-700 border-gray-600 text-white"
+                  />
+                  <Button
+                    onClick={handleLogin}
+                    disabled={!email || !password || isLoading}
+                    size="sm"
+                  >
+                    {isLoading ? '...' : 'Go'}
+                  </Button>
+                  <Button
+                    onClick={() => setShowLogin(false)}
+                    variant="ghost"
+                    size="sm"
+                    className="text-gray-400"
+                  >
+                    ✕
+                  </Button>
+                </div>
+              )}
+            </div>
+          )}
+
           {/* Tenant Switcher */}
           <TenantSwitcher className="w-64" />
           {/* User Avatar */}

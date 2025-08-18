@@ -90,9 +90,9 @@ const moduleConfig = {
     icon: <TrendingUp className="h-5 w-5" />,
     color: "text-orange-400",
     activeColor: "border-orange-400 bg-orange-50 text-orange-700",
-    dashboardPath: "/performance/dashboard",
+    dashboardPath: "/",
     submenu: [
-      { label: "Dashboard", icon: <BarChart3 className="h-4 w-4" />, path: "/performance/dashboard" },
+      { label: "Dashboard", icon: <BarChart3 className="h-4 w-4" />, path: "/" },
       { label: "Goals & OKRs", icon: <Target className="h-4 w-4" />, path: "/performance/goals" },
       { label: "Reviews", icon: <Award className="h-4 w-4" />, path: "/performance/reviews" },
       { label: "Training & Certifications", icon: <Award className="h-4 w-4" />, path: "/performance/training" },

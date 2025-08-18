@@ -13,6 +13,7 @@ import MainNavigation from "@/components/layout/MainNavigation";
 import { employeeService } from "@/services/employeeService";
 import FirebaseTestComponent from "@/components/FirebaseTestComponent";
 import { DashboardLogin } from "@/components/DashboardLogin";
+import { EmergencyFetchFix } from "@/components/EmergencyFetchFix";
 import React, { useState, useEffect } from "react";
 import {
   Users,

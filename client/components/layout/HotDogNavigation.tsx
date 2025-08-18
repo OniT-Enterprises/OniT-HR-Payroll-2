@@ -60,9 +60,9 @@ const moduleConfig = {
     icon: <Users className="h-5 w-5" />,
     color: "text-blue-400",
     activeColor: "border-blue-400 bg-blue-50 text-blue-700",
-    dashboardPath: "/staff/dashboard",
+    dashboardPath: "/",
     submenu: [
-      { label: "Dashboard", icon: <BarChart3 className="h-4 w-4" />, path: "/staff/dashboard" },
+      { label: "Dashboard", icon: <BarChart3 className="h-4 w-4" />, path: "/" },
       { label: "All Employees", icon: <Users className="h-4 w-4" />, path: "/staff/employees" },
       { label: "Add Employee", icon: <UserPlus className="h-4 w-4" />, path: "/staff/add" },
       { label: "Departments", icon: <Building className="h-4 w-4" />, path: "/staff/departments" },

@@ -49,6 +49,57 @@ export default function MainNavigation() {
   const [password, setPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
 
+  // Monitor auth status
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setAuthStatus(getAuthStatus());
+    }, 1000);
+    return () => clearInterval(interval);
+  }, []);
+
+  const handleLogin = async () => {
+    if (!email || !password) return;
+
+    setIsLoading(true);
+    try {
+      await signInWithEmail(email, password);
+      setAuthStatus(getAuthStatus());
+      setShowLogin(false);
+      setEmail('');
+      setPassword('');
+
+      // Auto-setup tenant
+      const status = getAuthStatus();
+      if (status.isSignedIn && status.user) {
+        await autoSetupTenantForUser(status.user.uid, status.user.email || 'user@example.com');
+        window.location.reload(); // Refresh to load tenant
+      }
+    } catch (error) {
+      console.error('Login failed:', error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleAnonymousLogin = async () => {
+    setIsLoading(true);
+    try {
+      await signInDev();
+      setAuthStatus(getAuthStatus());
+
+      // Auto-setup tenant
+      const status = getAuthStatus();
+      if (status.isSignedIn && status.user) {
+        await autoSetupTenantForUser(status.user.uid, status.user.email || 'anonymous@example.com');
+        window.location.reload(); // Refresh to load tenant
+      }
+    } catch (error) {
+      console.error('Anonymous login failed:', error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   const navigationItems = [
     {
       id: "hiring",

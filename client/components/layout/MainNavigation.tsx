@@ -1,7 +1,10 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import { TenantSwitcher } from "@/components/TenantSwitcher";
+import { signInWithEmail, signInDev, getAuthStatus } from "@/lib/devAuth";
+import { autoSetupTenantForUser } from "@/lib/tenantSetup";
 import {
   DropdownMenu,
   DropdownMenuContent,

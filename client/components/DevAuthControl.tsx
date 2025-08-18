@@ -52,8 +52,51 @@ export const DevAuthControl: React.FC = () => {
     try {
       await signOutDev();
       setMessage('✅ Signed out successfully');
+      setShowEmailForm(false);
+      setEmail('');
+      setPassword('');
     } catch (error: any) {
       setMessage(`❌ Sign out error: ${error.message}`);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleEmailSignIn = async (e?: React.FormEvent) => {
+    if (e) e.preventDefault();
+
+    if (!email || !password) {
+      setMessage('❌ Please enter both email and password');
+      return;
+    }
+
+    setIsLoading(true);
+    setMessage('');
+
+    try {
+      const user = await signInWithEmail(email, password);
+      if (user) {
+        setMessage(`✅ Signed in successfully with ${user.email}!`);
+        setShowEmailForm(false);
+        setPassword(''); // Clear password for security
+      } else {
+        setMessage('❌ Sign in failed - check console for details');
+      }
+    } catch (error: any) {
+      let userMessage = `❌ Sign in failed: ${error.message}`;
+
+      // Provide user-friendly error messages
+      if (error.code === 'auth/user-not-found') {
+        userMessage = '❌ No account found with this email address';
+      } else if (error.code === 'auth/wrong-password') {
+        userMessage = '❌ Incorrect password';
+      } else if (error.code === 'auth/invalid-email') {
+        userMessage = '❌ Invalid email format';
+      } else if (error.code === 'auth/user-disabled') {
+        userMessage = '❌ This account has been disabled';
+      }
+
+      setMessage(userMessage);
     } finally {
       setIsLoading(false);
     }

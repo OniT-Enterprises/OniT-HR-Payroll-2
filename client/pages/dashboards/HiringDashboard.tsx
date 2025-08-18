@@ -7,7 +7,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import MainNavigation from "@/components/layout/MainNavigation";
+import Header from "@/components/layout/Header";
 import {
   Users,
   UserPlus,
@@ -22,7 +22,7 @@ import {
 export default function HiringDashboard() {
   return (
     <div className="min-h-screen bg-gray-50">
-      <MainNavigation />
+      <Header />
 
       <div className="p-6">
         <div className="max-w-7xl mx-auto">

@@ -264,7 +264,7 @@ export default function MainNavigation() {
           </div>
 
           {/* Main Navigation Items */}
-          <div className="hidden md:ml-6 md:flex md:flex-1 md:gap-1">
+          <div className="hidden md:ml-6 md:flex md:flex-1">
             {navigationItems.map((section) => {
               // Map colors to border classes
               const borderColorMap = {
@@ -289,7 +289,7 @@ export default function MainNavigation() {
                 <DropdownMenuTrigger asChild>
                   <Button
                     variant="ghost"
-                    className={`text-white hover:bg-gray-700 flex items-center gap-2 border-2 ${borderClass} rounded-lg px-4 py-2 flex-1 justify-center ${
+                    className={`text-white hover:bg-gray-700 flex items-center gap-2 border-2 ${borderClass} rounded-lg px-6 py-2 flex-1 justify-center ${
                       isActiveSection(section.id) ? "bg-gray-700" : ""
                     }`}
                     onClick={() => handleDropdownClick(section.id)}

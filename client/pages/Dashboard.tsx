@@ -138,6 +138,9 @@ export default function Dashboard() {
       <MainNavigation />
 
       <div className="p-6">
+        {/* Simple Login Component */}
+        <SimpleLogin />
+
         <div className="flex items-center justify-between mb-8">
           <div>
             <h1 className="text-3xl font-bold">HR Dashboard</h1>

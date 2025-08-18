@@ -103,6 +103,33 @@ export const DevAuthControl: React.FC = () => {
     }
   };
 
+  const handleSetupTenant = async () => {
+    if (!authStatus.isSignedIn || !authStatus.user) {
+      setMessage('❌ Please sign in first');
+      return;
+    }
+
+    setIsLoading(true);
+    setMessage('🏢 Setting up your tenant...');
+
+    try {
+      const success = await autoSetupTenantForUser(
+        authStatus.user.uid,
+        authStatus.user.email || 'user@example.com'
+      );
+
+      if (success) {
+        setMessage('✅ Tenant setup completed! Refresh the page to see your new company.');
+      } else {
+        setMessage('❌ Failed to setup tenant. Check console for details.');
+      }
+    } catch (error: any) {
+      setMessage(`❌ Tenant setup error: ${error.message}`);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   const getStatusBadge = () => {
     if (authStatus.isSignedIn) {
       return <Badge variant="default">SIGNED IN</Badge>;

@@ -10,7 +10,7 @@ import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
-import MainNavigation from "@/components/layout/MainNavigation";
+import HotDogNavigation from "@/components/layout/HotDogNavigation";
 import { SimpleLogin } from "@/components/SimpleLogin";
 import {
   Users,

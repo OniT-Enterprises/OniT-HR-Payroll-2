@@ -55,7 +55,7 @@ const Header: React.FC = () => {
         { id: 'time-tracking', label: 'Time Tracking', icon: <Clock className="h-5 w-5" />, path: '/time-leave/tracking' },
         { id: 'attendance', label: 'Attendance', icon: <Calendar className="h-5 w-5" />, path: '/time-leave/attendance' },
         { id: 'leave-requests', label: 'Leave Requests', icon: <Heart className="h-5 w-5" />, path: '/time-leave/requests' },
-        { id: 'scheduling', label: 'Scheduling', icon: <Calendar className="h-5 w-5" />, path: '/time-leave/schedules' }
+        { id: 'scheduling', label: 'Scheduling', icon: <Calendar className="h-5 w-5" />, path: '/time-leave/scheduling' }
       ]
     },
     {

@@ -328,7 +328,10 @@ class FirebaseConnectionManager {
 export const firebaseManager = new FirebaseConnectionManager();
 
 // Export convenient functions
-export const testFirebaseConnection = () => firebaseManager.testConnection();
+export const testFirebaseConnection = async (): Promise<boolean> => {
+  console.log("🔧 Firebase connection test disabled for local development");
+  return false; // Always return false to indicate using local data
+};
 export const getFirebaseStatus = () => firebaseManager.getStatus();
 export const resetFirebaseConnection = () => firebaseManager.reset();
 export const cleanupFirebase = () => firebaseManager.cleanup();

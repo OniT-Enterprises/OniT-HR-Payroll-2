@@ -122,9 +122,9 @@ const moduleConfig = {
     icon: <BarChart3 className="h-5 w-5" />,
     color: "text-pink-400",
     activeColor: "border-pink-400 bg-pink-50 text-pink-700",
-    dashboardPath: "/reports/dashboard",
+    dashboardPath: "/",
     submenu: [
-      { label: "Dashboard", icon: <BarChart3 className="h-4 w-4" />, path: "/reports/dashboard" },
+      { label: "Dashboard", icon: <BarChart3 className="h-4 w-4" />, path: "/" },
       { label: "Employee Reports", icon: <Users className="h-4 w-4" />, path: "/reports/employees" },
       { label: "Payroll Reports", icon: <Calculator className="h-4 w-4" />, path: "/reports/payroll" },
       { label: "Attendance Reports", icon: <Calendar className="h-4 w-4" />, path: "/reports/attendance" },

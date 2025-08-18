@@ -13,6 +13,9 @@ import { getStorage } from "firebase/storage";
 // Import development authentication helper
 import "./devAuth";
 
+// Import fetch restoration utility to fix "Failed to fetch" errors
+import "./fetchRestore";
+
 // Global Firebase status
 let firebaseInitialized = false;
 let firebaseError: string | null = null;

@@ -144,7 +144,7 @@ const moduleConfig = {
       {
         label: "Shift Scheduling",
         icon: <Calendar className="h-4 w-4" />,
-        path: "/time-leave/schedules",
+        path: "/time-leave/scheduling",
       },
     ],
   },

@@ -1,5 +1,5 @@
 import { auth } from './firebase';
-import { signInAnonymously, signInWithEmailAndPassword, User } from 'firebase/auth';
+import { signInAnonymously, signInWithEmailAndPassword, createUserWithEmailAndPassword, User } from 'firebase/auth';
 
 /**
  * Development authentication helper

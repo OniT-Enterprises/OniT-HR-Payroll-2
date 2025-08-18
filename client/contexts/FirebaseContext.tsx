@@ -112,27 +112,22 @@ export const FirebaseProvider: React.FC<FirebaseProviderProps> = ({
   };
 
   useEffect(() => {
-    console.log('🔧 FirebaseProvider initializing (connection checks disabled to prevent assertion errors)');
+    console.log('🔧 FirebaseProvider initializing with full Firebase connectivity');
 
-    // Set static offline state to prevent Firebase operations
-    setIsOnline(navigator.onLine);
-    setIsConnected(false);
-    setIsUsingMockData(true);
-    setError('Firebase connection disabled to prevent assertion errors. Using demo data.');
-
-    console.log('✅ FirebaseProvider initialized in offline mode');
-
-    // Still listen for online/offline events for UI purposes, but don't trigger Firebase operations
     const handleOnline = () => {
       setIsOnline(true);
-      // Don't trigger connection checks to avoid Firebase operations
+      checkConnection();
     };
 
     const handleOffline = () => {
       setIsOnline(false);
       setIsConnected(false);
       setIsUsingMockData(true);
+      setError('Device is offline');
     };
+
+    // Initial connection check
+    checkConnection();
 
     window.addEventListener("online", handleOnline);
     window.addEventListener("offline", handleOffline);

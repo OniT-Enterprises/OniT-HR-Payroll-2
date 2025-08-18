@@ -164,6 +164,8 @@ export const disableFirebaseNetwork = async (): Promise<boolean> => {
 // DEPRECATED: Use firebaseManager.testConnection() instead
 // This function is kept for backward compatibility but delegates to the safe manager
 export const testFirebaseConnection = async (): Promise<boolean> => {
+  console.log("🔧 Firebase connection test disabled for local development");
+  return false; // Always return false to indicate using local data
   // Import here to avoid circular dependencies
   const { firebaseManager } = await import("./firebaseManager");
   return firebaseManager.testConnection();

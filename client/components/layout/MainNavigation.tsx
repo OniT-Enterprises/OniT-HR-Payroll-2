@@ -264,7 +264,7 @@ export default function MainNavigation() {
           </div>
 
           {/* Main Navigation Items */}
-          <div className="hidden md:ml-6 md:flex md:flex-1 md:gap-1 md:mr-6">
+          <div className="hidden md:ml-6 md:flex md:flex-1 md:gap-1">
             {navigationItems.map((section) => {
               // Map colors to border classes
               const borderColorMap = {

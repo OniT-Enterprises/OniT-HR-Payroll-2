@@ -16,6 +16,9 @@ import "./devAuth";
 // Import emergency fetch fix to completely resolve "Failed to fetch" errors
 import "./emergencyFetchFix";
 
+// COMPLETELY DISABLE Firebase isolation to prevent fetch blocking
+// import "./firebaseIsolation"; // DISABLED - was causing fetch errors
+
 // Global Firebase status
 let firebaseInitialized = false;
 let firebaseError: string | null = null;

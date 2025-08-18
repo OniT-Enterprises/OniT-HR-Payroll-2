@@ -230,7 +230,6 @@ export function TenantProvider({ children }: TenantProviderProps) {
       setLoading(false);
       setCurrentUser(null);
       setAvailableTenants([]);
-      setSelectedTenant(null);
       return () => {};
     }
 

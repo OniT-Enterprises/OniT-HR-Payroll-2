@@ -17,7 +17,40 @@ export const devAuthConfig = {
 };
 
 /**
- * Sign in with development test user
+ * Sign in with email and password
+ */
+export const signInWithEmail = async (email: string, password: string): Promise<User | null> => {
+  if (!auth) {
+    console.error('❌ Firebase Auth not initialized');
+    return null;
+  }
+
+  try {
+    console.log('🔐 Attempting email/password authentication for:', email);
+    const userCredential = await signInWithEmailAndPassword(auth, email, password);
+    console.log('✅ Email authentication successful:', userCredential.user.email);
+
+    return userCredential.user;
+  } catch (error: any) {
+    console.error('❌ Email authentication failed:', error);
+
+    // Provide helpful error information
+    if (error.code === 'auth/user-not-found') {
+      console.warn('💡 User not found - the email may not be registered');
+    } else if (error.code === 'auth/wrong-password') {
+      console.warn('💡 Wrong password provided');
+    } else if (error.code === 'auth/invalid-email') {
+      console.warn('💡 Invalid email format');
+    } else if (error.code === 'auth/user-disabled') {
+      console.warn('💡 User account has been disabled');
+    }
+
+    throw error; // Re-throw for UI handling
+  }
+};
+
+/**
+ * Sign in with development test user (anonymous)
  */
 export const signInDev = async (): Promise<User | null> => {
   if (!auth) {

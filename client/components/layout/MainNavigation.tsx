@@ -343,9 +343,24 @@ export default function MainNavigation() {
             >
               {user && (
                 <>
-                  <DropdownMenuItem className="text-gray-300 flex-col items-start">
-                    <div className="font-medium">{user.name}</div>
-                    <div className="text-xs text-gray-500">{user.email}</div>
+                  <DropdownMenuItem className="text-gray-300 flex-col items-start pointer-events-none">
+                    <div className="flex items-center gap-2 w-full">
+                      <div className="flex items-center gap-2">
+                        <div className="h-8 w-8 bg-blue-600 rounded-full flex items-center justify-center">
+                          <span className="text-white text-sm font-medium">
+                            {user.name.split(' ').map(n => n[0]).join('').toUpperCase()}
+                          </span>
+                        </div>
+                        <div>
+                          <div className="font-medium">{user.name}</div>
+                          <div className="text-xs text-gray-500">{user.email}</div>
+                        </div>
+                      </div>
+                      <Badge variant="outline" className="text-xs ml-auto">
+                        {user.role}
+                      </Badge>
+                    </div>
+                    <div className="text-xs text-gray-500 mt-1">{user.company}</div>
                   </DropdownMenuItem>
                   <DropdownMenuSeparator className="bg-gray-700" />
                 </>

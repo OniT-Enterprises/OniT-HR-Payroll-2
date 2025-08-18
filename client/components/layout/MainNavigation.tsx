@@ -264,8 +264,21 @@ export default function MainNavigation() {
           </div>
 
           {/* Main Navigation Items */}
-          <div className="hidden md:ml-6 md:flex md:space-x-2">
-            {navigationItems.map((section) => (
+          <div className="hidden md:ml-6 md:flex md:flex-1 md:justify-between md:gap-2 md:mr-4">
+            {navigationItems.map((section) => {
+              // Map colors to border classes
+              const borderColorMap = {
+                "text-green-400": "border-green-400",
+                "text-blue-400": "border-blue-400",
+                "text-purple-400": "border-purple-400",
+                "text-orange-400": "border-orange-400",
+                "text-yellow-400": "border-yellow-400",
+                "text-pink-400": "border-pink-400"
+              };
+
+              const borderClass = borderColorMap[section.color as keyof typeof borderColorMap] || "border-gray-400";
+
+              return (
               <DropdownMenu
                 key={section.id}
                 open={activeDropdown === section.id}
@@ -276,7 +289,7 @@ export default function MainNavigation() {
                 <DropdownMenuTrigger asChild>
                   <Button
                     variant="ghost"
-                    className={`text-white hover:bg-gray-700 flex items-center gap-2 ${
+                    className={`text-white hover:bg-gray-700 flex items-center gap-2 border-2 ${borderClass} rounded-lg px-4 py-2 flex-1 justify-center ${
                       isActiveSection(section.id) ? "bg-gray-700" : ""
                     }`}
                     onClick={() => handleDropdownClick(section.id)}
@@ -307,7 +320,8 @@ export default function MainNavigation() {
                   ))}
                 </DropdownMenuContent>
               </DropdownMenu>
-            ))}
+            );
+            })}
           </div>
         </div>
 

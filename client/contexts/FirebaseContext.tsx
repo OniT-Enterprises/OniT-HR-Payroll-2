@@ -45,6 +45,13 @@ export const FirebaseProvider: React.FC<FirebaseProviderProps> = ({
 
   const checkConnection = async () => {
     try {
+      // TEMPORARILY DISABLE Firebase for local development mode
+      console.log("🔧 Using local development mode - skipping Firebase connection");
+      setIsConnected(false);
+      setIsUsingMockData(true);
+      setError(null);
+      return;
+
       // Check network first
       if (!navigator.onLine) {
         console.warn("🌐 No network connection detected");

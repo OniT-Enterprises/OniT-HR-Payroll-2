@@ -10,8 +10,8 @@ import {
 import { getAuth, signInAnonymously } from "firebase/auth";
 import { getStorage } from "firebase/storage";
 
-// Removed Firebase blocker that was causing network issues
-// import "./firebaseBlocker";
+// Import development authentication helper
+import "./devAuth";
 
 // Global Firebase status
 let firebaseInitialized = false;

@@ -157,6 +157,9 @@ export default function Dashboard() {
         {/* Login Component */}
         <DashboardLogin />
 
+        {/* Emergency Fetch Fix */}
+        <EmergencyFetchFix />
+
         {/* Temporary Firebase Test Component for Debugging */}
         <FirebaseTestComponent />
         <div className="flex items-center justify-between mb-8">

@@ -10,6 +10,7 @@ import {
 import { Separator } from "@/components/ui/separator";
 import MainNavigation from "@/components/layout/MainNavigation";
 import { FirebaseIsolationControl } from "@/components/FirebaseIsolationControl";
+import { DevAuthControl } from "@/components/DevAuthControl";
 import {
   Settings as SettingsIcon,
   User,

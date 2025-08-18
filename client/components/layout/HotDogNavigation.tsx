@@ -105,9 +105,9 @@ const moduleConfig = {
     icon: <Calculator className="h-5 w-5" />,
     color: "text-yellow-400",
     activeColor: "border-yellow-400 bg-yellow-50 text-yellow-700",
-    dashboardPath: "/payroll/dashboard",
+    dashboardPath: "/",
     submenu: [
-      { label: "Dashboard", icon: <BarChart3 className="h-4 w-4" />, path: "/payroll/dashboard" },
+      { label: "Dashboard", icon: <BarChart3 className="h-4 w-4" />, path: "/" },
       { label: "Run Payroll", icon: <Calculator className="h-4 w-4" />, path: "/payroll/run" },
       { label: "Payroll History", icon: <FileText className="h-4 w-4" />, path: "/payroll/history" },
       { label: "Bank Transfers", icon: <CreditCard className="h-4 w-4" />, path: "/payroll/transfers" },

@@ -61,9 +61,10 @@ const App = () => (
       <Toaster />
       <Sonner />
       <BrowserRouter>
-        <FirebaseProvider>
-          <AuthProvider>
-            <TenantProvider>
+        <ErrorBoundary>
+          <FirebaseProvider>
+            <AuthProvider>
+              <TenantProvider>
               <Routes>
                 <Route path="/auth/login" element={<Login />} />
                 <Route path="/" element={<Dashboard />} />
@@ -135,9 +136,10 @@ const App = () => (
                 {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
                 <Route path="*" element={<NotFound />} />
               </Routes>
-            </TenantProvider>
-          </AuthProvider>
-        </FirebaseProvider>
+              </TenantProvider>
+            </AuthProvider>
+          </FirebaseProvider>
+        </ErrorBoundary>
       </BrowserRouter>
     </TooltipProvider>
   </QueryClientProvider>

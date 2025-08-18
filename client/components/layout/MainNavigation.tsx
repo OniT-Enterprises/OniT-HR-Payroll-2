@@ -318,9 +318,19 @@ export default function MainNavigation() {
           {/* User Avatar with Gear Hint */}
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button variant="ghost" className="p-0 h-8 w-8 rounded-full">
-                <Avatar className="h-8 w-8">
-                  <AvatarFallback className="bg-primary text-primary-foreground text-sm">
+              <Button
+                variant="ghost"
+                className="relative p-0 h-10 w-10 rounded-full hover:bg-gray-700 group"
+                title={user ? `${user.name} - Click for settings` : 'User menu'}
+              >
+                {/* Gear wheel hint - visible on hover */}
+                <div className="absolute inset-0 opacity-0 group-hover:opacity-30 transition-opacity duration-200">
+                  <Cog className="h-10 w-10 text-gray-300 animate-spin-slow" />
+                </div>
+
+                {/* User Avatar */}
+                <Avatar className="h-8 w-8 relative z-10">
+                  <AvatarFallback className="bg-blue-600 text-white text-sm font-medium">
                     {user ? user.name.split(' ').map(n => n[0]).join('').toUpperCase() : 'U'}
                   </AvatarFallback>
                 </Avatar>

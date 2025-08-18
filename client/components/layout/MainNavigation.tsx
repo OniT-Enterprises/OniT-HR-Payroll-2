@@ -273,54 +273,56 @@ export default function MainNavigation() {
                 "text-purple-400": "border-purple-400",
                 "text-orange-400": "border-orange-400",
                 "text-yellow-400": "border-yellow-400",
-                "text-pink-400": "border-pink-400"
+                "text-pink-400": "border-pink-400",
               };
 
-              const borderClass = borderColorMap[section.color as keyof typeof borderColorMap] || "border-gray-400";
+              const borderClass =
+                borderColorMap[section.color as keyof typeof borderColorMap] ||
+                "border-gray-400";
 
               return (
-              <DropdownMenu
-                key={section.id}
-                open={activeDropdown === section.id}
-                onOpenChange={(open) =>
-                  setActiveDropdown(open ? section.id : null)
-                }
-              >
-                <DropdownMenuTrigger asChild>
-                  <Button
-                    variant="ghost"
-                    className={`text-white hover:bg-gray-700 flex items-center gap-2 border-2 ${borderClass} rounded-lg px-6 py-2 flex-1 justify-center ${
-                      isActiveSection(section.id) ? "bg-gray-700" : ""
-                    }`}
-                    onClick={() => handleDropdownClick(section.id)}
-                  >
-                    <span className={section.color}>{section.icon}</span>
-                    {section.label}
-                    <ChevronDown className="h-4 w-4" />
-                  </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent
-                  className="w-56 bg-gray-900 border-gray-700"
-                  align="start"
-                  sideOffset={5}
+                <DropdownMenu
+                  key={section.id}
+                  open={activeDropdown === section.id}
+                  onOpenChange={(open) =>
+                    setActiveDropdown(open ? section.id : null)
+                  }
                 >
-                  {section.items.map((item, index) => (
-                    <DropdownMenuItem
-                      key={index}
-                      className={`text-gray-300 hover:text-white hover:bg-gray-700 cursor-pointer ${
-                        isActiveRoute(item.path)
-                          ? "bg-gray-700 text-white"
-                          : ""
+                  <DropdownMenuTrigger asChild>
+                    <Button
+                      variant="ghost"
+                      className={`text-white hover:bg-gray-700 flex items-center gap-2 border-2 ${borderClass} rounded-lg px-6 py-2 flex-1 justify-center ${
+                        isActiveSection(section.id) ? "bg-gray-700" : ""
                       }`}
-                      onClick={() => handleNavigate(item.path)}
+                      onClick={() => handleDropdownClick(section.id)}
                     >
-                      <span className="mr-2">{item.icon}</span>
-                      {item.label}
-                    </DropdownMenuItem>
-                  ))}
-                </DropdownMenuContent>
-              </DropdownMenu>
-            );
+                      <span className={section.color}>{section.icon}</span>
+                      {section.label}
+                      <ChevronDown className="h-4 w-4" />
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent
+                    className="w-56 bg-gray-900 border-gray-700"
+                    align="start"
+                    sideOffset={5}
+                  >
+                    {section.items.map((item, index) => (
+                      <DropdownMenuItem
+                        key={index}
+                        className={`text-gray-300 hover:text-white hover:bg-gray-700 cursor-pointer ${
+                          isActiveRoute(item.path)
+                            ? "bg-gray-700 text-white"
+                            : ""
+                        }`}
+                        onClick={() => handleNavigate(item.path)}
+                      >
+                        <span className="mr-2">{item.icon}</span>
+                        {item.label}
+                      </DropdownMenuItem>
+                    ))}
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              );
             })}
           </div>
         </div>
@@ -333,7 +335,7 @@ export default function MainNavigation() {
               <Button
                 variant="ghost"
                 className="relative p-0 h-10 w-10 rounded-full hover:bg-gray-700 group"
-                title={user ? `${user.name} - Click for settings` : 'User menu'}
+                title={user ? `${user.name} - Click for settings` : "User menu"}
               >
                 {/* Gear wheel hint - visible on hover */}
                 <div className="absolute inset-0 opacity-0 group-hover:opacity-50 transition-opacity duration-300">
@@ -343,7 +345,13 @@ export default function MainNavigation() {
                 {/* User Avatar */}
                 <Avatar className="h-8 w-8 relative z-10">
                   <AvatarFallback className="bg-blue-600 text-white text-sm font-medium">
-                    {user ? user.name.split(' ').map(n => n[0]).join('').toUpperCase() : 'U'}
+                    {user
+                      ? user.name
+                          .split(" ")
+                          .map((n) => n[0])
+                          .join("")
+                          .toUpperCase()
+                      : "U"}
                   </AvatarFallback>
                 </Avatar>
               </Button>
@@ -360,19 +368,27 @@ export default function MainNavigation() {
                       <div className="flex items-center gap-2">
                         <div className="h-8 w-8 bg-blue-600 rounded-full flex items-center justify-center">
                           <span className="text-white text-sm font-medium">
-                            {user.name.split(' ').map(n => n[0]).join('').toUpperCase()}
+                            {user.name
+                              .split(" ")
+                              .map((n) => n[0])
+                              .join("")
+                              .toUpperCase()}
                           </span>
                         </div>
                         <div>
                           <div className="font-medium">{user.name}</div>
-                          <div className="text-xs text-gray-500">{user.email}</div>
+                          <div className="text-xs text-gray-500">
+                            {user.email}
+                          </div>
                         </div>
                       </div>
                       <Badge variant="outline" className="text-xs ml-auto">
                         {user.role}
                       </Badge>
                     </div>
-                    <div className="text-xs text-gray-500 mt-1">{user.company}</div>
+                    <div className="text-xs text-gray-500 mt-1">
+                      {user.company}
+                    </div>
                   </DropdownMenuItem>
                   <DropdownMenuSeparator className="bg-gray-700" />
                 </>
@@ -396,7 +412,7 @@ export default function MainNavigation() {
                 className="text-red-400 hover:text-red-300 hover:bg-gray-700 cursor-pointer"
                 onClick={() => {
                   // Handle sign out
-                  const { signOutLocal } = require('@/lib/localAuth');
+                  const { signOutLocal } = require("@/lib/localAuth");
                   signOutLocal();
                   window.location.reload();
                 }}

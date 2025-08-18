@@ -297,9 +297,7 @@ export default function MainNavigation() {
                     <DropdownMenuItem
                       key={index}
                       className={`text-gray-300 hover:text-white hover:bg-gray-700 cursor-pointer ${
-                        isActiveRoute(item.path)
-                          ? "bg-gray-700 text-white"
-                          : ""
+                        isActiveRoute(item.path) ? "bg-gray-700 text-white" : ""
                       }`}
                       onClick={() => handleNavigate(item.path)}
                     >
@@ -332,7 +330,13 @@ export default function MainNavigation() {
               <Button variant="ghost" className="p-0 h-8 w-8 rounded-full">
                 <Avatar className="h-8 w-8">
                   <AvatarFallback className="bg-primary text-primary-foreground text-sm">
-                    {user ? user.name.split(' ').map(n => n[0]).join('').toUpperCase() : 'U'}
+                    {user
+                      ? user.name
+                          .split(" ")
+                          .map((n) => n[0])
+                          .join("")
+                          .toUpperCase()
+                      : "U"}
                   </AvatarFallback>
                 </Avatar>
               </Button>
@@ -370,7 +374,7 @@ export default function MainNavigation() {
                 className="text-red-400 hover:text-red-300 hover:bg-gray-700 cursor-pointer"
                 onClick={() => {
                   // Handle sign out
-                  const { signOutLocal } = require('@/lib/localAuth');
+                  const { signOutLocal } = require("@/lib/localAuth");
                   signOutLocal();
                   window.location.reload();
                 }}

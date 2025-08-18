@@ -1,13 +1,13 @@
-import React, { useState, useEffect } from 'react';
-import { Button } from './ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from './ui/card';
-import { Badge } from './ui/badge';
-import { Alert, AlertDescription } from './ui/alert';
-import { restoreFetch, checkFetchStatus } from '../lib/fetchRestore';
+import React, { useState, useEffect } from "react";
+import { Button } from "./ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "./ui/card";
+import { Badge } from "./ui/badge";
+import { Alert, AlertDescription } from "./ui/alert";
+import { restoreFetch, checkFetchStatus } from "../lib/fetchRestore";
 
 export const FetchDiagnostic: React.FC = () => {
   const [fetchStatus, setFetchStatus] = useState(checkFetchStatus());
-  const [message, setMessage] = useState<string>('');
+  const [message, setMessage] = useState<string>("");
 
   const refreshStatus = () => {
     setFetchStatus(checkFetchStatus());
@@ -16,7 +16,7 @@ export const FetchDiagnostic: React.FC = () => {
   const handleRestoreFetch = () => {
     try {
       restoreFetch();
-      setMessage('✅ Fetch function restored successfully');
+      setMessage("✅ Fetch function restored successfully");
       setTimeout(refreshStatus, 100);
     } catch (error: any) {
       setMessage(`❌ Error restoring fetch: ${error.message}`);
@@ -25,10 +25,10 @@ export const FetchDiagnostic: React.FC = () => {
 
   const handleTestFetch = async () => {
     try {
-      setMessage('🔍 Testing fetch...');
-      const response = await fetch('https://httpbin.org/json');
+      setMessage("🔍 Testing fetch...");
+      const response = await fetch("https://httpbin.org/json");
       const data = await response.json();
-      setMessage('✅ Fetch test successful - network requests are working');
+      setMessage("✅ Fetch test successful - network requests are working");
     } catch (error: any) {
       setMessage(`❌ Fetch test failed: ${error.message}`);
     }
@@ -57,33 +57,30 @@ export const FetchDiagnostic: React.FC = () => {
       <CardContent className="space-y-4">
         <Alert>
           <AlertDescription>
-            <strong>Fetch Status:</strong> {fetchStatus.isOverridden ? 'Overridden' : 'Normal'}
+            <strong>Fetch Status:</strong>{" "}
+            {fetchStatus.isOverridden ? "Overridden" : "Normal"}
             <br />
-            <strong>Has Original:</strong> {fetchStatus.hasOriginal ? 'Yes' : 'No'}
+            <strong>Has Original:</strong>{" "}
+            {fetchStatus.hasOriginal ? "Yes" : "No"}
             <br />
-            <strong>Is Custom:</strong> {fetchStatus.isCustom ? 'Yes' : 'No'}
+            <strong>Is Custom:</strong> {fetchStatus.isCustom ? "Yes" : "No"}
             <br />
-            <strong>Is Native:</strong> {fetchStatus.fetchInfo.isNative ? 'Yes' : 'No'}
+            <strong>Is Native:</strong>{" "}
+            {fetchStatus.fetchInfo.isNative ? "Yes" : "No"}
           </AlertDescription>
         </Alert>
 
         <div className="flex gap-2">
-          <Button 
+          <Button
             onClick={handleRestoreFetch}
             variant={fetchStatus.isOverridden ? "default" : "outline"}
           >
             Restore Fetch
           </Button>
-          <Button 
-            onClick={handleTestFetch}
-            variant="secondary"
-          >
+          <Button onClick={handleTestFetch} variant="secondary">
             Test Fetch
           </Button>
-          <Button 
-            onClick={refreshStatus}
-            variant="outline"
-          >
+          <Button onClick={refreshStatus} variant="outline">
             Refresh Status
           </Button>
         </div>
@@ -95,8 +92,9 @@ export const FetchDiagnostic: React.FC = () => {
         )}
 
         <div className="text-xs text-muted-foreground">
-          <strong>Note:</strong> If fetch is overridden, Firebase requests will fail with "Failed to fetch" errors.
-          Use "Restore Fetch" to fix this issue.
+          <strong>Note:</strong> If fetch is overridden, Firebase requests will
+          fail with "Failed to fetch" errors. Use "Restore Fetch" to fix this
+          issue.
         </div>
       </CardContent>
     </Card>

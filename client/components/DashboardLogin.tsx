@@ -1,19 +1,19 @@
-import React, { useState, useEffect } from 'react';
-import { Button } from './ui/button';
-import { Input } from './ui/input';
-import { Card, CardContent, CardHeader, CardTitle } from './ui/card';
-import { Badge } from './ui/badge';
-import { Alert, AlertDescription } from './ui/alert';
-import { signInWithEmail, signInDev, getAuthStatus } from '../lib/devAuth';
-import { autoSetupTenantForUser } from '../lib/tenantSetup';
-import { LogIn, User, Building } from 'lucide-react';
+import React, { useState, useEffect } from "react";
+import { Button } from "./ui/button";
+import { Input } from "./ui/input";
+import { Card, CardContent, CardHeader, CardTitle } from "./ui/card";
+import { Badge } from "./ui/badge";
+import { Alert, AlertDescription } from "./ui/alert";
+import { signInWithEmail, signInDev, getAuthStatus } from "../lib/devAuth";
+import { autoSetupTenantForUser } from "../lib/tenantSetup";
+import { LogIn, User, Building } from "lucide-react";
 
 export const DashboardLogin: React.FC = () => {
   const [authStatus, setAuthStatus] = useState(getAuthStatus());
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-  const [message, setMessage] = useState('');
+  const [message, setMessage] = useState("");
   const [showForm, setShowForm] = useState(false);
 
   // Monitor auth status
@@ -26,39 +26,44 @@ export const DashboardLogin: React.FC = () => {
 
   const handleEmailSignIn = async () => {
     if (!email || !password) {
-      setMessage('Please enter both email and password');
+      setMessage("Please enter both email and password");
       return;
     }
 
     setIsLoading(true);
-    setMessage('Signing in...');
+    setMessage("Signing in...");
 
     try {
       const user = await signInWithEmail(email, password);
       if (user) {
-        setMessage('✅ Signed in successfully! Setting up your workspace...');
+        setMessage("✅ Signed in successfully! Setting up your workspace...");
         setAuthStatus(getAuthStatus());
-        
+
         // Auto-setup tenant
-        const success = await autoSetupTenantForUser(user.uid, user.email || 'user@example.com');
+        const success = await autoSetupTenantForUser(
+          user.uid,
+          user.email || "user@example.com",
+        );
         if (success) {
-          setMessage('✅ Workspace created! Refreshing page...');
+          setMessage("✅ Workspace created! Refreshing page...");
           setTimeout(() => window.location.reload(), 1500);
         } else {
-          setMessage('⚠️ Signed in but failed to create workspace. Try refreshing the page.');
+          setMessage(
+            "⚠️ Signed in but failed to create workspace. Try refreshing the page.",
+          );
         }
       }
     } catch (error: any) {
       let userMessage = `❌ Sign in failed: ${error.message}`;
-      
-      if (error.code === 'auth/user-not-found') {
-        userMessage = '❌ No account found with this email address';
-      } else if (error.code === 'auth/wrong-password') {
-        userMessage = '❌ Incorrect password';
-      } else if (error.code === 'auth/invalid-email') {
-        userMessage = '❌ Invalid email format';
+
+      if (error.code === "auth/user-not-found") {
+        userMessage = "❌ No account found with this email address";
+      } else if (error.code === "auth/wrong-password") {
+        userMessage = "❌ Incorrect password";
+      } else if (error.code === "auth/invalid-email") {
+        userMessage = "❌ Invalid email format";
       }
-      
+
       setMessage(userMessage);
     } finally {
       setIsLoading(false);
@@ -67,21 +72,26 @@ export const DashboardLogin: React.FC = () => {
 
   const handleAnonymousSignIn = async () => {
     setIsLoading(true);
-    setMessage('Signing in anonymously...');
+    setMessage("Signing in anonymously...");
 
     try {
       const user = await signInDev();
       if (user) {
-        setMessage('✅ Signed in! Setting up demo workspace...');
+        setMessage("✅ Signed in! Setting up demo workspace...");
         setAuthStatus(getAuthStatus());
-        
+
         // Auto-setup tenant
-        const success = await autoSetupTenantForUser(user.uid, 'demo@example.com');
+        const success = await autoSetupTenantForUser(
+          user.uid,
+          "demo@example.com",
+        );
         if (success) {
-          setMessage('✅ Demo workspace created! Refreshing page...');
+          setMessage("✅ Demo workspace created! Refreshing page...");
           setTimeout(() => window.location.reload(), 1500);
         } else {
-          setMessage('⚠️ Signed in but failed to create workspace. Try refreshing the page.');
+          setMessage(
+            "⚠️ Signed in but failed to create workspace. Try refreshing the page.",
+          );
         }
       }
     } catch (error: any) {
@@ -102,9 +112,10 @@ export const DashboardLogin: React.FC = () => {
               Signed In
             </Badge>
             <span className="text-sm text-green-700">
-              {authStatus.email || `User: ${authStatus.uid?.substring(0, 8)}...`}
+              {authStatus.email ||
+                `User: ${authStatus.uid?.substring(0, 8)}...`}
             </span>
-            <Button 
+            <Button
               onClick={() => window.location.reload()}
               variant="outline"
               size="sm"
@@ -128,27 +139,28 @@ export const DashboardLogin: React.FC = () => {
       <CardContent className="space-y-4">
         <Alert>
           <AlertDescription>
-            You need to sign in to access your HR workspace. This will create your company tenant and enable all features.
+            You need to sign in to access your HR workspace. This will create
+            your company tenant and enable all features.
           </AlertDescription>
         </Alert>
 
         {!showForm ? (
           <div className="flex gap-3">
-            <Button 
+            <Button
               onClick={() => setShowForm(true)}
               className="flex-1 flex items-center gap-2"
             >
               <LogIn className="h-4 w-4" />
               Sign In with Email
             </Button>
-            <Button 
+            <Button
               onClick={handleAnonymousSignIn}
               variant="outline"
               disabled={isLoading}
               className="flex items-center gap-2"
             >
               <Building className="h-4 w-4" />
-              {isLoading ? 'Creating...' : 'Try Demo'}
+              {isLoading ? "Creating..." : "Try Demo"}
             </Button>
           </div>
         ) : (
@@ -166,24 +178,24 @@ export const DashboardLogin: React.FC = () => {
                 placeholder="Password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                onKeyPress={(e) => e.key === 'Enter' && handleEmailSignIn()}
+                onKeyPress={(e) => e.key === "Enter" && handleEmailSignIn()}
                 disabled={isLoading}
               />
             </div>
             <div className="flex gap-2">
-              <Button 
+              <Button
                 onClick={handleEmailSignIn}
                 disabled={!email || !password || isLoading}
                 className="flex-1"
               >
-                {isLoading ? 'Signing In...' : 'Sign In'}
+                {isLoading ? "Signing In..." : "Sign In"}
               </Button>
-              <Button 
+              <Button
                 onClick={() => {
                   setShowForm(false);
-                  setEmail('');
-                  setPassword('');
-                  setMessage('');
+                  setEmail("");
+                  setPassword("");
+                  setMessage("");
                 }}
                 variant="outline"
                 disabled={isLoading}
@@ -195,8 +207,18 @@ export const DashboardLogin: React.FC = () => {
         )}
 
         {message && (
-          <Alert className={message.includes('✅') ? 'border-green-200 bg-green-50' : 'border-red-200 bg-red-50'}>
-            <AlertDescription className={message.includes('✅') ? 'text-green-700' : 'text-red-700'}>
+          <Alert
+            className={
+              message.includes("✅")
+                ? "border-green-200 bg-green-50"
+                : "border-red-200 bg-red-50"
+            }
+          >
+            <AlertDescription
+              className={
+                message.includes("✅") ? "text-green-700" : "text-red-700"
+              }
+            >
               {message}
             </AlertDescription>
           </Alert>

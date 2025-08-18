@@ -1,11 +1,11 @@
-import React, { useState } from 'react';
-import { Button } from './ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from './ui/card';
-import { Alert, AlertDescription } from './ui/alert';
-import { Shield, Upload, Check, AlertTriangle } from 'lucide-react';
+import React, { useState } from "react";
+import { Button } from "./ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "./ui/card";
+import { Alert, AlertDescription } from "./ui/alert";
+import { Shield, Upload, Check, AlertTriangle } from "lucide-react";
 
 export const FirestoreRulesDeploy: React.FC = () => {
-  const [message, setMessage] = useState('');
+  const [message, setMessage] = useState("");
   const [isDeploying, setIsDeploying] = useState(false);
 
   const handleShowDeployInstructions = () => {
@@ -37,35 +37,37 @@ service cloud.firestore {
 
   const handleTestPermissions = async () => {
     setIsDeploying(true);
-    setMessage('🔍 Testing Firestore permissions...');
+    setMessage("🔍 Testing Firestore permissions...");
 
     try {
       // Try a simple Firestore operation
-      const { db } = await import('../lib/firebase');
-      const { collection, addDoc } = await import('firebase/firestore');
-      
+      const { db } = await import("../lib/firebase");
+      const { collection, addDoc } = await import("firebase/firestore");
+
       if (db) {
-        const testRef = collection(db, 'permission-test');
+        const testRef = collection(db, "permission-test");
         await addDoc(testRef, {
           test: true,
           timestamp: new Date(),
-          message: 'Permission test successful'
+          message: "Permission test successful",
         });
-        setMessage('✅ SUCCESS! Firestore permissions are working. You can now save data.');
+        setMessage(
+          "✅ SUCCESS! Firestore permissions are working. You can now save data.",
+        );
       } else {
-        setMessage('❌ Firebase database not initialized');
+        setMessage("❌ Firebase database not initialized");
       }
     } catch (error: any) {
-      console.error('Permission test failed:', error);
-      
-      if (error.code === 'permission-denied') {
+      console.error("Permission test failed:", error);
+
+      if (error.code === "permission-denied") {
         setMessage(`❌ PERMISSION DENIED: Firestore rules need to be deployed.
         
 The error means your Firestore rules are blocking access. You need to:
 1. Deploy the development rules with: firebase deploy --only firestore:rules
 2. OR manually update rules in Firebase Console to allow access`);
-      } else if (error.message?.includes('Failed to fetch')) {
-        setMessage('❌ Network error: Try the Emergency Fix button first');
+      } else if (error.message?.includes("Failed to fetch")) {
+        setMessage("❌ Network error: Try the Emergency Fix button first");
       } else {
         setMessage(`❌ Test failed: ${error.message}`);
       }
@@ -85,21 +87,22 @@ The error means your Firestore rules are blocking access. You need to:
       <CardContent className="space-y-3">
         <Alert>
           <AlertDescription>
-            <strong>Permission Denied:</strong> Your Firestore rules are blocking database access. 
-            You need to deploy development rules to allow data operations.
+            <strong>Permission Denied:</strong> Your Firestore rules are
+            blocking database access. You need to deploy development rules to
+            allow data operations.
           </AlertDescription>
         </Alert>
 
         <div className="flex gap-2 flex-wrap">
-          <Button 
+          <Button
             onClick={handleTestPermissions}
             disabled={isDeploying}
             className="flex items-center gap-2"
           >
             <Check className="h-4 w-4" />
-            {isDeploying ? 'Testing...' : 'Test Permissions'}
+            {isDeploying ? "Testing..." : "Test Permissions"}
           </Button>
-          <Button 
+          <Button
             onClick={handleShowDeployInstructions}
             variant="outline"
             className="flex items-center gap-2"
@@ -107,8 +110,10 @@ The error means your Firestore rules are blocking access. You need to:
             <Upload className="h-4 w-4" />
             Show Deploy Instructions
           </Button>
-          <Button 
-            onClick={() => window.open('https://console.firebase.google.com', '_blank')}
+          <Button
+            onClick={() =>
+              window.open("https://console.firebase.google.com", "_blank")
+            }
             variant="secondary"
             className="flex items-center gap-2"
           >
@@ -118,15 +123,26 @@ The error means your Firestore rules are blocking access. You need to:
         </div>
 
         {message && (
-          <Alert className={message.includes('✅') ? 'border-green-200 bg-green-50' : 'border-yellow-200 bg-yellow-50'}>
-            <AlertDescription className={message.includes('✅') ? 'text-green-700' : 'text-yellow-700'}>
+          <Alert
+            className={
+              message.includes("✅")
+                ? "border-green-200 bg-green-50"
+                : "border-yellow-200 bg-yellow-50"
+            }
+          >
+            <AlertDescription
+              className={
+                message.includes("✅") ? "text-green-700" : "text-yellow-700"
+              }
+            >
               <pre className="whitespace-pre-wrap text-xs">{message}</pre>
             </AlertDescription>
           </Alert>
         )}
 
         <div className="text-xs text-gray-600">
-          <strong>Quick Fix:</strong> Run <code>firebase deploy --only firestore:rules</code> in your terminal
+          <strong>Quick Fix:</strong> Run{" "}
+          <code>firebase deploy --only firestore:rules</code> in your terminal
         </div>
       </CardContent>
     </Card>

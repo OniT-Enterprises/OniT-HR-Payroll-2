@@ -1,20 +1,25 @@
-import React, { useState, useEffect } from 'react';
-import { Button } from './ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from './ui/card';
-import { Badge } from './ui/badge';
-import { Alert, AlertDescription } from './ui/alert';
-import { Input } from './ui/input';
-import { Label } from './ui/label';
-import { signInDev, signOutDev, getAuthStatus, signInWithEmail } from '../lib/devAuth';
-import { autoSetupTenantForUser } from '../lib/tenantSetup';
-import { auth } from '../lib/firebase';
+import React, { useState, useEffect } from "react";
+import { Button } from "./ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "./ui/card";
+import { Badge } from "./ui/badge";
+import { Alert, AlertDescription } from "./ui/alert";
+import { Input } from "./ui/input";
+import { Label } from "./ui/label";
+import {
+  signInDev,
+  signOutDev,
+  getAuthStatus,
+  signInWithEmail,
+} from "../lib/devAuth";
+import { autoSetupTenantForUser } from "../lib/tenantSetup";
+import { auth } from "../lib/firebase";
 
 export const DevAuthControl: React.FC = () => {
   const [authStatus, setAuthStatus] = useState(getAuthStatus());
   const [isLoading, setIsLoading] = useState(false);
-  const [message, setMessage] = useState<string>('');
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  const [message, setMessage] = useState<string>("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const [showEmailForm, setShowEmailForm] = useState(false);
 
   // Listen for auth state changes
@@ -30,14 +35,16 @@ export const DevAuthControl: React.FC = () => {
 
   const handleSignIn = async () => {
     setIsLoading(true);
-    setMessage('');
+    setMessage("");
 
     try {
       const user = await signInDev();
       if (user) {
-        setMessage(`✅ Signed in successfully! User ID: ${user.uid.substring(0, 8)}...`);
+        setMessage(
+          `✅ Signed in successfully! User ID: ${user.uid.substring(0, 8)}...`,
+        );
       } else {
-        setMessage('❌ Sign in failed - check console for details');
+        setMessage("❌ Sign in failed - check console for details");
       }
     } catch (error: any) {
       setMessage(`❌ Sign in error: ${error.message}`);
@@ -48,14 +55,14 @@ export const DevAuthControl: React.FC = () => {
 
   const handleSignOut = async () => {
     setIsLoading(true);
-    setMessage('');
+    setMessage("");
 
     try {
       await signOutDev();
-      setMessage('✅ Signed out successfully');
+      setMessage("✅ Signed out successfully");
       setShowEmailForm(false);
-      setEmail('');
-      setPassword('');
+      setEmail("");
+      setPassword("");
     } catch (error: any) {
       setMessage(`❌ Sign out error: ${error.message}`);
     } finally {
@@ -67,34 +74,34 @@ export const DevAuthControl: React.FC = () => {
     if (e) e.preventDefault();
 
     if (!email || !password) {
-      setMessage('❌ Please enter both email and password');
+      setMessage("❌ Please enter both email and password");
       return;
     }
 
     setIsLoading(true);
-    setMessage('');
+    setMessage("");
 
     try {
       const user = await signInWithEmail(email, password);
       if (user) {
         setMessage(`✅ Signed in successfully with ${user.email}!`);
         setShowEmailForm(false);
-        setPassword(''); // Clear password for security
+        setPassword(""); // Clear password for security
       } else {
-        setMessage('❌ Sign in failed - check console for details');
+        setMessage("❌ Sign in failed - check console for details");
       }
     } catch (error: any) {
       let userMessage = `❌ Sign in failed: ${error.message}`;
 
       // Provide user-friendly error messages
-      if (error.code === 'auth/user-not-found') {
-        userMessage = '❌ No account found with this email address';
-      } else if (error.code === 'auth/wrong-password') {
-        userMessage = '❌ Incorrect password';
-      } else if (error.code === 'auth/invalid-email') {
-        userMessage = '❌ Invalid email format';
-      } else if (error.code === 'auth/user-disabled') {
-        userMessage = '❌ This account has been disabled';
+      if (error.code === "auth/user-not-found") {
+        userMessage = "❌ No account found with this email address";
+      } else if (error.code === "auth/wrong-password") {
+        userMessage = "❌ Incorrect password";
+      } else if (error.code === "auth/invalid-email") {
+        userMessage = "❌ Invalid email format";
+      } else if (error.code === "auth/user-disabled") {
+        userMessage = "❌ This account has been disabled";
       }
 
       setMessage(userMessage);
@@ -105,23 +112,25 @@ export const DevAuthControl: React.FC = () => {
 
   const handleSetupTenant = async () => {
     if (!authStatus.isSignedIn || !authStatus.user) {
-      setMessage('❌ Please sign in first');
+      setMessage("❌ Please sign in first");
       return;
     }
 
     setIsLoading(true);
-    setMessage('🏢 Setting up your tenant...');
+    setMessage("🏢 Setting up your tenant...");
 
     try {
       const success = await autoSetupTenantForUser(
         authStatus.user.uid,
-        authStatus.user.email || 'user@example.com'
+        authStatus.user.email || "user@example.com",
       );
 
       if (success) {
-        setMessage('✅ Tenant setup completed! Refresh the page to see your new company.');
+        setMessage(
+          "✅ Tenant setup completed! Refresh the page to see your new company.",
+        );
       } else {
-        setMessage('❌ Failed to setup tenant. Check console for details.');
+        setMessage("❌ Failed to setup tenant. Check console for details.");
       }
     } catch (error: any) {
       setMessage(`❌ Tenant setup error: ${error.message}`);
@@ -151,13 +160,15 @@ export const DevAuthControl: React.FC = () => {
           <AlertDescription>
             {authStatus.isSignedIn ? (
               <>
-                <strong>Status:</strong> Authenticated as {authStatus.isAnonymous ? 'Anonymous User' : authStatus.email}
+                <strong>Status:</strong> Authenticated as{" "}
+                {authStatus.isAnonymous ? "Anonymous User" : authStatus.email}
                 <br />
                 <strong>User ID:</strong> {authStatus.uid?.substring(0, 16)}...
               </>
             ) : (
               <>
-                <strong>Status:</strong> Not authenticated. You need to sign in to access Firebase data.
+                <strong>Status:</strong> Not authenticated. You need to sign in
+                to access Firebase data.
                 <br />
                 This will enable database operations and fix permission errors.
               </>
@@ -174,7 +185,7 @@ export const DevAuthControl: React.FC = () => {
                   disabled={isLoading}
                   className="flex-1"
                 >
-                  {isLoading ? 'Signing In...' : 'Sign In (Anonymous)'}
+                  {isLoading ? "Signing In..." : "Sign In (Anonymous)"}
                 </Button>
                 <Button
                   onClick={() => setShowEmailForm(true)}
@@ -215,15 +226,15 @@ export const DevAuthControl: React.FC = () => {
                     disabled={isLoading || !email || !password}
                     className="flex-1"
                   >
-                    {isLoading ? 'Signing In...' : 'Sign In'}
+                    {isLoading ? "Signing In..." : "Sign In"}
                   </Button>
                   <Button
                     type="button"
                     onClick={() => {
                       setShowEmailForm(false);
-                      setEmail('');
-                      setPassword('');
-                      setMessage('');
+                      setEmail("");
+                      setPassword("");
+                      setMessage("");
                     }}
                     variant="outline"
                     disabled={isLoading}
@@ -243,7 +254,7 @@ export const DevAuthControl: React.FC = () => {
               disabled={isLoading}
               className="w-full"
             >
-              {isLoading ? 'Setting up...' : 'Setup My Company/Tenant'}
+              {isLoading ? "Setting up..." : "Setup My Company/Tenant"}
             </Button>
             <Button
               onClick={handleSignOut}
@@ -251,7 +262,7 @@ export const DevAuthControl: React.FC = () => {
               disabled={isLoading}
               className="w-full"
             >
-              {isLoading ? 'Signing Out...' : 'Sign Out'}
+              {isLoading ? "Signing Out..." : "Sign Out"}
             </Button>
           </div>
         )}
@@ -263,8 +274,9 @@ export const DevAuthControl: React.FC = () => {
         )}
 
         <div className="text-xs text-muted-foreground">
-          <strong>Note:</strong> This uses Firebase Anonymous Authentication for development.
-          After signing in, Firebase operations should work if Firestore rules allow anonymous users.
+          <strong>Note:</strong> This uses Firebase Anonymous Authentication for
+          development. After signing in, Firebase operations should work if
+          Firestore rules allow anonymous users.
         </div>
       </CardContent>
     </Card>

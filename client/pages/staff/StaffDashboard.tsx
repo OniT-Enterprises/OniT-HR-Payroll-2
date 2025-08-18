@@ -1,15 +1,15 @@
-import React from 'react';
-import HotDogNavigation from '@/components/layout/HotDogNavigation';
-import { ModuleDashboard } from '@/components/ModuleDashboard';
-import { SimpleLogin } from '@/components/SimpleLogin';
-import { 
-  Users, 
-  UserPlus, 
-  Building, 
+import React from "react";
+import HotDogNavigation from "@/components/layout/HotDogNavigation";
+import { ModuleDashboard } from "@/components/ModuleDashboard";
+import { SimpleLogin } from "@/components/SimpleLogin";
+import {
+  Users,
+  UserPlus,
+  Building,
   TrendingUp,
   Plus,
-  FileText
-} from 'lucide-react';
+  FileText,
+} from "lucide-react";
 
 export default function StaffDashboard() {
   const stats = [
@@ -47,14 +47,14 @@ export default function StaffDashboard() {
     {
       label: "Add Employee",
       icon: <Plus className="h-4 w-4" />,
-      action: () => window.location.href = '/staff/add'
+      action: () => (window.location.href = "/staff/add"),
     },
     {
       label: "View All",
       icon: <FileText className="h-4 w-4" />,
-      action: () => window.location.href = '/staff/employees',
-      variant: 'outline' as const
-    }
+      action: () => (window.location.href = "/staff/employees"),
+      variant: "outline" as const,
+    },
   ];
 
   const recentItems = [
@@ -62,32 +62,32 @@ export default function StaffDashboard() {
       title: "Sarah Johnson",
       subtitle: "Software Engineer - Started",
       status: "Active",
-      date: "Dec 2, 2024"
+      date: "Dec 2, 2024",
     },
     {
       title: "Michael Chen",
       subtitle: "Product Manager - Started",
-      status: "Active", 
-      date: "Nov 28, 2024"
+      status: "Active",
+      date: "Nov 28, 2024",
     },
     {
       title: "Emily Rodriguez",
       subtitle: "UX Designer - Started",
       status: "Active",
-      date: "Nov 25, 2024"
+      date: "Nov 25, 2024",
     },
     {
       title: "Engineering Department",
       subtitle: "Team structure updated",
-      date: "Nov 20, 2024"
-    }
+      date: "Nov 20, 2024",
+    },
   ];
 
   return (
     <div className="min-h-screen bg-background">
       <HotDogNavigation />
       <SimpleLogin />
-      
+
       <ModuleDashboard
         moduleName="Staff"
         moduleIcon={<Users className="h-8 w-8" />}

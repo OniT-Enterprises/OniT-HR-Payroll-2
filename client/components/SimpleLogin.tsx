@@ -1,17 +1,22 @@
-import React, { useState, useEffect } from 'react';
-import { Button } from './ui/button';
-import { Input } from './ui/input';
-import { Card, CardContent, CardHeader, CardTitle } from './ui/card';
-import { Alert, AlertDescription } from './ui/alert';
-import { Badge } from './ui/badge';
-import { signInLocal, signOutLocal, getCurrentUser, isAuthenticated } from '../lib/localAuth';
-import { LogIn, User, Building } from 'lucide-react';
+import React, { useState, useEffect } from "react";
+import { Button } from "./ui/button";
+import { Input } from "./ui/input";
+import { Card, CardContent, CardHeader, CardTitle } from "./ui/card";
+import { Alert, AlertDescription } from "./ui/alert";
+import { Badge } from "./ui/badge";
+import {
+  signInLocal,
+  signOutLocal,
+  getCurrentUser,
+  isAuthenticated,
+} from "../lib/localAuth";
+import { LogIn, User, Building } from "lucide-react";
 
 export const SimpleLogin: React.FC = () => {
   const [user, setUser] = useState(getCurrentUser());
-  const [email, setEmail] = useState('celestinod@gmail.com'); // Pre-filled
+  const [email, setEmail] = useState("celestinod@gmail.com"); // Pre-filled
   const [isLoading, setIsLoading] = useState(false);
-  const [message, setMessage] = useState('');
+  const [message, setMessage] = useState("");
   const [showForm, setShowForm] = useState(!isAuthenticated());
 
   // Monitor auth status
@@ -23,8 +28,8 @@ export const SimpleLogin: React.FC = () => {
 
     // Auto-sign in with Celestino for demo (if not already signed in)
     if (!isAuthenticated()) {
-      console.log('🚀 Auto-signing in Celestino for demo...');
-      signInLocal('celestinod@gmail.com');
+      console.log("🚀 Auto-signing in Celestino for demo...");
+      signInLocal("celestinod@gmail.com");
       checkAuth();
     }
 
@@ -39,29 +44,29 @@ export const SimpleLogin: React.FC = () => {
 
   const handleSignIn = async () => {
     if (!email) {
-      setMessage('Please enter an email address');
+      setMessage("Please enter an email address");
       return;
     }
 
     setIsLoading(true);
-    setMessage('Signing in...');
+    setMessage("Signing in...");
 
     try {
       // Simulate network delay
-      await new Promise(resolve => setTimeout(resolve, 500));
-      
+      await new Promise((resolve) => setTimeout(resolve, 500));
+
       const newUser = signInLocal(email);
       if (newUser) {
         setUser(newUser);
         setMessage(`✅ Welcome back, ${newUser.name}!`);
         setShowForm(false);
-        
+
         // Refresh page after successful login
         setTimeout(() => {
           window.location.reload();
         }, 1500);
       } else {
-        setMessage('❌ Failed to sign in');
+        setMessage("❌ Failed to sign in");
       }
     } catch (error: any) {
       setMessage(`❌ Error: ${error.message}`);
@@ -72,15 +77,15 @@ export const SimpleLogin: React.FC = () => {
 
   const handleSignOut = async () => {
     setIsLoading(true);
-    setMessage('Signing out...');
+    setMessage("Signing out...");
 
     try {
-      await new Promise(resolve => setTimeout(resolve, 300));
+      await new Promise((resolve) => setTimeout(resolve, 300));
       signOutLocal();
       setUser(null);
       setShowForm(true);
-      setMessage('✅ Signed out successfully');
-      
+      setMessage("✅ Signed out successfully");
+
       // Refresh page after sign out
       setTimeout(() => {
         window.location.reload();
@@ -115,20 +120,20 @@ export const SimpleLogin: React.FC = () => {
               <Badge variant="outline">{user.role}</Badge>
             </div>
             <div className="flex gap-2">
-              <Button 
+              <Button
                 onClick={() => window.location.reload()}
                 variant="outline"
                 size="sm"
               >
                 Refresh
               </Button>
-              <Button 
+              <Button
                 onClick={handleSignOut}
                 variant="outline"
                 size="sm"
                 disabled={isLoading}
               >
-                {isLoading ? 'Signing Out...' : 'Sign Out'}
+                {isLoading ? "Signing Out..." : "Sign Out"}
               </Button>
             </div>
           </div>
@@ -149,7 +154,8 @@ export const SimpleLogin: React.FC = () => {
       <CardContent className="space-y-4">
         <Alert>
           <AlertDescription>
-            Welcome! Sign in to access your HR dashboard. No password required for development.
+            Welcome! Sign in to access your HR dashboard. No password required
+            for development.
           </AlertDescription>
         </Alert>
 
@@ -162,43 +168,43 @@ export const SimpleLogin: React.FC = () => {
                 placeholder="Enter your email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                onKeyPress={(e) => e.key === 'Enter' && handleSignIn()}
+                onKeyPress={(e) => e.key === "Enter" && handleSignIn()}
                 disabled={isLoading}
               />
             </div>
-            
+
             <div className="flex gap-2">
-              <Button 
+              <Button
                 onClick={handleSignIn}
                 disabled={!email || isLoading}
                 className="flex-1 flex items-center gap-2"
               >
                 <LogIn className="h-4 w-4" />
-                {isLoading ? 'Signing In...' : 'Sign In'}
+                {isLoading ? "Signing In..." : "Sign In"}
               </Button>
             </div>
 
             <div className="border-t pt-3">
               <p className="text-xs text-gray-600 mb-2">Quick Login:</p>
               <div className="flex gap-2 flex-wrap">
-                <Button 
-                  onClick={() => handleQuickLogin('celestinod@gmail.com')}
+                <Button
+                  onClick={() => handleQuickLogin("celestinod@gmail.com")}
                   variant="outline"
                   size="sm"
                   disabled={isLoading}
                 >
                   Celestino
                 </Button>
-                <Button 
-                  onClick={() => handleQuickLogin('admin@company.com')}
+                <Button
+                  onClick={() => handleQuickLogin("admin@company.com")}
                   variant="outline"
                   size="sm"
                   disabled={isLoading}
                 >
                   Admin
                 </Button>
-                <Button 
-                  onClick={() => handleQuickLogin('hr@company.com')}
+                <Button
+                  onClick={() => handleQuickLogin("hr@company.com")}
                   variant="outline"
                   size="sm"
                   disabled={isLoading}
@@ -211,8 +217,18 @@ export const SimpleLogin: React.FC = () => {
         )}
 
         {message && (
-          <Alert className={message.includes('✅') ? 'border-green-200 bg-green-50' : 'border-red-200 bg-red-50'}>
-            <AlertDescription className={message.includes('✅') ? 'text-green-700' : 'text-red-700'}>
+          <Alert
+            className={
+              message.includes("✅")
+                ? "border-green-200 bg-green-50"
+                : "border-red-200 bg-red-50"
+            }
+          >
+            <AlertDescription
+              className={
+                message.includes("✅") ? "text-green-700" : "text-red-700"
+              }
+            >
               {message}
             </AlertDescription>
           </Alert>

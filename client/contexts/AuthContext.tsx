@@ -38,7 +38,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
 
   useEffect(() => {
     // Re-enable auth state listener with our fixed Firebase setup
-    console.log('🔧 AuthProvider initializing with Firebase authentication');
+    console.log("🔧 AuthProvider initializing with Firebase authentication");
 
     const unsubscribe = auth.onAuthStateChanged(async (firebaseUser) => {
       try {
@@ -46,21 +46,24 @@ export function AuthProvider({ children }: AuthProviderProps) {
         setUser(firebaseUser);
 
         if (firebaseUser) {
-          console.log('✅ User authenticated:', firebaseUser.email || firebaseUser.uid);
+          console.log(
+            "✅ User authenticated:",
+            firebaseUser.email || firebaseUser.uid,
+          );
           // Load user profile if available
           try {
             const profile = await authService.getUserProfile(firebaseUser.uid);
             setUserProfile(profile);
           } catch (error) {
-            console.warn('Could not load user profile:', error);
+            console.warn("Could not load user profile:", error);
             setUserProfile(null);
           }
         } else {
-          console.log('❌ User not authenticated');
+          console.log("❌ User not authenticated");
           setUserProfile(null);
         }
       } catch (error) {
-        console.error('Auth state change error:', error);
+        console.error("Auth state change error:", error);
       } finally {
         setLoading(false);
       }

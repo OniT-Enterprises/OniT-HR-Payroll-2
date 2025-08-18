@@ -121,8 +121,13 @@ export const tryAuthentication = async (): Promise<boolean> => {
   } catch (error: any) {
     console.warn("❌ Authentication failed:", error);
     // Check if it's a permissions error and provide guidance
-    if (error.code === 'permission-denied' || error.message?.includes('Missing or insufficient permissions')) {
-      console.warn("🔒 Permissions issue detected. Check Firestore rules and authentication setup.");
+    if (
+      error.code === "permission-denied" ||
+      error.message?.includes("Missing or insufficient permissions")
+    ) {
+      console.warn(
+        "🔒 Permissions issue detected. Check Firestore rules and authentication setup.",
+      );
     }
     return false;
   }
@@ -146,13 +151,13 @@ export const unblockFirebase = () => {
 // DEPRECATED: Use firebaseManager instead
 // These functions are kept for backward compatibility but delegate to the safe manager
 export const enableFirebaseNetwork = async (): Promise<boolean> => {
-  const { firebaseManager } = await import('./firebaseManager');
+  const { firebaseManager } = await import("./firebaseManager");
   const result = await firebaseManager.testConnection();
   return result;
 };
 
 export const disableFirebaseNetwork = async (): Promise<boolean> => {
-  const { firebaseManager } = await import('./firebaseManager');
+  const { firebaseManager } = await import("./firebaseManager");
   return firebaseManager.disableNetwork();
 };
 
@@ -160,7 +165,7 @@ export const disableFirebaseNetwork = async (): Promise<boolean> => {
 // This function is kept for backward compatibility but delegates to the safe manager
 export const testFirebaseConnection = async (): Promise<boolean> => {
   // Import here to avoid circular dependencies
-  const { firebaseManager } = await import('./firebaseManager');
+  const { firebaseManager } = await import("./firebaseManager");
   return firebaseManager.testConnection();
 };
 

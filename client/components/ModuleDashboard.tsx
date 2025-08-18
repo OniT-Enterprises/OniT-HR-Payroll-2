@@ -1,16 +1,16 @@
-import React from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from './ui/card';
-import { Badge } from './ui/badge';
-import { Button } from './ui/button';
-import { 
-  BarChart3, 
-  Users, 
-  TrendingUp, 
+import React from "react";
+import { Card, CardContent, CardHeader, CardTitle } from "./ui/card";
+import { Badge } from "./ui/badge";
+import { Button } from "./ui/button";
+import {
+  BarChart3,
+  Users,
+  TrendingUp,
   Plus,
   ArrowUpRight,
   ArrowDownRight,
-  Minus
-} from 'lucide-react';
+  Minus,
+} from "lucide-react";
 
 interface ModuleDashboardProps {
   moduleName: string;
@@ -20,14 +20,14 @@ interface ModuleDashboardProps {
     title: string;
     value: string;
     change: string;
-    changeType: 'positive' | 'negative' | 'neutral';
+    changeType: "positive" | "negative" | "neutral";
     icon: React.ReactNode;
   }>;
   quickActions?: Array<{
     label: string;
     icon: React.ReactNode;
     action: () => void;
-    variant?: 'default' | 'outline' | 'secondary';
+    variant?: "default" | "outline" | "secondary";
   }>;
   recentItems?: Array<{
     title: string;
@@ -43,7 +43,7 @@ export const ModuleDashboard: React.FC<ModuleDashboardProps> = ({
   moduleColor,
   stats,
   quickActions = [],
-  recentItems = []
+  recentItems = [],
 }) => {
   return (
     <div className="p-6">
@@ -60,13 +60,13 @@ export const ModuleDashboard: React.FC<ModuleDashboardProps> = ({
             </p>
           </div>
         </div>
-        
+
         {quickActions.length > 0 && (
           <div className="flex items-center gap-3">
             {quickActions.map((action, index) => (
               <Button
                 key={index}
-                variant={action.variant || 'default'}
+                variant={action.variant || "default"}
                 onClick={action.action}
                 className="flex items-center gap-2"
               >
@@ -105,8 +105,8 @@ export const ModuleDashboard: React.FC<ModuleDashboardProps> = ({
                     stat.changeType === "positive"
                       ? "text-green-500"
                       : stat.changeType === "negative"
-                      ? "text-red-500"
-                      : "text-gray-500"
+                        ? "text-red-500"
+                        : "text-gray-500"
                   }
                 >
                   {stat.change}
@@ -128,7 +128,10 @@ export const ModuleDashboard: React.FC<ModuleDashboardProps> = ({
             <CardContent>
               <div className="space-y-4">
                 {recentItems.map((item, index) => (
-                  <div key={index} className="flex items-center justify-between">
+                  <div
+                    key={index}
+                    className="flex items-center justify-between"
+                  >
                     <div className="space-y-1">
                       <p className="text-sm font-medium">{item.title}</p>
                       <p className="text-xs text-muted-foreground">
@@ -160,16 +163,24 @@ export const ModuleDashboard: React.FC<ModuleDashboardProps> = ({
             <CardContent>
               <div className="space-y-4">
                 <div className="flex items-center justify-between">
-                  <span className="text-sm text-muted-foreground">Module Activity</span>
+                  <span className="text-sm text-muted-foreground">
+                    Module Activity
+                  </span>
                   <Badge variant="default">Active</Badge>
                 </div>
                 <div className="flex items-center justify-between">
-                  <span className="text-sm text-muted-foreground">Data Status</span>
+                  <span className="text-sm text-muted-foreground">
+                    Data Status
+                  </span>
                   <Badge variant="outline">Up to date</Badge>
                 </div>
                 <div className="flex items-center justify-between">
-                  <span className="text-sm text-muted-foreground">System Health</span>
-                  <Badge variant="default" className="bg-green-500">Healthy</Badge>
+                  <span className="text-sm text-muted-foreground">
+                    System Health
+                  </span>
+                  <Badge variant="default" className="bg-green-500">
+                    Healthy
+                  </Badge>
                 </div>
               </div>
             </CardContent>

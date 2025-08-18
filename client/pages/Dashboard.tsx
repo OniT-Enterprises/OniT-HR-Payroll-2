@@ -31,7 +31,7 @@ export default function Dashboard() {
     totalEmployees: 42,
     monthlyPayroll: 1247800,
     hoursThisWeek: 9856,
-    openPositions: 18
+    openPositions: 18,
   });
 
   const stats = [
@@ -187,8 +187,8 @@ export default function Dashboard() {
                       stat.changeType === "positive"
                         ? "text-green-500"
                         : stat.changeType === "negative"
-                        ? "text-red-500"
-                        : "text-gray-500"
+                          ? "text-red-500"
+                          : "text-gray-500"
                     }
                   >
                     {stat.change}
@@ -259,7 +259,10 @@ export default function Dashboard() {
             <CardContent>
               <div className="space-y-4">
                 {upcomingTasks.map((task, index) => (
-                  <div key={index} className="flex items-center justify-between">
+                  <div
+                    key={index}
+                    className="flex items-center justify-between"
+                  >
                     <div className="space-y-1">
                       <p className="text-sm font-medium">{task.task}</p>
                       <p className="text-xs text-muted-foreground">
@@ -271,8 +274,8 @@ export default function Dashboard() {
                         task.priority === "high"
                           ? "destructive"
                           : task.priority === "medium"
-                          ? "default"
-                          : "secondary"
+                            ? "default"
+                            : "secondary"
                       }
                     >
                       {task.priority}
@@ -296,7 +299,10 @@ export default function Dashboard() {
             <CardContent>
               <div className="space-y-4">
                 {recentPayrolls.map((payroll, index) => (
-                  <div key={index} className="flex items-center justify-between">
+                  <div
+                    key={index}
+                    className="flex items-center justify-between"
+                  >
                     <div className="space-y-1">
                       <p className="text-sm font-medium">{payroll.period}</p>
                       <p className="text-xs text-muted-foreground">

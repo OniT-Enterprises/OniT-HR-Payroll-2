@@ -315,18 +315,7 @@ export default function MainNavigation() {
 
         {/* Right side - User info and settings */}
         <div className="flex items-center gap-3">
-          {/* Company/Tenant Info */}
-          {user && (
-            <div className="hidden sm:flex items-center gap-2 px-3 py-1 bg-gray-800 rounded-lg">
-              <Building className="h-4 w-4 text-gray-400" />
-              <span className="text-sm text-gray-300">{user.company}</span>
-              <Badge variant="outline" className="text-xs">
-                {user.role}
-              </Badge>
-            </div>
-          )}
-
-          {/* User Avatar */}
+          {/* User Avatar with Gear Hint */}
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button variant="ghost" className="p-0 h-8 w-8 rounded-full">

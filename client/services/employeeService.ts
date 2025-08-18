@@ -75,7 +75,12 @@ export interface Employee {
 }
 
 class EmployeeService {
-  private collection = collection(db, "employees");
+  private get collection() {
+    if (!db) {
+      throw new Error("Firebase not initialized - using local data mode");
+    }
+    return collection(db, "employees");
+  }
 
   private async testConnection(): Promise<void> {
     try {

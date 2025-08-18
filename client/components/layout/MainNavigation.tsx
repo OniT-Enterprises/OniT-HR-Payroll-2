@@ -255,14 +255,12 @@ export default function MainNavigation() {
         {/* Logo and Main Navigation */}
         <div className="flex items-center">
           <div className="flex-shrink-0 flex items-center">
-            <Building className="h-8 w-8 text-blue-400 mr-3" />
-            <Button
-              variant="ghost"
+            <img
+              src="https://cdn.builder.io/api/v1/image/assets%2F460f188acad442d387e4846176efeb72%2F1cd62202d1d04226be6dc6ced94436eb?format=webp&width=800"
+              alt="ONIT Logo"
+              className="h-8 w-auto cursor-pointer hover:opacity-80 transition-opacity"
               onClick={() => navigate("/")}
-              className="text-white font-semibold text-lg hover:bg-gray-700 px-2"
-            >
-              Payroll
-            </Button>
+            />
           </div>
 
           {/* Main Navigation Items */}

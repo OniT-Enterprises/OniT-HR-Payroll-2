@@ -137,6 +137,19 @@ export default function Settings() {
           ))}
         </div>
 
+        {/* Development Authentication */}
+        <Card className="mt-8">
+          <CardHeader>
+            <CardTitle>Development Authentication</CardTitle>
+            <CardDescription>
+              Sign in to Firebase to enable database operations
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <DevAuthControl />
+          </CardContent>
+        </Card>
+
         {/* Firebase Database Control */}
         <Card className="mt-8">
           <CardHeader>

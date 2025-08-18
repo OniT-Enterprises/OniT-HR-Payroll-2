@@ -43,6 +43,11 @@ export default function MainNavigation() {
   const navigate = useNavigate();
   const location = useLocation();
   const [activeDropdown, setActiveDropdown] = useState<string | null>(null);
+  const [authStatus, setAuthStatus] = useState(getAuthStatus());
+  const [showLogin, setShowLogin] = useState(false);
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
 
   const navigationItems = [
     {

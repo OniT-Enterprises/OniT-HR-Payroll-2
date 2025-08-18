@@ -6,6 +6,7 @@ import { Alert, AlertDescription } from './ui/alert';
 import { Input } from './ui/input';
 import { Label } from './ui/label';
 import { signInDev, signOutDev, getAuthStatus, signInWithEmail } from '../lib/devAuth';
+import { autoSetupTenantForUser } from '../lib/tenantSetup';
 import { auth } from '../lib/firebase';
 
 export const DevAuthControl: React.FC = () => {

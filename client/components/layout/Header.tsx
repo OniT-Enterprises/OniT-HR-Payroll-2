@@ -76,6 +76,7 @@ const Header: React.FC = () => {
       sub: [
         { id: 'run-payroll', label: 'Run Payroll', icon: <Calculator className="h-5 w-5" />, path: '/payroll/run' },
         { id: 'history', label: 'History', icon: <FileText className="h-5 w-5" />, path: '/payroll/history' },
+        { id: 'tax-reports', label: 'Tax Reports', icon: <FileText className="h-5 w-5" />, path: '/payroll/taxes' },
         { id: 'transfers', label: 'Bank Transfers', icon: <CreditCard className="h-5 w-5" />, path: '/payroll/transfers' },
         { id: 'benefits', label: 'Benefits', icon: <Heart className="h-5 w-5" />, path: '/payroll/benefits' },
         { id: 'deductions', label: 'Deductions', icon: <DollarSign className="h-5 w-5" />, path: '/payroll/deductions' }

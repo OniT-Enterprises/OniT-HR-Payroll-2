@@ -12,7 +12,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import MainNavigation from "@/components/layout/MainNavigation";
 import { employeeService } from "@/services/employeeService";
 import FirebaseTestComponent from "@/components/FirebaseTestComponent";
-import { DashboardLogin } from "@/components/DashboardLogin";
+import { DirectEmailLogin } from "@/components/DirectEmailLogin";
 import { EmergencyFetchFix } from "@/components/EmergencyFetchFix";
 import { FirestoreRulesDeploy } from "@/components/FirestoreRulesDeploy";
 import React, { useState, useEffect } from "react";

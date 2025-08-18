@@ -477,12 +477,29 @@ class EmployeeService {
       }
     }
 
+    // Try to authenticate before attempting to write
+    try {
+      console.log('🔐 Ensuring authentication before adding employee...');
+      const authSuccess = await tryAuthentication();
+      if (!authSuccess) {
+        console.warn('❌ Authentication failed, falling back to mock service');
+        const id = await mockDataService.addEmployee(employee);
+        return id;
+      }
+      console.log('✅ Authentication successful, proceeding with Firebase write');
+    } catch (authError) {
+      console.warn('❌ Authentication error, falling back to mock service:', authError);
+      const id = await mockDataService.addEmployee(employee);
+      return id;
+    }
+
     try {
       const docRef = await addDoc(this.collection, {
         ...employee,
         createdAt: serverTimestamp(),
         updatedAt: serverTimestamp(),
       });
+      console.log('✅ Employee added to Firebase successfully:', docRef.id);
       return docRef.id;
     } catch (error) {
       console.error("Error adding employee to Firebase:", error);

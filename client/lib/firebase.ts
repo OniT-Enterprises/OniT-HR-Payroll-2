@@ -46,8 +46,9 @@ let analytics: any = null;
 
 // Simple check for Firebase initialization
 const shouldInitializeFirebase = () => {
-  // Always try to initialize Firebase
-  return true;
+  // DISABLE Firebase for local development mode
+  console.log("🔧 Firebase initialization disabled for local development");
+  return false;
 };
 
 try {

@@ -11,6 +11,7 @@ import { Separator } from "@/components/ui/separator";
 import MainNavigation from "@/components/layout/MainNavigation";
 import { FirebaseIsolationControl } from "@/components/FirebaseIsolationControl";
 import { DevAuthControl } from "@/components/DevAuthControl";
+import { FetchDiagnostic } from "@/components/FetchDiagnostic";
 import {
   Settings as SettingsIcon,
   User,

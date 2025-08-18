@@ -237,14 +237,23 @@ export const DevAuthControl: React.FC = () => {
         )}
 
         {authStatus.isSignedIn && (
-          <Button
-            onClick={handleSignOut}
-            variant="outline"
-            disabled={isLoading}
-            className="w-full"
-          >
-            {isLoading ? 'Signing Out...' : 'Sign Out'}
-          </Button>
+          <div className="space-y-2">
+            <Button
+              onClick={handleSetupTenant}
+              disabled={isLoading}
+              className="w-full"
+            >
+              {isLoading ? 'Setting up...' : 'Setup My Company/Tenant'}
+            </Button>
+            <Button
+              onClick={handleSignOut}
+              variant="outline"
+              disabled={isLoading}
+              className="w-full"
+            >
+              {isLoading ? 'Signing Out...' : 'Sign Out'}
+            </Button>
+          </div>
         )}
 
         {message && (

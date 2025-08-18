@@ -161,6 +161,9 @@ export default function Dashboard() {
         {/* Emergency Fetch Fix */}
         <EmergencyFetchFix />
 
+        {/* Firestore Rules Deployment */}
+        <FirestoreRulesDeploy />
+
         {/* Temporary Firebase Test Component for Debugging */}
         <FirebaseTestComponent />
         <div className="flex items-center justify-between mb-8">

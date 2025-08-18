@@ -53,7 +53,7 @@ export default function MainNavigation() {
         {
           label: "Create Job",
           icon: <Briefcase className="h-4 w-4" />,
-          path: "/hiring/jobs/create",
+          path: "/hiring/create-job",
         },
         {
           label: "Candidate Selection",

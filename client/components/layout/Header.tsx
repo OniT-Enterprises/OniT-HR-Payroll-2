@@ -29,7 +29,7 @@ const Header: React.FC = () => {
       label: 'Hiring',
       icon: <UserPlus className="h-6 w-6" />,
       sub: [
-        { id: 'create-job', label: 'Create Job', icon: <Briefcase className="h-5 w-5" />, path: '/hiring/jobs/create' },
+        { id: 'create-job', label: 'Create Job', icon: <Briefcase className="h-5 w-5" />, path: '/hiring/create-job' },
         { id: 'candidates', label: 'Candidates', icon: <Users className="h-5 w-5" />, path: '/hiring/candidates' },
         { id: 'interviews', label: 'Interviews', icon: <Calendar className="h-5 w-5" />, path: '/hiring/interviews' },
         { id: 'onboarding', label: 'Onboarding', icon: <UserPlus className="h-5 w-5" />, path: '/hiring/onboarding' },

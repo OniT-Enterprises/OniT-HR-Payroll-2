@@ -225,6 +225,15 @@ export function TenantProvider({ children }: TenantProviderProps) {
   useEffect(() => {
     console.log('🔧 TenantProvider initializing with Firebase authentication');
 
+    if (!auth) {
+      console.log("🔧 Firebase auth disabled in TenantProvider, using fallback mode");
+      setLoading(false);
+      setCurrentUser(null);
+      setAvailableTenants([]);
+      setSelectedTenant(null);
+      return () => {};
+    }
+
     const unsubscribe = auth.onAuthStateChanged(async (user) => {
       try {
         setLoading(true);

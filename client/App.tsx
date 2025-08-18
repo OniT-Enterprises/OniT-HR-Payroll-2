@@ -16,6 +16,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { AuthProvider } from "@/contexts/AuthContext";
 import { FirebaseProvider } from "@/contexts/FirebaseContext";
 import { TenantProvider } from "@/contexts/TenantContext";
+import { ErrorBoundary } from "@/components/ErrorBoundary";
 import Login from "@/pages/auth/Login";
 import Index from "./pages/Index";
 import Dashboard from "./pages/Dashboard";

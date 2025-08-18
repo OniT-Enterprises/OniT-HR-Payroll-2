@@ -75,9 +75,9 @@ const moduleConfig = {
     icon: <Clock className="h-5 w-5" />,
     color: "text-purple-400",
     activeColor: "border-purple-400 bg-purple-50 text-purple-700",
-    dashboardPath: "/time-leave/dashboard",
+    dashboardPath: "/",
     submenu: [
-      { label: "Dashboard", icon: <BarChart3 className="h-4 w-4" />, path: "/time-leave/dashboard" },
+      { label: "Dashboard", icon: <BarChart3 className="h-4 w-4" />, path: "/" },
       { label: "Time Tracking", icon: <Clock className="h-4 w-4" />, path: "/time-leave/tracking" },
       { label: "Attendance", icon: <Calendar className="h-4 w-4" />, path: "/time-leave/attendance" },
       { label: "Leave Requests", icon: <Heart className="h-4 w-4" />, path: "/time-leave/requests" },

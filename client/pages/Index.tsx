@@ -8,7 +8,7 @@ import {
 } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
-import MainNavigation from "@/components/layout/MainNavigation";
+import Header from "@/components/layout/Header";
 import { useNavigate } from "react-router-dom";
 import {
   Users,
@@ -102,7 +102,7 @@ export default function Index() {
 
   return (
     <div className="min-h-screen bg-background">
-      <MainNavigation />
+      <Header />
 
       {/* Hero Section */}
       <section className="py-20 lg:py-32">

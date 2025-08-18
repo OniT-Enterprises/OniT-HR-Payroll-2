@@ -153,6 +153,9 @@ export default function Dashboard() {
       <MainNavigation />
 
       <div className="p-6">
+        {/* Login Component */}
+        <DashboardLogin />
+
         {/* Temporary Firebase Test Component for Debugging */}
         <FirebaseTestComponent />
         <div className="flex items-center justify-between mb-8">

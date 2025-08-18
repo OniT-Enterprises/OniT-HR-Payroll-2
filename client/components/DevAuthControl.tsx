@@ -3,7 +3,9 @@ import { Button } from './ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from './ui/card';
 import { Badge } from './ui/badge';
 import { Alert, AlertDescription } from './ui/alert';
-import { signInDev, signOutDev, getAuthStatus } from '../lib/devAuth';
+import { Input } from './ui/input';
+import { Label } from './ui/label';
+import { signInDev, signOutDev, getAuthStatus, signInWithEmail } from '../lib/devAuth';
 import { auth } from '../lib/firebase';
 
 export const DevAuthControl: React.FC = () => {

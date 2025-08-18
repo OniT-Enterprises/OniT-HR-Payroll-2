@@ -324,8 +324,8 @@ export default function MainNavigation() {
                 title={user ? `${user.name} - Click for settings` : 'User menu'}
               >
                 {/* Gear wheel hint - visible on hover */}
-                <div className="absolute inset-0 opacity-0 group-hover:opacity-30 transition-opacity duration-200">
-                  <Cog className="h-10 w-10 text-gray-300 animate-spin-slow" />
+                <div className="absolute inset-0 opacity-0 group-hover:opacity-50 transition-opacity duration-300">
+                  <Cog className="h-10 w-10 text-gray-400 animate-spin-slow" />
                 </div>
 
                 {/* User Avatar */}

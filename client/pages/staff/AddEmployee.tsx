@@ -951,7 +951,7 @@ export default function AddEmployee() {
   if (loading) {
     return (
       <div className="min-h-screen bg-background">
-        <MainNavigation />
+        <Header />
         <div className="p-6">
           <div className="flex items-center justify-center p-8">
             <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-purple-600"></div>
@@ -964,7 +964,7 @@ export default function AddEmployee() {
 
   return (
     <div className="min-h-screen bg-background">
-      <MainNavigation />
+      <Header />
 
       <div className="p-6">
         <OfflineStatusBanner />
@@ -1632,7 +1632,7 @@ export default function AddEmployee() {
                           <SelectItem value="Iraq">🇮🇶 Iraq</SelectItem>
                           <SelectItem value="Ireland">🇮🇪 Ireland</SelectItem>
                           <SelectItem value="Israel">🇮🇱 Israel</SelectItem>
-                          <SelectItem value="Italy">����🇹 Italy</SelectItem>
+                          <SelectItem value="Italy">🇮🇹 Italy</SelectItem>
                           <SelectItem value="Japan">🇯🇵 Japan</SelectItem>
                           <SelectItem value="Jordan">🇯🇴 Jordan</SelectItem>
                           <SelectItem value="Kazakhstan">

@@ -9,7 +9,7 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import MainNavigation from "@/components/layout/MainNavigation";
+import Header from "@/components/layout/Header";
 import { employeeService } from "@/services/employeeService";
 import FirebaseTestComponent from "@/components/FirebaseTestComponent";
 import { DirectEmailLogin } from "@/components/DirectEmailLogin";
@@ -152,7 +152,7 @@ export default function Dashboard() {
 
   return (
     <div className="min-h-screen bg-background">
-      <MainNavigation />
+      <Header />
 
       <div className="p-6">
         {/* Direct Email Login for celestinod@gmail.com */}

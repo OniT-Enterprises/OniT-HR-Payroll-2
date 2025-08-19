@@ -10,8 +10,8 @@ import {
 import { getAuth, signInAnonymously } from "firebase/auth";
 import { getStorage } from "firebase/storage";
 
-// Import development authentication helper
-import "./devAuth";
+// Import development authentication helper - DISABLED for local development
+// import "./devAuth";
 
 // Import emergency fetch fix to completely resolve "Failed to fetch" errors
 import "./emergencyFetchFix";

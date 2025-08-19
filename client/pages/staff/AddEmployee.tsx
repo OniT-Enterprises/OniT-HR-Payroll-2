@@ -42,7 +42,7 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { useToast } from "@/hooks/use-toast";
-import MainNavigation from "@/components/layout/MainNavigation";
+import Header from "@/components/layout/Header";
 import { employeeService, type Employee } from "@/services/employeeService";
 import OfflineStatusBanner from "@/components/OfflineStatusBanner";
 import { fileUploadService } from "@/services/fileUploadService";
@@ -1632,7 +1632,7 @@ export default function AddEmployee() {
                           <SelectItem value="Iraq">🇮🇶 Iraq</SelectItem>
                           <SelectItem value="Ireland">🇮🇪 Ireland</SelectItem>
                           <SelectItem value="Israel">🇮🇱 Israel</SelectItem>
-                          <SelectItem value="Italy">🇮🇹 Italy</SelectItem>
+                          <SelectItem value="Italy">����🇹 Italy</SelectItem>
                           <SelectItem value="Japan">🇯🇵 Japan</SelectItem>
                           <SelectItem value="Jordan">🇯🇴 Jordan</SelectItem>
                           <SelectItem value="Kazakhstan">

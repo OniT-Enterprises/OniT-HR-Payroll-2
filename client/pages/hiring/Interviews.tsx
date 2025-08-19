@@ -28,7 +28,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import Header from "@/components/layout/Header";
+import MainNavigation from "@/components/layout/MainNavigation";
 import {
   Calendar,
   Clock,
@@ -153,7 +153,7 @@ export default function Interviews() {
 
   return (
     <div className="min-h-screen bg-background">
-      <Header />
+      <MainNavigation />
 
       <div className="p-6">
         <div className="flex items-center gap-3 mb-8">

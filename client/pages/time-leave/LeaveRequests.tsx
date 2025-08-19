@@ -56,7 +56,7 @@ import {
   PaginationPrevious,
 } from "@/components/ui/pagination";
 import { useToast } from "@/hooks/use-toast";
-import Header from "@/components/layout/Header";
+import MainNavigation from "@/components/layout/MainNavigation";
 import {
   Calendar,
   Plus,
@@ -515,7 +515,7 @@ export default function LeaveRequests() {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <Header />
+      <MainNavigation />
 
       <div className="p-6">
         <div className="max-w-7xl mx-auto">

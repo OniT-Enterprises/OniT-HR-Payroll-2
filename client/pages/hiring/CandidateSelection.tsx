@@ -22,7 +22,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import MainNavigation from "@/components/layout/MainNavigation";
+import Header from "@/components/layout/Header";
 import {
   Users,
   Search,

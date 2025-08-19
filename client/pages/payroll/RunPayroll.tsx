@@ -1,11 +1,11 @@
 import React from "react";
-import Header from "@/components/layout/Header";
+import MainNavigation from "@/components/layout/MainNavigation";
 import { Calculator } from "lucide-react";
 
 export default function RunPayroll() {
   return (
     <div className="min-h-screen bg-gray-50">
-      <Header />
+      <MainNavigation />
       <div className="p-6">
         <div className="max-w-7xl mx-auto">
           <div className="mb-6">

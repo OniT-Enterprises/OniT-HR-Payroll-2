@@ -135,7 +135,7 @@ export default function Dashboard() {
 
   return (
     <div className="min-h-screen bg-background">
-      <Header />
+      <MainNavigation />
 
       <div className="p-6">
         {/* Simple Login Component */}

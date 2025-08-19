@@ -34,7 +34,7 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Badge } from "@/components/ui/badge";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { useToast } from "@/hooks/use-toast";
-import Header from "@/components/layout/Header";
+import MainNavigation from "@/components/layout/MainNavigation";
 import { useTenant } from "@/contexts/TenantContext";
 import { 
   useTenantDepartments, 
@@ -230,7 +230,7 @@ export default function CreateJob() {
   if (!canCreateJob) {
     return (
       <div className="min-h-screen bg-background">
-        <Header />
+        <MainNavigation />
         <div className="p-6">
           <Alert>
             <AlertCircle className="h-4 w-4" />
@@ -247,7 +247,7 @@ export default function CreateJob() {
 
   return (
     <div className="min-h-screen bg-background">
-      <Header />
+      <MainNavigation />
 
       <div className="p-6">
         <div className="flex items-center justify-between mb-8">

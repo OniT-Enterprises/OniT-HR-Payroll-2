@@ -14,7 +14,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 import { Separator } from "@/components/ui/separator";
-import MainNavigation from "@/components/layout/MainNavigation";
+import Header from "@/components/layout/Header";
 import {
   UserPlus,
   FileText,

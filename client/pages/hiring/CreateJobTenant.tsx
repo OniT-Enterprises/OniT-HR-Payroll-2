@@ -20,7 +20,7 @@ import {
 } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
 import { useToast } from "@/hooks/use-toast";
-import Header from "@/components/layout/Header";
+import MainNavigation from "@/components/layout/MainNavigation";
 import { TenantSwitcher } from "@/components/TenantSwitcher";
 import {
   useDepartments,
@@ -161,7 +161,7 @@ export default function CreateJobTenant() {
 
   return (
     <div className="min-h-screen bg-background">
-      <Header />
+      <MainNavigation />
 
       <div className="p-6">
         <div className="max-w-4xl mx-auto">

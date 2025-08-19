@@ -22,7 +22,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import Header from "@/components/layout/Header";
+import MainNavigation from "@/components/layout/MainNavigation";
 import {
   Users,
   Search,
@@ -259,7 +259,7 @@ export default function CandidateSelection() {
 
   return (
     <div className="min-h-screen bg-background">
-      <Header />
+      <MainNavigation />
 
       <div className="p-6">
         <div className="flex items-center justify-between mb-6">

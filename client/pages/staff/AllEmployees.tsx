@@ -18,7 +18,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import Header from "@/components/layout/Header";
+import MainNavigation from "@/components/layout/MainNavigation";
 import { employeeService, type Employee } from "@/services/employeeService";
 import EmployeeProfileView from "@/components/EmployeeProfileView";
 import ContactInfoPopover from "@/components/ContactInfoPopover";
@@ -552,7 +552,7 @@ export default function AllEmployees() {
   if (loading) {
     return (
       <div className="min-h-screen bg-background">
-        <Header />
+        <MainNavigation />
         <div className="p-6">
           <div className="flex items-center justify-center p-8">
             <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-purple-600"></div>
@@ -565,7 +565,7 @@ export default function AllEmployees() {
 
   return (
     <div className="min-h-screen bg-background">
-      <Header />
+      <MainNavigation />
 
       <div className="p-6">
         {/* Connection Status */}

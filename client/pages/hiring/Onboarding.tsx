@@ -159,7 +159,7 @@ export default function Onboarding() {
 
   return (
     <div className="min-h-screen bg-background">
-      <MainNavigation />
+      <Header />
 
       <div className="p-6">
         <div className="flex items-center gap-3 mb-8">

@@ -7,7 +7,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import Header from "@/components/layout/Header";
+import MainNavigation from "@/components/layout/MainNavigation";
 import {
   Clock,
   Calendar,
@@ -22,7 +22,7 @@ import {
 export default function TimeLeaveDashboard() {
   return (
     <div className="min-h-screen bg-gray-50">
-      <Header />
+      <MainNavigation />
 
       <div className="p-6">
         <div className="max-w-7xl mx-auto">

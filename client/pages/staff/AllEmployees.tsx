@@ -18,7 +18,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import MainNavigation from "@/components/layout/MainNavigation";
+import Header from "@/components/layout/Header";
 import { employeeService, type Employee } from "@/services/employeeService";
 import EmployeeProfileView from "@/components/EmployeeProfileView";
 import ContactInfoPopover from "@/components/ContactInfoPopover";

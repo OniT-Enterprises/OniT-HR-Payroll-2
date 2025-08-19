@@ -16,8 +16,8 @@ export const devAuthConfig = {
   testEmail: "test@example.com",
   testPassword: "testpass123",
 
-  // Development mode settings
-  autoSignIn: true,
+  // Development mode settings - DISABLED when Firebase is not available
+  autoSignIn: false, // Disabled for local development mode
   useAnonymous: true, // Use anonymous auth if email/password fails
 };
 

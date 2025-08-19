@@ -10,6 +10,11 @@
   .scrollbar-hide::-webkit-scrollbar {
     display: none;  /* Safari and Chrome */
   }
+
+  /* Ensure content doesn't hide behind sticky navigation */
+  .content-with-sticky-nav {
+    padding-top: 80px; /* Adjust based on navigation height */
+  }
 }
 
 @layer base {

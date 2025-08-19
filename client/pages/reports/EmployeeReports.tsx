@@ -7,13 +7,13 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import MainNavigation from "@/components/layout/MainNavigation";
+import Header from "@/components/layout/Header";
 import { Users, Download, FileText, TrendingUp } from "lucide-react";
 
 export default function EmployeeReports() {
   return (
     <div className="min-h-screen bg-gray-50">
-      <MainNavigation />
+      <Header />
 
       <div className="p-6">
         <div className="max-w-7xl mx-auto">

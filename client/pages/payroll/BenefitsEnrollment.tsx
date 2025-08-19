@@ -1,11 +1,11 @@
 import React from "react";
-import MainNavigation from "@/components/layout/MainNavigation";
+import Header from "@/components/layout/Header";
 import { Heart } from "lucide-react";
 
 export default function BenefitsEnrollment() {
   return (
     <div className="min-h-screen bg-gray-50">
-      <MainNavigation />
+      <Header />
       <div className="p-6">
         <div className="max-w-7xl mx-auto">
           <div className="mb-6">

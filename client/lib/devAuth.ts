@@ -166,7 +166,7 @@ if (typeof window !== "undefined") {
 
   // Auto-sign in after a short delay to let Firebase initialize
   setTimeout(() => {
-    if (devAuthConfig.autoSignIn) {
+    if (devAuthConfig.autoSignIn && auth) {
       autoSignInDev().then((user) => {
         if (user) {
           console.log("✅ Auto sign-in successful");
@@ -176,6 +176,8 @@ if (typeof window !== "undefined") {
           );
         }
       });
+    } else if (!auth) {
+      console.log("🔧 Firebase auth disabled - skipping auto sign-in");
     }
   }, 1000);
 }

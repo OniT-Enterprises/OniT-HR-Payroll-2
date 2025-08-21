@@ -100,7 +100,7 @@ const modules = [
     borderColor: "border-yellow-400", 
     subMenu: [
       { title: "Create Payroll", icon: Calculator, path: "/payroll/run" },
-      { title: "Benefits Deductions", icon: DollarSign, path: "/payroll/deductions" },
+      { title: "Benefits &\nDeductions", icon: DollarSign, path: "/payroll/deductions" },
       { title: "Setup", icon: Settings, path: "/payroll/setup" },
     ],
   },
@@ -112,10 +112,10 @@ const modules = [
     bgColor: "bg-pink-950/40",
     borderColor: "border-pink-400",
     subMenu: [
-      { title: "Department Reports", icon: Building, path: "/reports/departments" },
-      { title: "Staff Reports", icon: Users, path: "/reports/employees" },
-      { title: "Payroll Reports", icon: Calculator, path: "/reports/payroll" },
-      { title: "Setup Reports", icon: Settings, path: "/reports/setup" },
+      { title: "Department\nReports", icon: Building, path: "/reports/departments" },
+      { title: "Staff\nReports", icon: Users, path: "/reports/employees" },
+      { title: "Payroll\nReports", icon: Calculator, path: "/reports/payroll" },
+      { title: "Setup\nReports", icon: Settings, path: "/reports/setup" },
     ],
   },
 ];

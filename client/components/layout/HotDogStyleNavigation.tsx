@@ -59,9 +59,8 @@ const modules = [
     bgColor: "bg-blue-950/40",
     borderColor: "border-blue-400",
     subMenu: [
-      { title: "All Employees", icon: Users, path: "/staff/employees" },
-      { title: "Add Employee", icon: UserPlus, path: "/staff/add" },
       { title: "Departments", icon: Building, path: "/staff/departments" },
+      { title: "All Staff", icon: Users, path: "/staff/employees" },
       { title: "Org Chart", icon: Building2, path: "/staff/org-chart" },
     ],
   },
@@ -73,10 +72,9 @@ const modules = [
     bgColor: "bg-purple-950/40",
     borderColor: "border-purple-400",
     subMenu: [
-      { title: "Time Tracking", icon: Clock, path: "/time-leave/tracking" },
       { title: "Attendance", icon: Calendar, path: "/time-leave/attendance" },
+      { title: "Shifts", icon: Calendar, path: "/time-leave/scheduling" },
       { title: "Leave Requests", icon: Heart, path: "/time-leave/requests" },
-      { title: "Scheduling", icon: Calendar, path: "/time-leave/scheduling" },
     ],
   },
   {
@@ -87,10 +85,10 @@ const modules = [
     bgColor: "bg-orange-950/40", 
     borderColor: "border-orange-400",
     subMenu: [
-      { title: "Goals & OKRs", icon: Target, path: "/performance/goals" },
-      { title: "Reviews", icon: Award, path: "/performance/reviews" },
-      { title: "Training", icon: Award, path: "/performance/training" },
       { title: "Disciplinary", icon: Shield, path: "/performance/disciplinary" },
+      { title: "Reviews", icon: Award, path: "/performance/reviews" },
+      { title: "Targets", icon: Target, path: "/performance/goals" },
+      { title: "Training", icon: Award, path: "/performance/training" },
     ],
   },
   {
@@ -101,12 +99,9 @@ const modules = [
     bgColor: "bg-yellow-950/40",
     borderColor: "border-yellow-400", 
     subMenu: [
-      { title: "Run Payroll", icon: Calculator, path: "/payroll/run" },
-      { title: "History", icon: FileText, path: "/payroll/history" },
-      { title: "Tax Reports", icon: FileText, path: "/payroll/taxes" },
-      { title: "Bank Transfers", icon: CreditCard, path: "/payroll/transfers" },
-      { title: "Benefits", icon: Heart, path: "/payroll/benefits" },
-      { title: "Deductions", icon: DollarSign, path: "/payroll/deductions" },
+      { title: "Create Payroll", icon: Calculator, path: "/payroll/run" },
+      { title: "Benefits Deductions", icon: DollarSign, path: "/payroll/deductions" },
+      { title: "Setup", icon: Settings, path: "/payroll/setup" },
     ],
   },
   {
@@ -117,10 +112,10 @@ const modules = [
     bgColor: "bg-pink-950/40",
     borderColor: "border-pink-400",
     subMenu: [
-      { title: "Employee Reports", icon: Users, path: "/reports/employees" },
+      { title: "Department Reports", icon: Building, path: "/reports/departments" },
+      { title: "Staff Reports", icon: Users, path: "/reports/employees" },
       { title: "Payroll Reports", icon: Calculator, path: "/reports/payroll" },
-      { title: "Attendance", icon: Calendar, path: "/reports/attendance" },
-      { title: "Custom Reports", icon: PieChart, path: "/reports/custom" },
+      { title: "Setup Reports", icon: Settings, path: "/reports/setup" },
     ],
   },
 ];

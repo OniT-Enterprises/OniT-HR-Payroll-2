@@ -8,7 +8,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
-import Header from "@/components/layout/Header";
+import HotDogStyleNavigation from "@/components/layout/HotDogStyleNavigation";
 import { FirebaseIsolationControl } from "@/components/FirebaseIsolationControl";
 import { DevAuthControl } from "@/components/DevAuthControl";
 import { FetchDiagnostic } from "@/components/FetchDiagnostic";

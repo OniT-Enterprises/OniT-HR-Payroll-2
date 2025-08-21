@@ -85,7 +85,7 @@ export default function Settings() {
 
   return (
     <div className="min-h-screen bg-background">
-      <Header />
+      <HotDogStyleNavigation />
 
       <div className="p-6">
         <div className="flex items-center gap-3 mb-8">

@@ -182,7 +182,7 @@ export default function HotDogStyleNavigation() {
                             }`}
                           >
                             <SubIconComponent className="h-4 w-4" />
-                            <span className="text-xs mt-1 text-center leading-tight whitespace-nowrap">{subItem.title}</span>
+                            <span className="text-xs mt-1 text-center leading-tight whitespace-pre-line">{subItem.title}</span>
                           </Link>
                         );
                       })}

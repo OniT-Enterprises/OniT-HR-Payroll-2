@@ -102,7 +102,7 @@ export default function Index() {
 
   return (
     <div className="min-h-screen bg-background">
-      <Header />
+      <HotDogStyleNavigation />
 
       {/* Hero Section */}
       <section className="py-20 lg:py-32">

@@ -10,7 +10,7 @@ import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
-import MainNavigation from "@/components/layout/MainNavigation";
+import HotDogStyleNavigation from "@/components/layout/HotDogStyleNavigation";
 import { SimpleLogin } from "@/components/SimpleLogin";
 import {
   Users,
@@ -135,7 +135,7 @@ export default function Dashboard() {
 
   return (
     <div className="min-h-screen bg-background">
-      <MainNavigation />
+      <HotDogStyleNavigation />
 
       <div className="p-6">
         {/* Simple Login Component */}

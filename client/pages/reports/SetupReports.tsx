@@ -8,7 +8,14 @@ import {
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import HotDogStyleNavigation from "@/components/layout/HotDogStyleNavigation";
-import { Settings, Download, Database, Shield, Activity, FileText } from "lucide-react";
+import {
+  Settings,
+  Download,
+  Database,
+  Shield,
+  Activity,
+  FileText,
+} from "lucide-react";
 
 export default function SetupReports() {
   return (
@@ -42,7 +49,8 @@ export default function SetupReports() {
               </CardHeader>
               <CardContent>
                 <p className="text-sm text-gray-600 mb-4">
-                  Overview of system settings, user permissions, and configuration status.
+                  Overview of system settings, user permissions, and
+                  configuration status.
                 </p>
                 <Button className="w-full">
                   <Download className="h-4 w-4 mr-2" />
@@ -58,7 +66,8 @@ export default function SetupReports() {
               </CardHeader>
               <CardContent>
                 <p className="text-sm text-gray-600 mb-4">
-                  Audit user roles, permissions, and access levels across the system.
+                  Audit user roles, permissions, and access levels across the
+                  system.
                 </p>
                 <Button className="w-full">
                   <Shield className="h-4 w-4 mr-2" />
@@ -88,11 +97,14 @@ export default function SetupReports() {
             <Card>
               <CardHeader>
                 <CardTitle>System Activity</CardTitle>
-                <CardDescription>Usage patterns and activity logs</CardDescription>
+                <CardDescription>
+                  Usage patterns and activity logs
+                </CardDescription>
               </CardHeader>
               <CardContent>
                 <p className="text-sm text-gray-600 mb-4">
-                  Analyze system usage, login patterns, and feature adoption rates.
+                  Analyze system usage, login patterns, and feature adoption
+                  rates.
                 </p>
                 <Button className="w-full">
                   <Activity className="h-4 w-4 mr-2" />
@@ -108,7 +120,8 @@ export default function SetupReports() {
               </CardHeader>
               <CardContent>
                 <p className="text-sm text-gray-600 mb-4">
-                  Track compliance with regulations, data policies, and security standards.
+                  Track compliance with regulations, data policies, and security
+                  standards.
                 </p>
                 <Button className="w-full">
                   <FileText className="h-4 w-4 mr-2" />
@@ -120,11 +133,14 @@ export default function SetupReports() {
             <Card>
               <CardHeader>
                 <CardTitle>Backup & Recovery</CardTitle>
-                <CardDescription>Data backup and recovery status</CardDescription>
+                <CardDescription>
+                  Data backup and recovery status
+                </CardDescription>
               </CardHeader>
               <CardContent>
                 <p className="text-sm text-gray-600 mb-4">
-                  Monitor backup schedules, recovery points, and data integrity checks.
+                  Monitor backup schedules, recovery points, and data integrity
+                  checks.
                 </p>
                 <Button className="w-full">
                   <Download className="h-4 w-4 mr-2" />

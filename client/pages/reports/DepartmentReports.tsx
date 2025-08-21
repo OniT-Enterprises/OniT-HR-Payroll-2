@@ -8,7 +8,13 @@ import {
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import HotDogStyleNavigation from "@/components/layout/HotDogStyleNavigation";
-import { Building, Download, Users, TrendingUp, DollarSign } from "lucide-react";
+import {
+  Building,
+  Download,
+  Users,
+  TrendingUp,
+  DollarSign,
+} from "lucide-react";
 
 export default function DepartmentReports() {
   return (
@@ -42,7 +48,8 @@ export default function DepartmentReports() {
               </CardHeader>
               <CardContent>
                 <p className="text-sm text-gray-600 mb-4">
-                  Overview of all departments, employee counts, and organizational structure.
+                  Overview of all departments, employee counts, and
+                  organizational structure.
                 </p>
                 <Button className="w-full">
                   <Download className="h-4 w-4 mr-2" />
@@ -54,11 +61,14 @@ export default function DepartmentReports() {
             <Card>
               <CardHeader>
                 <CardTitle>Department Performance</CardTitle>
-                <CardDescription>Performance metrics by department</CardDescription>
+                <CardDescription>
+                  Performance metrics by department
+                </CardDescription>
               </CardHeader>
               <CardContent>
                 <p className="text-sm text-gray-600 mb-4">
-                  Compare department performance, goals achievement, and productivity metrics.
+                  Compare department performance, goals achievement, and
+                  productivity metrics.
                 </p>
                 <Button className="w-full">
                   <TrendingUp className="h-4 w-4 mr-2" />
@@ -76,7 +86,8 @@ export default function DepartmentReports() {
               </CardHeader>
               <CardContent>
                 <p className="text-sm text-gray-600 mb-4">
-                  Track department budgets, salary costs, and resource allocation.
+                  Track department budgets, salary costs, and resource
+                  allocation.
                 </p>
                 <Button className="w-full">
                   <DollarSign className="h-4 w-4 mr-2" />
@@ -92,7 +103,8 @@ export default function DepartmentReports() {
               </CardHeader>
               <CardContent>
                 <p className="text-sm text-gray-600 mb-4">
-                  Analyze staffing levels, turnover rates, and recruitment needs by department.
+                  Analyze staffing levels, turnover rates, and recruitment needs
+                  by department.
                 </p>
                 <Button className="w-full">
                   <Users className="h-4 w-4 mr-2" />
@@ -108,7 +120,8 @@ export default function DepartmentReports() {
               </CardHeader>
               <CardContent>
                 <p className="text-sm text-gray-600 mb-4">
-                  Track department growth trends, hiring patterns, and expansion metrics.
+                  Track department growth trends, hiring patterns, and expansion
+                  metrics.
                 </p>
                 <Button className="w-full">
                   <Download className="h-4 w-4 mr-2" />
@@ -120,11 +133,14 @@ export default function DepartmentReports() {
             <Card>
               <CardHeader>
                 <CardTitle>Cross-Department Analysis</CardTitle>
-                <CardDescription>Inter-department collaboration</CardDescription>
+                <CardDescription>
+                  Inter-department collaboration
+                </CardDescription>
               </CardHeader>
               <CardContent>
                 <p className="text-sm text-gray-600 mb-4">
-                  Analyze collaboration patterns and resource sharing between departments.
+                  Analyze collaboration patterns and resource sharing between
+                  departments.
                 </p>
                 <Button className="w-full">
                   <Download className="h-4 w-4 mr-2" />

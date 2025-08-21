@@ -46,8 +46,7 @@ const modules = [
     borderColor: "border-green-400",
     subMenu: [
       { title: "Create Job", icon: Briefcase, path: "/hiring/create-job" },
-      { title: "Candidates", icon: Users, path: "/hiring/candidates" },
-      { title: "Interviews", icon: Calendar, path: "/hiring/interviews" },
+      { title: "Selection", icon: Users, path: "/hiring/candidates" },
       { title: "Onboarding", icon: UserPlus, path: "/hiring/onboarding" },
       { title: "Offboarding", icon: UserCog, path: "/hiring/offboarding" },
     ],

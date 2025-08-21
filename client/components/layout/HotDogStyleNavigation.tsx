@@ -61,7 +61,7 @@ const modules = [
     subMenu: [
       { title: "Departments", icon: Building, path: "/staff/departments" },
       { title: "All Staff", icon: Users, path: "/staff/employees" },
-      { title: "Org Chart", icon: Building2, path: "/staff/org-chart" },
+      { title: "Organisation\nChart", icon: Building2, path: "/staff/org-chart" },
     ],
   },
   {

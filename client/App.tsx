@@ -21,6 +21,7 @@ import Login from "@/pages/auth/Login";
 import Index from "./pages/Index";
 import Dashboard from "./pages/Dashboard";
 import Settings from "./pages/Settings";
+import Profile from "./pages/Profile";
 import CreateJob from "./pages/hiring/CreateJob";
 import CandidateSelection from "./pages/hiring/CandidateSelection";
 import Interviews from "./pages/hiring/Interviews";

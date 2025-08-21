@@ -150,51 +150,51 @@ export default function HotDogStyleNavigation() {
           </div>
 
           {/* Hot Dog Navigation Items */}
-          <div className="hidden md:ml-6 md:flex md:flex-1">
+          <div className="hidden md:ml-6 md:flex md:flex-1 md:gap-2 md:px-4">
             {modules.map((module) => {
               const IconComponent = module.icon;
               const isActive = currentPath === module.path || currentPath.startsWith(`${module.path}/`);
-              
+
               return (
-                <div 
+                <div
                   key={module.path}
-                  className={`flex-1 flex items-center justify-center h-full transition-all duration-200 ${
-                    isActive 
-                      ? `${module.bgColor} ${module.borderColor} border-b-2` 
-                      : "hover:bg-gray-800"
+                  className={`flex-1 flex items-center justify-center h-12 my-2 rounded-lg border-2 transition-all duration-200 ${
+                    isActive
+                      ? `${module.bgColor} ${module.borderColor} border-opacity-100`
+                      : `border-gray-600 border-opacity-50 hover:border-opacity-80 hover:${module.borderColor} hover:bg-gray-800`
                   }`}
                 >
                   {isActive ? (
                     // Show submenu items horizontally
-                    <div className="flex items-center justify-center gap-4 w-full px-2">
+                    <div className="flex items-center justify-center gap-3 w-full px-2">
                       {module.subMenu.map((subItem) => {
                         const SubIconComponent = subItem.icon;
                         const isSubActive = currentPath === subItem.path;
-                        
+
                         return (
-                          <Link 
+                          <Link
                             key={subItem.path}
-                            to={subItem.path} 
+                            to={subItem.path}
                             className={`flex flex-col items-center p-1 rounded transition-colors ${
-                              isSubActive 
-                                ? `${module.color} bg-gray-700` 
+                              isSubActive
+                                ? `${module.color} bg-gray-700`
                                 : "text-gray-300 hover:text-white hover:bg-gray-700"
                             }`}
                           >
                             <SubIconComponent className="h-4 w-4" />
-                            <span className="text-xs mt-1 text-center leading-tight">{subItem.title}</span>
+                            <span className="text-xs mt-1 text-center leading-tight whitespace-nowrap">{subItem.title}</span>
                           </Link>
                         );
                       })}
                     </div>
                   ) : (
                     // Show regular module button
-                    <Link 
-                      to={module.path} 
-                      className={`flex items-center gap-2 px-4 py-2 rounded transition-colors hover:bg-gray-700 ${module.color}`}
+                    <Link
+                      to={module.path}
+                      className={`flex items-center gap-2 px-3 py-2 rounded transition-colors hover:bg-gray-700/50 ${module.color} w-full justify-center`}
                     >
-                      <IconComponent className="h-5 w-5" />
-                      <span className="font-medium">{module.title}</span>
+                      <IconComponent className="h-5 w-5 flex-shrink-0" />
+                      <span className="font-medium whitespace-nowrap">{module.title}</span>
                     </Link>
                   )}
                 </div>

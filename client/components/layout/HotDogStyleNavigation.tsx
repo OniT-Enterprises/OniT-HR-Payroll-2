@@ -150,7 +150,7 @@ export default function HotDogStyleNavigation() {
           </div>
 
           {/* Hot Dog Navigation Items */}
-          <div className="hidden md:ml-6 md:flex md:flex-1 md:gap-2 md:px-4 md:pr-8">
+          <div className="hidden md:ml-6 md:flex md:flex-1 md:gap-2 md:px-2 md:mr-4">
             {modules.map((module) => {
               const IconComponent = module.icon;
               const isActive = currentPath === module.path || currentPath.startsWith(`${module.path}/`);

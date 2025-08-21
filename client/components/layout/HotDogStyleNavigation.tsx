@@ -137,7 +137,7 @@ export default function HotDogStyleNavigation() {
 
   return (
     <nav className="bg-gray-900 border-b border-gray-700 px-4 sm:px-6 lg:px-8 sticky top-0 z-50">
-      <div className="flex justify-between h-16">
+      <div className="flex justify-between h-20">
         {/* Logo */}
         <div className="flex items-center">
           <div className="flex-shrink-0 flex items-center">
@@ -150,7 +150,7 @@ export default function HotDogStyleNavigation() {
           </div>
 
           {/* Hot Dog Navigation Items */}
-          <div className="hidden md:ml-6 md:flex md:flex-1 md:gap-2 md:px-4">
+          <div className="hidden md:ml-6 md:flex md:flex-1 md:gap-2 md:px-4 md:pr-8">
             {modules.map((module) => {
               const IconComponent = module.icon;
               const isActive = currentPath === module.path || currentPath.startsWith(`${module.path}/`);
@@ -158,7 +158,7 @@ export default function HotDogStyleNavigation() {
               return (
                 <div
                   key={module.path}
-                  className={`flex-1 flex items-center justify-center h-12 my-2 rounded-lg border-2 transition-all duration-200 ${
+                  className={`flex-1 flex items-center justify-center h-16 my-2 rounded-lg border-2 transition-all duration-200 ${
                     isActive
                       ? `${module.bgColor} ${module.borderColor} border-opacity-100`
                       : `border-gray-600 border-opacity-50 hover:border-opacity-80 hover:${module.borderColor} hover:bg-gray-800`

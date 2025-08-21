@@ -51,6 +51,8 @@ import PayrollReports from "./pages/reports/PayrollReports";
 import EmployeeReports from "./pages/reports/EmployeeReports";
 import AttendanceReports from "./pages/reports/AttendanceReports";
 import CustomReports from "./pages/reports/CustomReports";
+import DepartmentReports from "./pages/reports/DepartmentReports";
+import SetupReports from "./pages/reports/SetupReports";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();

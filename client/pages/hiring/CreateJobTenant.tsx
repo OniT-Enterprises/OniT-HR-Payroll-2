@@ -355,12 +355,12 @@ export default function CreateJobTenant() {
                         <SelectValue placeholder="Select department" />
                       </SelectTrigger>
                       <SelectContent>
-                        {loadingDepartments ? (
+                        {loadingDepartments && departments.length === 0 ? (
                           <SelectItem value="loading" disabled>
                             Loading departments...
                           </SelectItem>
                         ) : (
-                          departments.map((dept) => (
+                          activeDepartments.map((dept) => (
                             <SelectItem key={dept.id} value={dept.id}>
                               {dept.name}
                             </SelectItem>

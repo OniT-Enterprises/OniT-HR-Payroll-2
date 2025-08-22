@@ -247,25 +247,31 @@ export default function CreateJobTenant() {
               </div>
             </div>
 
-            <TenantSwitcher showDetails />
+            {tenantContext?.session && <TenantSwitcher showDetails />}
           </div>
 
-          {/* Tenant Info */}
+          {/* User/Tenant Info */}
           <Card className="mb-6">
             <CardContent className="p-4">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
                   <Badge variant="secondary">
-                    {tenant.config.name || tenant.tenantId}
+                    {tenantContext?.session?.config.name || localUser?.company || "Your Company"}
                   </Badge>
                   <span className="text-sm text-muted-foreground">
-                    Creating job as {tenant.member.role}
+                    Creating job as {tenantContext?.session?.member.role || localUser?.role || "user"}
                   </span>
                 </div>
-                {!tenant.permissions.canWrite("hiring") && (
+                {tenantContext?.session && !tenantContext.session.member.role && (
                   <div className="flex items-center gap-2 text-amber-600">
                     <AlertCircle className="h-4 w-4" />
                     <span className="text-sm">Limited hiring permissions</span>
+                  </div>
+                )}
+                {!tenantContext?.session && localUser && (
+                  <div className="flex items-center gap-2 text-green-600">
+                    <CheckCircle className="h-4 w-4" />
+                    <span className="text-sm">Local development mode</span>
                   </div>
                 )}
               </div>

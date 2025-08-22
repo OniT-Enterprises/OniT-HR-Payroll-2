@@ -529,7 +529,7 @@ export default function CreateJobTenant() {
                   </div>
                 )}
 
-                {formData.approverMode === "specific" && (
+                {formData.approverMode === "name" && (
                   <div>
                     <Label htmlFor="approver">Specific Approver *</Label>
                     <Select

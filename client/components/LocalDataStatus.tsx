@@ -13,7 +13,7 @@ import {
   getStats,
   exportData,
   clearAllData,
-  localDataService,
+  initializeData,
 } from "@/lib/localDataService";
 import {
   Database,

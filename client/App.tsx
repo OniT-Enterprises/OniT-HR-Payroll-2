@@ -77,7 +77,7 @@ const App = () => (
                   <Route path="/performance" element={<Dashboard />} />
                   <Route path="/payroll" element={<Dashboard />} />
                   <Route path="/reports" element={<Dashboard />} />
-                  <Route path="/hiring/create-job" element={<CreateJob />} />
+                  <Route path="/hiring/create-job" element={<CreateJobTenant />} />
                   <Route
                     path="/hiring/jobs/create"
                     element={<Navigate to="/hiring/create-job" replace />}

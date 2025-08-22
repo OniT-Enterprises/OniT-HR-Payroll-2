@@ -552,7 +552,7 @@ export default function CreateJobTenant() {
                               <span>{emp.displayName}</span>
                               <Badge variant="outline" className="text-xs">
                                 {
-                                  departments.find(
+                                  activeDepartments.find(
                                     (d) => d.id === emp.departmentId,
                                   )?.name
                                 }

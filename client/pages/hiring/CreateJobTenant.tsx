@@ -398,7 +398,7 @@ export default function CreateJobTenant() {
                         />
                       </SelectTrigger>
                       <SelectContent>
-                        {loadingEmployees ? (
+                        {loadingEmployees && employees.length === 0 ? (
                           <SelectItem value="loading" disabled>
                             Loading employees...
                           </SelectItem>

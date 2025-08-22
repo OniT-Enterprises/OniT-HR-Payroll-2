@@ -38,6 +38,29 @@ import {
 } from "lucide-react";
 
 export default function Settings() {
+  const user = getCurrentUser();
+  const [isEditingProfile, setIsEditingProfile] = useState(false);
+  const [profileData, setProfileData] = useState({
+    name: user?.name || "Celestino de Freitas",
+    email: user?.email || "celestino@company.com",
+    phone: "+1 (555) 123-4567",
+    department: "Human Resources",
+    position: "HR Manager",
+    location: "San Francisco, CA",
+    joinDate: "January 15, 2023",
+    employeeId: "EMP-001",
+  });
+
+  const handleSaveProfile = () => {
+    setIsEditingProfile(false);
+    // Here you would typically save to your backend
+    console.log("Profile updated:", profileData);
+  };
+
+  const handleProfileInputChange = (field: string, value: string) => {
+    setProfileData(prev => ({ ...prev, [field]: value }));
+  };
+
   const settingsCategories = [
     {
       title: "Account Settings",

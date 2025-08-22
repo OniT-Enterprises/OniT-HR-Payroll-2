@@ -445,5 +445,6 @@ export const clearAllData = () => localDataService.clearAllData();
 export const exportData = () => localDataService.exportData();
 export const importData = (data: any) => localDataService.importData(data);
 export const getStats = () => localDataService.getStats();
+export const initializeData = () => localDataService.initializeData();
 
 console.log('🚀 Local Data Service initialized');

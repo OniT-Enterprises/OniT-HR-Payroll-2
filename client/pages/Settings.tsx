@@ -16,6 +16,7 @@ import HotDogStyleNavigation from "@/components/layout/HotDogStyleNavigation";
 import { FirebaseIsolationControl } from "@/components/FirebaseIsolationControl";
 import { DevAuthControl } from "@/components/DevAuthControl";
 import { FetchDiagnostic } from "@/components/FetchDiagnostic";
+import { LocalDataStatus } from "@/components/LocalDataStatus";
 import { getCurrentUser } from "@/lib/localAuth";
 import {
   Settings as SettingsIcon,

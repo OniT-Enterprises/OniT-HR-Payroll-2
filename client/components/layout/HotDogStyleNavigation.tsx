@@ -261,7 +261,7 @@ export default function HotDogStyleNavigation() {
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent
-              className="w-56 bg-gray-900 border-gray-700"
+              className="w-72 bg-gray-900 border-gray-700"
               align="end"
               sideOffset={5}
             >
@@ -288,6 +288,16 @@ export default function HotDogStyleNavigation() {
                       </Badge>
                     </div>
                   </DropdownMenuItem>
+
+                  {/* Database Connection Status */}
+                  <div className="px-2 py-2">
+                    <div className={`${isConnected ? 'bg-green-600' : 'bg-red-600'} rounded-md px-3 py-2 flex items-center justify-center`}>
+                      <span className="text-white text-xs font-medium">
+                        {isConnected ? 'Connected to Database' : 'Not Connected to Database'}
+                      </span>
+                    </div>
+                  </div>
+
                   <DropdownMenuSeparator className="bg-gray-700" />
                 </>
               )}

@@ -54,8 +54,8 @@ export const LocalDataStatus: React.FC = () => {
       )
     ) {
       clearAllData();
-      // Re-initialize with sample data
-      localDataService.constructor();
+      // Re-initialize with sample data by calling the private method
+      (localDataService as any).initializeData();
       refreshStats();
     }
   };

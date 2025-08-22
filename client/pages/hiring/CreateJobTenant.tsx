@@ -584,11 +584,12 @@ export default function CreateJobTenant() {
               <Button
                 type="submit"
                 disabled={
-                  createJobMutation.isPending ||
-                  !tenant.permissions.canWrite("hiring")
+                  (tenantContext?.session && createJobMutation?.isPending) ||
+                  !canWrite ||
+                  !hasAccess
                 }
               >
-                {createJobMutation.isPending ? (
+                {(tenantContext?.session && createJobMutation?.isPending) ? (
                   <>
                     <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2" />
                     Creating...

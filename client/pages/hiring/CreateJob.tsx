@@ -163,14 +163,14 @@ export default function CreateJob() {
   // Filtered employees by department for hiring manager
   const departmentEmployees = useMemo(() => {
     if (!watchedDepartmentId) return [];
-    return employees.filter(emp => emp.departmentId === watchedDepartmentId);
-  }, [employees, watchedDepartmentId]);
+    return activeEmployees.filter(emp => emp.departmentId === watchedDepartmentId);
+  }, [activeEmployees, watchedDepartmentId]);
 
   // Filtered employees by approver department
   const approverDepartmentEmployees = useMemo(() => {
     if (watchedApproverMode !== "department" || !watchedApproverDepartmentId) return [];
-    return employees.filter(emp => emp.departmentId === watchedApproverDepartmentId);
-  }, [employees, watchedApproverMode, watchedApproverDepartmentId]);
+    return activeEmployees.filter(emp => emp.departmentId === watchedApproverDepartmentId);
+  }, [activeEmployees, watchedApproverMode, watchedApproverDepartmentId]);
 
   // Handle approval mode change
   const handleApproverModeChange = (mode: "department" | "name") => {

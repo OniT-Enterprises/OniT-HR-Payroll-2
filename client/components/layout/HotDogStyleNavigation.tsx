@@ -248,7 +248,7 @@ export default function HotDogStyleNavigation() {
 
                 {/* User Avatar */}
                 <Avatar className="h-8 w-8 relative z-10">
-                  <AvatarFallback className="bg-blue-600 text-white text-sm font-medium">
+                  <AvatarFallback className={`${isConnected ? 'bg-green-600' : 'bg-red-600'} text-white text-sm font-medium`}>
                     {user
                       ? user.name
                           .split(" ")

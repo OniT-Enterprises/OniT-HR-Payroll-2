@@ -362,6 +362,19 @@ export default function Settings() {
           </CardContent>
         </Card>
 
+        {/* Local Data Management */}
+        <Card className="mb-8">
+          <CardHeader>
+            <CardTitle>Local Data Management</CardTitle>
+            <CardDescription>
+              Manage your local HR data storage and view system status
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <LocalDataStatus />
+          </CardContent>
+        </Card>
+
         {/* Settings Categories */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           {settingsCategories.map((category, index) => (

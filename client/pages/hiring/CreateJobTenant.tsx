@@ -212,10 +212,10 @@ export default function CreateJobTenant() {
     }
   };
 
-  const selectedDepartment = departments.find(
+  const selectedDepartment = activeDepartments.find(
     (d) => d.id === formData.departmentId,
   );
-  const selectedManager = employees.find(
+  const selectedManager = activeEmployees.find(
     (e) => e.id === formData.hiringManagerId,
   );
 

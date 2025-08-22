@@ -28,7 +28,9 @@ import {
   useCreateJob,
 } from "@/hooks/useTenantData";
 import { useTenant } from "@/contexts/TenantContext";
-import { CreateJobRequest, JobApproverMode } from "@/types/tenant";
+import { Job } from "@/types/tenant";
+
+type CreateJobRequest = Omit<Job, 'id' | 'postedDate' | 'closingDate' | 'createdAt' | 'updatedAt'>;
 import { getCurrentUser } from "@/lib/localAuth";
 import {
   Building2,

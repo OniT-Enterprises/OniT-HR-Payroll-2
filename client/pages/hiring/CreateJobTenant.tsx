@@ -114,13 +114,13 @@ export default function CreateJobTenant() {
   const [errors, setErrors] = useState<Record<string, string>>({});
 
   // Filter employees by selected department for hiring manager selection
-  const eligibleManagers = employees.filter(
+  const eligibleManagers = activeEmployees.filter(
     (emp) =>
       emp.departmentId === formData.departmentId && emp.status === "active",
   );
 
   // Filter employees for specific approver selection
-  const eligibleApprovers = employees.filter((emp) => emp.status === "active");
+  const eligibleApprovers = activeEmployees.filter((emp) => emp.status === "active");
 
   const validateForm = (): boolean => {
     const newErrors: Record<string, string> = {};

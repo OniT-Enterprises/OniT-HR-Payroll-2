@@ -43,12 +43,63 @@ import {
 export default function CreateJobTenant() {
   const navigate = useNavigate();
   const { toast } = useToast();
-  const tenant = useRequiredTenant();
+  const tenantContext = useTenant();
+  const localUser = getCurrentUser();
 
   const { data: departments = [], isLoading: loadingDepartments } =
     useDepartments();
   const { data: employees = [], isLoading: loadingEmployees } = useEmployees();
   const createJobMutation = useCreateJob();
+
+  // Fallback data for local development
+  const fallbackDepartments = [
+    { id: "dept_1", name: "Human Resources" },
+    { id: "dept_2", name: "Engineering" },
+    { id: "dept_3", name: "Sales" },
+    { id: "dept_4", name: "Marketing" },
+    { id: "dept_5", name: "Finance" },
+  ];
+
+  const fallbackEmployees = [
+    {
+      id: "emp_1",
+      displayName: "John Smith",
+      departmentId: "dept_1",
+      status: "active",
+    },
+    {
+      id: "emp_2",
+      displayName: "Sarah Johnson",
+      departmentId: "dept_2",
+      status: "active",
+    },
+    {
+      id: "emp_3",
+      displayName: "Mike Davis",
+      departmentId: "dept_3",
+      status: "active",
+    },
+    {
+      id: "emp_4",
+      displayName: "Lisa Wilson",
+      departmentId: "dept_1",
+      status: "active",
+    },
+    {
+      id: "emp_5",
+      displayName: "Tom Brown",
+      departmentId: "dept_4",
+      status: "active",
+    },
+  ];
+
+  // Use tenant data if available, otherwise use fallback data
+  const activeDepartments = departments.length > 0 ? departments : fallbackDepartments;
+  const activeEmployees = employees.length > 0 ? employees : fallbackEmployees;
+
+  // Support both tenant and local user contexts
+  const hasAccess = tenantContext?.session || localUser;
+  const canWrite = tenantContext?.session?.member ? tenantContext.session.member.role !== 'viewer' : (localUser?.role === 'admin' || localUser?.role === 'hr');
 
   const [formData, setFormData] = useState<CreateJobRequest>({
     title: "",

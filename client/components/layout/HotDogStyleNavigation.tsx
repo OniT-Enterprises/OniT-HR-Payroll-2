@@ -2,6 +2,7 @@ import React from "react";
 import { useNavigate, useLocation, Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { getCurrentUser } from "@/lib/localAuth";
+import { useFirebase } from "@/contexts/FirebaseContext";
 import {
   DropdownMenu,
   DropdownMenuContent,

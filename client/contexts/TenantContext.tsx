@@ -46,6 +46,19 @@ export function useTenant() {
   return context;
 }
 
+export function useTenantId(): string {
+  const context = useContext(TenantContext);
+  if (context === undefined) {
+    throw new Error('useTenantId must be used within a TenantProvider');
+  }
+
+  if (!context.session?.tid) {
+    throw new Error('No active tenant session - tenant ID not available');
+  }
+
+  return context.session.tid;
+}
+
 interface TenantProviderProps {
   children: ReactNode;
 }

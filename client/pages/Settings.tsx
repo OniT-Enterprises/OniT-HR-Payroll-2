@@ -58,7 +58,7 @@ export default function Settings() {
   };
 
   const handleProfileInputChange = (field: string, value: string) => {
-    setProfileData(prev => ({ ...prev, [field]: value }));
+    setProfileData((prev) => ({ ...prev, [field]: value }));
   };
 
   const settingsCategories = [
@@ -143,24 +143,42 @@ export default function Settings() {
                 <div className="relative">
                   <Avatar className="h-20 w-20">
                     <AvatarFallback className="bg-blue-600 text-white text-xl font-medium">
-                      {user ? user.name.split(' ').map(n => n[0]).join('').toUpperCase() : 'CDF'}
+                      {user
+                        ? user.name
+                            .split(" ")
+                            .map((n) => n[0])
+                            .join("")
+                            .toUpperCase()
+                        : "CDF"}
                     </AvatarFallback>
                   </Avatar>
-                  <Button size="sm" variant="outline" className="absolute -bottom-2 -right-2 h-8 w-8 p-0 rounded-full">
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    className="absolute -bottom-2 -right-2 h-8 w-8 p-0 rounded-full"
+                  >
                     <Camera className="h-4 w-4" />
                   </Button>
                 </div>
                 <div>
                   <h2 className="text-2xl font-bold">{profileData.name}</h2>
-                  <p className="text-muted-foreground">{profileData.position}</p>
+                  <p className="text-muted-foreground">
+                    {profileData.position}
+                  </p>
                   <div className="flex items-center gap-2 mt-2">
                     <Badge variant="outline">{user?.role || "Admin"}</Badge>
-                    <Badge variant="secondary">Employee ID: {profileData.employeeId}</Badge>
+                    <Badge variant="secondary">
+                      Employee ID: {profileData.employeeId}
+                    </Badge>
                   </div>
                 </div>
               </div>
               <Button
-                onClick={() => isEditingProfile ? handleSaveProfile() : setIsEditingProfile(true)}
+                onClick={() =>
+                  isEditingProfile
+                    ? handleSaveProfile()
+                    : setIsEditingProfile(true)
+                }
                 className="flex items-center gap-2"
               >
                 {isEditingProfile ? (
@@ -192,10 +210,14 @@ export default function Settings() {
                       <Input
                         id="name"
                         value={profileData.name}
-                        onChange={(e) => handleProfileInputChange("name", e.target.value)}
+                        onChange={(e) =>
+                          handleProfileInputChange("name", e.target.value)
+                        }
                       />
                     ) : (
-                      <p className="mt-1 text-sm font-medium">{profileData.name}</p>
+                      <p className="mt-1 text-sm font-medium">
+                        {profileData.name}
+                      </p>
                     )}
                   </div>
                   <div className="flex items-center gap-3">
@@ -205,10 +227,14 @@ export default function Settings() {
                       {isEditingProfile ? (
                         <Input
                           value={profileData.email}
-                          onChange={(e) => handleProfileInputChange("email", e.target.value)}
+                          onChange={(e) =>
+                            handleProfileInputChange("email", e.target.value)
+                          }
                         />
                       ) : (
-                        <p className="text-sm font-medium">{profileData.email}</p>
+                        <p className="text-sm font-medium">
+                          {profileData.email}
+                        </p>
                       )}
                     </div>
                   </div>
@@ -219,10 +245,14 @@ export default function Settings() {
                       {isEditingProfile ? (
                         <Input
                           value={profileData.phone}
-                          onChange={(e) => handleProfileInputChange("phone", e.target.value)}
+                          onChange={(e) =>
+                            handleProfileInputChange("phone", e.target.value)
+                          }
                         />
                       ) : (
-                        <p className="text-sm font-medium">{profileData.phone}</p>
+                        <p className="text-sm font-medium">
+                          {profileData.phone}
+                        </p>
                       )}
                     </div>
                   </div>
@@ -233,10 +263,14 @@ export default function Settings() {
                       {isEditingProfile ? (
                         <Input
                           value={profileData.location}
-                          onChange={(e) => handleProfileInputChange("location", e.target.value)}
+                          onChange={(e) =>
+                            handleProfileInputChange("location", e.target.value)
+                          }
                         />
                       ) : (
-                        <p className="text-sm font-medium">{profileData.location}</p>
+                        <p className="text-sm font-medium">
+                          {profileData.location}
+                        </p>
                       )}
                     </div>
                   </div>
@@ -257,10 +291,17 @@ export default function Settings() {
                       {isEditingProfile ? (
                         <Input
                           value={profileData.department}
-                          onChange={(e) => handleProfileInputChange("department", e.target.value)}
+                          onChange={(e) =>
+                            handleProfileInputChange(
+                              "department",
+                              e.target.value,
+                            )
+                          }
                         />
                       ) : (
-                        <p className="text-sm font-medium">{profileData.department}</p>
+                        <p className="text-sm font-medium">
+                          {profileData.department}
+                        </p>
                       )}
                     </div>
                   </div>
@@ -271,10 +312,14 @@ export default function Settings() {
                       {isEditingProfile ? (
                         <Input
                           value={profileData.position}
-                          onChange={(e) => handleProfileInputChange("position", e.target.value)}
+                          onChange={(e) =>
+                            handleProfileInputChange("position", e.target.value)
+                          }
                         />
                       ) : (
-                        <p className="text-sm font-medium">{profileData.position}</p>
+                        <p className="text-sm font-medium">
+                          {profileData.position}
+                        </p>
                       )}
                     </div>
                   </div>

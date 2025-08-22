@@ -248,7 +248,9 @@ export default function HotDogStyleNavigation() {
 
                 {/* User Avatar */}
                 <Avatar className="h-8 w-8 relative z-10">
-                  <AvatarFallback className={`${isConnected ? 'bg-green-600' : 'bg-red-600'} text-white text-sm font-medium`}>
+                  <AvatarFallback
+                    className={`${isConnected ? "bg-green-600" : "bg-red-600"} text-white text-sm font-medium`}
+                  >
                     {user
                       ? user.name
                           .split(" ")
@@ -270,7 +272,9 @@ export default function HotDogStyleNavigation() {
                   <DropdownMenuItem className="text-gray-300 flex-col items-start pointer-events-none">
                     <div className="flex items-center gap-2 w-full">
                       <div className="flex items-center gap-2">
-                        <div className={`h-8 w-8 ${isConnected ? 'bg-green-600' : 'bg-red-600'} rounded-full flex items-center justify-center`}>
+                        <div
+                          className={`h-8 w-8 ${isConnected ? "bg-green-600" : "bg-red-600"} rounded-full flex items-center justify-center`}
+                        >
                           <span className="text-white text-sm font-medium">
                             {user.name
                               .split(" ")
@@ -291,9 +295,13 @@ export default function HotDogStyleNavigation() {
 
                   {/* Database Connection Status */}
                   <div className="px-2 py-2">
-                    <div className={`${isConnected ? 'bg-green-600' : 'bg-red-600'} rounded-md px-3 py-2 flex items-center justify-center`}>
+                    <div
+                      className={`${isConnected ? "bg-green-600" : "bg-red-600"} rounded-md px-3 py-2 flex items-center justify-center`}
+                    >
                       <span className="text-white text-xs font-medium">
-                        {isConnected ? 'Connected to Database' : 'Not Connected to Database'}
+                        {isConnected
+                          ? "Connected to Database"
+                          : "Not Connected to Database"}
                       </span>
                     </div>
                   </div>

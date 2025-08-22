@@ -36,13 +36,14 @@ import { Alert, AlertDescription } from "@/components/ui/alert";
 import { useToast } from "@/hooks/use-toast";
 import HotDogStyleNavigation from "@/components/layout/HotDogStyleNavigation";
 import { useTenant } from "@/contexts/TenantContext";
-import { 
-  useTenantDepartments, 
-  useTenantEmployees, 
+import {
+  useTenantDepartments,
+  useTenantEmployees,
   useTenantCreateJob,
-  useTenantPositions 
+  useTenantPositions
 } from "@/lib/data";
 import { Job } from "@/types/tenant";
+import { getCurrentUser } from "@/lib/localAuth";
 import {
   Briefcase,
   Building,

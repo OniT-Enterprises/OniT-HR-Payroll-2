@@ -454,8 +454,8 @@ export default function CreateJob() {
                         render={({ field }) => (
                           <FormItem>
                             <FormLabel>Department *</FormLabel>
-                            <Select 
-                              onValueChange={handleDepartmentChange} 
+                            <Select
+                              onValueChange={handleDepartmentChange}
                               value={field.value}
                             >
                               <FormControl>
@@ -464,7 +464,7 @@ export default function CreateJob() {
                                 </SelectTrigger>
                               </FormControl>
                               <SelectContent>
-                                {departments.map((dept) => (
+                                {activeDepartments.map((dept) => (
                                   <SelectItem key={dept.id} value={dept.id!}>
                                     {dept.name}
                                   </SelectItem>

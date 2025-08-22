@@ -82,7 +82,7 @@ class LocalDataService {
   }
 
   // Initialize with sample data if empty
-  private initializeData() {
+  public initializeData() {
     if (localStorage.getItem(STORAGE_KEYS.initialized)) {
       return; // Already initialized
     }

@@ -514,7 +514,7 @@ export default function CreateJobTenant() {
                         <SelectValue placeholder="Select approver department" />
                       </SelectTrigger>
                       <SelectContent>
-                        {departments.map((dept) => (
+                        {activeDepartments.map((dept) => (
                           <SelectItem key={dept.id} value={dept.id}>
                             {dept.name}
                           </SelectItem>

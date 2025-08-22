@@ -101,11 +101,47 @@ export default function CreateJob() {
     (session && hasModule("hiring") && canWrite()) || // Tenant system
     (localUser && (localUser.role === "admin" || localUser.role === "hr")); // Local development
 
-  // Data queries
+  // Data queries with fallback for local development
   const { data: departments = [], isLoading: loadingDepartments } = useTenantDepartments();
   const { data: employees = [], isLoading: loadingEmployees } = useTenantEmployees();
   const { data: positions = [], isLoading: loadingPositions } = useTenantPositions();
   const createJobMutation = useTenantCreateJob();
+
+  // Fallback data for local development
+  const fallbackDepartments = [
+    { id: "dept_1", name: "Human Resources" },
+    { id: "dept_2", name: "Engineering" },
+    { id: "dept_3", name: "Sales" },
+    { id: "dept_4", name: "Marketing" },
+    { id: "dept_5", name: "Finance" },
+  ];
+
+  const fallbackEmployees = [
+    {
+      id: "emp_1",
+      personalInfo: { firstName: "John", lastName: "Smith" },
+      departmentId: "dept_1",
+    },
+    {
+      id: "emp_2",
+      personalInfo: { firstName: "Sarah", lastName: "Johnson" },
+      departmentId: "dept_2",
+    },
+    {
+      id: "emp_3",
+      personalInfo: { firstName: "Mike", lastName: "Davis" },
+      departmentId: "dept_3",
+    },
+    {
+      id: "emp_4",
+      personalInfo: { firstName: "Lisa", lastName: "Wilson" },
+      departmentId: "dept_1",
+    },
+  ];
+
+  // Use fallback data when no tenant data is available
+  const activeDepartments = departments.length > 0 ? departments : fallbackDepartments;
+  const activeEmployees = employees.length > 0 ? employees : fallbackEmployees;
 
   // Form setup
   const form = useForm<CreateJobFormData>({

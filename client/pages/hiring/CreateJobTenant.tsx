@@ -30,7 +30,10 @@ import {
 import { useTenant } from "@/contexts/TenantContext";
 import { Job } from "@/types/tenant";
 
-type CreateJobRequest = Omit<Job, 'id' | 'postedDate' | 'closingDate' | 'createdAt' | 'updatedAt'>;
+type CreateJobRequest = Omit<
+  Job,
+  "id" | "postedDate" | "closingDate" | "createdAt" | "updatedAt"
+>;
 import { getCurrentUser } from "@/lib/localAuth";
 import {
   Building2,
@@ -96,12 +99,15 @@ export default function CreateJobTenant() {
   ];
 
   // Use tenant data if available, otherwise use fallback data
-  const activeDepartments = departments.length > 0 ? departments : fallbackDepartments;
+  const activeDepartments =
+    departments.length > 0 ? departments : fallbackDepartments;
   const activeEmployees = employees.length > 0 ? employees : fallbackEmployees;
 
   // Support both tenant and local user contexts
   const hasAccess = tenantContext?.session || localUser;
-  const canWrite = tenantContext?.session?.member ? tenantContext.session.member.role !== 'viewer' : (localUser?.role === 'admin' || localUser?.role === 'hr');
+  const canWrite = tenantContext?.session?.member
+    ? tenantContext.session.member.role !== "viewer"
+    : localUser?.role === "admin" || localUser?.role === "hr";
 
   const [formData, setFormData] = useState<CreateJobRequest>({
     title: "",
@@ -122,7 +128,9 @@ export default function CreateJobTenant() {
   );
 
   // Filter employees for specific approver selection
-  const eligibleApprovers = activeEmployees.filter((emp) => emp.status === "active");
+  const eligibleApprovers = activeEmployees.filter(
+    (emp) => emp.status === "active",
+  );
 
   const validateForm = (): boolean => {
     const newErrors: Record<string, string> = {};
@@ -174,7 +182,7 @@ export default function CreateJobTenant() {
         // Local development mode - simulate job creation
         console.log("📝 Creating job in local development mode:", formData);
         // Simulate API delay
-        await new Promise(resolve => setTimeout(resolve, 1000));
+        await new Promise((resolve) => setTimeout(resolve, 1000));
       }
 
       toast({
@@ -182,7 +190,7 @@ export default function CreateJobTenant() {
         description: `Job "${formData.title}" has been created successfully`,
       });
 
-      navigate('/hiring');
+      navigate("/hiring");
     } catch (error) {
       toast({
         title: "Creation Failed",
@@ -258,18 +266,26 @@ export default function CreateJobTenant() {
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
                   <Badge variant="secondary">
-                    {tenantContext?.session?.config.name || localUser?.company || "Your Company"}
+                    {tenantContext?.session?.config.name ||
+                      localUser?.company ||
+                      "Your Company"}
                   </Badge>
                   <span className="text-sm text-muted-foreground">
-                    Creating job as {tenantContext?.session?.member.role || localUser?.role || "user"}
+                    Creating job as{" "}
+                    {tenantContext?.session?.member.role ||
+                      localUser?.role ||
+                      "user"}
                   </span>
                 </div>
-                {tenantContext?.session && !tenantContext.session.member.role && (
-                  <div className="flex items-center gap-2 text-amber-600">
-                    <AlertCircle className="h-4 w-4" />
-                    <span className="text-sm">Limited hiring permissions</span>
-                  </div>
-                )}
+                {tenantContext?.session &&
+                  !tenantContext.session.member.role && (
+                    <div className="flex items-center gap-2 text-amber-600">
+                      <AlertCircle className="h-4 w-4" />
+                      <span className="text-sm">
+                        Limited hiring permissions
+                      </span>
+                    </div>
+                  )}
                 {!tenantContext?.session && localUser && (
                   <div className="flex items-center gap-2 text-green-600">
                     <CheckCircle className="h-4 w-4" />
@@ -475,13 +491,9 @@ export default function CreateJobTenant() {
                     <Button
                       type="button"
                       variant={
-                        formData.approverMode === "name"
-                          ? "default"
-                          : "outline"
+                        formData.approverMode === "name" ? "default" : "outline"
                       }
-                      onClick={() =>
-                        handleInputChange("approverMode", "name")
-                      }
+                      onClick={() => handleInputChange("approverMode", "name")}
                       className="h-auto p-4 flex flex-col items-start gap-2"
                     >
                       <div className="flex items-center gap-2">
@@ -591,7 +603,7 @@ export default function CreateJobTenant() {
                   !hasAccess
                 }
               >
-                {(tenantContext?.session && createJobMutation?.isPending) ? (
+                {tenantContext?.session && createJobMutation?.isPending ? (
                   <>
                     <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2" />
                     Creating...

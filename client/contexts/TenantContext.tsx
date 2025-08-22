@@ -1,36 +1,49 @@
-import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
-import { User } from 'firebase/auth';
-import { doc, getDoc, collection, query, where, getDocs } from 'firebase/firestore';
-import { db, auth } from '@/lib/firebase';
-import { paths } from '@/lib/paths';
-import { 
-  TenantConfig, 
-  TenantMember, 
-  TenantSession, 
-  TenantRole, 
+import React, {
+  createContext,
+  useContext,
+  useState,
+  useEffect,
+  ReactNode,
+} from "react";
+import { User } from "firebase/auth";
+import {
+  doc,
+  getDoc,
+  collection,
+  query,
+  where,
+  getDocs,
+} from "firebase/firestore";
+import { db, auth } from "@/lib/firebase";
+import { paths } from "@/lib/paths";
+import {
+  TenantConfig,
+  TenantMember,
+  TenantSession,
+  TenantRole,
   ModulePermission,
   CustomClaims,
   DEFAULT_ROLE_PERMISSIONS,
-  hasModulePermission 
-} from '@/types/tenant';
+  hasModulePermission,
+} from "@/types/tenant";
 
 interface TenantContextType {
   // Current session
   session: TenantSession | null;
   loading: boolean;
   error: string | null;
-  
+
   // Available tenants for current user
   availableTenants: Array<{ id: string; name: string; role: TenantRole }>;
-  
+
   // Tenant switching
   switchTenant: (tid: string) => Promise<void>;
-  
+
   // Permission helpers
   hasModule: (module: ModulePermission) => boolean;
   canWrite: () => boolean;
   canManage: () => boolean;
-  
+
   // Refresh functions
   refreshSession: () => Promise<void>;
   refreshTenants: () => Promise<void>;
@@ -41,7 +54,7 @@ const TenantContext = createContext<TenantContextType | undefined>(undefined);
 export function useTenant() {
   const context = useContext(TenantContext);
   if (context === undefined) {
-    throw new Error('useTenant must be used within a TenantProvider');
+    throw new Error("useTenant must be used within a TenantProvider");
   }
   return context;
 }
@@ -49,12 +62,12 @@ export function useTenant() {
 export function useTenantId(): string {
   const context = useContext(TenantContext);
   if (context === undefined) {
-    throw new Error('useTenantId must be used within a TenantProvider');
+    throw new Error("useTenantId must be used within a TenantProvider");
   }
 
   if (!context.session?.tid) {
     // For local development mode, return a fallback tenant ID
-    return 'local-dev-tenant';
+    return "local-dev-tenant";
   }
 
   return context.session.tid;
@@ -68,11 +81,16 @@ export function TenantProvider({ children }: TenantProviderProps) {
   const [session, setSession] = useState<TenantSession | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [availableTenants, setAvailableTenants] = useState<Array<{ id: string; name: string; role: TenantRole }>>([]);
+  const [availableTenants, setAvailableTenants] = useState<
+    Array<{ id: string; name: string; role: TenantRole }>
+  >([]);
   const [currentUser, setCurrentUser] = useState<User | null>(null);
 
   // Get current user and custom claims
-  const getCurrentUserAndClaims = async (): Promise<{ user: User | null; claims: CustomClaims | null }> => {
+  const getCurrentUserAndClaims = async (): Promise<{
+    user: User | null;
+    claims: CustomClaims | null;
+  }> => {
     if (!auth?.currentUser) {
       return { user: null, claims: null };
     }
@@ -82,15 +100,17 @@ export function TenantProvider({ children }: TenantProviderProps) {
       const claims = idTokenResult.claims as CustomClaims;
       return { user: auth.currentUser, claims };
     } catch (error) {
-      console.error('Failed to get user claims:', error);
+      console.error("Failed to get user claims:", error);
       return { user: auth.currentUser, claims: null };
     }
   };
 
   // Load available tenants for current user
-  const loadAvailableTenants = async (user: User): Promise<Array<{ id: string; name: string; role: TenantRole }>> => {
+  const loadAvailableTenants = async (
+    user: User,
+  ): Promise<Array<{ id: string; name: string; role: TenantRole }>> => {
     if (!db) {
-      console.warn('Database not available');
+      console.warn("Database not available");
       return [];
     }
 
@@ -102,16 +122,18 @@ export function TenantProvider({ children }: TenantProviderProps) {
           try {
             // Get tenant config
             const tenantDoc = await getDoc(doc(db, paths.tenant(tid)));
-            const memberDoc = await getDoc(doc(db, paths.member(tid, user.uid)));
-            
+            const memberDoc = await getDoc(
+              doc(db, paths.member(tid, user.uid)),
+            );
+
             if (tenantDoc.exists() && memberDoc.exists()) {
               const tenantData = tenantDoc.data() as TenantConfig;
               const memberData = memberDoc.data() as TenantMember;
-              
+
               return {
                 id: tid,
                 name: tenantData.name || tid,
-                role: memberData.role
+                role: memberData.role,
               };
             }
             return null;
@@ -121,7 +143,9 @@ export function TenantProvider({ children }: TenantProviderProps) {
           }
         });
 
-        const tenants = (await Promise.all(tenantPromises)).filter(Boolean) as Array<{ id: string; name: string; role: TenantRole }>;
+        const tenants = (await Promise.all(tenantPromises)).filter(
+          Boolean,
+        ) as Array<{ id: string; name: string; role: TenantRole }>;
         if (tenants.length > 0) {
           return tenants;
         }
@@ -129,22 +153,24 @@ export function TenantProvider({ children }: TenantProviderProps) {
 
       // Method 2: Fallback - discover tenants by checking member collections
       // This is less efficient but works when custom claims aren't set yet
-      console.log('Discovering tenants by checking memberships...');
-      
+      console.log("Discovering tenants by checking memberships...");
+
       // Note: This requires a composite index on members collection
       // For now, we'll return empty array and rely on proper tenant provisioning
       return [];
-      
     } catch (error) {
-      console.error('Failed to load available tenants:', error);
+      console.error("Failed to load available tenants:", error);
       return [];
     }
   };
 
   // Load tenant session data
-  const loadTenantSession = async (tid: string, user: User): Promise<TenantSession | null> => {
+  const loadTenantSession = async (
+    tid: string,
+    user: User,
+  ): Promise<TenantSession | null> => {
     if (!db) {
-      console.warn('Database not available');
+      console.warn("Database not available");
       return null;
     }
 
@@ -152,7 +178,7 @@ export function TenantProvider({ children }: TenantProviderProps) {
       // Load tenant config and member data in parallel
       const [tenantDoc, memberDoc] = await Promise.all([
         getDoc(doc(db, paths.tenant(tid))),
-        getDoc(doc(db, paths.member(tid, user.uid)))
+        getDoc(doc(db, paths.member(tid, user.uid))),
       ]);
 
       if (!tenantDoc.exists()) {
@@ -175,7 +201,7 @@ export function TenantProvider({ children }: TenantProviderProps) {
         role: member.role,
         modules,
         config,
-        member
+        member,
       };
     } catch (error) {
       console.error(`Failed to load tenant session for ${tid}:`, error);
@@ -186,7 +212,7 @@ export function TenantProvider({ children }: TenantProviderProps) {
   // Switch to a different tenant
   const switchTenant = async (tid: string) => {
     if (!currentUser) {
-      throw new Error('No authenticated user');
+      throw new Error("No authenticated user");
     }
 
     try {
@@ -197,11 +223,11 @@ export function TenantProvider({ children }: TenantProviderProps) {
       if (newSession) {
         setSession(newSession);
         // Store current tenant in localStorage for persistence
-        localStorage.setItem('currentTenantId', tid);
+        localStorage.setItem("currentTenantId", tid);
       }
     } catch (error: any) {
-      console.error('Failed to switch tenant:', error);
-      setError(error.message || 'Failed to switch tenant');
+      console.error("Failed to switch tenant:", error);
+      setError(error.message || "Failed to switch tenant");
       throw error;
     } finally {
       setLoading(false);
@@ -213,13 +239,16 @@ export function TenantProvider({ children }: TenantProviderProps) {
     if (!session || !currentUser) return;
 
     try {
-      const refreshedSession = await loadTenantSession(session.tid, currentUser);
+      const refreshedSession = await loadTenantSession(
+        session.tid,
+        currentUser,
+      );
       if (refreshedSession) {
         setSession(refreshedSession);
       }
     } catch (error) {
-      console.error('Failed to refresh session:', error);
-      setError('Failed to refresh session');
+      console.error("Failed to refresh session:", error);
+      setError("Failed to refresh session");
     }
   };
 
@@ -231,16 +260,18 @@ export function TenantProvider({ children }: TenantProviderProps) {
       const tenants = await loadAvailableTenants(currentUser);
       setAvailableTenants(tenants);
     } catch (error) {
-      console.error('Failed to refresh tenants:', error);
+      console.error("Failed to refresh tenants:", error);
     }
   };
 
   // Initialize tenant session with real Firebase auth
   useEffect(() => {
-    console.log('🔧 TenantProvider initializing with Firebase authentication');
+    console.log("🔧 TenantProvider initializing with Firebase authentication");
 
     if (!auth) {
-      console.log("🔧 Firebase auth disabled in TenantProvider, using fallback mode");
+      console.log(
+        "🔧 Firebase auth disabled in TenantProvider, using fallback mode",
+      );
       setLoading(false);
       setCurrentUser(null);
       setAvailableTenants([]);
@@ -253,7 +284,7 @@ export function TenantProvider({ children }: TenantProviderProps) {
         setError(null);
 
         if (user) {
-          console.log('✅ User authenticated:', user.email);
+          console.log("✅ User authenticated:", user.email);
           setCurrentUser(user);
 
           // Load available tenants
@@ -261,33 +292,34 @@ export function TenantProvider({ children }: TenantProviderProps) {
           setAvailableTenants(tenants);
 
           // Try to restore previous tenant or use first available
-          const savedTenantId = localStorage.getItem('currentTenantId');
-          const targetTenant = savedTenantId && tenants.find(t => t.id === savedTenantId)
-            ? savedTenantId
-            : tenants[0]?.id;
+          const savedTenantId = localStorage.getItem("currentTenantId");
+          const targetTenant =
+            savedTenantId && tenants.find((t) => t.id === savedTenantId)
+              ? savedTenantId
+              : tenants[0]?.id;
 
           if (targetTenant) {
             try {
               const session = await loadTenantSession(targetTenant, user);
               setSession(session);
-              localStorage.setItem('currentTenantId', targetTenant);
+              localStorage.setItem("currentTenantId", targetTenant);
             } catch (error) {
-              console.error('Failed to load tenant session:', error);
+              console.error("Failed to load tenant session:", error);
               setError(`Failed to load tenant: ${error}`);
             }
           } else {
-            console.warn('No tenants available for user');
-            setError('No tenants available. Contact your administrator.');
+            console.warn("No tenants available for user");
+            setError("No tenants available. Contact your administrator.");
           }
         } else {
-          console.log('❌ User not authenticated');
+          console.log("❌ User not authenticated");
           setCurrentUser(null);
           setSession(null);
           setAvailableTenants([]);
-          localStorage.removeItem('currentTenantId');
+          localStorage.removeItem("currentTenantId");
         }
       } catch (error) {
-        console.error('Auth state change error:', error);
+        console.error("Auth state change error:", error);
         setError(`Authentication error: ${error}`);
       } finally {
         setLoading(false);
@@ -305,12 +337,12 @@ export function TenantProvider({ children }: TenantProviderProps) {
 
   const canWrite = (): boolean => {
     if (!session) return false;
-    return session.role === 'owner' || session.role === 'hr-admin';
+    return session.role === "owner" || session.role === "hr-admin";
   };
 
   const canManage = (): boolean => {
     if (!session) return false;
-    return session.role === 'owner' || session.role === 'hr-admin';
+    return session.role === "owner" || session.role === "hr-admin";
   };
 
   const value: TenantContextType = {
@@ -327,8 +359,6 @@ export function TenantProvider({ children }: TenantProviderProps) {
   };
 
   return (
-    <TenantContext.Provider value={value}>
-      {children}
-    </TenantContext.Provider>
+    <TenantContext.Provider value={value}>{children}</TenantContext.Provider>
   );
 }

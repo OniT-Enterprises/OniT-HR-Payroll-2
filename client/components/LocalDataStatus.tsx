@@ -50,7 +50,7 @@ export const LocalDataStatus: React.FC = () => {
   const handleClearData = () => {
     if (
       confirm(
-        "Are you sure you want to clear all local data? This cannot be undone."
+        "Are you sure you want to clear all local data? This cannot be undone.",
       )
     ) {
       clearAllData();
@@ -126,7 +126,9 @@ export const LocalDataStatus: React.FC = () => {
           </div>
 
           <div className="text-center p-3 bg-yellow-50 rounded-lg">
-            <div className="text-2xl font-bold text-yellow-600">{stats.jobs}</div>
+            <div className="text-2xl font-bold text-yellow-600">
+              {stats.jobs}
+            </div>
             <div className="text-sm text-yellow-700">Total Jobs</div>
           </div>
         </div>

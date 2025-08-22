@@ -42,11 +42,11 @@ interface CreateJobFormData {
   description: string;
   departmentId: string;
   hiringManagerId: string;
-  approverMode: 'department' | 'name';
+  approverMode: "department" | "name";
   approverDepartmentId: string;
   approverId: string;
   location: string;
-  employmentType: 'full-time' | 'part-time' | 'contract' | 'intern';
+  employmentType: "full-time" | "part-time" | "contract" | "intern";
   salaryMin: string;
   salaryMax: string;
 }
@@ -58,7 +58,7 @@ export default function CreateJobLocal() {
 
   // Get local data
   const departments = getDepartments();
-  const allEmployees = getEmployees({ status: 'active' });
+  const allEmployees = getEmployees({ status: "active" });
 
   const [formData, setFormData] = useState<CreateJobFormData>({
     title: "",
@@ -79,13 +79,16 @@ export default function CreateJobLocal() {
 
   // Filter employees by selected department for hiring manager selection
   const eligibleManagers = allEmployees.filter(
-    (emp) => emp.departmentId === formData.departmentId
+    (emp) => emp.departmentId === formData.departmentId,
   );
 
   // Filter employees for approver selection based on mode
-  const eligibleApprovers = formData.approverMode === "department"
-    ? allEmployees.filter(emp => emp.departmentId === formData.approverDepartmentId)
-    : allEmployees;
+  const eligibleApprovers =
+    formData.approverMode === "department"
+      ? allEmployees.filter(
+          (emp) => emp.departmentId === formData.approverDepartmentId,
+        )
+      : allEmployees;
 
   const validateForm = (): boolean => {
     const newErrors: Record<string, string> = {};
@@ -102,7 +105,10 @@ export default function CreateJobLocal() {
       newErrors.hiringManagerId = "Hiring manager is required";
     }
 
-    if (formData.approverMode === "department" && !formData.approverDepartmentId) {
+    if (
+      formData.approverMode === "department" &&
+      !formData.approverDepartmentId
+    ) {
       newErrors.approverDepartmentId = "Approver department is required";
     }
 
@@ -130,7 +136,7 @@ export default function CreateJobLocal() {
 
     try {
       // Create job data
-      const jobData: Omit<LocalJob, 'id' | 'createdAt' | 'updatedAt'> = {
+      const jobData: Omit<LocalJob, "id" | "createdAt" | "updatedAt"> = {
         title: formData.title,
         description: formData.description,
         departmentId: formData.departmentId,
@@ -138,14 +144,17 @@ export default function CreateJobLocal() {
         approverMode: formData.approverMode,
         approverDepartmentId: formData.approverDepartmentId || undefined,
         approverId: formData.approverId,
-        status: 'draft',
+        status: "draft",
         location: formData.location,
         employmentType: formData.employmentType,
-        salaryRange: formData.salaryMin && formData.salaryMax ? {
-          min: parseInt(formData.salaryMin),
-          max: parseInt(formData.salaryMax),
-          currency: 'USD',
-        } : undefined,
+        salaryRange:
+          formData.salaryMin && formData.salaryMax
+            ? {
+                min: parseInt(formData.salaryMin),
+                max: parseInt(formData.salaryMax),
+                currency: "USD",
+              }
+            : undefined,
       };
 
       // Save job locally
@@ -156,9 +165,9 @@ export default function CreateJobLocal() {
         description: `"${newJob.title}" has been created and saved locally`,
       });
 
-      navigate('/hiring');
+      navigate("/hiring");
     } catch (error) {
-      console.error('Failed to create job:', error);
+      console.error("Failed to create job:", error);
       toast({
         title: "Creation Failed",
         description: "Failed to create job posting. Please try again.",
@@ -196,8 +205,12 @@ export default function CreateJobLocal() {
     }
   };
 
-  const selectedDepartment = departments.find(d => d.id === formData.departmentId);
-  const selectedManager = allEmployees.find(e => e.id === formData.hiringManagerId);
+  const selectedDepartment = departments.find(
+    (d) => d.id === formData.departmentId,
+  );
+  const selectedManager = allEmployees.find(
+    (e) => e.id === formData.hiringManagerId,
+  );
 
   return (
     <div className="min-h-screen bg-background">
@@ -256,12 +269,16 @@ export default function CreateJobLocal() {
                     <Input
                       id="title"
                       value={formData.title}
-                      onChange={(e) => handleInputChange("title", e.target.value)}
+                      onChange={(e) =>
+                        handleInputChange("title", e.target.value)
+                      }
                       placeholder="e.g., Senior Software Engineer"
                       className={errors.title ? "border-destructive" : ""}
                     />
                     {errors.title && (
-                      <p className="text-sm text-destructive mt-1">{errors.title}</p>
+                      <p className="text-sm text-destructive mt-1">
+                        {errors.title}
+                      </p>
                     )}
                   </div>
 
@@ -269,7 +286,9 @@ export default function CreateJobLocal() {
                     <Label htmlFor="location">Work Location</Label>
                     <Select
                       value={formData.location}
-                      onValueChange={(value) => handleInputChange("location", value)}
+                      onValueChange={(value) =>
+                        handleInputChange("location", value)
+                      }
                     >
                       <SelectTrigger>
                         <SelectValue placeholder="Select location" />
@@ -287,7 +306,9 @@ export default function CreateJobLocal() {
                     <Label htmlFor="employmentType">Employment Type</Label>
                     <Select
                       value={formData.employmentType}
-                      onValueChange={(value: any) => handleInputChange("employmentType", value)}
+                      onValueChange={(value: any) =>
+                        handleInputChange("employmentType", value)
+                      }
                     >
                       <SelectTrigger>
                         <SelectValue placeholder="Select type" />
@@ -307,7 +328,9 @@ export default function CreateJobLocal() {
                       id="salaryMin"
                       type="number"
                       value={formData.salaryMin}
-                      onChange={(e) => handleInputChange("salaryMin", e.target.value)}
+                      onChange={(e) =>
+                        handleInputChange("salaryMin", e.target.value)
+                      }
                       placeholder="50000"
                     />
                   </div>
@@ -318,7 +341,9 @@ export default function CreateJobLocal() {
                       id="salaryMax"
                       type="number"
                       value={formData.salaryMax}
-                      onChange={(e) => handleInputChange("salaryMax", e.target.value)}
+                      onChange={(e) =>
+                        handleInputChange("salaryMax", e.target.value)
+                      }
                       placeholder="80000"
                     />
                   </div>
@@ -328,7 +353,9 @@ export default function CreateJobLocal() {
                     <Textarea
                       id="description"
                       value={formData.description}
-                      onChange={(e) => handleInputChange("description", e.target.value)}
+                      onChange={(e) =>
+                        handleInputChange("description", e.target.value)
+                      }
                       placeholder="Describe the role, responsibilities, and requirements..."
                       rows={4}
                     />
@@ -354,9 +381,15 @@ export default function CreateJobLocal() {
                     <Label htmlFor="department">Department *</Label>
                     <Select
                       value={formData.departmentId}
-                      onValueChange={(value) => handleInputChange("departmentId", value)}
+                      onValueChange={(value) =>
+                        handleInputChange("departmentId", value)
+                      }
                     >
-                      <SelectTrigger className={errors.departmentId ? "border-destructive" : ""}>
+                      <SelectTrigger
+                        className={
+                          errors.departmentId ? "border-destructive" : ""
+                        }
+                      >
                         <SelectValue placeholder="Select department" />
                       </SelectTrigger>
                       <SelectContent>
@@ -368,7 +401,9 @@ export default function CreateJobLocal() {
                       </SelectContent>
                     </Select>
                     {errors.departmentId && (
-                      <p className="text-sm text-destructive mt-1">{errors.departmentId}</p>
+                      <p className="text-sm text-destructive mt-1">
+                        {errors.departmentId}
+                      </p>
                     )}
                   </div>
 
@@ -376,10 +411,16 @@ export default function CreateJobLocal() {
                     <Label htmlFor="hiringManager">Hiring Manager *</Label>
                     <Select
                       value={formData.hiringManagerId}
-                      onValueChange={(value) => handleInputChange("hiringManagerId", value)}
+                      onValueChange={(value) =>
+                        handleInputChange("hiringManagerId", value)
+                      }
                       disabled={!formData.departmentId}
                     >
-                      <SelectTrigger className={errors.hiringManagerId ? "border-destructive" : ""}>
+                      <SelectTrigger
+                        className={
+                          errors.hiringManagerId ? "border-destructive" : ""
+                        }
+                      >
                         <SelectValue
                           placeholder={
                             !formData.departmentId
@@ -403,13 +444,17 @@ export default function CreateJobLocal() {
                       </SelectContent>
                     </Select>
                     {errors.hiringManagerId && (
-                      <p className="text-sm text-destructive mt-1">{errors.hiringManagerId}</p>
+                      <p className="text-sm text-destructive mt-1">
+                        {errors.hiringManagerId}
+                      </p>
                     )}
 
                     {selectedDepartment && selectedManager && (
                       <div className="flex items-center gap-2 mt-2 text-sm text-green-600">
                         <CheckCircle className="h-4 w-4" />
-                        <span>Manager belongs to {selectedDepartment.name}</span>
+                        <span>
+                          Manager belongs to {selectedDepartment.name}
+                        </span>
                       </div>
                     )}
                   </div>
@@ -434,8 +479,14 @@ export default function CreateJobLocal() {
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-2">
                     <Button
                       type="button"
-                      variant={formData.approverMode === "department" ? "default" : "outline"}
-                      onClick={() => handleInputChange("approverMode", "department")}
+                      variant={
+                        formData.approverMode === "department"
+                          ? "default"
+                          : "outline"
+                      }
+                      onClick={() =>
+                        handleInputChange("approverMode", "department")
+                      }
                       className="h-auto p-4 flex flex-col items-start gap-2"
                     >
                       <div className="flex items-center gap-2">
@@ -449,7 +500,9 @@ export default function CreateJobLocal() {
 
                     <Button
                       type="button"
-                      variant={formData.approverMode === "name" ? "default" : "outline"}
+                      variant={
+                        formData.approverMode === "name" ? "default" : "outline"
+                      }
                       onClick={() => handleInputChange("approverMode", "name")}
                       className="h-auto p-4 flex flex-col items-start gap-2"
                     >
@@ -466,12 +519,22 @@ export default function CreateJobLocal() {
 
                 {formData.approverMode === "department" && (
                   <div>
-                    <Label htmlFor="approverDepartment">Approver Department *</Label>
+                    <Label htmlFor="approverDepartment">
+                      Approver Department *
+                    </Label>
                     <Select
                       value={formData.approverDepartmentId}
-                      onValueChange={(value) => handleInputChange("approverDepartmentId", value)}
+                      onValueChange={(value) =>
+                        handleInputChange("approverDepartmentId", value)
+                      }
                     >
-                      <SelectTrigger className={errors.approverDepartmentId ? "border-destructive" : ""}>
+                      <SelectTrigger
+                        className={
+                          errors.approverDepartmentId
+                            ? "border-destructive"
+                            : ""
+                        }
+                      >
                         <SelectValue placeholder="Select approver department" />
                       </SelectTrigger>
                       <SelectContent>
@@ -483,30 +546,47 @@ export default function CreateJobLocal() {
                       </SelectContent>
                     </Select>
                     {errors.approverDepartmentId && (
-                      <p className="text-sm text-destructive mt-1">{errors.approverDepartmentId}</p>
+                      <p className="text-sm text-destructive mt-1">
+                        {errors.approverDepartmentId}
+                      </p>
                     )}
                   </div>
                 )}
 
                 <div>
                   <Label htmlFor="approver">
-                    {formData.approverMode === "department" ? "Approver from Department *" : "Specific Approver *"}
+                    {formData.approverMode === "department"
+                      ? "Approver from Department *"
+                      : "Specific Approver *"}
                   </Label>
                   <Select
                     value={formData.approverId}
-                    onValueChange={(value) => handleInputChange("approverId", value)}
-                    disabled={formData.approverMode === "department" && !formData.approverDepartmentId}
+                    onValueChange={(value) =>
+                      handleInputChange("approverId", value)
+                    }
+                    disabled={
+                      formData.approverMode === "department" &&
+                      !formData.approverDepartmentId
+                    }
                   >
-                    <SelectTrigger className={errors.approverId ? "border-destructive" : ""}>
+                    <SelectTrigger
+                      className={errors.approverId ? "border-destructive" : ""}
+                    >
                       <SelectValue placeholder="Select approver" />
                     </SelectTrigger>
                     <SelectContent>
                       {eligibleApprovers.map((emp) => (
                         <SelectItem key={emp.id} value={emp.id}>
                           <div className="flex items-center gap-2">
-                            <span>{emp.firstName} {emp.lastName}</span>
+                            <span>
+                              {emp.firstName} {emp.lastName}
+                            </span>
                             <Badge variant="outline" className="text-xs">
-                              {departments.find(d => d.id === emp.departmentId)?.name}
+                              {
+                                departments.find(
+                                  (d) => d.id === emp.departmentId,
+                                )?.name
+                              }
                             </Badge>
                           </div>
                         </SelectItem>
@@ -514,7 +594,9 @@ export default function CreateJobLocal() {
                     </SelectContent>
                   </Select>
                   {errors.approverId && (
-                    <p className="text-sm text-destructive mt-1">{errors.approverId}</p>
+                    <p className="text-sm text-destructive mt-1">
+                      {errors.approverId}
+                    </p>
                   )}
                 </div>
               </CardContent>

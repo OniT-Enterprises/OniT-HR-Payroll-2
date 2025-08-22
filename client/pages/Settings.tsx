@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -7,11 +7,16 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
+import { Badge } from "@/components/ui/badge";
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import HotDogStyleNavigation from "@/components/layout/HotDogStyleNavigation";
 import { FirebaseIsolationControl } from "@/components/FirebaseIsolationControl";
 import { DevAuthControl } from "@/components/DevAuthControl";
 import { FetchDiagnostic } from "@/components/FetchDiagnostic";
+import { getCurrentUser } from "@/lib/localAuth";
 import {
   Settings as SettingsIcon,
   User,
@@ -21,6 +26,15 @@ import {
   Palette,
   Database,
   Download,
+  Mail,
+  Phone,
+  MapPin,
+  Calendar,
+  Edit,
+  Save,
+  Camera,
+  Key,
+  Activity,
 } from "lucide-react";
 
 export default function Settings() {

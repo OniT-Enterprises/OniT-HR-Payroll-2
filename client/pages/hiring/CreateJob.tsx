@@ -601,15 +601,15 @@ export default function CreateJob() {
                                 </SelectTrigger>
                               </FormControl>
                               <SelectContent>
-                                {(watchedApproverMode === "department" 
-                                  ? approverDepartmentEmployees 
-                                  : employees
+                                {(watchedApproverMode === "department"
+                                  ? approverDepartmentEmployees
+                                  : activeEmployees
                                 ).map((emp) => (
                                   <SelectItem key={emp.id} value={emp.id!}>
                                     {emp.personalInfo.firstName} {emp.personalInfo.lastName}
                                     {watchedApproverMode === "name" && (
                                       <span className="text-xs text-muted-foreground ml-2">
-                                        ({departments.find(d => d.id === emp.departmentId)?.name})
+                                        ({activeDepartments.find(d => d.id === emp.departmentId)?.name})
                                       </span>
                                     )}
                                   </SelectItem>

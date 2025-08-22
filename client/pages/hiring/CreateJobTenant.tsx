@@ -473,12 +473,12 @@ export default function CreateJobTenant() {
                     <Button
                       type="button"
                       variant={
-                        formData.approverMode === "specific"
+                        formData.approverMode === "name"
                           ? "default"
                           : "outline"
                       }
                       onClick={() =>
-                        handleInputChange("approverMode", "specific")
+                        handleInputChange("approverMode", "name")
                       }
                       className="h-auto p-4 flex flex-col items-start gap-2"
                     >

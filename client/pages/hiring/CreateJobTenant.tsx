@@ -27,8 +27,9 @@ import {
   useEmployees,
   useCreateJob,
 } from "@/hooks/useTenantData";
-import { useRequiredTenant } from "@/contexts/TenantContext";
+import { useTenant } from "@/contexts/TenantContext";
 import { CreateJobRequest, JobApproverMode } from "@/types/tenant";
+import { getCurrentUser } from "@/lib/localAuth";
 import {
   Building2,
   Users,

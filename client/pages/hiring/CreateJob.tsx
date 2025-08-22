@@ -93,10 +93,13 @@ export default function CreateJob() {
   const navigate = useNavigate();
   const { toast } = useToast();
   const { session, hasModule, canWrite } = useTenant();
+  const localUser = getCurrentUser();
   const [selectedApproverMode, setSelectedApproverMode] = useState<"department" | "name">("department");
 
-  // Check permissions
-  const canCreateJob = session && hasModule("hiring") && canWrite();
+  // Check permissions - support both tenant system and local development
+  const canCreateJob =
+    (session && hasModule("hiring") && canWrite()) || // Tenant system
+    (localUser && (localUser.role === "admin" || localUser.role === "hr")); // Local development
 
   // Data queries
   const { data: departments = [], isLoading: loadingDepartments } = useTenantDepartments();

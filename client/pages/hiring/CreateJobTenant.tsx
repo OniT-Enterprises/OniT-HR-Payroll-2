@@ -144,7 +144,7 @@ export default function CreateJobTenant() {
       newErrors.approverDepartmentId = "Approver department is required";
     }
 
-    if (formData.approverMode === "specific" && !formData.approverId) {
+    if (formData.approverMode === "name" && !formData.approverId) {
       newErrors.approverId = "Specific approver is required";
     }
 

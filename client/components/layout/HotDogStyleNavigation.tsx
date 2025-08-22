@@ -270,7 +270,7 @@ export default function HotDogStyleNavigation() {
                   <DropdownMenuItem className="text-gray-300 flex-col items-start pointer-events-none">
                     <div className="flex items-center gap-2 w-full">
                       <div className="flex items-center gap-2">
-                        <div className="h-8 w-8 bg-blue-600 rounded-full flex items-center justify-center">
+                        <div className={`h-8 w-8 ${isConnected ? 'bg-green-600' : 'bg-red-600'} rounded-full flex items-center justify-center`}>
                           <span className="text-white text-sm font-medium">
                             {user.name
                               .split(" ")
@@ -281,17 +281,11 @@ export default function HotDogStyleNavigation() {
                         </div>
                         <div>
                           <div className="font-medium">{user.name}</div>
-                          <div className="text-xs text-gray-500">
-                            {user.email}
-                          </div>
                         </div>
                       </div>
                       <Badge variant="outline" className="text-xs ml-auto">
                         {user.role}
                       </Badge>
-                    </div>
-                    <div className="text-xs text-gray-500 mt-1">
-                      {user.company}
                     </div>
                   </DropdownMenuItem>
                   <DropdownMenuSeparator className="bg-gray-700" />
@@ -302,14 +296,7 @@ export default function HotDogStyleNavigation() {
                 onClick={() => handleNavigate("/settings")}
               >
                 <Settings className="mr-2 h-4 w-4" />
-                Settings
-              </DropdownMenuItem>
-              <DropdownMenuItem
-                className="text-gray-300 hover:text-white hover:bg-gray-700 cursor-pointer"
-                onClick={() => handleNavigate("/profile")}
-              >
-                <UserCog className="mr-2 h-4 w-4" />
-                Profile
+                Settings & Profile
               </DropdownMenuItem>
               <DropdownMenuSeparator className="bg-gray-700" />
               <DropdownMenuItem

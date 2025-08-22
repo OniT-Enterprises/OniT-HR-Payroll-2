@@ -422,26 +422,28 @@ class LocalDataService {
 // Create singleton instance
 export const localDataService = new LocalDataService();
 
-// Export helper functions for easy use
-export const {
-  getDepartments,
-  getDepartment,
-  createDepartment,
-  getEmployees,
-  getEmployee,
-  createEmployee,
-  updateEmployee,
-  getJobs,
-  getJob,
-  createJob,
-  updateJob,
-  deleteJob,
-  getCandidates,
-  createCandidate,
-  clearAllData,
-  exportData,
-  importData,
-  getStats,
-} = localDataService;
+// Export helper functions for easy use with proper binding
+export const getDepartments = () => localDataService.getDepartments();
+export const getDepartment = (id: string) => localDataService.getDepartment(id);
+export const createDepartment = (data: Omit<LocalDepartment, 'id' | 'createdAt'>) => localDataService.createDepartment(data);
+
+export const getEmployees = (filters?: { departmentId?: string; status?: LocalEmployee['status'] }) => localDataService.getEmployees(filters);
+export const getEmployee = (id: string) => localDataService.getEmployee(id);
+export const createEmployee = (data: Omit<LocalEmployee, 'id' | 'createdAt'>) => localDataService.createEmployee(data);
+export const updateEmployee = (id: string, data: Partial<LocalEmployee>) => localDataService.updateEmployee(id, data);
+
+export const getJobs = (filters?: { departmentId?: string; status?: LocalJob['status'] }) => localDataService.getJobs(filters);
+export const getJob = (id: string) => localDataService.getJob(id);
+export const createJob = (data: Omit<LocalJob, 'id' | 'createdAt' | 'updatedAt'>) => localDataService.createJob(data);
+export const updateJob = (id: string, data: Partial<LocalJob>) => localDataService.updateJob(id, data);
+export const deleteJob = (id: string) => localDataService.deleteJob(id);
+
+export const getCandidates = (jobId?: string) => localDataService.getCandidates(jobId);
+export const createCandidate = (data: Omit<LocalCandidate, 'id' | 'createdAt'>) => localDataService.createCandidate(data);
+
+export const clearAllData = () => localDataService.clearAllData();
+export const exportData = () => localDataService.exportData();
+export const importData = (data: any) => localDataService.importData(data);
+export const getStats = () => localDataService.getStats();
 
 console.log('🚀 Local Data Service initialized');

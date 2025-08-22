@@ -314,14 +314,14 @@ export default function CreateJob() {
             <div>
               <h1 className="text-3xl font-bold">Create Job Posting</h1>
               <p className="text-muted-foreground">
-                Create a new job posting for {session?.config.name}
+                Create a new job posting for {session?.config.name || localUser?.company || "Your Company"}
               </p>
             </div>
           </div>
 
           <div className="flex items-center gap-2">
             <Badge variant="outline" className="text-xs">
-              {session?.config.name}
+              {session?.config.name || localUser?.company || "Your Company"}
             </Badge>
           </div>
         </div>
